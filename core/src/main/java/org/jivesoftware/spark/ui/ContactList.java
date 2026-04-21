@@ -15,12 +15,17 @@
  */
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -201,12 +206,8 @@ public class ContactList extends JPanel implements ActionListener,
 
         // Save state on shutdown.
         final ContactList instance = this;
-        SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            @Override
-            public void shutdown() {
-                saveState();
+        SparkManager.getMainWindow().addMainWindowListener(() -> {
                 SparkManager.getConnection().removeConnectionListener(instance);
-            }
         });
 
         SparkManager.getConnection().addConnectionListener(this);
@@ -1697,12 +1698,11 @@ public class ContactList extends JPanel implements ActionListener,
 
     @Override
     public void shutdown() {
-        saveState();
     }
 
     @Override
     public boolean canShutDown() {
-        return true;
+        return false;
     }
 
     private void addContactListToWorkspace() {
@@ -2021,11 +2021,15 @@ public class ContactList extends JPanel implements ActionListener,
         if (props == null) {
             return;
         }
+        // save collapsed groups
+        props.clear();
         for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
-            props.put(contactGroup.getGroupName(), Boolean.toString(contactGroup.isCollapsed()));
+            if (contactGroup.isCollapsed()) {
+                props.put(contactGroup.getGroupName(), "true");
+            }
         }
         try {
-            props.store(new FileOutputStream(propertiesFile), "Tracks the state of groups.");
+            props.store(new FileOutputStream(propertiesFile), null);
         } catch (IOException e) {
             Log.error("Unable to save group properties.", e);
         }
