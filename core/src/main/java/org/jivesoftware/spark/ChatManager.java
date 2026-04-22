@@ -237,16 +237,15 @@ public class ChatManager {
         ChatContainer chatRooms = SparkManager.getChatManager().getChatContainer();
         try {
             chatRoom = chatRooms.getChatRoom(jid);
-        } catch (ChatRoomNotFoundException ignored) {
-            return;
-        }
-        if (chatRoom == null) {
+        } catch (ChatRoomNotFoundException e) {
+            // create new room
             if (jid instanceof EntityJid) {
                 chatRoom = UIComponentRegistry.createChatRoom((EntityJid) jid, nickname, nickname);
                 chatRooms.addChatRoom(chatRoom);
             } else {
                 //TODO implement chat with a BareJid like just a DomainBareJid
                 Log.warning("Unsupported bare jid " + jid);
+                return;
             }
         }
         chatRooms.activateChatRoom(chatRoom);

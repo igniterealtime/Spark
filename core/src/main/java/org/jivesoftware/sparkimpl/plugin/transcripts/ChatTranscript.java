@@ -27,13 +27,10 @@ import java.util.Set;
  * @author Derek DeMoro
  */
 public class ChatTranscript {
-
     private List<HistoryMessage> messages = new ArrayList<>();
 
     /**
      * Add a <code>HistoryMessage</code> to users chat transcript.
-     *
-     * @param entry the HistoryMessage to add.
      */
     public void addHistoryMessage(HistoryMessage entry) {
         messages.add(entry);
@@ -41,29 +38,24 @@ public class ChatTranscript {
 
     /**
      * Returns all messages.
-     *
-     * @return all messages.
      */
     public List<HistoryMessage> getMessages() {
         return messages;
     }
 
     /**
-     * Returns a specified number of messages.
+     * Returns a specified number of last messages.
      *
      * @param number the number of messages to return.
      * @return the specified number of messages, or all messages if number is greater than the current amount.
      */
     public Collection<HistoryMessage> getNumberOfEntries(int number) {
         int listSize = messages.size();
-
-        if (messages.size() <= number) {
+        if (listSize <= number) {
             return messages;
         }
-        else {
-            int start = listSize - number;
-            return messages.subList(start, listSize);
-        }
+        int start = listSize - number;
+        return messages.subList(start, listSize);
     }
 
     /**
@@ -75,14 +67,15 @@ public class ChatTranscript {
     public List<HistoryMessage> getMessage(String text) {
         if (text == null || text.isEmpty()) {
             return messages;
-        } else {
+        }
+        String textNeedle = text.toLowerCase();
             List<HistoryMessage> searchResult = new ArrayList<>();
             Set<Integer> lines = new HashSet<>();
             HistoryMessage previous = null;
             int iter = -1;
             for(HistoryMessage message : messages) {
                 iter++;
-                if (message.getBody().toLowerCase().contains(text.toLowerCase())) {
+                if (message.getBody().toLowerCase().contains(textNeedle)) {
                     if (previous != null && !lines.contains(iter - 1)) {
                         searchResult.add(previous);
                         lines.add(iter - 1);
@@ -100,11 +93,10 @@ public class ChatTranscript {
                 previous = message;
             }
             return searchResult;
-        }
     }
 
     /**
-     * Clears the Message History if its not needed anymore
+     * Clears the Message History if it's not needed anymore
      */
     public void release() {
 	messages.clear();
@@ -120,23 +112,16 @@ public class ChatTranscript {
 
     /**
      * Return the size of the message list
-     * @return The size of the message list
      */
-    public int size(){
-    	return this.messages.size();
+    public int size() {
+        return messages.size();
     }
 
     /**
      * Return the HistoryMessage by the given index
-     * @param i the index of the history message
      * @return the history message, null if out of bounds
      */
-    public HistoryMessage getMessage(int i){
-    	HistoryMessage result = null;
-    	if ((i > -1) && i < messages.size()){
-    		result = messages.get(i);
-    	}
-    	return result;
+    public HistoryMessage getMessage(int i) {
+        return i >= 0 && i < messages.size() ? messages.get(i) : null;
     }
-
 }

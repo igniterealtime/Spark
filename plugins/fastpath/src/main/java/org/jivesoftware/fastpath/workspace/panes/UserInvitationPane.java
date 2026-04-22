@@ -301,10 +301,11 @@ public class UserInvitationPane {
                 return;
             }
 
+            EntityBareJid myJid = SparkManager.getSessionManager().getUserBareAddress();
             List<Jid> list = new ArrayList<>();
             for (Affiliate affiliate : owners) {
                 Jid jid = affiliate.getJid();
-                if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+                if (!jid.equals(myJid)) {
                     list.add(jid);
                 }
             }
@@ -326,8 +327,6 @@ public class UserInvitationPane {
 
     /**
      * Sets the AcceptListener to use with this dialog instance.
-     *
-     * @param listener the <code>AcceptListener</code> to use with this instance.
      */
     public void setAcceptListener(AcceptListener listener) {
         this.listener = listener;
@@ -357,7 +356,6 @@ public class UserInvitationPane {
     private void startFastpathChat(EntityBareJid fullRoomJID, String roomName) {
         // Add to Chat window
         ChatManager chatManager = SparkManager.getChatManager();
-
         GroupChatRoom chatRoom;
         try {
             chatRoom = chatManager.getGroupChat(fullRoomJID);

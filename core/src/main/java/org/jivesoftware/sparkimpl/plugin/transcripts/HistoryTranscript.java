@@ -43,14 +43,14 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
+import static org.jivesoftware.spark.util.StringUtils.*;
+
 /**
  * This class represents the history transcript
  *
  * @author tim.jentz
- *
  */
 public class HistoryTranscript extends SwingWorker {
-
     private final Semaphore token = new Semaphore(1);
     private int pageIndex = 0;
     private int maxPages = 0;
@@ -108,8 +108,6 @@ public class HistoryTranscript extends SwingWorker {
 
     /**
      * Show the History for the given Contact.
-     *
-     * @param jid the JID of the current transcript
      */
     public void showHistory(BareJid jid) {
         vacardPanel = new VCardPanel(jid);
@@ -119,10 +117,9 @@ public class HistoryTranscript extends SwingWorker {
     }
 
     /**
-     * Check if the period was changed an apply the filter to the message
-     * history
+     * Check if the period was changed and apply the filter to the message history
      *
-     * @param change the choosen value for the period
+     * @param change the chosen value for the period
      */
     private synchronized void handlePeriodChange(String change) {
         try {
@@ -133,10 +130,10 @@ public class HistoryTranscript extends SwingWorker {
                 isHistoryLoaded.set(false);
                 TaskEngine.getInstance().schedule(transcriptTask, 10);
             }
+        } catch (InterruptedException ignored) {
+            return;
+        } finally {
             token.release();
-        } catch (InterruptedException e) {
-            Log.error(e);
-            e.printStackTrace();
         }
     }
 
@@ -156,9 +153,8 @@ public class HistoryTranscript extends SwingWorker {
             if (changed.get()) {
                 display();
             }
-        } catch (InterruptedException e) {
-            Log.error(e);
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+            return;
         }
     }
 
@@ -179,9 +175,8 @@ public class HistoryTranscript extends SwingWorker {
             if (changed.get()) {
                 display();
             }
-        } catch (InterruptedException e) {
-            Log.error(e);
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+            return;
         }
     }
 
@@ -192,6 +187,7 @@ public class HistoryTranscript extends SwingWorker {
      */
     public final String buildString(List<HistoryMessage> messages) {
         StringBuilder builder = new StringBuilder();
+        EntityBareJid myJID = SparkManager.getSessionManager().getUserBareAddress();
         final String personalNickname = SparkManager.getUserManager().getNickname();
         Date lastPost = null;
         Jid broadcastnick = null;
@@ -203,14 +199,9 @@ public class HistoryTranscript extends SwingWorker {
             Jid from = message.getFrom();
             String nickname = SparkManager.getUserManager()
                     .getUserNicknameFromJID(message.getFrom().asBareJid());
-            String body = org.jivesoftware.spark.util.StringUtils
-                    .escapeHTMLTags(message.getBody());
+            String body = escapeHTMLTags(message.getBody());
             if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
-                BareJid otherJID = message
-                        .getFrom().asBareJid();
-                EntityBareJid myJID = SparkManager.getSessionManager()
-                        .getUserBareAddress();
-
+                BareJid otherJID = message.getFrom().asBareJid();
                 if (otherJID.equals(myJID)) {
                     nickname = personalNickname;
                 } else {
@@ -220,7 +211,7 @@ public class HistoryTranscript extends SwingWorker {
             }
 
             if (!from.asBareJid().equals(
-                    SparkManager.getSessionManager().getUserBareAddress())) {
+                    myJID)) {
                 color = "red";
             }
 
@@ -300,13 +291,12 @@ public class HistoryTranscript extends SwingWorker {
                 Document doc = window.getDocument();
                 String line;
                 if (!text.isEmpty() && focusFlag) {
+                    Pattern timePattern = Pattern.compile("\\(\\d\\d:\\d\\d:\\d\\d\\)\\s[a-zA-Z0-9]+:\\s");
                     String str = doc.getText(1, doc.getLength());
                     BufferedReader buf = new BufferedReader(new StringReader(str));
                     int globalPos = 1;
                     while ((line = buf.readLine()) != null) {
-                        Matcher matcherTime = Pattern
-                                .compile("\\(\\d\\d:\\d\\d:\\d\\d\\)\\s[a-zA-Z0-9]+:\\s")
-                                .matcher(line);
+                        Matcher matcherTime = timePattern.matcher(line);
                         if (matcherTime.find()) {
                             for (int i = matcherTime.end(); i + text.length() < line.length() + 1; i++) {
                                 String match = line.substring(i, i + text.length());
@@ -321,7 +311,6 @@ public class HistoryTranscript extends SwingWorker {
                 }
             } catch (BadLocationException | IOException ex) {
                 Log.error(ex);
-                ex.printStackTrace();
             }
 
             builder.replace(0, builder.length(), "");
@@ -330,18 +319,16 @@ public class HistoryTranscript extends SwingWorker {
             }
             pageCounter.setText(pageIndex + " / " + maxPages);
             token.release();
-        } catch (InterruptedException e) {
-            Log.error(e);
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+            return;
         }
     }
 
     /**
-     * This class will run every time a search has startet on the messages,
+     * This class will run every time a search has started on the messages,
      * saved in the transcript or the time period has been changed
      *
      * @author tim.jentz
-     *
      */
     private class timerTranscript extends TimerTask {
 
@@ -403,7 +390,7 @@ public class HistoryTranscript extends SwingWorker {
         }
 
         /**
-         * Sort the messages by the choosen period of time
+         * Sort the messages by the chosen period of time
          *
          * @param transcript the transcript to sort
          * @return List of transcript sorted by period. each transcript contains
@@ -492,7 +479,7 @@ public class HistoryTranscript extends SwingWorker {
                     token.release();
                 } catch (InterruptedException e) {
                     Log.error(e);
-                    e.printStackTrace();
+                    return;
                 }
             }
 
@@ -521,9 +508,8 @@ public class HistoryTranscript extends SwingWorker {
                 pageIndex = (!searchFilteredList.isEmpty()) ? 1 : 0;
                 maxPages = searchFilteredList.size();
                 token.release();
-            } catch (InterruptedException e) {
-                Log.error(e);
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
+                return;
             }
             display();
         }
@@ -553,27 +539,22 @@ public class HistoryTranscript extends SwingWorker {
         pageLeft.addActionListener(arg0 -> pageLeft());
         pageRight.addActionListener(arg0 -> pageRight());
         periodChooser.addActionListener(e -> handlePeriodChange(periods.get(periodChooser.getSelectedIndex())));
-
         // add search text input
         searchPanel.setLayout(new GridBagLayout());
         navigatorPanel.setLayout(new GridBagLayout());
         controlPanel.setLayout(new BorderLayout());
         filterPanel.setLayout(new GridBagLayout());
         mainPanel.setLayout(new BorderLayout());
-
         // the list of periods
         periods.add(period_oneDay);
 		periods.add(period_oneWeek);
         periods.add(period_oneMonth);
         periods.add(period_oneYear);
         periods.add(period_noPeriod);
-
-        // get the default preferences for the search period 
+        // get the default preferences for the search period
         int index = getPeriodIndex(pref.getSearchPeriod(periods.get(0)));
-
         for (String period : periods) {
             periodChooser.addItem(Res.getString(period));
-
         }
 
         periodChooser.setToolTipText(Res.getString("message.search.page.timeperiod"));
@@ -642,10 +623,9 @@ public class HistoryTranscript extends SwingWorker {
                                             if (getDocument().getText(p0, p1 - p0).contains(System.lineSeparator())) {
                                                 return View.ForcedBreakWeight;
                                             }
-                                        } catch (BadLocationException ex) {
+                                        } catch (BadLocationException ignored) {
                                             //should never happen
                                         }
-
                                     }
                                     return super.getBreakWeight(axis, pos, len);
                                 }
@@ -698,8 +678,7 @@ public class HistoryTranscript extends SwingWorker {
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16)
-                .getImage());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16).getImage());
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
         frame.pack();

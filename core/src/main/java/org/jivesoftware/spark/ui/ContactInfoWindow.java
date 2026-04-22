@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
 
+import org.jivesoftware.MainWindow;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
@@ -146,30 +147,24 @@ public class ContactInfoWindow extends JPanel {
 
     public void display(ContactGroup group, MouseEvent e) {
         int loc = group.getList().locationToIndex(e.getPoint());
-
-
         ContactItem item = group.getList().getModel().getElementAt(loc);
         if (item == null || item.getJid() == null || item.getJid().toString().equals("dummy@dummy.example")) {
             return;
         }
-
         if (getContactItem() != null && getContactItem() == item) {
             return;
         }
-
         iconLabel.setIcon(item.getIcon());
-
         Point point = group.getList().indexToLocation(loc);
-
         window.setFocusableWindowState(false);
         setContactItem(item);
         window.pack();
 
-
-        Point mainWindowLocation = SparkManager.getMainWindow().getLocationOnScreen();
+        MainWindow mainWindow = SparkManager.getMainWindow();
+        Point mainWindowLocation = mainWindow.getLocationOnScreen();
         Point listLocation = group.getList().getLocationOnScreen();
 
-        int x = (int)mainWindowLocation.getX() + SparkManager.getMainWindow().getWidth();
+        int x = (int)mainWindowLocation.getX() + mainWindow.getWidth();
         int y = (int) listLocation.getY() + (int) point.getY();
         setWindowLocation(x, y);
         if (!window.isVisible()) {
@@ -197,7 +192,7 @@ public class ContactInfoWindow extends JPanel {
         window.setLocation(actualX, actualY);
     }
 
-    public void customizeUI(ContactItem contactItem) {
+    public void customizeUI() {
         if (contactItem == null) {
             return;
         }
@@ -306,7 +301,7 @@ public class ContactInfoWindow extends JPanel {
 
     public void setContactItem(ContactItem contactItem) {
         this.contactItem = contactItem;
-        customizeUI(this.contactItem);
+        customizeUI();
     }
 
     public ContactItem getContactItem() {

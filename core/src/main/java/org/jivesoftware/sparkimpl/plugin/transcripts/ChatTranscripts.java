@@ -41,40 +41,27 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
-
 /**
  * A Utility class that manages the Chat Transcripts within Spark.
  *
  * @author Derek DeMoro
  */
 public final class ChatTranscripts {
-
-    /**
-     * Default Date Formatter *
-     */
-    private static final DateFormat FORMATTER;
-
-    static {
-        FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
-    }
+    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");
 
     private ChatTranscripts() {
-
     }
 
     /**
      * Appends the given ChatTranscript to the transcript file associated with a JID.
-     *
-     * @param jid        the jid of the user.
-     * @param transcript the ChatTranscript.
      */
     public static void appendToTranscript(Jid jid, ChatTranscript transcript) {
     	final File transcriptFile = getTranscriptFile(jid);
-
-       	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+        if (Default.getBoolean(Default.HISTORY_DISABLED) || !Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+            return;
+        }
     		// Write Full Transcript, appending the messages.
     		writeToFile(transcriptFile, transcript.getMessages(), true);
-
     		// Write to current history File
     		final File currentHistoryFile = getCurrentHistoryFile(jid);
     		ChatTranscript tempTranscript = getCurrentChatTranscript(jid);
@@ -83,7 +70,6 @@ public final class ChatTranscripts {
     		}
             int max = SettingsManager.getLocalPreferences().getMaxCurrentHistorySize();
             writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(max), false);
-    	}
     }
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {
@@ -115,10 +101,10 @@ public final class ChatTranscripts {
             builder.append("</transcript>");
         }
 
-
         if (!transcriptFile.exists() || !append) {
             // Write out new File
             try {
+                //noinspection ResultOfMethodCallIgnored
                 transcriptFile.getParentFile().mkdirs();
                 Files.write(transcriptFile.toPath(), builder.toString().getBytes(StandardCharsets.UTF_8));
             }
@@ -127,11 +113,9 @@ public final class ChatTranscripts {
             }
             return;
         }
-
         // Append to File
         try {
             final RandomAccessFile raf = new RandomAccessFile(transcriptFile, "rw");
-
             // We want to append near the end of the document as the last
             // child in the transcript.
             final String endTag = " </messages>\n</transcript>";
@@ -145,9 +129,7 @@ public final class ChatTranscripts {
           }
 
             builder.append(endTag);
-
             raf.seek(transcriptFile.length() - endTag.length());
-
             // Append to the end
             raf.write(builder.toString().getBytes(StandardCharsets.UTF_8));
             raf.close();
@@ -158,10 +140,7 @@ public final class ChatTranscripts {
     }
 
     /**
-     * Retrieve the current chat history.
-     *
-     * @param jid the jid of the user whos history you wish to retrieve.
-     * @return the ChatTranscript (default = last 20 messages max).
+     * Retrieve the current chat history (default = last 20 messages max).
      */
     public static ChatTranscript getCurrentChatTranscript(Jid jid) {
         return getTranscript(getCurrentHistoryFile(jid));
@@ -169,9 +148,6 @@ public final class ChatTranscripts {
 
     /**
      * Retrieve the full chat history.
-     *
-     * @param jid the jid of the the user whos history you wish to retrieve.
-     * @return the ChatTranscript.
      */
     public static ChatTranscript getChatTranscript(Jid jid) {
         return getTranscript(getTranscriptFile(jid));
@@ -179,9 +155,6 @@ public final class ChatTranscripts {
 
     /**
      * Reads in the transcript file using the Xml Pull Parser.
-     *
-     * @param transcriptFile the transcript file to read.
-     * @return the ChatTranscript.
      */
     public static ChatTranscript getTranscript(File transcriptFile) {
         final ChatTranscript transcript = new ChatTranscript();
@@ -205,10 +178,8 @@ public final class ChatTranscripts {
             in.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.error("Unable to parse the transcript file", e);
         }
-      
-
         return transcript;
     }
 
@@ -234,7 +205,6 @@ public final class ChatTranscripts {
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
         HistoryMessage message = new HistoryMessage();
-
         // Check for nickname
         boolean done = false;
         while (!done) {
@@ -266,10 +236,6 @@ public final class ChatTranscripts {
                 done = true;
             }
         }
-
-
         return message;
     }
-
-
 }

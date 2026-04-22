@@ -66,7 +66,6 @@ import org.jxmpp.util.XmppStringUtils;
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
 
 public class InvitationPane {
-
     private Map<String, List<String>> metadata = null;
     private GroupChatRoom chatRoom;
 
@@ -75,14 +74,12 @@ public class InvitationPane {
         transcriptAlert.setBackground(Color.white);
         transcriptAlert.setLayout(new GridBagLayout());
 
-
         JLabel userImage = new JLabel(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
         userImage.setHorizontalAlignment(JLabel.LEFT);
         String title = FpRes.getString("title.fastpath.invitation");
         if (request.isTransfer()) {
             title = FpRes.getString("title.fastpath.transfer");
         }
-
 
         userImage.setText(title);
         transcriptAlert.add(userImage, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
@@ -125,12 +122,10 @@ public class InvitationPane {
         transcriptAlert.add(rejectButton, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         transcriptAlert.add(new JLabel(), new GridBagConstraints(2, 5, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-
         MetaData metaDataExt = message.getExtension(MetaData.class);
         if (metaDataExt != null) {
             metadata = metaDataExt.getMetaData();
         }
-
 
         infoButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -140,11 +135,11 @@ public class InvitationPane {
                     roomInformation.showAllInformation(metadata);
                     roomInformation.showRoomInformation();
                 }
-
             }
         });
 
 
+        ChatManager chatManager = SparkManager.getChatManager();
         acceptButton.addActionListener(actionEvent -> {
             SwingWorker waiter = new SwingWorker() {
                 @Override
@@ -153,7 +148,7 @@ public class InvitationPane {
                         Thread.sleep(50);
                     }
                     catch (InterruptedException e) {
-                        Log.error(e);
+                        return false;
                     }
                     return true;
                 }
@@ -172,8 +167,6 @@ public class InvitationPane {
                     chatRoom.getSplitPane().setDividerLocation(0.8);
                     transcriptAlert.setVisible(false);
 
-                    String name = XmppStringUtils.parseLocalpart(roomName);
-
                     try {
                         chatRoom.setTabTitle(roomName);
                         chatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
@@ -182,12 +175,11 @@ public class InvitationPane {
                         chatRoom.getEditorBar().setVisible(true);
                         chatRoom.getChatInputEditor().setEnabled(true);
 
-                        ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
+                        ChatContainer chatContainer = chatManager.getChatContainer();
                         chatContainer.setChatRoomTitle(chatRoom, roomName);
                         if (chatContainer.getActiveChatRoom() == chatRoom) {
                             chatContainer.getChatFrame().setTitle(roomName);
                         }
-
                     }
                     catch (Exception e) {
                         Log.error(e);
@@ -204,8 +196,6 @@ public class InvitationPane {
         });
 
         // Add to Chat window
-        ChatManager chatManager = SparkManager.getChatManager();
-
         try {
             chatRoom = chatManager.getGroupChat(room);
         }
@@ -224,15 +214,13 @@ public class InvitationPane {
         chatRoom.getBottomPanel().setVisible(false);
         chatRoom.getScrollPaneForTranscriptWindow().setVisible(false);
 
-        SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
+        chatManager.getChatContainer().addChatRoom(chatRoom);
 
         FastpathPlugin.getLitWorkspace().addFastpathChatRoom(chatRoom, RoomState.invitationRequest);
 
         rejectButton.addActionListener(actionEvent -> {
             // Add to Chat window
-            ChatManager chatManager1 = SparkManager.getChatManager();
-            chatManager1.removeChat(chatRoom);
-
+            chatManager.removeChat(chatRoom);
             try
             {
                 MultiUserChatManager mucManager = SparkManager.getMucManager();
@@ -243,13 +231,10 @@ public class InvitationPane {
                 Log.warning( "Unable to decline invitation from " + inviter + " to join room " + room, e );
             }
         });
-
     }
 
     /**
      * Removes oneself as an owner of the room.
-     *
-     * @param muc the <code>MultiUserChat</code> of the chat room.
      */
     private void removeOwner(MultiUserChat muc) {
         if (muc.isJoined()) {
@@ -262,23 +247,19 @@ public class InvitationPane {
                 return;
             }
 
-            if (owners == null) {
-                return;
-            }
-
+            EntityBareJid myJid = SparkManager.getSessionManager().getUserBareAddress();
             List<Jid> list = new ArrayList<>();
             for (Affiliate affiliate : owners) {
                 Jid jid = affiliate.getJid();
-                if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+                if (!jid.equals(myJid)) {
                     list.add(jid);
                 }
             }
             if (!list.isEmpty()) {
                 try {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
-                    List<String> jidStrings = new ArrayList<>(list.size());
-                    JidUtil.toStrings(list, jidStrings);
-                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
+                    List<String> listStrings = JidUtil.toStringList(list);
+                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, listStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);

@@ -77,7 +77,6 @@ public class Workpane {
     private final Map<String, Offer> offerMap = new HashMap<>();
     private final Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
     private final Map<String, UserInvitationPane> invitations = new HashMap<>();
-
     private final Map<ChatRoom, RoomState> fastpathRooms = new HashMap<>();
 
     private final OnlineAgents onlineAgentsPane;
@@ -128,11 +127,9 @@ public class Workpane {
 
         FastpathPlugin.getUI().getMainPanel().addTab(FpRes.getString("tab.current.chats"), null, agentCons);
         SearchManager.getInstance().addSearchService(chatSearch);
-
         // Add Queue Activity Menu
         queueActivity = new QueueActivity();
         setupQueueViewer();
-
         // Add presence listener. This is used to send presence changes to the workgroup itself.
         SparkManager.getSessionManager().addPresenceListener(presenceListener);
 
@@ -142,7 +139,6 @@ public class Workpane {
         ResourceUtils.resButton(historyButton, FpRes.getString("button.history"));
         toolbar.add(historyButton);
         historyButton.setIcon(FastpathRes.getImageIcon(FastpathRes.HISTORY_16x16));
-
         historyButton.addActionListener(e -> {
             final ChatHistory chatHistory = new ChatHistory();
             chatHistory.showDialog();
@@ -307,7 +303,6 @@ public class Workpane {
             final GroupChatRoom groupChatRoom = (GroupChatRoom)room;
             groupChatRoom.leaveChatRoom();
         });
-
         // Set Room is Active
         addFastpathChatRoom(room, RoomState.activeRoom);
     }
@@ -321,7 +316,6 @@ public class Workpane {
      */
     private void inviteOrTransfer(ChatRoom room, String workgroup, String sessionID, boolean transfer) {
         WorkgroupInvitationDialog dialog = new WorkgroupInvitationDialog();
-
         boolean ok = dialog.hasSelectedAgent(room, transfer);
         if (ok) {
             String jidString = dialog.getSelectedJID();
@@ -387,10 +381,7 @@ public class Workpane {
         tabbedPane.addTab(FpRes.getString("tab.user.history"), historyScroll);
 
         final Notes notes = new Notes(sessionID, room);
-
         tabbedPane.addTab(FpRes.getString("tab.notes"), notes);
-
-
         tabbedPane.addChangeListener(new ChangeListener() {
             boolean loaded;
 
