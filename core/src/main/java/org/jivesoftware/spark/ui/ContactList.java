@@ -66,7 +66,6 @@ import org.jxmpp.jid.impl.JidCreate;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -80,7 +79,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ContactList extends JPanel implements ActionListener,
+public class ContactList extends JPanel implements
     ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
     private static final String GROUP_DELIMITER = "::";
@@ -140,10 +139,10 @@ public class ContactList extends JPanel implements ActionListener,
         chatMenu = new JMenuItem(Res.getString("menuitem.start.a.chat"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
         renameMenu = new JMenuItem(Res.getString("menuitem.rename"), SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
 
-        addContactMenu.addActionListener(this);
-        removeContactFromGroupMenu.addActionListener(this);
-        chatMenu.addActionListener(this);
-        renameMenu.addActionListener(this);
+        addContactMenu.addActionListener(evt -> addContactMenuOnOpen());
+        removeContactFromGroupMenu.addActionListener(evt -> removeContactFromGroupOnClick());
+        chatMenu.addActionListener(evt -> chatMenuOnOpen());
+        renameMenu.addActionListener(evt -> renameMenuOnClick());
 
         setLayout(new BorderLayout());
 
@@ -153,7 +152,7 @@ public class ContactList extends JPanel implements ActionListener,
         toolbar.add(addingGroupButton);
         toolbar.add(groupChatButton);
 
-        addingGroupButton.addActionListener(this);
+        addingGroupButton.addActionListener(evt -> addingGroupButtonOnClick());
 
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground((Color) UIManager.get("ContactItem.background"));
@@ -1064,58 +1063,63 @@ public class ContactList extends JPanel implements ActionListener,
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addingGroupButton) {
-            new RosterDialog().showRosterDialog();
-        } else if (e.getSource() == chatMenu) {
-            if (activeItem != null) {
-                SparkManager.getChatManager().activateChat(activeItem.getJid(), activeItem.getDisplayName());
-            }
-        } else if (e.getSource() == addContactMenu) {
-            RosterDialog rosterDialog = new RosterDialog();
-            if (activeGroup != null) {
-                rosterDialog.setDefaultGroup(activeGroup);
-            }
-            rosterDialog.showRosterDialog();
-        } else if (e.getSource() == removeContactFromGroupMenu) {
-            if (activeItem != null) {
-                removeContactFromGroup(activeItem);
-            }
-        } else if (e.getSource() == renameMenu) {
-            if (activeItem == null) {
-                return;
+    private void chatMenuOnOpen() {
+        if (activeItem != null) {
+            SparkManager.getChatManager().activateChat(activeItem.getJid(), activeItem.getDisplayName());
+        }
+    }
+
+    private static void addingGroupButtonOnClick() {
+        new RosterDialog().showRosterDialog();
+    }
+
+    private void addContactMenuOnOpen() {
+        RosterDialog rosterDialog = new RosterDialog();
+        if (activeGroup != null) {
+            rosterDialog.setDefaultGroup(activeGroup);
+        }
+        rosterDialog.showRosterDialog();
+    }
+
+    private void removeContactFromGroupOnClick() {
+        if (activeItem != null) {
+            removeContactFromGroup(activeItem);
+        }
+    }
+
+    private void renameMenuOnClick() {
+        if (activeItem == null) {
+            return;
+        }
+
+        String oldAlias = activeItem.getAlias();
+        String newAlias = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldAlias);
+
+        // if the user pressed 'cancel', the output will be null.
+        // if the user removed alias, the output will be an empty String.
+        if (newAlias != null) {
+            if (!ModelUtil.hasLength(newAlias)) {
+                newAlias = null; // allows you to remove an alias.
             }
 
-            String oldAlias = activeItem.getAlias();
-            String newAlias = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldAlias);
+            BareJid address = activeItem.getJid().asBareJid();
+            ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
+            ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
+            contactItem.setAlias(newAlias);
 
-            // if the user pressed 'cancel', the output will be null.
-            // if the user removed alias, the output will be an empty String.
-            if (newAlias != null) {
-                if (!ModelUtil.hasLength(newAlias)) {
-                    newAlias = null; // allows you to remove an alias.
-                }
-
-                BareJid address = activeItem.getJid().asBareJid();
-                ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
-                ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
-                contactItem.setAlias(newAlias);
-
-                final Roster roster = SparkManager.getRoster();
-                RosterEntry entry = roster.getEntry(address);
-                try {
-                    entry.setName(newAlias);
-                    final BareJid user = address.asBareJid();
-                    for (ContactGroup cg : new ArrayList<>(groupList)) {
-                        ContactItem ci = cg.getContactItemByJID(user);
-                        if (ci != null) {
-                            ci.setAlias(newAlias);
-                        }
+            Roster roster = SparkManager.getRoster();
+            RosterEntry entry = roster.getEntry(address);
+            try {
+                entry.setName(newAlias);
+                BareJid user = address.asBareJid();
+                for (ContactGroup cg : new ArrayList<>(groupList)) {
+                    ContactItem ci = cg.getContactItemByJID(user);
+                    if (ci != null) {
+                        ci.setAlias(newAlias);
                     }
-                } catch (XMPPException.XMPPErrorException | SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException e1) {
-                    Log.warning("Unable to set new alias '" + newAlias + "' for roster entry " + address, e1);
                 }
+            } catch (XMPPException.XMPPErrorException | SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException e1) {
+                Log.warning("Unable to set new alias '" + newAlias + "' for roster entry " + address, e1);
             }
         }
     }
