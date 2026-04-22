@@ -84,7 +84,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final Action viewHistoryAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ContactItem item = contactList.getSelectedUsers().iterator().next();
+                ContactItem item = contactList.getSelectedUsers().get(0);
                 final BareJid jid = item.getJid();
                 transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
                 transcript.showHistory(jid);
@@ -98,7 +98,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final Action showStatusMessageAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ContactItem item = contactList.getSelectedUsers().iterator().next();
+                ContactItem item = contactList.getSelectedUsers().get(0);
                 showStatusMessage(item);
             }
         };

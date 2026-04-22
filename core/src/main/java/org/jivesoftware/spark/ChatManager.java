@@ -701,7 +701,7 @@ public class ChatManager {
     /**
      * Returns all selected <code>ContactItem</code> users in the <code>ContactList</code>.
      */
-    public Collection<ContactItem> getSelectedContactItems() {
+    public List<ContactItem> getSelectedContactItems() {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         return contactList.getSelectedUsers();
     }

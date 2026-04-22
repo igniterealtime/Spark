@@ -1859,7 +1859,7 @@ public class ContactList extends JPanel implements
         return activeGroup;
     }
 
-    public Collection<ContactItem> getSelectedUsers() {
+    public List<ContactItem> getSelectedUsers() {
         final List<ContactItem> list = new ArrayList<>();
         for (ContactGroup group : getContactGroups()) {
             list.addAll(group.getSelectedContacts());

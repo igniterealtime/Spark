@@ -115,11 +115,10 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Start chat with user entered in dialog
         startConversationMenu.addActionListener(e -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
-            Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
+            java.util.List<ContactItem> selectedUsers = contactList.getSelectedUsers();
             String selectedUser = "";
-            Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
-            if (selectedUsersIterator.hasNext()) {
-                ContactItem contactItem = selectedUsersIterator.next();
+            if (!selectedUsers.isEmpty()) {
+                ContactItem contactItem = selectedUsers.get(0);
                 selectedUser = contactItem.getJid().toString();
             }
 

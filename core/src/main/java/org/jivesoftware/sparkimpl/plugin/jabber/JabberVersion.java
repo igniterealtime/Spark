@@ -122,9 +122,9 @@ public class JabberVersion implements Plugin {
     private void viewClient() {
         final JTextField field = new JTextField();
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
+        java.util.List<ContactItem> selectedUsers = contactList.getSelectedUsers();
         if (selectedUsers.size() == 1) {
-            final ContactItem item = (ContactItem)selectedUsers.toArray()[0];
+            ContactItem item = selectedUsers.get(0);
             final Presence presence = item.getPresence();
             if (presence == null || presence.getFrom() == null) {
                 JOptionPane.showMessageDialog(field,

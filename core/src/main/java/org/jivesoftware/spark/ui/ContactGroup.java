@@ -559,11 +559,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     fireContactItemClicked(contactItemList.getSelectedValue());
                 }
             }
-            final Collection<ContactItem> selectedItems = SparkManager.getChatManager().getSelectedContactItems();
+            List<ContactItem> selectedItems = SparkManager.getChatManager().getSelectedContactItems();
             if (selectedItems.size() > 1) {
                 firePopupEvent(e, selectedItems);
             } else if (selectedItems.size() == 1) {
-                final ContactItem contactItem = selectedItems.iterator().next();
+                final ContactItem contactItem = selectedItems.get(0);
                 firePopupEvent(e, contactItem);
             }
         }

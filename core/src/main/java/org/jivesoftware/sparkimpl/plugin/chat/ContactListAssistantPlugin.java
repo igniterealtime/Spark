@@ -67,7 +67,7 @@ public class ContactListAssistantPlugin implements Plugin {
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, final JPopupMenu popup) {
-                final Collection<ContactItem> contactItems = contactList.getSelectedUsers();
+                List<ContactItem> contactItems = contactList.getSelectedUsers();
                 if (!contactItems.isEmpty()) {
                     final List<ContactGroup> contactGroups = contactList.getContactGroups();
                     contactGroups.sort(ContactList.GROUP_COMPARATOR);

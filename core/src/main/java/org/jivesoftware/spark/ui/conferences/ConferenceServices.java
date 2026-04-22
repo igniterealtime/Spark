@@ -195,7 +195,7 @@ public class ConferenceServices implements InvitationListener {
         final Action conferenceAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Collection<ContactItem> contacts = contactList.getSelectedUsers();
+                List<ContactItem> contacts = contactList.getSelectedUsers();
                 startConference(contacts);
             }
         };
@@ -207,7 +207,7 @@ public class ConferenceServices implements InvitationListener {
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object component, JPopupMenu popup) {
-                Collection<ContactItem> col = contactList.getSelectedUsers();
+                List<ContactItem> col = contactList.getSelectedUsers();
                 if (component instanceof ContactGroup) {
                     popup.add(inviteAllAction);
                 } else if (component instanceof Collection<?> && !col.isEmpty()) {
