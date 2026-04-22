@@ -17,7 +17,6 @@ public class InternalPlugins {
             new PublicPlugin("Presence Change Plugin", "org.jivesoftware.sparkimpl.plugin.chat.PresenceChangePlugin", "1.1"),
             new PublicPlugin("Plugin Viewer Plugin", "org.jivesoftware.sparkimpl.plugin.viewer.PluginViewer", "1.1"),
             new PublicPlugin("Emoticon Plugin", "org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonPlugin", "1.1"),
-            new PublicPlugin("Sparklers Plugin", "org.jivesoftware.sparkimpl.plugin.sparklers.SparklersPlugin", "1.1"),
             new PublicPlugin("Notes Plugin", "org.jivesoftware.sparkimpl.plugin.scratchpad.ScratchPadPlugin", "1.1"),
             new PublicPlugin("Buzz Plugin", "org.jivesoftware.sparkimpl.plugin.alerts.BuzzPlugin", "1.1"),
             new PublicPlugin("Notifications Plugin", "org.jivesoftware.sparkimpl.preference.notifications.NotificationPlugin", "1.1"),
