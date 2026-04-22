@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -115,8 +116,6 @@ public class ContactList extends JPanel implements
 
     private final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
     private ContactItem contactItem;
-    private String name;
-    private BareJid user;
 
     private static final String RETRY_PANEL = "RETRY_PANEL";
     private final ReconnectPanel _reconnectPanel;
@@ -185,34 +184,32 @@ public class ContactList extends JPanel implements
 
         showHideMenu.setSelected(false);
         // Add KeyMappings
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
-        SparkManager.getMainWindow().getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
+        MainWindow mainWindow = SparkManager.getMainWindow();
+        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        mainWindow.getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
+                SparkManager.getUserManager().searchContacts("", mainWindow);
             }
         });
         // Handle Command-F on Macs
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
-        SparkManager.getMainWindow().getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
+        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
+        mainWindow.getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
+                SparkManager.getUserManager().searchContacts("", mainWindow);
             }
         });
         // Save state on shutdown.
         final ContactList instance = this;
-        SparkManager.getMainWindow().addMainWindowListener(() -> {
+        mainWindow.addMainWindowListener(() -> {
                 SparkManager.getConnection().removeConnectionListener(instance);
         });
         SparkManager.getConnection().addConnectionListener(this);
         ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(this);
         // Get a command panel and add View Online/Offline, Add Contact
-//        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-
-//        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
-//
-//
+//        StatusBar statusBar = workspace.getStatusBar();
+//        final JPanel commandPanel = workspace.getCommandPanel();
 //        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icons.USER1_ADD_16x16));
 //        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
 //        	commandPanel.add(addContactButton);
@@ -492,8 +489,8 @@ public class ContactList extends JPanel implements
                 }
                 for (RosterEntry entry : group.getEntries()) {
                     contactItem = null;
-                    name = entry.getName();
-                    user = entry.getJid();
+                    String name = entry.getName();
+                    BareJid user = entry.getJid();
                     // in case of a connection lost, the creation must be done in the event queue
                     if (EventQueue.isDispatchThread()) {
                         contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
@@ -560,11 +557,6 @@ public class ContactList extends JPanel implements
         }
     }
 
-    /**
-     * Called when NEW entries are added.
-     *
-     * @param addresses the address added.
-     */
     @Override
     public void entriesAdded(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater(() -> {
@@ -610,21 +602,11 @@ public class ContactList extends JPanel implements
         }
     }
 
-    /**
-     * Handle when the Roster changes based on subscription notices.
-     *
-     * @param addresses List of entries that were updated.
-     */
     @Override
     public void entriesUpdated(final Collection<Jid> addresses) {
         handleEntriesUpdated(addresses);
     }
 
-    /**
-     * Called when users are removed from the roster.
-     *
-     * @param addresses the addresses removed from the roster.
-     */
     @Override
     public void entriesDeleted(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater(() -> {
@@ -1392,7 +1374,7 @@ public class ContactList extends JPanel implements
             public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
                 BareJid jid = item.getJid().asBareJid();
-                vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
+                vcardSupport.viewProfile(jid, workspace);
             }
         };
         viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16));
@@ -1578,7 +1560,7 @@ public class ContactList extends JPanel implements
         // Add a subscription listener.
         addSubscriptionListener();
         // Load all plugins
-        SparkManager.getWorkspace().loadPlugins();
+        workspace.loadPlugins();
     }
 
     public void addSubscriptionListener() {
@@ -1690,7 +1672,6 @@ public class ContactList extends JPanel implements
     }
 
     private void addContactListToWorkspace() {
-        Workspace workspace = SparkManager.getWorkspace();
         workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_ALL_CHATS_IMAGE), this);
         // Add To Contacts Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
@@ -1739,8 +1720,6 @@ public class ContactList extends JPanel implements
         showOfflineGroup(localPreferences.isOfflineGroupVisible());
         // sets showOfflineUsersMenu selected or not selected
         showOfflineUsersMenu.setSelected(localPreferences.isOfflineUsersShown());
-        // Initialize vcard support
-        SparkManager.getVCardManager();
     }
 
     /**
@@ -2021,10 +2000,10 @@ public class ContactList extends JPanel implements
     public void connectionClosed() {
         // No reason to reconnect.
         // Show MainWindow
-        SparkManager.getMainWindow().setVisible(true);
+        MainWindow mainWindow = SparkManager.getMainWindow();
+        mainWindow.setVisible(true);
         // Flash That Window.
-        SparkManager.getNativeManager().flashWindowStopOnFocus(
-            SparkManager.getMainWindow());
+        SparkManager.getNativeManager().flashWindowStopOnFocus(mainWindow);
         String errorMessage = Res.getString("message.disconnected.error");
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
@@ -2048,10 +2027,10 @@ public class ContactList extends JPanel implements
      */
     private void reconnect(final String message) {
         // Show MainWindow
-        SparkManager.getMainWindow().setVisible(true);
+        MainWindow mainWindow = SparkManager.getMainWindow();
+        mainWindow.setVisible(true);
         // Flash That Window.
-        SparkManager.getNativeManager().flashWindowStopOnFocus(
-            SparkManager.getMainWindow());
+        SparkManager.getNativeManager().flashWindowStopOnFocus(mainWindow);
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
                 workspace.changeCardLayout(RETRY_PANEL);
@@ -2097,8 +2076,7 @@ public class ContactList extends JPanel implements
         catch (Exception e) {
             Log.error(e);
         }
-        final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
-            .getPresence();
+        Presence myPresence = workspace.getStatusBar().getPresence();
         SparkManager.getSessionManager().changePresence(myPresence);
     }
 
