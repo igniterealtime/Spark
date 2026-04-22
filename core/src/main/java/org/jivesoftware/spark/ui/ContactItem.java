@@ -394,7 +394,7 @@ public class ContactItem extends JPanel {
      * Persists the avatar locally based on the new hash.
      */
     private void updateAvatar() {
-    	SparkManager.getVCardManager().addToQueue(getJid().asBareJid());
+    	SparkManager.getVCardManager().addToQueue(getJid());
     }
 
     @Override

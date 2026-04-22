@@ -252,11 +252,11 @@ public class ContactListAssistantPlugin implements Plugin {
         boolean groupHadAvailableContacts = false;
         
         // Do not copy/move a contact item only if it is not already in the Group.
-        if (contactGroup.getContactItemByJID(item.getJid().asBareJid(), true) != null) {
+        if (contactGroup.getContactItemByJID(item.getJid(), true) != null) {
             return;
         }
 
-        if (!PresenceManager.isOnline(item.getJid().asBareJid())) {
+        if (!PresenceManager.isOnline(item.getJid())) {
             contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJid(), null);
         }
         else {
@@ -274,10 +274,8 @@ public class ContactListAssistantPlugin implements Plugin {
             @Override
             public Object construct() {
                 Roster roster = SparkManager.getRoster();
-                RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
-
+                RosterEntry entry = roster.getEntry(item.getJid());
                 RosterGroup groupFound = null;
-
                 for (RosterGroup group : roster.getGroups()) {
                     if (group.getName().equals(contactGroup.getGroupName())) {
                         try {
@@ -345,10 +343,8 @@ public class ContactListAssistantPlugin implements Plugin {
 
         // Remove entry from Roster Group
         Roster roster = SparkManager.getRoster();
-        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
-
+        RosterEntry entry = roster.getEntry(item.getJid());
         RosterGroup rosterGroup = null;
-
         for (RosterGroup group : roster.getGroups()) {
             if (group.getName().equals(contactGroup.getGroupName())) {
                 try {

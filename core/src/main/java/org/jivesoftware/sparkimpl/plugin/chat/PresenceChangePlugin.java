@@ -66,7 +66,7 @@ public class PresenceChangePlugin implements Plugin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (ContactItem item : contactList.getSelectedUsers()) {
-                    BareJid bareAddress = item.getJid().asBareJid();
+                    BareJid bareAddress = item.getJid();
                     sparkContacts.add(bareAddress);
                 }
             }
@@ -79,7 +79,7 @@ public class PresenceChangePlugin implements Plugin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (ContactItem item : contactList.getSelectedUsers()) {
-                    BareJid bareAddress = item.getJid().asBareJid();
+                    BareJid bareAddress = item.getJid();
                     sparkContacts.remove(bareAddress);
                 }
             }

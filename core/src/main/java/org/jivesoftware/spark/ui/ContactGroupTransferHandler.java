@@ -191,7 +191,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
 
-        if (!PresenceManager.isOnline(item.getJid().asBareJid())) {
+        if (!PresenceManager.isOnline(item.getJid())) {
             contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJid(), null);
         }
         else {
@@ -206,7 +206,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
             @Override
 			public Object construct() {
                 Roster roster = SparkManager.getRoster();
-                RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
+                RosterEntry entry = roster.getEntry(item.getJid());
                 RosterGroup groupFound = null;
                 for (RosterGroup group : roster.getGroups()) {
                     if (group.getName().equals(contactGroup.getGroupName())) {
@@ -256,7 +256,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
         // Remove entry from Roster Group
         Roster roster = SparkManager.getRoster();
-        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
+        RosterEntry entry = roster.getEntry(item.getJid());
         RosterGroup rosterGroup = null;
         for (RosterGroup group : roster.getGroups()) {
             if (group.getName().equals(contactGroup.getGroupName())) {

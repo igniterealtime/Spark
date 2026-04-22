@@ -249,12 +249,13 @@ public class ContactInfoWindow extends JPanel {
         statusLabel.setText(status);
 
         Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
+        String localPart = contactItem.getJid().getLocalpartOrThrow().asUnescapedString();
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            fullJIDLabel.setText(transport.getName() + " - " + localPart);
         }
         else {
-            fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            fullJIDLabel.setText(localPart);
             fullJIDLabel.setIcon(null);
         }
 
@@ -282,23 +283,13 @@ public class ContactInfoWindow extends JPanel {
         }
 
         // Get VCard from memory (if available)
-        String title = "";
-        String phone = "";
-        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(contactItem.getJid().asBareJid());
+        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(contactItem.getJid());
         if (vcard != null) {
-            title = vcard.getField("TITLE");
-            phone = vcard.getPhoneWork("VOICE");
-            if (!ModelUtil.hasLength(title)) {
-                title = "";
-            }
-            if (!ModelUtil.hasLength(phone)) {
-                phone = "";
-            }
+            String title = vcard.getField("TITLE");
+            String phone = vcard.getPhoneWork("VOICE");
+            titleLabel.setText(title);
+            phoneLabel.setText(phone);
         }
-
-        titleLabel.setText(title);
-        phoneLabel.setText(phone);
-
     }
 
     public void setContactItem(ContactItem contactItem) {

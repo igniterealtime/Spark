@@ -89,7 +89,7 @@ public class ConversationHistoryPlugin implements Plugin {
 			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
-		    SparkManager.getContactList().setSelectedUser(contact.getJid().asBareJid());
+		    SparkManager.getContactList().setSelectedUser(contact.getJid());
 		    SparkManager.getContactList().showPopup(contacts, e,
 			    contact);
 		}

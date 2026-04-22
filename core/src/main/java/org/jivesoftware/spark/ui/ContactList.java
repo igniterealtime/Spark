@@ -63,6 +63,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1085,7 +1086,7 @@ public class ContactList extends JPanel implements
                 newAlias = null; // allows you to remove an alias.
             }
 
-            BareJid address = activeItem.getJid().asBareJid();
+            BareJid address = activeItem.getJid();
             ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
             ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
             contactItem.setAlias(newAlias);
@@ -1114,7 +1115,7 @@ public class ContactList extends JPanel implements
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
         Roster roster = SparkManager.getRoster();
-        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
+        RosterEntry entry = roster.getEntry(item.getJid());
         if (entry != null && contactGroup != offlineGroup) {
             try {
                 RosterGroup rosterGroup = roster.getGroup(groupName);
@@ -1134,13 +1135,14 @@ public class ContactList extends JPanel implements
 
     private void removeContactFromRoster(ContactItem item) {
         Roster roster = SparkManager.getRoster();
-        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
-        if (entry != null) {
-            try {
-                roster.removeEntry(entry);
-            } catch (XMPPException | SmackException | InterruptedException e) {
-                Log.warning("Unable to remove roster entry.", e);
-            }
+        RosterEntry entry = roster.getEntry(item.getJid());
+        if (entry == null) {
+            return;
+        }
+        try {
+            roster.removeEntry(entry);
+        } catch (XMPPException | SmackException | InterruptedException e) {
+            Log.warning("Unable to remove roster entry.", e);
         }
     }
 
@@ -1324,7 +1326,7 @@ public class ContactList extends JPanel implements
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
         if (contactGroup != null && !contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
             Roster roster = SparkManager.getRoster();
-            RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
+            RosterEntry entry = roster.getEntry(item.getJid());
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
                 //todo: It should be possible to remove a user from the only group they're in
@@ -1350,7 +1352,7 @@ public class ContactList extends JPanel implements
         boolean isInSharedGroup = false;
         for (ContactGroup cGroup : new ArrayList<>(groupList)) {
             if (cGroup.isSharedGroup()) {
-                ContactItem it = cGroup.getContactItemByJID(item.getJid().asBareJid());
+                ContactItem it = cGroup.getContactItemByJID(item.getJid());
                 if (it != null) {
                     isInSharedGroup = true;
                     break;
@@ -1373,8 +1375,7 @@ public class ContactList extends JPanel implements
             @Override
             public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
-                BareJid jid = item.getJid().asBareJid();
-                vcardSupport.viewProfile(jid, workspace);
+                vcardSupport.viewProfile(item.getJid(), workspace);
             }
         };
         viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16));
@@ -1387,14 +1388,7 @@ public class ContactList extends JPanel implements
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    String client = "";
-                    if (item.getPresence().getType() != Presence.Type.unavailable) {
-                        client = item.getPresence().getFrom().toString();
-                        if (client.lastIndexOf("/") != -1) {
-                            client = client.substring(client.lastIndexOf("/"));
-                        } else client = "/";
-                    }
-                    Jid jid = JidCreate.from(item.getJid().toString() + client);
+                    Jid jid = item.getPresence().getType() != Presence.Type.unavailable ? item.getPresence().getFrom() : item.getJid();
                     LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(jid);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
@@ -1434,7 +1428,7 @@ public class ContactList extends JPanel implements
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
         Roster roster = SparkManager.getRoster();
-        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
+        RosterEntry entry = roster.getEntry(item.getJid());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         } else if (entry != null && entry.getType() != RosterPacket.ItemType.both && entry.isSubscriptionPending()) {
@@ -2179,7 +2173,7 @@ public class ContactList extends JPanel implements
      */
     private void moveToOffline(ContactItem contactItem) {
         offlineGroup.addContactItem(contactItem);
-        BareJid jid = contactItem.getJid().asBareJid();
+        BareJid jid = contactItem.getJid();
         boolean isFiled = false;
 
         final Roster roster = SparkManager.getRoster();

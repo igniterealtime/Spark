@@ -403,7 +403,7 @@ public class UserManager {
         	    contactField.setSelectetIndex(e);
         	    ContactItem item = contactField.getSelectedContactItem();
         	    MouseEvent exx = new MouseEvent((Component) e.getSource(),e.getID(), e.getWhen(),e.getModifiers(),e.getX()+20, e.getY(), e.getClickCount(), false);
-        	    SparkManager.getContactList().setSelectedUser(item.getJid().asBareJid());
+        	    SparkManager.getContactList().setSelectedUser(item.getJid());
         	    SparkManager.getContactList().showPopup(contactField.getPopup(),exx,item);
         	}
         	

@@ -76,8 +76,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
                 if (item != null && item.getJid() != null && item.getPresence().isAvailable()) {
-                    BareJid bareJID = item.getJid().asBareJid();
-                    onlineUsers.add(bareJID);
+                    onlineUsers.add(item.getJid());
                 }
             }
         }
