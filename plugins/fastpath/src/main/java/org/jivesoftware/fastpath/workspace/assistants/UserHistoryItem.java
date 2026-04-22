@@ -22,9 +22,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -73,21 +74,15 @@ public class UserHistoryItem extends JPanel {
         add(startTimeLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         startTimeLabel.setText(theDate);
 
-        StringBuilder buf = new StringBuilder();
-        Iterator<Transcripts.AgentDetail> agents = agentDetails.iterator();
-        while (agents.hasNext()) {
-            Transcripts.AgentDetail agentDetail = agents.next();
+        List<String> agentJids = new ArrayList<>(agentDetails.size());
+        for (Transcripts.AgentDetail agentDetail : agentDetails) {
             String agentJID = agentDetail.getAgentJID();
             agentJID = UserManager.unescapeJID(agentJID);
-            buf.append(agentJID);
-            if (agents.hasNext()) {
-                buf.append("\n");
-            }
+            agentJids.add(agentJID);
         }
-
-        agentsLabel.setText(buf.toString());
+        String buf = String.join("\n", agentJids);
+        agentsLabel.setText(buf);
     }
-
 
     public void setSessionID(String sessionID) {
         this.sessionID = sessionID;

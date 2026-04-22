@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -35,14 +34,12 @@ import org.jxmpp.jid.util.JidUtil;
  * Bean whose properties are the various preference settings for file transfer.
  */
 public class FileTransferSettings {
-
     private List<String> extensions = new ArrayList<>();
     private List<EntityBareJid> JIDs = new ArrayList<>();
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
     private static final File BACKING_STORE = new File(Spark.getSparkUserHome(), "/transferguard.properties");
-
 
     /**
      * Returns a {@link List} of strings - one for each blocked file extension. Strings are in the form <tt>*.{extension}</tt>.
@@ -133,7 +130,6 @@ public class FileTransferSettings {
      */
     public void load() {
         Properties props = new Properties();
-
         if (BACKING_STORE.exists()) {
             try {
                 props.load(new FileInputStream(BACKING_STORE));
@@ -159,9 +155,7 @@ public class FileTransferSettings {
                 if (maxSize != null) {
                     this.kb = Integer.parseInt(maxSize);
                 }
-
                 this.cannedRejectionMessage = props.getProperty("cannedResponse");
-
             } catch (IOException ioe) {
                 System.out.println("Error Loading properties from Filesystem"+ioe);
                 //TODO handle error better.
@@ -174,7 +168,6 @@ public class FileTransferSettings {
      */
     public void store() {
         Properties props = new Properties();
-
         try {
             props.setProperty("extensions", convertSettingsListToString(extensions));
             props.setProperty("jids", convertSettingsListToString(JIDs));
@@ -183,9 +176,7 @@ public class FileTransferSettings {
             if (cannedRejectionMessage != null) {
                 props.setProperty("cannedResponse", cannedRejectionMessage);
             }
-
             props.store(new FileOutputStream(BACKING_STORE), BACKING_STORE.getAbsolutePath());
-
         } catch (IOException ioe) {
             Log.error(ioe);
         }
@@ -198,11 +189,14 @@ public class FileTransferSettings {
      */
     public static String convertSettingsListToString(List<? extends CharSequence> settings) {
         StringBuilder buffer = new StringBuilder();
-        for (Iterator<? extends CharSequence> iter = settings.iterator(); iter.hasNext(); ) {
-            buffer.append(iter.next());
-            if (iter.hasNext()) {
-                buffer.append(",");
+        boolean first = true;
+        for (CharSequence cs : settings) {
+            if (!first) {
+                buffer.append(',');
+            } else {
+                first = false;
             }
+            buffer.append(cs);
         }
         return buffer.toString();
     }

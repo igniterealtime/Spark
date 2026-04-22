@@ -263,7 +263,7 @@ public class ConferenceServices implements InvitationListener {
                 }
                 // If no match was found, or no "default" bookmark could be retrieved-use the first bookmark:
                 if (bookmarkedConference == null) {
-                    bookmarkedConference = bookmarkedConfs.iterator().next();
+                    bookmarkedConference = bookmarkedConfs.get(0);
                 }
             }
             return bookmarkedConference;

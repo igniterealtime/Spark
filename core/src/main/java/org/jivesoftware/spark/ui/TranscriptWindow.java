@@ -410,7 +410,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             if ( selFile != null && result == JFileChooser.APPROVE_OPTION )
             {
                 final StringBuilder buf = new StringBuilder();
-                final Iterator<Message> transcripts = transcript.iterator();
                 buf.append( "<html><body>" );
                 if ( headerData != null )
                 {
@@ -418,9 +417,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 }
 
                 buf.append( "<table width=600>" );
-                while ( transcripts.hasNext() )
-                {
-                    final Message message = transcripts.next();
+                for (Message message : transcript) {
                     String from = null;
                     if (message.getFrom() != null) {
                         from = message.getFrom().toString();
@@ -472,7 +469,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
             JOptionPane.showMessageDialog( SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE );
         }
-
     }
 
     public void cleanup()
@@ -498,7 +494,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 	public void poppingUp( final Object object, JPopupMenu popup )
     {
         popup.addSeparator();
-
         popup.add(new AbstractAction(Res.getString("action.print"), SparkRes.getImageIcon(SparkRes.Icon.PRINTER_IMAGE_16x16))
         {
             @Override
@@ -532,8 +527,10 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                             // This actions must be move into Transcript Plugin!
                             File transcriptDir = SparkManager.getTranscriptDir();
                             File transcriptFile = new File( transcriptDir, user + ".xml" );
+                            //noinspection ResultOfMethodCallIgnored
                             transcriptFile.delete();
                             transcriptFile = new File( transcriptDir, user + "_current.xml" );
+                            //noinspection ResultOfMethodCallIgnored
                             transcriptFile.delete();
                             clear();
                         }
@@ -551,7 +548,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         }catch (Exception e){
             Log.error( "An exception occurred while trying to get active chat room " + room, e );
         }
-
 
         // History window
         if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {

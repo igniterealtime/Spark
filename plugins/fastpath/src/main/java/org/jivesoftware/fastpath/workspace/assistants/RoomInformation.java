@@ -35,7 +35,6 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class RoomInformation extends JPanel {
-
     public static final Color LINK_COLOR = new Color(69, 92, 137);
 
     public void showAllInformation(Map<String, List<String>> map) {
@@ -62,12 +60,8 @@ public class RoomInformation extends JPanel {
         setBackground(Color.white);
 
         //  add(titlePanel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
-
-        Iterator<String> iter = map.keySet().iterator();
         int row = 1;
-        while (iter.hasNext()) {
-            String key = iter.next();
+        for (String key : map.keySet()) {
             String value = utils.getValue(key);
 
             JLabel nameLabel = new JLabel(key);

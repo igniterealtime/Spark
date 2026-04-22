@@ -301,11 +301,8 @@ public class UserInvitationPane {
                 return;
             }
 
-            Iterator<Affiliate> iter = owners.iterator();
-
             List<Jid> list = new ArrayList<>();
-            while (iter.hasNext()) {
-                Affiliate affiliate = iter.next();
+            for (Affiliate affiliate : owners) {
                 Jid jid = affiliate.getJid();
                 if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                     list.add(jid);

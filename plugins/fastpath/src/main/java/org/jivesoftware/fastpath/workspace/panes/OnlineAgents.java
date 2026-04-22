@@ -184,14 +184,12 @@ public final class OnlineAgents extends JPanel {
         List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
 
         // Add new ones.
-        Iterator<AgentStatus.ChatInfo> iter = list.iterator();
         StringBuilder buf = new StringBuilder();
         buf.append("<html>");
         buf.append("<body>");
         buf.append("<table>");
 
-        while (iter.hasNext()) {
-            AgentStatus.ChatInfo chatInfo = iter.next();
+        for (AgentStatus.ChatInfo chatInfo : list) {
             Date startDate = chatInfo.getDate();
 
             String nickname = chatInfo.getUsername();

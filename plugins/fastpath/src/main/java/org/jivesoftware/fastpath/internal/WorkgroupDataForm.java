@@ -31,7 +31,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -150,11 +149,10 @@ public class WorkgroupDataForm extends JPanel {
      */
     public FillableForm getFilledForm() {
         // Now submit all information
-        Iterator<String> valueIter = valueMap.keySet().iterator();
         FillableForm answerForm = searchForm.getFillableForm();
-        while (valueIter.hasNext()) {
-            String answer = valueIter.next();
-            Object o = valueMap.get(answer);
+        for (var answerEntry : valueMap.entrySet()) {
+            String answer = answerEntry.getKey();
+            Object o = answerEntry.getValue();
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox)o).isSelected();
                 answerForm.setAnswer(answer, isSelected);
@@ -194,9 +192,8 @@ public class WorkgroupDataForm extends JPanel {
             }
         }
 
-        for (String variable : presetVariables.keySet()) {
-            String value = presetVariables.get(variable);
-            answerForm.setAnswer(variable, value);
+        for (var varEntry : presetVariables.entrySet()) {
+            answerForm.setAnswer(varEntry.getKey(), varEntry.getValue());
         }
 
         return answerForm;

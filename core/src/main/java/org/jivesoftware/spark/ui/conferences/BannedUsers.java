@@ -39,7 +39,7 @@ import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -113,15 +113,13 @@ public class BannedUsers extends JPanel {
         // Clear all elements from model
         listModel.clear();
 
-        Iterator<Affiliate> bannedUsers = null;
+        List<Affiliate> bannedUsers = List.of();
         try {
-            bannedUsers = chat.getOutcasts().iterator();
+            bannedUsers = chat.getOutcasts();
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error loading all banned users", e);
         }
-
-        while (bannedUsers != null && bannedUsers.hasNext()) {
-            Affiliate bannedUser = bannedUsers.next();
+        for (Affiliate bannedUser : bannedUsers) {
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.STAR_RED_IMAGE);
             icon.setDescription(bannedUser.getJid().toString());
             listModel.addElement(icon);

@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -132,12 +131,8 @@ public class CustomMessages {
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         for (StatusItem item : statusBar.getStatusList()) {
             JiveTreeNode node = new JiveTreeNode(item.getText(), false, item.getIcon());
-            Iterator<CustomStatusItem> cMessages = customItems.iterator();
-
             node.setAllowsChildren(true);
-
-            while (cMessages.hasNext()) {
-                CustomStatusItem csi = cMessages.next();
+            for (CustomStatusItem csi : customItems) {
                 if (csi.getType().equals(item.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -279,12 +274,8 @@ public class CustomMessages {
             JiveTreeNode node = new JiveTreeNode(statusItem.getText(), false, statusItem.getIcon());
 
             List<CustomStatusItem> newItems = load();
-            Iterator<CustomStatusItem> cMessages = newItems.iterator();
-
             node.setAllowsChildren(true);
-
-            while (cMessages.hasNext()) {
-                CustomStatusItem csi = cMessages.next();
+            for (CustomStatusItem csi : newItems) {
                 if (csi.getType().equals(statusItem.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
@@ -411,11 +402,8 @@ public class CustomMessages {
                 }
                 else if (Res.getString("ok").equals(value)) {
                     List<CustomStatusItem> list = load();
-                    Iterator<CustomStatusItem> iter = list.iterator();
-
                     CustomStatusItem changeItem = null;
-                    while (iter.hasNext()) {
-                        CustomStatusItem customItem = iter.next();
+                    for (CustomStatusItem customItem : list) {
                         if (customItem.getType().equals(item.getType()) &&
                                 customItem.getStatus().equals(item.getStatus()) &&
                                 customItem.getPriority() == item.getPriority() ) {
@@ -449,12 +437,10 @@ public class CustomMessages {
                     optionsDialog.setVisible(false);
                 }
             } );
-
             optionsDialog.setVisible(true);
             optionsDialog.toFront();
             optionsDialog.requestFocus();
         }
-
 
         public void invoke(String selectedType) {
             final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
@@ -525,12 +511,8 @@ public class CustomMessages {
                     customStatusItem.setPriority(getPriority());
                     customStatusItem.setStatus(getStatus());
                     customStatusItem.setType(getType());
-
-
-                    Iterator<CustomStatusItem> customListIterator = list.iterator();
                     boolean exists = false;
-                    while (customListIterator.hasNext()) {
-                        CustomStatusItem customItem = customListIterator.next();
+                    for (CustomStatusItem customItem : list) {
                         String type = customItem.getType();
                         String status = customItem.getStatus();
 

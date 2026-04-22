@@ -312,14 +312,15 @@ public class ContactList extends JPanel implements
     private void updateContactItemsPresence(Presence presence, RosterEntry entry, BareJid bareJID) {
         for (ContactGroup group : new ArrayList<>(groupList)) {
             ContactItem item = group.getContactItemByJID(bareJID);
-            if (item != null) {
+            if (item == null) {
+                continue;
+            }
                 if (group == offlineGroup) {
                     changeOfflineToOnline(bareJID, entry, presence);
                     continue;
                 }
                 item.setPresence(presence);
                 group.fireContactGroupUpdated();
-            }
         }
     }
 
@@ -376,24 +377,27 @@ public class ContactList extends JPanel implements
         }
         offlineGroup.removeContactItem(offlineItem);
         // Add To all groups it belongs to.
-        boolean isFiled = false;
-        for (RosterGroup rosterGroup : entry.getGroups()) {
-            isFiled = true;
+        List<RosterGroup> entryGroups = entry.getGroups();
+        boolean isFiled = !entryGroups.isEmpty();
+        for (RosterGroup rosterGroup : entryGroups) {
             ContactGroup contactGroup = getContactGroup(rosterGroup.getName());
             if (contactGroup == null) {
                 // Create Contact Group
                 contactGroup = addContactGroup(rosterGroup.getName());
+                if (contactGroup == null) {
+                    continue;
+                }
             }
-
-            if (contactGroup != null) {
-                ContactItem changeContactItem;
-                if (contactGroup.getContactItemByJID(entry.getJid()) == null) {
+            if (contactGroup.getContactItemByJID(entry.getJid()) != null) {
+                continue;
+            }
                     ContactItem offlineCurrentItem = contactGroup.getOfflineContactItemByJID(bareJID);
                     //prevents from duplicating roster contacts when users going offline and online with Offline Group invisible
                     contactGroup.removeContactItem(offlineCurrentItem);
                     // If we are reconnecting, we have to check if we are on the
                     // dispatch thread
                     if (EventQueue.isDispatchThread()) {
+                        ContactItem changeContactItem;
                         changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                         contactGroup.addContactItem(changeContactItem);
                         changeContactItem.setAvailable(true);
@@ -431,12 +435,11 @@ public class ContactList extends JPanel implements
                             staticContactGroup.fireContactGroupUpdated();
                         });
                     }
-                }
-            }
         }
 
-        if (!isFiled) {
-            if (unfiledGroup.getContactItemByJID(entry.getJid()) == null) {
+        if (isFiled || unfiledGroup.getContactItemByJID(entry.getJid()) != null) {
+            return;
+        }
                 // If we are reconnecting, we have to check if we are on the
                 // dispatch thread
                 if (EventQueue.isDispatchThread()) {
@@ -459,8 +462,6 @@ public class ContactList extends JPanel implements
                         unfiledGrp.fireContactGroupUpdated();
                     });
                 }
-            }
-        }
     }
 
     /**

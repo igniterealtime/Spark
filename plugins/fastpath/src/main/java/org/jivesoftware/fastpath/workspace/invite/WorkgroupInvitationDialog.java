@@ -395,20 +395,14 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
      */
     private Collection<EntityBareJid> getAvailableAgents(AgentRoster roster, EntityBareJid roomName) {
         final Set<EntityBareJid> availableAgents = new HashSet<>();
-
         for (EntityBareJid agent : roster.getAgents()) {
             if (PresenceManager.isAvailable(agent)) {
-                final Iterator<String> agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
                 boolean alreadyExists = false;
-
-                while (agentsInRoom.hasNext()) {
-                    String userid = agentsInRoom.next();
-
+                for (String userid : SparkManager.getUserManager().getUserJidsInRoom(roomName, false)) {
                     if (agent.equals(userid)) {
                         alreadyExists = true;
                     }
                 }
-
                 if (!alreadyExists) {
                     availableAgents.add(agent);
                 }

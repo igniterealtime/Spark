@@ -18,12 +18,10 @@ package org.jivesoftware.sparkimpl.settings;
 
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class SettingsData implements PrivateData {
     private final Map<String,String> settingsMap;
-
 
     public SettingsData(Map<String,String> map) {
         settingsMap = map;
@@ -47,18 +45,18 @@ public class SettingsData implements PrivateData {
 	public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
-        String key;
-        for (Iterator<String> iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</").append(key).append("></entry>")) {
-            key = iter.next();
-            String value = settingsMap.get(key);
+        for (Map.Entry<String,String> entry : settingsMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
             buf.append("<entry xmlns=\"\">");
             buf.append("<").append(key).append(">");
-            buf.append(value);
+            if (value != null) {
+                buf.append(value);
+            }
+            buf.append("</").append(key).append("></entry>");
         }
-
         buf.append("</").append(getElementName()).append(">");
         return buf.toString();
     }
-
 
 }
