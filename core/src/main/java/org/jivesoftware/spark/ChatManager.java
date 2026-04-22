@@ -58,6 +58,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The ChatManager is responsible for the creation and removal of chat rooms, transcripts, transfers, and room invitations.
  */
 public class ChatManager {
+    /**
+     * User can open chat with dummy@dummy.example and also when hovering the cursor, a window with contact information is displayed.
+     */
+    public static final BareJid TESTING_JID = JidCreate.bareFromOrThrowUnchecked("dummy@dummy.example");
     private static ChatManager singleton;
     private static final Object LOCK = new Object();
 

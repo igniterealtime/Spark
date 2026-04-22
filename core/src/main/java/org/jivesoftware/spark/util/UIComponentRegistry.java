@@ -43,8 +43,9 @@ import org.jivesoftware.spark.ui.themes.ThemePanel;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
+
+import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 
 /**
  * This is a registry for components that may be replaced by plugins. Also
@@ -312,7 +313,7 @@ public final class UIComponentRegistry {
             BareJid fullyQualifiedJID) {
         // null breaks instantiation by reflection
         final String nick = nickname != null ? nickname : "";
-        final BareJid jid = fullyQualifiedJID != null ? fullyQualifiedJID : JidCreate.bareFromOrThrowUnchecked("dummy@dummy.example");
+        final BareJid jid = fullyQualifiedJID != null ? fullyQualifiedJID : TESTING_JID;
         final String aliass = alias != null ? alias : "";
 
         return instantiate(contactItemClass, aliass, nick, jid);

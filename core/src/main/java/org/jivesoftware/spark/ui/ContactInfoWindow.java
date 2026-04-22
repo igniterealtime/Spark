@@ -49,6 +49,8 @@ import org.jxmpp.jid.Jid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.jivesoftware.spark.ChatManager.TESTING_JID;
+
 /**
  * Represents the UI for the "ToolTip" functionallity in the ContactList.
  *
@@ -148,7 +150,7 @@ public class ContactInfoWindow extends JPanel {
     public void display(ContactGroup group, MouseEvent e) {
         int loc = group.getList().locationToIndex(e.getPoint());
         ContactItem item = group.getList().getModel().getElementAt(loc);
-        if (item == null || item.getJid() == null || item.getJid().toString().equals("dummy@dummy.example")) {
+        if (item == null || item.getJid() == null || item.getJid().equals(TESTING_JID)) {
             return;
         }
         if (getContactItem() != null && getContactItem() == item) {

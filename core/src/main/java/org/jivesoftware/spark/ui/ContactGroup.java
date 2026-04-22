@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
@@ -588,7 +589,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void fireContactItemDoubleClicked(ContactItem item) {
-        if(item.getJid().equals("dummy@dummy.example")){
+        if(item.getJid().equals(TESTING_JID)){
             return;
         }
         for (final ContactGroupListener listener : listeners) {
