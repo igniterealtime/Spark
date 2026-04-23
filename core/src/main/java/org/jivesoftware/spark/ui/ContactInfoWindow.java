@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.resource.Res;
@@ -46,19 +47,29 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.Jid;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.SOUTHWEST;
+import static java.awt.GridBagConstraints.WEST;
+import static java.time.format.FormatStyle.MEDIUM;
+import static java.time.format.FormatStyle.SHORT;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 
 /**
- * Represents the UI for the "ToolTip" functionallity in the ContactList.
+ * Represents the UI for the "ToolTip" functionality in the ContactList.
  *
  * @author Derek DeMoro
  */
 public class ContactInfoWindow extends JPanel {
-	private final JLabel nicknameLabel = new JLabel();
+    private final JLabel nicknameLabel = new JLabel();
     private final JTextArea statusLabel = new JTextArea();
+    private final JLabel idleLabel = new JLabel();
     private final JLabel fullJIDLabel = new JLabel();
     private final JLabel avatarLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
@@ -72,16 +83,7 @@ public class ContactInfoWindow extends JPanel {
     private static ContactInfoWindow singleton;
     private static final Object LOCK = new Object();
 
-    /**
-     * Returns the singleton instance of <CODE>ContactInfoWindow</CODE>,
-     * creating it if necessary.
-     * <p/>
-     *
-     * @return the singleton instance of <Code>ContactInfoWindow</CODE>
-     */
     public static ContactInfoWindow getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
                 ContactInfoWindow controller = new ContactInfoWindow();
@@ -92,45 +94,36 @@ public class ContactInfoWindow extends JPanel {
         return singleton;
     }
 
-	protected ContactInfoWindow() {
-		this(true);
-	}
-
-    protected ContactInfoWindow(boolean populate) {
-
+    private ContactInfoWindow() {
         setLayout(new GridBagLayout());
-
         setBackground(Color.white);
-        if (populate) {
-		add(avatarLabel, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-		add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
-		add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
-		add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
-		add(titleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-		add(phoneLabel, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-		add(fullJIDLabel, new GridBagConstraints(0, 5, 4, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
+        add(avatarLabel, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0, NORTHWEST, NONE, new Insets(2, 2, 2, 2), 0, 0));
+        add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, WEST, NONE, new Insets(2, 2, 0, 2), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
+        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+        add(idleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+        add(titleLabel, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        add(phoneLabel, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 6, 4, 1, 1.0, 1.0, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
-
-		nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-		statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-		statusLabel.setForeground(Color.gray);
-		statusLabel.setLineWrap(true);
-		statusLabel.setWrapStyleWord(true);
-		statusLabel.setEditable(false);
-		statusLabel.setBorder(null);
-		fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-		fullJIDLabel.setForeground(Color.gray);
-		titleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-		titleLabel.setForeground(Color.gray);
-		phoneLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-		phoneLabel.setForeground(Color.gray);
-
-
-		fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
-        }
+        nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        statusLabel.setForeground(Color.gray);
+        statusLabel.setLineWrap(true);
+        statusLabel.setWrapStyleWord(true);
+        statusLabel.setEditable(false);
+        statusLabel.setBorder(null);
+        idleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        idleLabel.setForeground(Color.gray);
+        fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        fullJIDLabel.setForeground(Color.gray);
+        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        titleLabel.setForeground(Color.gray);
+        phoneLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        phoneLabel.setForeground(Color.gray);
+        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 
         setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-
         window.getContentPane().add(this);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -195,66 +188,26 @@ public class ContactInfoWindow extends JPanel {
     }
 
     public void customizeUI() {
-        if (contactItem == null) {
-            return;
-        }
-
         nicknameLabel.setText(contactItem.getDisplayName());
 
+        boolean isOnLeave = contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable;
+        boolean isAway = contactItem.getPresence().isAway();
         String status = contactItem.getStatus();
-        if (!ModelUtil.hasLength(status)) {
-            if (contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable) {
-                status = Res.getString("offline");
-            }
-            else {
-                status = Res.getString("online");
-            }
-        }
-        if (status.equals(Res.getString("offline")) || contactItem.getPresence().isAway()) {
-        	//If user is offline or away, try to see last activity
-	        try {
-                //If user is away (not offline), last activity request is sent to client
-				Jid client = status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
-	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
-	            long idleTime = (activity.getIdleTime() * 1000);
-	
-	            if (idleTime > 0) {
-	                if (status.equals(Res.getString("offline"))) {
-		                SimpleDateFormat format = new SimpleDateFormat("M/d/yy");
-		                Date l = new Date();
-		                String curDay = format.format(l);
-		                l.setTime(l.getTime() - idleTime);
-		                //If idleTime is within today show the time, otherwise, show the day, date, and time
-		                if (curDay.equals(format.format(l))) {
-		                    format = new SimpleDateFormat("h:mm a");
-		                } else {
-		                    format = new SimpleDateFormat("EEE M/d/yy h:mm a");
-		                }
-	                	status += (" " + Res.getString("time.since")+ " " + format.format(l));
-	                } else if (contactItem.getPresence().isAway()) {
-	                    status += "\n";
-	                    String time = ModelUtil.getTimeFromLong(idleTime);
-	                    status += Res.getString("message.idle.for", time);
-	                }
-	            }
-            } catch (XMPPException.XMPPErrorException e) {
-                Condition condition = e.getStanzaError().getCondition();
-                if (condition != Condition.feature_not_implemented && condition != Condition.service_unavailable && condition != Condition.subscription_required) {
-                    Log.warning("Unable to get Last Activity from: " + contactItem, e);
-                }
-            } catch (Exception e) {
-                Log.warning("Unable to get Last Activity from: " + contactItem, e);
-            }
+        if (isBlank(status)) {
+            status = isOnLeave ? Res.getString("offline") : Res.getString("online");
         }
         statusLabel.setText(status);
+        idleLabel.setText("");
+        if (isOnLeave || isAway) {
+            SwingUtilities.invokeLater(() -> retrieveIdleTime(isOnLeave));
+        }
 
         Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         String localPart = contactItem.getJid().getLocalpartOrThrow().asUnescapedString();
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
             fullJIDLabel.setText(transport.getName() + " - " + localPart);
-        }
-        else {
+        } else {
             fullJIDLabel.setText(localPart);
             fullJIDLabel.setIcon(null);
         }
@@ -271,14 +224,12 @@ public class ContactInfoWindow extends JPanel {
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
                 avatarLabel.setIcon(icon);
-            }
-            else {
+            } else {
                 icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE);
                 avatarLabel.setIcon(icon);
             }
             avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.warning("Unable to update avatar in contact info window", e);
         }
 
@@ -292,8 +243,52 @@ public class ContactInfoWindow extends JPanel {
         }
     }
 
+    private void retrieveIdleTime(boolean isOnLeave) {
+        //If user is offline or away, try to see last activity
+        try {
+            //If user is away (not offline), last activity request is sent to client
+            Jid client = isOnLeave ? contactItem.getJid() : contactItem.getPresence().getFrom();
+            LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(client);
+            long idleTimeSec = activity.getIdleTime();
+            if (idleTimeSec > 0) {
+                String idleText = formatIdleTime(isOnLeave, idleTimeSec);
+                idleLabel.setText(idleText);
+            }
+        } catch (XMPPException.XMPPErrorException e) {
+            Condition condition = e.getStanzaError().getCondition();
+            if (condition == Condition.feature_not_implemented || condition == Condition.service_unavailable || condition == Condition.subscription_required) {
+                // ignore
+                return;
+            }
+            Log.warning("Unable to get Last Activity from: " + contactItem, e);
+        } catch (Exception e) {
+            Log.warning("Unable to get Last Activity from: " + contactItem, e);
+        }
+    }
+
+    private static String formatIdleTime(boolean isOnLeave, long idleTimeSec) {
+        String idleText;
+        if (isOnLeave) {
+            ZoneId zone = ZoneId.systemDefault();
+            ZonedDateTime now = ZonedDateTime.now(zone);
+            ZonedDateTime idleDate = now.minusSeconds(idleTimeSec);
+            boolean isToday = now.toLocalDate().equals(idleDate.toLocalDate());
+            DateTimeFormatter formatter = isToday ? DateTimeFormatter.ofLocalizedTime(SHORT) : DateTimeFormatter.ofLocalizedDateTime(MEDIUM);
+            String idleSince = idleDate.format(formatter);
+            idleText = Res.getString("time.since") + " " + idleSince;
+        } else {
+            // is away
+            String time = ModelUtil.getTimeFromLong(idleTimeSec);
+            idleText = Res.getString("message.idle.for", time);
+        }
+        return idleText;
+    }
+
     public void setContactItem(ContactItem contactItem) {
         this.contactItem = contactItem;
+        if (contactItem == null) {
+            return;
+        }
         customizeUI();
     }
 
@@ -306,7 +301,6 @@ public class ContactInfoWindow extends JPanel {
         contactItem = null;
         window.dispose();
     }
-
 
     @Override
 	public Dimension getPreferredSize() {
@@ -340,11 +334,4 @@ public class ContactInfoWindow extends JPanel {
         contactItem = null;
     }
 
-    protected JWindow getWindow() {
-        return window;
-    }
-
-    protected static Object getLock() {
-        return LOCK;
-    }
 }
