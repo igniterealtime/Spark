@@ -31,7 +31,7 @@ import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;

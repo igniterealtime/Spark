@@ -25,6 +25,7 @@ import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.log.Log;
 
 /**

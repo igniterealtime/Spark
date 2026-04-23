@@ -8,7 +8,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;

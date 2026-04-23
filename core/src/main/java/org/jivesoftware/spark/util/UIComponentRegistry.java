@@ -33,7 +33,7 @@ import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactInfoWindow;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;

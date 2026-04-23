@@ -18,8 +18,8 @@ package org.jivesoftware.sparkimpl.plugin.chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.TranscriptWindow;
-import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindowInterceptor;
 import org.jivesoftware.spark.util.ModelUtil;
 
 import java.awt.Color;

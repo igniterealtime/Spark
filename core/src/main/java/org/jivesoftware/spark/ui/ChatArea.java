@@ -70,23 +70,12 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     private final CopyOnWriteArrayList<LinkInterceptor> interceptors = new CopyOnWriteArrayList<>();
 
-    protected final EmoticonManager emoticonManager;
-
     protected Boolean forceEmoticons = false;
-    
-    protected Boolean emoticonsAvailable = true;
 
     /**
      * ChatArea Constructor.
      */
     public ChatArea() {
-        emoticonManager = EmoticonManager.getInstance();
-        Collection<String> emoticonPacks;
-        emoticonPacks = emoticonManager.getEmoticonPacks();
-        if(emoticonPacks == null) {
-        	emoticonsAvailable = false;
-        }
-
         cutMenu = new JMenuItem(Res.getString("action.cut"));
         cutMenu.addActionListener(this);
 

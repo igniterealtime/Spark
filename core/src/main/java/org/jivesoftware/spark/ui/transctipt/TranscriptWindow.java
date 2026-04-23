@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.ui.transctipt;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
@@ -26,6 +26,8 @@ import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.ChatArea;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.history.HistoryWindow;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -77,15 +79,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     public TranscriptWindow()
     {
         setEditable( false );
-
-        Collection<String> emoticonPacks;
-        emoticonPacks = EmoticonManager.getInstance().getEmoticonPacks();
-
-        if ( emoticonPacks == null )
-        {
-            emoticonsAvailable = false;
-        }
-
         addMouseListener( this );
         addMouseMotionListener( this );
         setDragEnabled( true );

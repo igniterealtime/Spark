@@ -18,7 +18,6 @@ package org.jivesoftware.sparkimpl.plugin.emoticons;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
@@ -44,50 +43,26 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * @author Derek DeMoro
  */
 public class EmoticonPlugin implements Plugin, ChatRoomListener {
-
-	private EmoticonManager emoticonManager;
 	private ChatManager chatManager;
 
 	@Override
 	public void initialize() {
-		emoticonManager = EmoticonManager.getInstance();
 		chatManager = SparkManager.getChatManager();
-		addChatRoomListener();
-	}
+        // Listen for rooms opening to add emoticon picker
+        chatManager.addChatRoomListener(this);
+        // Add Preferences
+        SparkManager.getPreferenceManager().addPreference(new ThemePreference());
+    }
 
-	/**
-	 * Listen for rooms opening to add emoticon picker.
-	 */
-	private void addChatRoomListener() {
-		// Adds the listener
-		chatManager.addChatRoomListener(this);
-
-		// Add Preferences
-		SparkManager.getPreferenceManager()
-				.addPreference(new ThemePreference());
-	}
-
-	@Override
+    @Override
 	public void chatRoomOpened(final ChatRoom room) {
 		// Check to see if emoticons are enabled.
 		if (!SettingsManager.getLocalPreferences().areEmoticonsEnabled()) {
 			return;
 		}
-
-		// final String activeEmoticonSetName =
-		// emoticonManager.getActiveEmoticonSetName();
-
-		emoticonManager = EmoticonManager.getInstance();
-		Collection<String> emoticonPacks;
-		emoticonPacks = emoticonManager.getEmoticonPacks();
-
-		if (emoticonPacks != null) {
-
 			// Add Emoticon button
 			final RolloverButton emoticonPicker = UIComponentRegistry.getButtonFactory().createEmoticonButton();
-
 			room.addEditorComponent(emoticonPicker);
-
 			emoticonPicker.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -127,12 +102,10 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 			});
 
 			room.addClosingListener( () -> room.removeEditorComponent(emoticonPicker) );
-		}
 	}
 
 	@Override
 	public void shutdown() {
-
 	}
 
 	@Override
@@ -142,7 +115,6 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 
 	@Override
 	public void uninstall() {
-		// Do nothing.
 	}
 
 }

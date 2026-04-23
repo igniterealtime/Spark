@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.ui.transctipt;
 
+import org.jivesoftware.spark.ui.ChatArea;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
@@ -52,6 +54,7 @@ public class MessageEntry extends TimeStampedEntry
     protected final String message;
     protected final Color messageColor;
     protected final Color backgroundColor;
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     /**
      * Creates a new entry using the default background color (white/transparent).
@@ -78,7 +81,7 @@ public class MessageEntry extends TimeStampedEntry
     {
         final MutableAttributeSet style = new SimpleAttributeSet();
         StyleConstants.setFontFamily( style, "Dialog" );
-        StyleConstants.setFontSize( style, SettingsManager.getLocalPreferences().getChatRoomFontSize() );
+        StyleConstants.setFontSize( style, pref.getChatRoomFontSize() );
         StyleConstants.setForeground( style, prefixColor );
         StyleConstants.setBackground( style, backgroundColor );
         return style;
@@ -88,7 +91,7 @@ public class MessageEntry extends TimeStampedEntry
     {
         final MutableAttributeSet style = new SimpleAttributeSet();
         StyleConstants.setFontFamily( style, "Dialog" );
-        StyleConstants.setFontSize( style, SettingsManager.getLocalPreferences().getChatRoomFontSize() );
+        StyleConstants.setFontSize( style, pref.getChatRoomFontSize() );
         StyleConstants.setForeground( style, messageColor );
         StyleConstants.setBackground( style, backgroundColor );
         return style;
@@ -325,12 +328,12 @@ public class MessageEntry extends TimeStampedEntry
      */
     public boolean insertEmoticon(ChatArea chatArea, String imageKey )
     {
-        if ( !chatArea.getForceEmoticons() && !SettingsManager.getLocalPreferences().areEmoticonsEnabled() || !chatArea.emoticonsAvailable )
-        {
+        if (!chatArea.getForceEmoticons() && !pref.areEmoticonsEnabled()) {
             return false;
         }
 
-        final Icon emotion = EmoticonManager.getInstance().getEmoticonImage( imageKey );
+        EmoticonManager emoticonManager = EmoticonManager.getInstance();
+        Icon emotion = emoticonManager.getEmoticonImage(imageKey);
         if ( emotion == null )
         {
             return false;

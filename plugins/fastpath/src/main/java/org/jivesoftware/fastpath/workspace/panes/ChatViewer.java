@@ -47,7 +47,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.ui.ChatPrinter;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jxmpp.jid.impl.JidCreate;
 

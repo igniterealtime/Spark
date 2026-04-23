@@ -66,15 +66,9 @@ public class EmoticonManager {
      * The root emoticon directory.
      */
     public File EMOTICON_DIRECTORY;
-
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-    /**
-     * Returns the singleton instance of <code>EmoticonManager</code>.
-     */
     public static EmoticonManager getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
                 EmoticonManager controller = new EmoticonManager();
@@ -85,15 +79,9 @@ public class EmoticonManager {
         return singleton;
     }
 
-    /**
-     * Initialize the EmoticonManager
-     */
     private EmoticonManager() {
         EMOTICON_DIRECTORY = new File(Spark.getXtraDirectory(), "emoticons").getAbsoluteFile();
-
-        File[] files;
-        files = EMOTICON_DIRECTORY.listFiles();
-
+        File[] files = EMOTICON_DIRECTORY.listFiles();
         // Copy emoticon files from installation directory to the Spark User Home directory
         if (files != null) {
             // Copy over to allow for non-admins to extract.
@@ -113,6 +101,7 @@ public class EmoticonManager {
     private void copyFiles() {
         // Current Plugin directory
         File profileEmoticonsFolder = new File(Spark.getSparkUserHome(), "xtra/emoticons").getAbsoluteFile();
+        //noinspection ResultOfMethodCallIgnored
         profileEmoticonsFolder.mkdirs();
         deleteOldEmoticons(profileEmoticonsFolder);
 
@@ -192,10 +181,9 @@ public class EmoticonManager {
         //When no emoticon set is available, return an empty list
         if (emoticonPack != null) {
             Map<String, Emoticon> emoticons = emoticonMap.get(emoticonPack);
-            Collection<Emoticon> empty = List.of();
-            return emoticons == null ? empty : new LinkedHashSet<>(emoticons.values());
+            return emoticons != null ? new LinkedHashSet<>(emoticons.values()) : List.of();
         }
-        return Collections.emptyList();
+        return List.of();
     }
 
     /**

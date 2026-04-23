@@ -35,6 +35,7 @@ import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;

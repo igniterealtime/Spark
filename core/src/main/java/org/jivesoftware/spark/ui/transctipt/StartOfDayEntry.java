@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.spark.ui;
+package org.jivesoftware.spark.ui.transctipt;
 
+import org.jivesoftware.spark.ui.ChatArea;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.text.*;

@@ -74,6 +74,7 @@ import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -82,7 +83,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveFileTra
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendFileTransfer;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;

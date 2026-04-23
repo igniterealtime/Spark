@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.log.Log;
 import space.dynomake.libretranslate.Language;
 import space.dynomake.libretranslate.Translator;
