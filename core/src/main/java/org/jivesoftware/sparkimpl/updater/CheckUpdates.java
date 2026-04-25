@@ -80,6 +80,7 @@ public class CheckUpdates {
             SparkVersion.class,
         });
         xstream.alias("Version", SparkVersion.class);
+        xstream.registerConverter(new InstantConverter());
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
         sparkPluginInstalled = isSparkPluginInstalled();
