@@ -256,7 +256,7 @@ public class ContactInfoWindow extends JPanel {
             }
         } catch (XMPPException.XMPPErrorException e) {
             Condition condition = e.getStanzaError().getCondition();
-            if (condition == Condition.feature_not_implemented || condition == Condition.service_unavailable || condition == Condition.subscription_required) {
+            if (condition == Condition.feature_not_implemented || condition == Condition.service_unavailable || condition == Condition.subscription_required || condition == Condition.forbidden) {
                 // ignore
                 return;
             }
