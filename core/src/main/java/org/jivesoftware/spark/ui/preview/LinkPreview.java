@@ -21,7 +21,7 @@ public class LinkPreview {
         if ((link.startsWith("https://") || link.startsWith("http://") ||
             link.startsWith("ftp://") ||
             link.startsWith("www.") ||
-            (link.startsWith("xmpp:") && link.contains("?join")) ||
+            link.startsWith("xmpp:") ||
             link.startsWith("file:/"))
             && link.indexOf(".") > 1) {
 
