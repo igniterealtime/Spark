@@ -25,6 +25,7 @@ import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.SparkManager;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 
 import javax.swing.UIManager;
@@ -476,17 +477,17 @@ public class LocalPreferences {
         return getInt("checkForUpdates", 7);
     }
 
-    public Date getLastCheckForUpdates() {
+    public Instant getLastCheckForUpdates() {
         String date = getString("lastUpdateCheck");
         if (isBlank(date)) {
             return null;
         }
         long time = Long.parseLong(date);
-        return new Date(time);
+        return Instant.ofEpochMilli(time);
     }
 
-    public void setLastCheckForUpdates(Date lastCheckForUpdates) {
-        String time = Long.toString(lastCheckForUpdates.getTime());
+    public void setLastCheckForUpdates(Instant lastCheckForUpdates) {
+        String time = Long.toString(lastCheckForUpdates.toEpochMilli());
         setString("lastUpdateCheck", time);
     }
 

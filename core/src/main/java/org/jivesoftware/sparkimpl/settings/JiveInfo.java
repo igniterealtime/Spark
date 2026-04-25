@@ -31,8 +31,9 @@ public class JiveInfo {
 
     public static String getVersion() {
         final String version = SparkRes.getString( "VERSION" );
+        // When running from IDE the VERSION=${project.version} because it wasn't yet filtered by the Maven resources plugin.
         // avoid null and return at least some current version
-        return version != null && !version.isBlank() ? version.trim() : "3.1.0";
+        return version != null && !version.isBlank() && !version.equals("${project.version}") ? version.trim() : "3.1.0";
     }
 
     public static String getOS() {

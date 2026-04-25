@@ -27,6 +27,7 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.IQ;
@@ -50,9 +51,14 @@ import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Timer;
 import java.util.TimerTask;
 
 public class CheckUpdates {
@@ -66,52 +72,39 @@ public class CheckUpdates {
     private final XStream xstream = new XStream();
     private String sizeText;
 
-
     public CheckUpdates() {
         // Set the Jabber IQ Provider for Jabber:iq:spark
         ProviderManager.addIQProvider("query", "jabber:iq:spark", new SparkVersion.Provider());
-
         // For simplicity, use an alias for the root xml tag
         xstream.allowTypes(new Class[] {
             SparkVersion.class,
         });
         xstream.alias("Version", SparkVersion.class);
-
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
-
         sparkPluginInstalled = isSparkPluginInstalled();
     }
 
     public SparkVersion newBuildAvailable() {
-        if (!sparkPluginInstalled && !Spark.disableUpdatesOnCustom()) {
-            // Handle Jivesoftware.org update
-            return isNewBuildAvailableFromJivesoftware();
+        SparkVersion serverVersion = null;
+        if (sparkPluginInstalled) {
+            serverVersion = getLatestVersion();
         }
-        else if (sparkPluginInstalled) {
-            SparkVersion serverVersion = getLatestVersion(SparkManager.getConnection());
-            if (serverVersion != null && isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
-                return serverVersion;
-            }
+        if (serverVersion == null && !Spark.disableUpdatesOnCustom()) {
+            serverVersion = isNewBuildAvailableFromSite();
         }
-        return null;
+        if (serverVersion == null) {
+            return null;
+        }
+        return isGreater(serverVersion.getVersion(), JiveInfo.getVersion()) ? serverVersion : null;
     }
-
 
     /**
      * Returns a release version if there is a new build available for download.
      */
-    public SparkVersion isNewBuildAvailableFromJivesoftware() {
-        final String os;
-        if (Spark.isWindows()) {
-            os = "windows";
-        }
-        else if (Spark.isMac()) {
-            os = "mac";
-        }
-        else {
-            os = "linux";
-        }
+    public SparkVersion isNewBuildAvailableFromSite() {
+        String os = currentOs();
+        if (os == null) return null;
 
         //        Properties isBetaCheckingEnabled is now used to indicate if updates are allowed
         //        // Check to see if the beta should be included.
@@ -131,16 +124,13 @@ public class CheckUpdates {
                 .build();
 
             return httpClient.execute(request, httpResponse -> {
-                final int statusCode = httpResponse.getCode();
-                if ((statusCode >= 200) && (statusCode <= 202)) {
+                if (httpResponse.getCode() == 200) {
                     String xml = EntityUtils.toString(httpResponse.getEntity());
-
                     // Server Version
                     SparkVersion serverVersion = (SparkVersion)xstream.fromXML(xml);
-                    if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
-                        return serverVersion;
-                    }
+                    return serverVersion;
                 }
+                Log.warning("Bad status code for updates descriptor " + httpResponse.getCode());
                 return null;
             });
         } catch (Exception e) {
@@ -149,9 +139,21 @@ public class CheckUpdates {
         return null;
     }
 
+    private static String currentOs() {
+        if (Spark.isWindows()) {
+            return "windows";
+        } else if (Spark.isMac()) {
+            return "mac";
+        } else if (Spark.isLinux()) {
+            return "linux";
+        } else {
+            return null;
+        }
+    }
+
 
     public void downloadUpdate(final File downloadedFile, final SparkVersion version) {
-        final java.util.Timer timer = new java.util.Timer();
+        Timer timer = new Timer();
 
         final HttpGet request = new HttpGet(version.getDownloadURL());
         try (final CloseableHttpClient httpClient =
@@ -176,6 +178,7 @@ public class CheckUpdates {
                         ByteFormat formater = new ByteFormat();
                         sizeText = formater.format(size);
                         titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + "\n" + Res.getString("message.file.size", sizeText));
+                        //noinspection ResultOfMethodCallIgnored
                         downloadedFile.getParentFile().mkdirs();
 
                         FileOutputStream out = new FileOutputStream(downloadedFile);
@@ -188,17 +191,17 @@ public class CheckUpdates {
                         }
                         else {
                             out.close();
+                            //noinspection ResultOfMethodCallIgnored
                             downloadedFile.delete();
                         }
-                        UPDATING = false;
                         frame.dispose();
                     }
                     catch (Exception ex) {
                         // Nothing to do
                     }
                     finally {
+                        UPDATING = false;
                         timer.cancel();
-                        // Release current connection to the connection pool once you are done
                     }
                 } );
 
@@ -312,37 +315,39 @@ public class CheckUpdates {
         }
         UPDATING = true;
         if (isLocalBuildAvailable()) {
+            UPDATING = false;
             return;
         }
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
         //defaults to 7, 0=disabled
         int CheckForUpdates = localPreferences.getCheckForUpdates();
         if (CheckForUpdates == 0) {
+            UPDATING = false;
             return;
         }
 
-        Date lastChecked = localPreferences.getLastCheckForUpdates();
+        Instant lastChecked = localPreferences.getLastCheckForUpdates();
         if (lastChecked == null) {
-            lastChecked = new Date();
+            lastChecked = Instant.now();
             // This is the first invocation of Communicator
             localPreferences.setLastCheckForUpdates(lastChecked);
         }
 
         // Check to see if it has been a CheckForUpdates (default 7) days
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(lastChecked);
-        calendar.add(Calendar.DATE, CheckForUpdates);
-
-        final Date lastCheckedPlusAPeriod = calendar.getTime();
-        boolean periodOrLonger = new Date().getTime() >= lastCheckedPlusAPeriod.getTime();
-        if (periodOrLonger || explicit || sparkPluginInstalled) {
-            if (!explicit && !localPreferences.isBetaCheckingEnabled())
-            {
-                return;
-            }
+        Instant lastCheckedPlusAPeriod = lastChecked.plus(CheckForUpdates, ChronoUnit.DAYS);
+        boolean periodOrLonger = Instant.now().isAfter(lastCheckedPlusAPeriod);
+        if (!periodOrLonger && !explicit && !sparkPluginInstalled) {
+            UPDATING = false;
+            return;
+        }
+        // beta versions downloaded only when explicitly checking for update
+        if (!explicit && !localPreferences.isBetaCheckingEnabled())
+        {
+            UPDATING = false;
+            return;
+        }
             // Check version on server.
-            lastChecked = new Date();
-            localPreferences.setLastCheckForUpdates(lastChecked);
+            localPreferences.setLastCheckForUpdates(Instant.now());
             final SparkVersion serverVersion = newBuildAvailable();
             if (serverVersion == null) {
                 UPDATING = false;
@@ -362,10 +367,12 @@ public class CheckUpdates {
             }
             // Set Download Directory
             final File downloadDir = new File(Spark.getSparkUserHome(), "updates");
+            //noinspection ResultOfMethodCallIgnored
             downloadDir.mkdirs();
             // Set file to download.
             final File fileToDownload = new File(downloadDir, filename);
             if (fileToDownload.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 fileToDownload.delete();
             }
 
@@ -391,7 +398,7 @@ public class CheckUpdates {
 
                         @Override
 						public void finished() {
-                            if (Spark.isWindows()) {
+                            if (Spark.isWindows() || Spark.isMac()) {
                                 downloadUpdate(fileToDownload, serverVersion);
                             }
                             else {
@@ -419,12 +426,7 @@ public class CheckUpdates {
                     UPDATING = false;
                 }
             });
-        }
-        else {
-            UPDATING = false;
-        }
     }
-
 
     /**
      * Returns true if the first version number is greater than the second.
@@ -472,15 +474,13 @@ public class CheckUpdates {
     }
 
     /**
-     * Returns the latest version of Spark available via Spark Manager or Jive Software.
+     * Returns the latest version of Spark available via Spark Manager or website.
      *
-     * @param connection the XMPPConnection to use.
-     * @return the information for about the latest Spark Client.
-     * @throws InterruptedException 
-     * @throws XMPPException If unable to retrieve latest version.
+     * @return the information for about the latest Spark Client or null.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection)
+    public static SparkVersion getLatestVersion()
     {
+        AbstractXMPPConnection connection = SparkManager.getConnection();
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
         request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
@@ -492,10 +492,10 @@ public class CheckUpdates {
                 // no new version available
                 return null;
             }
-            Log.warning("Unable the check fo new build.", e);
+            Log.warning("Unable the check for new build.", e);
             return null;
         }  catch (Exception e) {
-            Log.error("Unable the check fo new build.", e);
+            Log.error("Unable the check for new build.", e);
             return null;
         }
     }
@@ -562,13 +562,10 @@ public class CheckUpdates {
 
     /**
      * Checks to see if a new version of Spark has already been downloaded by not installed.
-     *
-     * @return true if a newer version exists.
      */
     private boolean isLocalBuildAvailable() {
         // Check the bin directory for previous downloads. If there is a
         // newer version of Spark, ask if they wish to install.
-        if (Spark.isWindows()) {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles(File::isFile);
             if (files == null) {
@@ -576,17 +573,18 @@ public class CheckUpdates {
             }
             for (File file : files) {
                 String fileName = file.getName();
-                if (fileName.endsWith(".exe")) {
+                if (Spark.isWindows() && fileName.endsWith(".exe") ||
+                    Spark.isMac() && fileName.endsWith(".dmg")) {
                     if (isIsGreater(fileName)) {
                         // Prompt
                         promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
                         return true;
                     } else {
+                        //noinspection ResultOfMethodCallIgnored
                         file.delete();
                     }
                 }
             }
-        }
         return false;
     }
 
