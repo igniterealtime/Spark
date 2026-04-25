@@ -200,9 +200,9 @@ public class BookmarksUI extends JPanel {
                 public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
                     treeModel.removeNodeFromParent(node);
-                    final Jid roomJid = (Jid) node.getAssociatedObject();
-                    autoJoinRooms.remove(roomJid.asEntityBareJidOrThrow());
-                    removeBookmark(roomJid.asEntityBareJidOrThrow());
+                    EntityBareJid roomJid = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
+                    autoJoinRooms.remove(roomJid);
+                    removeBookmark(roomJid);
                 }
             };
             removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
@@ -260,8 +260,9 @@ public class BookmarksUI extends JPanel {
                 Action copyUriGroupChat = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        final String rooJid = node.getAssociatedObject().toString();
-                        SparkManager.setClipboard("xmpp:" + rooJid + "?join");
+                        EntityBareJid roomJid = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
+                        String xmppUri = "xmpp:" + roomJid + "?join";
+                        SparkManager.setClipboard(xmppUri);
                     }
                 };
 
