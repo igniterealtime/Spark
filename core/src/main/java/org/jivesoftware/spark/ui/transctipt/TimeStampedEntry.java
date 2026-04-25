@@ -17,8 +17,7 @@ package org.jivesoftware.spark.ui.transctipt;
 
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,19 +28,17 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class TimeStampedEntry extends TranscriptWindowEntry
 {
-    private final DateTimeFormatter format;
+    private final DateTimeFormatter format = DateTimeFormatter.ofPattern(SettingsManager.getLocalPreferences().getTimeFormat());
 
     protected TimeStampedEntry( ZonedDateTime timestamp, boolean isDelayed )
     {
         super( timestamp, isDelayed );
-        format = DateTimeFormatter.ofPattern( SettingsManager.getLocalPreferences().getTimeFormat() );
     }
 
     protected String getFormattedTimestamp()
     {
         // Convert the zoned timestamp to a timestamp in the local zone.
-        final LocalDateTime localDateTime = getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDateTime();
-
+        LocalTime localDateTime = getTimestamp().toLocalTime();
         // Use the local timestamp to format a message that will be displayed to the end-user.
         return "(" + format.format( localDateTime ) + ") ";
     }

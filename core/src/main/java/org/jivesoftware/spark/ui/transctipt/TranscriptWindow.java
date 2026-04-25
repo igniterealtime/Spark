@@ -33,7 +33,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
@@ -50,7 +49,6 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
@@ -144,14 +142,12 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     }, 250);
                 }
             }
-            if ( !entry.getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate().isEqual( entries.getLast().getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate() ) )
-            {
-                // The date appeared to have rolled over, since the last entry. Add a 'start-of-day' entry before we add
-                // the new entry, unless we're already in the process of adding exactly that 'start-of-day' entry.
+            if (!entry.getTimestamp().toLocalDate().isEqual(entries.getLast().getTimestamp().toLocalDate())) {
+                // The date appeared to have rolled over, since the last entry. Add a 'start-of-day' entry before we add the new entry.
                 final StartOfDayEntry startOfDayEntry = new StartOfDayEntry( entry.getTimestamp() );
-                if ( !entry.equals( startOfDayEntry ) )
-                {
-                    add( startOfDayEntry );
+                try {
+                    startOfDayEntry.addTo( this );
+                } catch (BadLocationException ignored) {
                 }
             }
         }
@@ -245,7 +241,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         final boolean isDelayed;
         if ( inf != null )
         {
-            sentDate = inf.getStamp().toInstant().atZone( ZoneOffset.UTC );
+            sentDate = inf.getStamp().toInstant().atZone(ZoneId.systemDefault());
             isDelayed = true;
         }
         else
@@ -350,9 +346,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      */
     public void insertHistoryMessage( String userid, String message, Date date )
     {
-        final ZonedDateTime sentDate = date.toInstant().atZone( ZoneOffset.UTC );
+        final ZonedDateTime sentDate = date.toInstant().atZone(ZoneId.systemDefault());
         final Color historyColor = (Color) UIManager.get( "History.foreground" );
-
         add(new MessageEntry(sentDate, true, userid, historyColor, message, historyColor, null));
     }
 

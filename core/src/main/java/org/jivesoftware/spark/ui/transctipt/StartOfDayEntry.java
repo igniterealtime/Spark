@@ -21,7 +21,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.text.*;
 import java.awt.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -32,13 +31,12 @@ import java.time.format.DateTimeFormatter;
  */
 public class StartOfDayEntry extends TranscriptWindowEntry
 {
-    private static final MutableAttributeSet STYLE;
+    private static final MutableAttributeSet STYLE = new SimpleAttributeSet();
 
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern( "EEEE, dd MMMM yyyy" );
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern( "EEEE, dd MMMM" );
 
     static
     {
-        STYLE = new SimpleAttributeSet();
         StyleConstants.setFontFamily( STYLE, "Dialog" );
         StyleConstants.setFontSize( STYLE, SettingsManager.getLocalPreferences().getChatRoomFontSize() );
         StyleConstants.setBold( STYLE, true );
@@ -56,13 +54,9 @@ public class StartOfDayEntry extends TranscriptWindowEntry
     protected void addTo( ChatArea chatArea ) throws BadLocationException
     {
         // Get the instant that represents the start of the day in the local time-zone.
-        final LocalDateTime startOfDay = getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate().atStartOfDay();
-
+        LocalDateTime startOfDay = getTimestamp().toLocalDate().atStartOfDay();
         final String startOfDayMessage = FORMAT.format( startOfDay );
-
         final Document doc = chatArea.getDocument();
         doc.insertString(doc.getLength(), startOfDayMessage + '\n', STYLE );
-        // Enabling the 'setCaretPosition' line below causes Spark to freeze (often, not always) when trying to print the subject of a chatroom that's just being loaded.
-        // chatArea.setCaretPosition( doc.getLength() );
     }
 }

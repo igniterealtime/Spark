@@ -62,9 +62,7 @@ public abstract class TranscriptWindowEntry
     }
 
     /**
-     * The timestamp of the entry.
-     *
-     * @return A (zoned) timestamp (never null).
+     * Time of the message was sent to us (or received) in our time zone.
      */
     public ZonedDateTime getTimestamp()
     {
@@ -95,13 +93,13 @@ public abstract class TranscriptWindowEntry
 
         TranscriptWindowEntry that = (TranscriptWindowEntry) o;
 
-        return timestamp.toInstant().equals( that.timestamp.toInstant() );
+        return timestamp.equals( that.timestamp );
     }
 
     @Override
     public int hashCode()
     {
-        return timestamp.toInstant().hashCode();
+        return timestamp.hashCode();
     }
    
     /**
