@@ -88,8 +88,9 @@ public final class WorkgroupRosterTree extends JPanel {
     }
 
     private void changePresence(Jid user, Presence presence) {
-        for (JiveTreeNode node : addressMap.keySet()) {
-            final BareJid nodeUser = addressMap.get(node);
+        for (var e : addressMap.entrySet()) {
+            JiveTreeNode node = e.getKey();
+            BareJid nodeUser = e.getValue();
             if (user.isParentOf(nodeUser)) {
                 if (!PresenceManager.isAvailable(presence)) {
                     node.setIcon(FastpathRes.getImageIcon(FastpathRes.RED_BALL));

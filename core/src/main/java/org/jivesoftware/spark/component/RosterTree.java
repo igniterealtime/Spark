@@ -70,8 +70,9 @@ public final class RosterTree extends JPanel {
     }
 
     private void changePresence(String user, Presence presence){
-        for (JiveTreeNode node : addressMap.keySet()) {
-            final String nodeUser = addressMap.get(node);
+        for (var e : addressMap.entrySet()) {
+            JiveTreeNode node = e.getKey();
+            final String nodeUser = e.getValue();
             if (user.startsWith(nodeUser)) {
                 if (!presence.isAvailable()) {
                     node.setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));

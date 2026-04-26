@@ -69,9 +69,10 @@ public class GatewayPrivateData implements PrivateData {
         StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
-        for (DomainBareJid serviceName : loginSettingsMap.keySet()) {
+        for (var e : loginSettingsMap.entrySet()) {
+            DomainBareJid serviceName = e.getKey();
+            String autoLogin = e.getValue();
             buf.append("<gateway>");
-            String autoLogin = loginSettingsMap.get(serviceName);
             buf.append("<serviceName>").append(serviceName).append("</serviceName>");
             buf.append("<autoLogin>").append(autoLogin).append("</autoLogin>");
             buf.append("</gateway>");
