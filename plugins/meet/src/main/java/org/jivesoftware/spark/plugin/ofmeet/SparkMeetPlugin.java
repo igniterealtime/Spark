@@ -45,6 +45,8 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.parts.*;
 
+import static javax.swing.JOptionPane.YES_OPTION;
+
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
     public Properties props = new Properties();
@@ -60,7 +62,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     /** Key: BareJid  for groups or chats, EntityJid for 1-1 chats */
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
-    private String electronHomePath = null;
+    private File electronHomePath = null;
     private XProcess electronThread = null;
     private JPanel inviteAlert;
 
@@ -68,7 +70,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void initialize()
     {
         ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());
-        checkNatives();
+        getElectronPath();
 
         ChatManager chatManager = SparkManager.getChatManager();
 
@@ -187,6 +189,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             Log.error("shutdown ", e);
         }
+        electronHomePath = null;
+        electronExePath = null;
+        url = null;
+        //TODO remove buttons
+        decorators.clear();
     }
 
     @Override
@@ -282,8 +289,15 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void openURL(String newUrl)
     {
+        if (!electronHomePath.exists()) {
+            if (JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), SparkMeetResource.getString("install.electron")) != YES_OPTION) {
+                return;
+            }
+            checkNatives();
+        }
+
         try {
-            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
+            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, electronHomePath, new ProcessListener() {
 
                 @Override
                 public void onOutputLine(final String line) {
@@ -343,23 +357,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     private void checkNatives()
     {
-        Log.debug("checkNatives");
-
-        new Thread()
-        {
-            @Override public void run()
-            {
+        Log.debug("Install Electron");
                 try
                 {
-                    String nativeLibsJarPath = Spark.getSparkUserHome() + File.separator + "plugins" + File.separator + "meet" + File.separator + "lib";
-                    File nativeLibFolder = new File(nativeLibsJarPath, "native");
-
-                    electronHomePath = nativeLibsJarPath + File.separator + "native";
-                    electronExePath = electronHomePath + File.separator + "electron";
-
-                    if(!nativeLibFolder.exists())
-                    {
-                        nativeLibFolder.mkdir();
+                        //noinspection ResultOfMethodCallIgnored
+                        electronHomePath.mkdirs();
 
                         String jarFileSuffix = null;
 
@@ -417,30 +419,17 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         zipIn.close();
 
                         Log.debug("Native lib folder created and natives extracted");
-                    }
-                    else {
-                        Log.debug("Native lib folder already exist.");
-                    }
-
-
-                    String libPath = nativeLibFolder.getCanonicalPath();
-
-                    if (!System.getProperty("java.library.path").contains(libPath))
-                    {
-                        String newLibPath = libPath + File.pathSeparator + System.getProperty("java.library.path");
-                        System.setProperty("java.library.path", newLibPath);
-
-                        // this will reload the new setting
-                        Log.warning("Unable to modify 'java.library.path' dynamically. Please ensure the library path includes: " + libPath);
-                    }
                 }
                 catch (Exception e)
                 {
                     Log.error(e.getMessage(), e);
                 }
-            }
+    }
 
-        }.start();
+    private void getElectronPath() {
+        String nativeLibsJarPath = Spark.getSparkUserHome() + File.separator + "plugins" + File.separator + "meet" + File.separator + "lib";
+        electronHomePath = new File(nativeLibsJarPath, "native");
+        electronExePath = new File(electronHomePath, "electron").getAbsolutePath();
     }
 
     private void extractFile(ZipInputStream zipIn, String filePath) throws IOException
