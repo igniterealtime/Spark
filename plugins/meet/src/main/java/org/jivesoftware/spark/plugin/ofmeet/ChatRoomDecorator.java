@@ -20,31 +20,30 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
+import org.jxmpp.jid.parts.Localpart;
 
 public class ChatRoomDecorator
 {
     public RolloverButton ofmeetButton;
-    public final ChatRoom room;
 
     public ChatRoomDecorator(final ChatRoom room, final SparkMeetPlugin plugin)
     {
-        this.room = room;
         ofmeetButton = new RolloverButton(SparkMeetResource.PLUGIN_ICON);
         ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
-        final String roomId = room.getBareJid().getLocalpart().toString();
+        Localpart roomId = room.getJid().getLocalpart();
         final String sessionID = String.valueOf(System.currentTimeMillis());
 
         ofmeetButton.addActionListener(event -> {
-            String newUrl, newRoomId = roomId + "-" + sessionID;
-            newUrl = plugin.url + newRoomId;
-            plugin.handleClick(newUrl, room, newUrl);
+            String newRoomId = roomId + "-" + sessionID;
+            String meetUrl = plugin.url + newRoomId;
+            plugin.handleClick(room, meetUrl);
         });
         room.getEditorBar().add(ofmeetButton);
     }
 
     public void finished()
     {
-        Log.debug("ChatRoomDecorator: finished " + room.getBareJid());
+        Log.debug("ChatRoomDecorator: finished");
     }
 
 }

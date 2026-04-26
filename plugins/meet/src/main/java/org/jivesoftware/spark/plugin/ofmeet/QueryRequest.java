@@ -34,18 +34,18 @@ public class QueryRequest extends IQ
     public static final String NAMESPACE = "urn:xmpp:http:online-meetings:0";
     public static final String ELEMENT_NAME = "query";
 
-	
+	/** Meeting system type e.g. "jitsi" */
     private String type;
-	public String url = null;	
+	public String url;
 
     public QueryRequest()
     {
-        super( "query", NAMESPACE );
+        super(ELEMENT_NAME, NAMESPACE);
     }
 
     public QueryRequest(String type)
     {
-        super( "query", NAMESPACE );
+        super(ELEMENT_NAME, NAMESPACE);
         this.type = type;
     }
 
@@ -68,12 +68,10 @@ public class QueryRequest extends IQ
         public QueryRequest parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final QueryRequest queryRequest = new QueryRequest();
-
             boolean done = false;
             while ( !done )
             {
                 XmlPullParser.Event eventType = parser.next();
-
                 if ( eventType == XmlPullParser.Event.START_ELEMENT )
                 {
                     if ( parser.getName().equals( "url" ) )
@@ -81,7 +79,6 @@ public class QueryRequest extends IQ
                         queryRequest.url = parser.nextText();
                     }
                 }
-
                 else if ( eventType == XmlPullParser.Event.END_ELEMENT )
                 {
                     if ( parser.getName().equals( "query" ) )
@@ -90,7 +87,6 @@ public class QueryRequest extends IQ
                     }
                 }
             }
-
             return queryRequest;
         }
     }

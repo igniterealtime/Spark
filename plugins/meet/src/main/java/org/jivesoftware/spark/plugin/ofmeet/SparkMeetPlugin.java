@@ -26,8 +26,6 @@ import java.net.*;
 
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.smack.packet.MessageBuilder;
-import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.*;
 
 import org.jivesoftware.smack.packet.Message;
@@ -44,19 +42,18 @@ import org.jivesoftware.spark.util.log.*;
 import org.jitsi.util.OSUtils;
 import de.mxro.process.*;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.parts.*;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
 	public Properties props = new Properties();
     public String url = null;
 	
-    private org.jivesoftware.spark.ChatManager chatManager;
     private final File pluginsettings = new File(Spark.getSparkUserHome(), "ofmeet.properties");
 
-    private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
+    /** Key: BareJid  for groups or chats, EntityJid for 1-1 chats */
+    private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
     private String electronHomePath = null;
     private XProcess electronThread = null;
@@ -68,7 +65,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());
         checkNatives();
 
-        chatManager = SparkManager.getChatManager();		
+        ChatManager chatManager = SparkManager.getChatManager();
 
         String server = SparkManager.getSessionManager().getServerAddress().toString();
         String port = "7443";
@@ -158,7 +155,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 		props.setProperty("url", url);
 		try {
 			FileOutputStream outputStream = new FileOutputStream(pluginsettings);
-			props.store(outputStream, "Properties");
+			props.store(outputStream, null);
 			outputStream.close();
 		} catch (Exception e) {
 			 Log.error("ofmeet-Error:", e);
@@ -171,8 +168,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         try
         {
             Log.debug("shutdown");
-            chatManager.removeChatRoomListener(this);
-            ProviderManager.removeIQProvider("query", QueryRequest.NAMESPACE);
+            SparkManager.getChatManager().removeChatRoomListener(this);
+            ProviderManager.removeIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE);
 
             if (electronThread != null) electronThread.destory();
             electronThread = null;
@@ -189,14 +186,15 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             Localpart roomId = room.getJid().getLocalpart();
             String body = message.getBody();
             int pos = body.indexOf("https://");
-            if (pos > -1 && (body.contains("/" + roomId + "-") || body.contains("meeting"))) {
-                showInvitationAlert(message.getBody().substring(pos), room, roomId);
+            if (pos != -1 && (body.contains("/" + roomId + "-") || body.contains("meeting"))) {
+                String meetUrl = message.getBody().substring(pos);
+                showInvitationAlert(meetUrl, room);
             }
         } catch (Exception ignored) {
         }
     }
 
-    private void showInvitationAlert(final String meetUrl, final ChatRoom room, final CharSequence roomId)
+    private void showInvitationAlert(final String meetUrl, final ChatRoom room)
     {
         // Got an offer to start a new meet. So, make sure that a chat is
         // started with the other
@@ -247,7 +245,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-
     }
 
     @Override
@@ -259,10 +256,9 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     @Override
     public void uninstall()
     {
-
     }
 
-    public void handleClick(String newUrl, ChatRoom room, String url)
+    public void handleClick(ChatRoom room, String url)
     {
         if (electronThread != null)
         {
@@ -272,20 +268,20 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
 
         sendInvite(room, url);
-        openURL(newUrl);
+        openURL(url);
     }
 
     public void openURL(String newUrl)
     {
         try {
-            String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), UTF_8);
-            String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), UTF_8);
-
             electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
 
                 @Override
                 public void onOutputLine(final String line) {
-                    System.out.println(line);
+                    if (line.isEmpty()) {
+                        return;
+                    }
+                    Log.debug(line);
                 }
 
                 @Override
@@ -293,13 +289,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                     electronThread = null;
                 }
 
-                public void onOutputClosed() {
-                    System.out.println("process completed");
-                }
-
                 @Override
                 public void onErrorLine(final String line) {
-
                     if (!line.contains("Corrupt JPEG data"))
                     {
                         Log.warning("Electron error " + line);
@@ -319,12 +310,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     @Override
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        String roomId = chatroom.getBareJid().toString();
+        EntityJid roomId = chatroom.getJid();
         Log.debug("chatRoomClosed:  " + roomId);
 
-        if (decorators.containsKey(roomId))
-        {
-            ChatRoomDecorator decorator = decorators.remove(roomId);
+        ChatRoomDecorator decorator = decorators.remove(roomId);
+        if (decorator != null) {
             decorator.finished();
         }
 
@@ -336,36 +326,10 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     }
 
     @Override
-    public void chatRoomActivated(ChatRoom chatroom)
-    {
-        String roomId = chatroom.getBareJid().toString();
-        Log.debug("chatRoomActivated:  " + roomId);
-    }
-
-    @Override
-    public void userHasJoined(ChatRoom room, String s)
-    {
-        String roomId = room.getBareJid().toString();
-        Log.debug("userHasJoined:  " + roomId + " " + s);
-    }
-
-    @Override
-    public void userHasLeft(ChatRoom room, String s)
-    {
-        String roomId = room.getBareJid().toString();
-        Log.debug("userHasLeft:  " + roomId + " " + s);
-    }
-
-    @Override
     public void chatRoomOpened(final ChatRoom room)
     {
-        String roomId = room.getBareJid().toString();
-        Log.debug("chatRoomOpened:  " + roomId);
-
-        if (roomId.indexOf('/') == -1)
-        {
-            decorators.put(roomId, new ChatRoomDecorator(room, this));
-        }
+        EntityJid roomId = room.getJid();
+        decorators.put(roomId, new ChatRoomDecorator(room, this));
     }
 
     private void checkNatives()
