@@ -17,7 +17,6 @@ package org.jivesoftware.spark.plugin.flashing;
 
 import java.awt.EventQueue;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
@@ -71,8 +70,7 @@ public class FlashingPreference implements Preference {
 
 	@Override
 	public Icon getIcon() {
-		ClassLoader cl = getClass().getClassLoader();
-		return new ImageIcon(cl.getResource("lightning.png"));
+		return FlashingResources.LIGHTING_BOLT_IMAGE;
 	}
 
 	@Override
@@ -108,7 +106,6 @@ public class FlashingPreference implements Preference {
 
 	@Override
 	public void shutdown() {
-
 	}
 
 }
