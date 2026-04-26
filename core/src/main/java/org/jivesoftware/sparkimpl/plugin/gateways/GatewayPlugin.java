@@ -127,6 +127,10 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             }
             String transportPrefix = entityName.substring(0, dotPos);
             switch (transportPrefix) {
+                case "discord":
+                    DiscordTransport discordTransport = new DiscordTransport(item.getEntityID().asDomainBareJid());
+                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), discordTransport);
+                    break;
                 case "xmpp":
                     XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), xmppTransport);
@@ -156,10 +160,27 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), facebookTransport);
                     break;
+                case "matrix":
+                    MatrixTransport matrixTransport = new MatrixTransport(item.getEntityID().asDomainBareJid());
+                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), matrixTransport);
+                    break;
                 case "myspace":
                 case "myspaceim":
                     MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), myspaceTransport);
+                    break;
+                case "rss":
+                    RssTransport rssTransport = new RssTransport(item.getEntityID().asDomainBareJid());
+                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), rssTransport);
+                    break;
+                case "tg":
+                case "telegram":
+                    TelegramTransport telegramTransport = new TelegramTransport(item.getEntityID().asDomainBareJid());
+                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), telegramTransport);
+                    break;
+                case "whatsapp":
+                    WhatsappTransport whatsappTransport = new WhatsappTransport(item.getEntityID().asDomainBareJid());
+                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), whatsappTransport);
                     break;
             }
         }
