@@ -129,31 +129,25 @@ public class ChatManager {
         return chatContainer;
     }
 
+    /**
+     * Returns the MultiUserChat associated with the specified roomAddress.
+     *
+     * @throws ChatNotFoundException thrown if no ChatRoom is found.
+     */
 	public GroupChatRoom getGroupChat(EntityBareJid roomAddress) throws ChatNotFoundException {
         if ( roomAddress == null ) {
             throw new ChatNotFoundException();
         }
-		return getGroupChat(roomAddress.toString());
-	}
-
-    /**
-     * Returns the MultiUserChat associated with the specified roomName.
-     *
-     * @param roomName the name of the chat room.
-     * @return the MultiUserChat found for the roomName.
-     * @throws ChatNotFoundException thrown if no ChatRoom is found.
-     */
-    public GroupChatRoom getGroupChat(String roomName) throws ChatNotFoundException {
         for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
             if (chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
-                if (groupChat.getBareJid().equals(roomName)) {
+                if (groupChat.getBareJid().equals(roomAddress)) {
                     return groupChat;
                 }
             }
         }
-        throw new ChatNotFoundException("Could not locate Group Chat Room - " + roomName);
-    }
+        throw new ChatNotFoundException("Could not locate Group Chat Room - " + roomAddress);
+	}
 
     /**
      * Creates and/or opens a chat room with the specified user.
