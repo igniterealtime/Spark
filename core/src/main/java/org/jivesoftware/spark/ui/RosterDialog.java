@@ -60,7 +60,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
+import org.jivesoftware.sparkimpl.plugin.gateways.packet.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;

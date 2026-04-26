@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkimpl.plugin.gateways;
+package org.jivesoftware.sparkimpl.plugin.gateways.packet;
 
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.parsing.SmackParsingException;
 import org.jivesoftware.smack.provider.IqProvider;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.spark.SparkManager;
@@ -29,9 +28,9 @@ import org.jxmpp.JxmppContext;
 import org.jxmpp.jid.DomainBareJid;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 /**
+ * XEP-0100: Gateway Interaction
  */
 public class Gateway extends IQ {
 
@@ -135,7 +134,9 @@ public class Gateway extends IQ {
         return response.getJid();
      }
 
-
+    static {
+        ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+    }
 }
 
 

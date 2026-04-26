@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkimpl.plugin.gateways;
+package org.jivesoftware.sparkimpl.plugin.gateways.packet;
 
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jxmpp.JxmppContext;
@@ -131,5 +132,7 @@ public class GatewayPrivateData implements PrivateData {
         }
     }
 
-
+    static {
+        PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
+    }
 }

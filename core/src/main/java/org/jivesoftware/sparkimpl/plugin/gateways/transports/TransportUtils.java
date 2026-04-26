@@ -17,10 +17,8 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.util.ExceptionCallback;
 import org.jivesoftware.smack.util.SuccessCallback;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -28,11 +26,11 @@ import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
+import org.jivesoftware.sparkimpl.plugin.gateways.packet.GatewayPrivateData;
+import org.jivesoftware.sparkimpl.plugin.gateways.packet.GatewayRegisterExtension;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.Jid;
 
-import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,26 +178,5 @@ public class TransportUtils {
             .onError(e -> Log.warning( "Unable to unregister from gateway: " + e));
     }
 
-
-    static class GatewayRegisterExtension implements ExtensionElement {
-        public static final String ELEMENT_NAME = "x";
-        public static final String NAMESPACE = "jabber:iq:gateway:register";
-        public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
-
-        @Override
-		public String getElementName() {
-            return ELEMENT_NAME;
-        }
-
-        @Override
-		public String getNamespace() {
-            return NAMESPACE;
-        }
-
-        @Override
-        public String toXML(XmlEnvironment xmlEnvironment) {
-            return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\"/>";
-        }
-    }
 
 }
