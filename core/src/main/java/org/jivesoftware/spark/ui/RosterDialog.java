@@ -446,7 +446,6 @@ public class RosterDialog implements ActionListener {
 		    JOptionPane.ERROR_MESSAGE);
 
 	} else {
-
 	    JPopupMenu popup = new JPopupMenu();
 	    JMenuItem header = new JMenuItem(
 		    Res.getString("group.search.results") + ":");
@@ -564,14 +563,12 @@ public class RosterDialog implements ActionListener {
 
     public List<AccountItem> getAccounts() {
         List<AccountItem> list = new ArrayList<>();
-
         for (Transport transport : TransportUtils.getTransports()) {
-            if (TransportUtils.isRegistered(SparkManager.getConnection(), transport)) {
+            if (TransportUtils.isRegistered(transport)) {
                 AccountItem item = new AccountItem(transport.getIcon(), transport.getName(), transport);
                 list.add(item);
             }
         }
-
         return list;
     }
     

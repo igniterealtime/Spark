@@ -74,7 +74,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
         commandPanel.updateUI();
         final Runnable registerThread = () -> {
             // Send directed presence if registered with this transport.
-            final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
+            final boolean isRegistered = TransportUtils.isRegistered(transport);
             if (isRegistered) {
                 // Check if auto login is set.
                 boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
@@ -163,7 +163,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
             int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport", transport.getName()), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
-                    TransportUtils.unregister(SparkManager.getConnection(), transport.getXMPPServiceDomain());
+                    TransportUtils.unregister(transport.getXMPPServiceDomain());
                 }
                 catch (SmackException | InterruptedException e1) {
                     Log.error(e1);
@@ -172,7 +172,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
         } );
 
         // If user is not registered with the gateway
-        boolean reg = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
+        boolean reg = TransportUtils.isRegistered(transport);
         if (!reg) {
             popupMenu.add(registerMenu);
             popupMenu.addSeparator();

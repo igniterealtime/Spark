@@ -178,7 +178,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         }
 
         try {
-            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname,
+            TransportUtils.registerUser(serviceName, username, password, nickname,
                     stanza -> {
                         // Send Directed Presence
                         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();

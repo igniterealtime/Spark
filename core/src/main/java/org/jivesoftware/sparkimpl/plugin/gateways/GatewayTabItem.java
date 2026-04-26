@@ -49,8 +49,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     
     public GatewayTabItem(final Transport transport) {
 	this._transport = transport;
-	_transportRegistered = TransportUtils.isRegistered(
-		SparkManager.getConnection(), _transport);
+	_transportRegistered = TransportUtils.isRegistered(_transport);
 
 	_autoJoin.setEnabled(false);
 	_autoJoin.setBackground((Color)UIManager.get("ContactItem.background"));
@@ -97,8 +96,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 	final Runnable registerThread = () -> {
     // Send directed presence if registered with this transport.
-    final boolean isRegistered = TransportUtils.isRegistered(
-        SparkManager.getConnection(), transport);
+    boolean isRegistered = TransportUtils.isRegistered(transport);
     if (isRegistered) {
         // Check if auto login is set.
         boolean autoJoin = TransportUtils.autoJoinService(transport
@@ -189,8 +187,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
         UIManager.put("OptionPane.noButtonText", Res.getString("no"));
         UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
-    if (TransportUtils.isRegistered(SparkManager.getConnection(),
-        _transport)) {
+    if (TransportUtils.isRegistered(_transport)) {
         int confirm = JOptionPane.showConfirmDialog(SparkManager
             .getMainWindow(), Res.getString(
             "message.disable.transport", _transport.getName()),
@@ -198,9 +195,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
         try {
-            TransportUtils.unregister(
-                SparkManager.getConnection(),
-                _transport.getXMPPServiceDomain());
+            TransportUtils.unregister(_transport.getXMPPServiceDomain());
             setNotRegistered();
         } catch (SmackException | InterruptedException e1) {
             Log.error(e1);

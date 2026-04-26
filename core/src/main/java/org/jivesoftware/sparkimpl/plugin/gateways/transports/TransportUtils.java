@@ -16,7 +16,6 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.util.ExceptionCallback;
@@ -32,8 +31,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.xml.namespace.QName;
 import java.util.Collection;
@@ -95,31 +92,18 @@ public class TransportUtils {
     	}
     }
 
-    /**
-     * 
-     * @param transportAddress
-     * @return
-     */
     public static Transport getTransport(DomainBareJid transportAddress) {
-        // Return transport.
         return transports.get(transportAddress);
     }
 
     /**
      * Returns true if the jid is from a gateway.
-     * @param jid the jid.
-     * @return true if the jid is from a gateway.
      */
     public static boolean isFromGateway(Jid jid) {
         DomainBareJid serviceName = jid.asDomainBareJid();
         return transports.containsKey(serviceName);
     }
 
-    /**
-     * 
-     * @param address
-     * @param transport
-     */
     public static void addTransport(DomainBareJid address, Transport transport) {
         transports.put(address, transport);
     }
@@ -130,23 +114,20 @@ public class TransportUtils {
 
     /**
      * Checks if the user is registered with a gateway.
-     *
-     * @param con       the XMPPConnection.
-     * @param transport the transport.
-     * @return true if the user is registered with the transport.
      */
-    public static boolean isRegistered(XMPPConnection con, Transport transport) {
-        if (!con.isConnected()) {
+    public static boolean isRegistered(Transport transport) {
+        if (!SparkManager.getConnection().isConnected()) {
             return false;
         }
 
+        // jabber:iq:registered is an older XMPP protocol used for checking if a user is registered with a gateway. Was used by Kraken.
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         try {
             DiscoverInfo info = discoManager.discoverInfo(transport.getXMPPServiceDomain());
             return info.containsFeature("jabber:iq:registered");
         }
         catch (XMPPException | SmackException | InterruptedException e) {
-            Log.error(e);
+            Log.error("Error on discovery " + transport.getXMPPServiceDomain(), e);
         }
         return false;
     }
@@ -154,15 +135,13 @@ public class TransportUtils {
     /**
      * Registers a user with a gateway.
      *
-     * @param con           the XMPPConnection.
      * @param gatewayDomain the domain of the gateway (service name)
      * @param username      the username.
      * @param password      the password.
      * @param nickname      the nickname.
-     * @throws InterruptedException 
      * @throws XMPPException thrown if there was an issue registering with the gateway.
      */
-    public static void registerUser(XMPPConnection con, DomainBareJid gatewayDomain, String username, String password,
+    public static void registerUser(DomainBareJid gatewayDomain, String username, String password,
             String nickname, SuccessCallback<IQ> callback, ExceptionCallback<Exception> exceptionCallback)
             throws SmackException.NotConnectedException, InterruptedException {
         Map<String, String> attributes = new HashMap<>();
@@ -180,18 +159,16 @@ public class TransportUtils {
         registration.setTo(gatewayDomain);
         registration.addExtension(new GatewayRegisterExtension());
 
-        con.sendIqRequestAsync(registration)
+        SparkManager.getConnection().sendIqRequestAsync(registration)
             .onSuccess(callback)
             .onError(exceptionCallback);
     }
 
     /**
-     * @param con           the XMPPConnection.
      * @param gatewayDomain the domain of the gateway (service name)
-     * @throws InterruptedException 
      * @throws XMPPException thrown if there was an issue unregistering with the gateway.
      */
-    public static void unregister(XMPPConnection con, DomainBareJid gatewayDomain) throws SmackException.NotConnectedException, InterruptedException
+    public static void unregister(DomainBareJid gatewayDomain) throws SmackException.NotConnectedException, InterruptedException
     {
         Map<String,String> map = new HashMap<>();
         map.put("remove", "");
@@ -199,7 +176,7 @@ public class TransportUtils {
         registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
 
-        con.sendIqRequestAsync(registration)
+        SparkManager.getConnection().sendIqRequestAsync(registration)
             .onError(e -> Log.warning( "Unable to unregister from gateway: " + e));
     }
 

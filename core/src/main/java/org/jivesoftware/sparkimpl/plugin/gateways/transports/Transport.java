@@ -20,6 +20,7 @@ import javax.swing.Icon;
 import org.jxmpp.jid.DomainBareJid;
 
 /**
+ * XMPP Gateway description (name, icon)
  */
 public interface Transport {
 
