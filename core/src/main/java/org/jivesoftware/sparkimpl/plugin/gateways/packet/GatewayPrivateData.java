@@ -132,8 +132,4 @@ public class GatewayPrivateData implements PrivateData {
             return data;
         }
     }
-
-    static {
-        PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
-    }
 }

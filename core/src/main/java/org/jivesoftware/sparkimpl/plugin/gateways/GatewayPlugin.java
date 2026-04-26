@@ -26,6 +26,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -37,6 +38,7 @@ import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.packet.Gateway;
+import org.jivesoftware.sparkimpl.plugin.gateways.packet.GatewayPrivateData;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -63,6 +65,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
     @Override
 	public void initialize() {
+        ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+        PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
 	useTab = localPref.getShowTransportTab();
 	transferTab.setBackground((Color)UIManager.get("ContactItem.background"));
@@ -84,7 +88,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
             @Override
 			public void finished() {
-        	
         	transferTab.setLayout(new VerticalFlowLayout(0,0,0,true,false));
         	Boolean transportExists = (Boolean)get();
                 if (!transportExists) {

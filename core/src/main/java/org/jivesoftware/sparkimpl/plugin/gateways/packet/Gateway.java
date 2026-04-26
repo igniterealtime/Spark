@@ -133,10 +133,6 @@ public class Gateway extends IQ {
         Gateway response = connection.sendIqRequestAndWaitForResponse(registration);
         return response.getJid();
      }
-
-    static {
-        ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
-    }
 }
 
 

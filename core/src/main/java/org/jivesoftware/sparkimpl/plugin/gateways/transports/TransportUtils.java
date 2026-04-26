@@ -47,8 +47,6 @@ public class TransportUtils {
     }
 
     static {
-        PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
-
         final Runnable loadGateways = () -> {
             PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
             gatewayPreferences = null;
