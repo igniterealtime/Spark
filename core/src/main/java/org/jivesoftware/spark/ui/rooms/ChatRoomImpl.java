@@ -83,8 +83,6 @@ public class ChatRoomImpl extends ChatRoom {
      */
     private String threadID;
 
-    private long lastActivity;
-
     private boolean active;
 
     // True if this is a one-on-one with a participant of a multi-user chatroom.
@@ -638,16 +636,6 @@ public class ChatRoomImpl extends ChatRoom {
             getNotificationLabel().setText("");
             getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
         }
-    }
-
-    /**
-     * The last time this chat room sent or received a message.
-     *
-     * @return the last time this chat room sent or receieved a message.sendChatState
-     */
-    @Override
-	public long getLastActivity() {
-        return lastActivity;
     }
 
     /**

@@ -110,6 +110,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private ChatState lastNotificationSent;
     private final long pauseTimePeriod = 2000;
     private final long inactiveTimePeriod = 120000;
+    protected long lastActivity;
 
     private static final Color COLOR_BOTTOM_PANEL_BORDER = new Color(197, 213, 230);
 
@@ -1064,10 +1065,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Implementation of this method should return the last time this chat room
-     * sent or received a message.
+     * The last time this chat room sent or received a message.
      */
-    public abstract long getLastActivity();
+    public long getLastActivity() {
+        return lastActivity;
+    }
 
     @Override
     public void updateStatus(boolean active) {

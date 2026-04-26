@@ -91,7 +91,6 @@ public class GroupChatRoom extends ChatRoom {
     private String password = null;
     private String tabTitle;
     private boolean isActive = true;
-    private long lastActivity;
     private Message lastMessage;
     private boolean chatStatEnabled;
 
@@ -896,11 +895,6 @@ public class GroupChatRoom extends ChatRoom {
      */
     public GroupChatParticipantList getConferenceRoomInfo() {
         return roomInfo;
-    }
-
-    @Override
-    public long getLastActivity() {
-        return lastActivity;
     }
 
     @Override
