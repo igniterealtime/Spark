@@ -96,18 +96,17 @@ public class GroupChatRoom extends ChatRoom {
     private boolean chatStatEnabled;
 
     public GroupChatRoom(final MultiUserChat chat) {
-        Log.debug("Loading Group Chat Room for " + chat.getRoom());
         this.chat = chat;
-
+        EntityBareJid roomBareJid = getBareJid();
+        Log.debug("Loading Group Chat Room for " + roomBareJid);
         // Create the filter and register with the current connection, making sure to filter by room
-        final StanzaFilter fromFilter = FromMatchesFilter.createBare(chat.getRoom());
+        final StanzaFilter fromFilter = FromMatchesFilter.createBare(roomBareJid);
         final StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
         final StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
-
         // Add packet Listener.
         SparkManager.getConnection().addAsyncStanzaListener(this, andFilter);
         // We are just using a generic Group Chat.
-        tabTitle = chat.getRoom().getLocalpart().asUnescapedString();
+        tabTitle = roomBareJid.getLocalpart().asUnescapedString();
         // Room Information
         roomInfo = UIComponentRegistry.createGroupChatParticipantList();
         getSplitPane().setRightComponent(roomInfo.getGUI());
@@ -118,12 +117,10 @@ public class GroupChatRoom extends ChatRoom {
         setupListeners();
 
         subjectPanel = new SubjectPanel(this);
-
         // Do not show the top toolbar
         getToolBar().add(subjectPanel,
             new GridBagConstraints(0, 1, 1, 1, 1, 0,
                 NORTHWEST, HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
-
         // Add ContextMenuListener
         getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
             @Override
@@ -132,7 +129,7 @@ public class GroupChatRoom extends ChatRoom {
                 Action inviteAction = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        ConferenceUtils.inviteUsersToRoom(chat.getRoom(), null, false);
+                        ConferenceUtils.inviteUsersToRoom(roomBareJid, null, false);
                     }
                 };
 
@@ -144,7 +141,7 @@ public class GroupChatRoom extends ChatRoom {
                 Action copyUriGroupChat = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        SparkManager.setClipboard("xmpp:" + chat.getRoom() + "?join");
+                        SparkManager.setClipboard("xmpp:" + roomBareJid + "?join");
                     }
                 };
 
@@ -222,7 +219,6 @@ public class GroupChatRoom extends ChatRoom {
                 if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), getNickname())) {
                     popup.add(destroyRoomAction);
                 }
-
             }
 
             @Override
@@ -236,7 +232,6 @@ public class GroupChatRoom extends ChatRoom {
 
         final GroupChatRoomTransferHandler transferHandler = new GroupChatRoomTransferHandler(this);
         getTranscriptWindow().setTransferHandler(transferHandler);
-
         // Adds the Settings and Subject Button to the right Toolbar
         settings = UIComponentRegistry.getButtonFactory().createSettingsButton();
         settings.setVisible(false);
@@ -286,7 +281,7 @@ public class GroupChatRoom extends ChatRoom {
                 scrollToBottom();
             }
         });
-        Log.debug("Loaded Group Chat Room for " + chat.getRoom());
+        Log.debug("Loaded Group Chat Room for " + roomBareJid);
     }
 
     private Pattern compileMyNicknameMatch() {
@@ -343,7 +338,7 @@ public class GroupChatRoom extends ChatRoom {
     @Override
     public void sendMessage(MessageBuilder messageBuilder) {
         messageBuilder.ofType(Message.Type.groupchat);
-        messageBuilder.to(chat.getRoom());
+        messageBuilder.to(getBareJid());
         Message message = messageBuilder.build();
         try {
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
@@ -508,8 +503,6 @@ public class GroupChatRoom extends ChatRoom {
         final Message message = (Message) stanza;
         lastMessage = message;
         if (message.getType() == Message.Type.groupchat) {
-            final DelayInformation inf = message.getExtension(DelayInformation.class);
-            final Date sentDate = inf != null ? inf.getStamp() : new Date();
             // Do not accept Administrative messages.
             final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
             if (host.equals(message.getFrom())) {
@@ -517,6 +510,8 @@ public class GroupChatRoom extends ChatRoom {
             }
             if (ModelUtil.hasLength(message.getBody())) {
                 final Resourcepart from = message.getFrom().getResourceOrThrow();
+                final DelayInformation inf = message.getExtension(DelayInformation.class);
+                final Date sentDate = inf != null ? inf.getStamp() : new Date();
                 if (inf != null) {
                     // This is part of the MUC history. No need to add it to the transcript again.
                     // Add to the UI component that shows the chat.
@@ -910,7 +905,7 @@ public class GroupChatRoom extends ChatRoom {
 
     @Override
     public void authenticated(XMPPConnection xmppConnection, boolean b) {
-        final EntityBareJid roomJID = chat.getRoom();
+        final EntityBareJid roomJID = getBareJid();
         final String roomName = tabTitle;
         final Resourcepart nickname = getNickname();
         final String password = this.password;

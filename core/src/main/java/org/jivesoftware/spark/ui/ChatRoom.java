@@ -113,9 +113,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private static final Color COLOR_BOTTOM_PANEL_BORDER = new Color(197, 213, 230);
 
-    /**
-     * Initializes the base layout and base background color.
-     */
     protected ChatRoom() {
         chatPanel = new JPanel(new GridBagLayout());
         transcriptWindow = UIComponentRegistry.createTranscriptWindow();
@@ -138,7 +135,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindowMouseListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 if (e.getClickCount() != 2) {
                     getChatInputEditor().requestFocus();
                 }
@@ -170,11 +166,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().setSelectionColor((Color) UIManager.get("ChatInput.SelectionColor"));
 
         setLayout(new GridBagLayout());
-
         // Remove Default Beveled Borders
         splitPane.setBorder(null);
         splitPane.setOneTouchExpandable(false);
-
         // Add Vertical Split Pane
         verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         add(verticalSplit, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -188,12 +182,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // For the first 5*150ms we wait for transcript to load and move
         // ScrollPane to max position if size of ScrollPane changed
         textScroller.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-
             private boolean scrollAtStart = false;
 
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
-
                 if (!scrollAtStart) {
                     scrollAtStart = true;
                     SwingWorker thread = new SwingWorker() {
@@ -260,10 +252,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         // Add listener to send button
         chatAreaButton.getButton().addActionListener(this);
-
         // Add Key Listener to Send Field
         getChatInputEditor().getDocument().addDocumentListener(this);
-
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
             @Override
@@ -319,16 +309,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getSplitPane().setRightComponent(null);
 
         notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
-
         getTranscriptWindow().addContextMenuListener(this);
-
         transferHandler = new ChatRoomTransferHandler(this);
 
         getTranscriptWindow().setTransferHandler(transferHandler);
         getChatInputEditor().setTransferHandler(transferHandler);
 
         addToolbar();
-
         // Add Connection Listener
         SparkManager.getConnection().addConnectionListener(this);
         // Add Focus Listener
@@ -849,6 +836,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
     }
 
+    /**
+     * The current SendField has been updated somehow.
+     */
     @Override
     public void insertUpdate(DocumentEvent e) {
         // Meant to be overridden

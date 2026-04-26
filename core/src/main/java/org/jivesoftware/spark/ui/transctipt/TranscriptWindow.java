@@ -65,15 +65,14 @@ import java.util.List;
  */
 public class TranscriptWindow extends ChatArea implements ContextMenuListener
 {
+    private static final SimpleDateFormat MSG_DATE_FORMATTER = new SimpleDateFormat("hh:mm:ss");
+
     /**
      * Unless specifically documented otherwise, content is stored in an in-memory cache of {@link TranscriptWindowEntry}s.
      * This cache is used to recompose the UI when needed (which typically occurs when entries are added out-of-order).
      */
     private final LinkedList<TranscriptWindowEntry> entries = new LinkedList<>();
 
-    /**
-     * Creates a default instance of <code>TranscriptWindow</code>.
-     */
     public TranscriptWindow()
     {
         setEditable( false );
@@ -151,9 +150,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 }
             }
         }
-
         entries.add( entry );
-
         try
         {
             entry.addTo( this );
@@ -164,7 +161,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         }
     }
 
-
     /**
      * Inserts a component into the transcript window.
      *
@@ -173,13 +169,9 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     public void addComponent( Component component )
     {
         final StyledDocument doc = (StyledDocument) getDocument();
-
         // The image must first be wrapped in a style
         Style style = doc.addStyle( "StyleName", null );
-
-
         StyleConstants.setComponent( style, component );
-
         // Insert the image at the end of the text
         try
         {
@@ -385,8 +377,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         try
         {
-            SimpleDateFormat formatter;
-
             File defaultSaveFile = new File(Spark.getSparkUserHome(), fileName);
             final JFileChooser fileChooser = new JFileChooser( defaultSaveFile );
             fileChooser.setSelectedFile( defaultSaveFile );
@@ -426,18 +416,12 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     final String body = message.getBody();
 
                     final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
-                    Date insertionDate = null;
-                    if ( extension != null )
-                    {
-                        insertionDate = (Date) extension.getProperty( "insertionDate" );
-                    }
-
-                    formatter = new SimpleDateFormat( "hh:mm:ss" );
+                    Date insertionDate = extension != null ? (Date) extension.getProperty("insertionDate") : null;
 
                     String value = "";
                     if ( insertionDate != null )
                     {
-                        value = "(" + formatter.format( insertionDate ) + ") ";
+                        value = "(" + MSG_DATE_FORMATTER.format( insertionDate ) + ") ";
                     }
                     buf.append( "<tr><td nowrap><font size=2>" ).append( value ).append( "<strong>" ).append( from ).append( ":</strong>&nbsp;" ).append( body ).append( "</font></td></tr>" );
 

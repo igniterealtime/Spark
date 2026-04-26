@@ -208,11 +208,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             history.setFrom(message.getFrom());
             history.setBody(message.getBody());
             final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
-            Date date = null;
-            if (extension != null) {
-                date = (Date) extension.getProperty("date");
-            }
-            history.setDate(date == null ? new Date() : date);
+            Date date = extension != null ? (Date) extension.getProperty("date") : new Date();
+            history.setDate(date);
             transcript.addHistoryMessage(history);
         }
         Message newLastKnownMessage = transcripts.get(transcripts.size() - 1);
