@@ -22,14 +22,10 @@ import org.jivesoftware.resource.Res;
 
 import javax.swing.*;
 
-/**
- */
-public class QQTransport implements Transport {
-    private DomainBareJid serviceName;
+public class QQTransport extends Transport {
 
-    public QQTransport(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-
+    public QQTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -53,31 +49,22 @@ public class QQTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName() {
         return "QQ";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 }

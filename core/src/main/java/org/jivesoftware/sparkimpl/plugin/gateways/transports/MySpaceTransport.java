@@ -21,13 +21,11 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class MySpaceTransport implements Transport {
-    private DomainBareJid serviceName;
-
-    public MySpaceTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+public class MySpaceTransport extends Transport {
+    public MySpaceTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
-    
+
     @Override
 	public String getTitle(){
         return Res.getString("title.myspace.registration");
@@ -49,31 +47,22 @@ public class MySpaceTransport implements Transport {
     }
 
     @Override
-	public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "MySpace";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 }

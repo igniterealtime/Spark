@@ -21,11 +21,9 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class WhatsappTransport implements Transport {
-    private final DomainBareJid serviceName;
-
-    public WhatsappTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+public class WhatsappTransport extends Transport {
+    public WhatsappTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -49,27 +47,22 @@ public class WhatsappTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "WhatsApp";
     }
 
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 

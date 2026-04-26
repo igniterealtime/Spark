@@ -21,11 +21,10 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class TelegramTransport implements Transport {
-    private final DomainBareJid serviceName;
+public class TelegramTransport extends Transport {
 
-    public TelegramTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+    public TelegramTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -49,27 +48,22 @@ public class TelegramTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "Telegram";
     }
 
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 

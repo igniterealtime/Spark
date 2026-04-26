@@ -21,11 +21,10 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class SametimeTransport implements Transport {
-    private DomainBareJid serviceName;
+public class SametimeTransport extends Transport {
 
-    public SametimeTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+    public SametimeTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -49,31 +48,22 @@ public class SametimeTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "Sametime";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 }

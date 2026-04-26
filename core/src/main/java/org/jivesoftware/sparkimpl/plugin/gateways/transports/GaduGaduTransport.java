@@ -21,14 +21,10 @@ import org.jivesoftware.resource.Res;
 
 import javax.swing.*;
 
-/**
- */
-public class GaduGaduTransport implements Transport {
+public class GaduGaduTransport extends Transport {
 
-    private DomainBareJid serviceName;
-
-    public GaduGaduTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+    public GaduGaduTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -52,31 +48,22 @@ public class GaduGaduTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "GaduGadu";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
     

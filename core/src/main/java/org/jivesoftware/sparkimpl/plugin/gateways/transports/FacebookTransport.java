@@ -21,12 +21,10 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class FacebookTransport implements Transport {
-	
-    private DomainBareJid serviceName;
+public class FacebookTransport extends Transport {
 
-    public FacebookTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+    public FacebookTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -50,31 +48,22 @@ public class FacebookTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "Facebook";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return true;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 }

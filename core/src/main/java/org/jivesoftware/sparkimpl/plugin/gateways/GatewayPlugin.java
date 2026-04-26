@@ -120,68 +120,62 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     private void populateTransports() {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : discoItems.getItems()) {
-            String entityName = item.getEntityID().toString();
+            DomainBareJid serviceDomain = item.getEntityID().asDomainBareJid();
+            String entityName = serviceDomain.toString();
             int dotPos = entityName.indexOf('.');
             if (dotPos == -1) {
                 continue;
             }
-            String transportPrefix = entityName.substring(0, dotPos);
+            Transport gateway;
+            String transportPrefix = entityName.substring(0, dotPos).toLowerCase();
             switch (transportPrefix) {
                 case "discord":
-                    DiscordTransport discordTransport = new DiscordTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), discordTransport);
+                    gateway = new DiscordTransport(serviceDomain, item.getName());
                     break;
                 case "xmpp":
-                    XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), xmppTransport);
+                    gateway = new XMPPTransport(serviceDomain, item.getName());
                     break;
                 case "irc":
-                    IRCTransport ircTransport = new IRCTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), ircTransport);
+                    gateway = new IRCTransport(serviceDomain, item.getName());
                     break;
                 case "sip":
                 case "simple":
-                    SimpleTransport simpleTransport = new SimpleTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), simpleTransport);
+                    gateway = new SimpleTransport(serviceDomain, item.getName());
                     break;
                 case "gadugadu":
-                    GaduGaduTransport gadugaduTransport = new GaduGaduTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), gadugaduTransport);
+                    gateway = new GaduGaduTransport(serviceDomain, item.getName());
                     break;
                 case "qq":
-                    QQTransport qqTransport = new QQTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), qqTransport);
+                    gateway = new QQTransport(serviceDomain, item.getName());
                     break;
                 case "sametime":
-                    SametimeTransport sametimeTransport = new SametimeTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), sametimeTransport);
+                    gateway = new SametimeTransport(serviceDomain, item.getName());
                     break;
                 case "facebook":
-                    FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), facebookTransport);
+                    gateway = new FacebookTransport(serviceDomain, item.getName());
                     break;
                 case "matrix":
-                    MatrixTransport matrixTransport = new MatrixTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), matrixTransport);
+                    gateway = new MatrixTransport(serviceDomain, item.getName());
                     break;
                 case "myspace":
                 case "myspaceim":
-                    MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), myspaceTransport);
+                    gateway = new MySpaceTransport(serviceDomain, item.getName());
                     break;
                 case "rss":
-                    RssTransport rssTransport = new RssTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), rssTransport);
+                    gateway = new RssTransport(serviceDomain, item.getName());
                     break;
                 case "tg":
                 case "telegram":
-                    TelegramTransport telegramTransport = new TelegramTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), telegramTransport);
+                    gateway = new TelegramTransport(serviceDomain, item.getName());
                     break;
                 case "whatsapp":
-                    WhatsappTransport whatsappTransport = new WhatsappTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), whatsappTransport);
+                    gateway = new WhatsappTransport(serviceDomain, item.getName());
                     break;
+                default:
+                    gateway = null;
+            }
+            if (gateway != null) {
+                TransportUtils.addTransport(serviceDomain, gateway);
             }
         }
     }

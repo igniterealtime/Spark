@@ -22,24 +22,37 @@ import org.jxmpp.jid.DomainBareJid;
 /**
  * XMPP Gateway description (name, icon)
  */
-public interface Transport {
+public abstract class Transport {
+    private final DomainBareJid xmppServiceDomain;
+    private final String xmppServiceName;
 
-    String getTitle();
+    public Transport(DomainBareJid xmppServiceDomain, String xmppServiceName){
+        this.xmppServiceDomain = xmppServiceDomain;
+        this.xmppServiceName = xmppServiceName;
+    }
 
-    String getInstructions();
+    public abstract String getTitle();
 
-    Icon getIcon();
+    public abstract String getInstructions();
 
-    Icon getInactiveIcon();
+    public abstract Icon getIcon();
 
-    DomainBareJid getXMPPServiceDomain();
+    public abstract Icon getInactiveIcon();
 
-    String getName();
+    public final DomainBareJid getXMPPServiceDomain() {
+        return xmppServiceDomain;
+    }
 
-    Boolean requiresUsername();
+    public final String getXMPPServiceName() {
+        return xmppServiceName;
+    }
 
-    Boolean requiresPassword();
+    public abstract String getName();
 
-    Boolean requiresNickname();
+    public abstract boolean requiresUsername();
+
+    public abstract boolean requiresPassword();
+
+    public abstract boolean requiresNickname();
 
 }

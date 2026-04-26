@@ -55,13 +55,10 @@ public class GatewayButton extends JPanel implements GatewayItem {
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
-        if (PresenceManager.isOnline(transport.getXMPPServiceDomain())) {
-            button.setIcon(transport.getIcon());
-        }
-        else {
-            button.setIcon(transport.getInactiveIcon());
-        }
-        button.setToolTipText(transport.getName());
+        boolean online = PresenceManager.isOnline(transport.getXMPPServiceDomain());
+        button.setIcon(online ? transport.getIcon() : transport.getInactiveIcon());
+        button.setText(transport.getXMPPServiceName());
+        button.setToolTipText(transport.getName() + " " + transport.getXMPPServiceDomain());
 
         commandPanel.add(button);
 
@@ -184,12 +181,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
             return;
         }
 
-        if (signedIn) {
-            popupMenu.add(signOutMenu);
-        }
-        else {
-            popupMenu.add(signInMenu);
-        }
+        popupMenu.add(signedIn ? signOutMenu : signInMenu);
 
         boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
         signInAtLoginMenu.setSelected(autoJoin);
@@ -202,12 +194,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
 
     @Override
 	public void signedIn(boolean signedIn) {
-        if (!signedIn) {
-            button.setIcon(transport.getInactiveIcon());
-        }
-        else {
-            button.setIcon(transport.getIcon());
-        }
+        button.setIcon(signedIn ? transport.getIcon() : transport.getInactiveIcon());
         this.signedIn = signedIn;
     }
 

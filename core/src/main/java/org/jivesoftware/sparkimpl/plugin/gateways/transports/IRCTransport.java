@@ -21,14 +21,9 @@ import org.jivesoftware.resource.Res;
 
 import javax.swing.*;
 
-/**
- */
-public class IRCTransport implements Transport {
-
-    private DomainBareJid serviceName;
-
-    public IRCTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+public class IRCTransport extends Transport {
+    public IRCTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -52,31 +47,22 @@ public class IRCTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "IRC";
     }
 
-    public void setServiceName(DomainBareJid serviceName) {
-        this.serviceName = serviceName;
-    }
-
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return true;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return false;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return true;
     }
 

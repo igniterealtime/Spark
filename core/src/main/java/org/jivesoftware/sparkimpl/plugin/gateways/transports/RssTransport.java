@@ -21,11 +21,10 @@ import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 
-public class RssTransport implements Transport {
-    private final DomainBareJid serviceName;
+public class RssTransport extends Transport {
 
-    public RssTransport(DomainBareJid serviceName){
-        this.serviceName = serviceName;
+    public RssTransport(DomainBareJid xmppServiceDomain, String xmppServiceName) {
+        super(xmppServiceDomain, xmppServiceName);
     }
 
     @Override
@@ -49,27 +48,22 @@ public class RssTransport implements Transport {
     }
 
     @Override
-    public DomainBareJid getXMPPServiceDomain() {
-        return serviceName;
-    }
-
-    @Override
 	public String getName(){
         return "RSS";
     }
 
     @Override
-	public Boolean requiresUsername() {
+	public boolean requiresUsername() {
         return false;
     }
 
     @Override
-	public Boolean requiresPassword() {
+	public boolean requiresPassword() {
         return false;
     }
 
     @Override
-	public Boolean requiresNickname() {
+	public boolean requiresNickname() {
         return false;
     }
 
