@@ -47,7 +47,12 @@ import org.jxmpp.jid.parts.*;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
-	public Properties props = new Properties();
+    public Properties props = new Properties();
+    /**
+     * Online conference URL e.g. <code>https://meet.jit.si/Lobby</code>.
+     * Can be configured in preferences or retrived from server if configured there.
+     * By default, it will be <code>https://yourxmppdomain:7443/ofmeet/</code>.
+     */
     public String url = null;
 	
     private final File pluginsettings = new File(Spark.getSparkUserHome(), "ofmeet.properties");
@@ -71,26 +76,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         String port = "7443";
         url = "https://" + server + ":" + port + "/ofmeet/";
 
-        if (pluginsettings.exists())
-        {
-            Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
-
-            try {
-                props.load(new FileInputStream(pluginsettings));
-
-                if (props.getProperty("url") != null)
-                {
-                    url = props.getProperty("url");
-                    Log.debug("ofmeet-info: ofmeet url from properties-file is= " + url);
-                }
-
-            } catch (IOException ioe) {
-                 Log.error("ofmeet-Error:", ioe);
-            }
-
-        } else {
-            Log.warning("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default " + url);
-        }
+        loadPreferences();
+        Log.debug("ofmeet-info: ofmeet url from properties-file is= " + url);
 
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
@@ -99,6 +86,23 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 		SparkManager.getPreferenceManager().addPreference(preference);
 
         initializeOnlineMeetings();
+    }
+
+    private void loadPreferences() {
+        if (!pluginsettings.exists()) {
+            Log.debug("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default");
+            return;
+        }
+        Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
+        try {
+            props.load(new FileInputStream(pluginsettings));
+            if (props.getProperty("url") != null)
+            {
+                url = props.getProperty("url");
+            }
+        } catch (IOException ioe) {
+             Log.error("ofmeet-Error:", ioe);
+        }
     }
 
     private void initializeOnlineMeetings() {
@@ -152,15 +156,20 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
 	public void commit(String url) {
 		this.url = url;
-		props.setProperty("url", url);
-		try {
-			FileOutputStream outputStream = new FileOutputStream(pluginsettings);
-			props.store(outputStream, null);
-			outputStream.close();
-		} catch (Exception e) {
-			 Log.error("ofmeet-Error:", e);
-		}			
-	}
+        savePreferences();
+    }
+
+    private void savePreferences() {
+        Properties props = new Properties();
+        props.setProperty("url", url);
+        try {
+            FileOutputStream outputStream = new FileOutputStream(pluginsettings);
+            props.store(outputStream, null);
+            outputStream.close();
+        } catch (Exception e) {
+             Log.error("ofmeet-Error:", e);
+        }
+    }
 
     @Override
     public void shutdown()
