@@ -206,7 +206,7 @@ public class ContactInfoWindow extends JPanel {
         String localPart = contactItem.getJid().getLocalpartOrThrow().asUnescapedString();
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            fullJIDLabel.setText(transport.getName() + " " + transport.getXMPPServiceName() + " - " + localPart);
+            fullJIDLabel.setText(transport.getCaption() + " - " + localPart);
         } else {
             fullJIDLabel.setText(localPart);
             fullJIDLabel.setIcon(null);

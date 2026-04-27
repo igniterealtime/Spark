@@ -55,4 +55,12 @@ public abstract class Transport {
 
     public abstract boolean requiresNickname();
 
+    public String getCaption() {
+        String caption = getName();
+        // Dont return duplicated "IRC IRC"
+        if (xmppServiceName != null && !caption.equals(xmppServiceName)) {
+            caption += " " + xmppServiceName;
+        }
+        return caption;
+    }
 }

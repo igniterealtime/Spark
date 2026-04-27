@@ -57,8 +57,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
 
         boolean online = PresenceManager.isOnline(transport.getXMPPServiceDomain());
         button.setIcon(online ? transport.getIcon() : transport.getInactiveIcon());
-        button.setText(transport.getXMPPServiceName());
-        button.setToolTipText(transport.getName() + " " + transport.getXMPPServiceDomain());
+        button.setText(transport.getCaption());
+        button.setToolTipText(transport.getXMPPServiceDomain().asUnescapedString());
 
         commandPanel.add(button);
 
