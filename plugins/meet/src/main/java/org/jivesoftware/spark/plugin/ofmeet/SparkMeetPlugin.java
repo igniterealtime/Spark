@@ -69,7 +69,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     @Override
     public void initialize()
     {
-        ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());
+        ProviderManager.addIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE, new QueryRequest.Provider());
         getElectronPath();
 
         ChatManager chatManager = SparkManager.getChatManager();

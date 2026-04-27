@@ -71,6 +71,7 @@ public final class SessionManager implements ConnectionListener {
      * @param password   the agent's password.
      */
     public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
+        ProviderManager.addExtensionProvider(Features.ELEMENT_NAME, Features.NAMESPACE, new Features.Provider());
         this.connection = connection;
         this.username = username;
         this.password = password;
@@ -82,7 +83,6 @@ public final class SessionManager implements ConnectionListener {
         // Discover items
         discoverItems();
 
-        ProviderManager.addExtensionProvider(Features.ELEMENT_NAME, Features.NAMESPACE, new Features.Provider());
         connection.addConnectionListener(this);
     }
 
