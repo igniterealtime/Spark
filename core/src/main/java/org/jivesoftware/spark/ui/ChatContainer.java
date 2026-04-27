@@ -27,7 +27,6 @@ import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -1198,8 +1197,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Action closeOldAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    for (ChatRoom rooms : getStaleChatRooms()) {
-                        closeTab(rooms);
+                    for (ChatRoom chatRoom : getChatRooms()) {
+                        if (chatRoom.stale) {
+                            closeTab(chatRoom);
+                        }
                     }
                 }
             };
@@ -1210,25 +1211,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         popup.show(tab, e.getX(), e.getY());
     }
 
-    /**
-     * Returns a Collection of stale chat rooms.
-     */
-    public Collection<ChatRoom> getStaleChatRooms() {
-        int timeoutInMs = pref.getChatLengthDefaultTimeout() * 60 * 1000;
-        long currentTime = System.currentTimeMillis();
-        final List<ChatRoom> staleRooms = new ArrayList<>();
-        for (ChatRoom chatRoom : getChatRooms()) {
-            int unreadCount = chatRoom.getUnreadMessageCount();
-            if (unreadCount > 0) {
-                continue;
-            }
-            long lastActivity = chatRoom.getLastActivity();
-            long diff = currentTime - lastActivity;
-            if (timeoutInMs <= diff) {
-                staleRooms.add(chatRoom);
-            }
-        }
-        return staleRooms;
+    public boolean isStaleChatRoom(ChatRoom chatRoom) {
+        return chatRoom.stale;
     }
 
     /**
@@ -1237,11 +1221,17 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private void handleStaleChats() {
         int delay = 1000;   // delay for 1 second.
         int period = 60000;  // repeat every minute.
+        int timeoutInMs = pref.getChatLengthDefaultTimeout() * 60_000;
 
         final TimerTask task = new SwingTimerTask() {
             @Override
             public void doRun() {
-                for (ChatRoom chatRoom : getStaleChatRooms()) {
+                long currentTime = System.currentTimeMillis();
+                for (ChatRoom chatRoom : getChatRooms()) {
+                    markRoomAsStale(chatRoom, currentTime, timeoutInMs);
+                    if (!chatRoom.stale) {
+                        continue;
+                    }
                     // Notify decorators
                     SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
                 }
@@ -1249,6 +1239,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         };
 
         TaskEngine.getInstance().scheduleAtFixedRate(task, delay, period);
+    }
+
+    private static void markRoomAsStale(ChatRoom chatRoom, long currentTime, int timeoutInMs) {
+        int unreadCount = chatRoom.getUnreadMessageCount();
+        if (unreadCount > 0) {
+            chatRoom.stale = true;
+        }
+        long lastActivity = chatRoom.getLastActivity();
+        long diff = currentTime - lastActivity;
+        chatRoom.stale = timeoutInMs <= diff;
     }
 
     private void navigateRight() {

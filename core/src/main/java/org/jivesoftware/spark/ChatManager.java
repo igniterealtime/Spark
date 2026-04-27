@@ -624,7 +624,7 @@ public class ChatManager {
      */
     public boolean isStaleRoom(ChatRoom chatRoom) {
         // Check if the room is stale
-        return chatContainer.getStaleChatRooms().contains(chatRoom);
+        return chatContainer.isStaleChatRoom(chatRoom);
     }
 
     /**

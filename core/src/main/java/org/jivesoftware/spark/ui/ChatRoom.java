@@ -111,6 +111,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final long pauseTimePeriod = 2000;
     private final long inactiveTimePeriod = 120000;
     protected long lastActivity;
+    /** Flag to show is the room is stale i.e. it was last active more than defaultChatLengthTimeout (15 min) */
+    boolean stale;
 
     private static final Color COLOR_BOTTOM_PANEL_BORDER = new Color(197, 213, 230);
 
