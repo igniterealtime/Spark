@@ -22,6 +22,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.search.Searchable;
 import org.jivesoftware.spark.ui.DataFormUI;
@@ -29,6 +30,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.*;
 import java.util.*;
@@ -132,32 +134,23 @@ public class UserSearchService implements Searchable {
      */
     private Collection<DomainBareJid> getServices() {
         List<DomainBareJid> searchServices = new ArrayList<>(2);
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        for (DiscoverItems.Item item : items.getItems() ) {
-            try {
-                DiscoverInfo info;
-                try {
-                    info = discoManager.discoverInfo(item.getEntityID());
-                }
-                catch (XMPPException | SmackException e) {
-                    // Ignore Case
-                    continue;
-                }
-
+        SessionManager sessionManager = SparkManager.getSessionManager();
+        var discoInfos = sessionManager.getDiscoveredInfos();
+        for (var entry : discoInfos.entrySet()) {
+            Jid serviceJid = entry.getKey();
+            DiscoverInfo info =  entry.getValue();;
+            if (info == null) {
+                continue;
+            }
                 if (info.containsFeature("jabber:iq:search")) {
                     // Check that the search service belongs to user searches (and not room searches or other searches)
                     for (DiscoverInfo.Identity identity : info.getIdentities() ) {
                         if ("directory".equals(identity.getCategory()) && "user".equals(identity.getType())) {
-                            searchServices.add(item.getEntityID().asDomainBareJid());
+                            searchServices.add(serviceJid.asDomainBareJid());
+                            break;
                         }
                     }
                 }
-            }
-            catch (Exception e) {
-                // No info found.
-                break;
-            }
         }
         return searchServices;
     }

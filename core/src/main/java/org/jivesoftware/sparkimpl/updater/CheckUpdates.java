@@ -34,6 +34,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.ConfirmDialog;
 import org.jivesoftware.spark.component.ConfirmDialog.ConfirmListener;
@@ -44,6 +45,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
@@ -62,6 +65,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class CheckUpdates {
+    public static final String UPDATER_SERVICE_SUBDOMAIN = "updater.";
     private final String mainUpdateURL;
     private JProgressBar bar;
     private TitlePanel titlePanel;
@@ -484,7 +488,7 @@ public class CheckUpdates {
         AbstractXMPPConnection connection = SparkManager.getConnection();
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
-        request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
+        request.setTo(JidCreate.fromOrThrowUnchecked(UPDATER_SERVICE_SUBDOMAIN + connection.getXMPPServiceDomain()));
         try {
             SparkVersion response = connection.sendIqRequestAndWaitForResponse(request);
             return response;
@@ -512,8 +516,12 @@ public class CheckUpdates {
             return false;
         }
         try {
-            DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            for (DiscoverItems.Item item : items.getItems() ) {
+            SessionManager sessionManager = SparkManager.getSessionManager();
+            DomainBareJid serverDomain = sessionManager.getServerAddress();
+            var items = sessionManager.getDiscoveredItems();
+            Jid serviceJid = JidCreate.fromOrNull(UPDATER_SERVICE_SUBDOMAIN + serverDomain);
+            DiscoverItems.Item item = items.get(serviceJid);
+            if (item != null) {
                 if ("Spark Updater".equals(item.getName())) {
                     return true;
                 }

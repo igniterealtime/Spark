@@ -110,7 +110,6 @@ public class ChatRoomDecorator {
         try {
             UploadRequest request = new UploadRequest(fileName, file.length(), mimeType);
             SessionManager sessionManager = SparkManager.getSessionManager();
-            sessionManager.getDiscoveredItems().getItems();
             String uploadEndpoint = "httpfileupload." + sessionManager.getServerAddress();
             request.setTo(JidCreate.fromOrThrowUnchecked(uploadEndpoint));
             request.setType(IQ.Type.get);

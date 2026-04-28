@@ -25,10 +25,12 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
@@ -52,6 +54,9 @@ import javax.swing.*;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.lowerCase;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
  * Handles Gateways/Transports in Spark.
@@ -121,17 +126,35 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void populateTransports() {
-        DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
-        for (DiscoverItems.Item item : discoItems.getItems()) {
-            DomainBareJid serviceDomain = item.getEntityID().asDomainBareJid();
-            String entityName = serviceDomain.toString();
-            int dotPos = entityName.indexOf('.');
-            if (dotPos == -1) {
+        SessionManager sessionManager = SparkManager.getSessionManager();
+        var discoItems = sessionManager.getDiscoveredItems();
+        var discoInfos = sessionManager.getDiscoveredInfos();
+        for (var entry : discoItems.entrySet()) {
+            Jid serviceJid = entry.getKey();
+            DiscoverItems.Item item = entry.getValue();
+            DiscoverInfo info = discoInfos.get(serviceJid);
+            if (info == null) {
                 continue;
             }
+            String gatewayType = null;
+            boolean hasIdentityGateway = false;
+            for (DiscoverInfo.Identity identity : info.getIdentities()) {
+               if ( "gateway".equals(identity.getCategory())) {
+                   hasIdentityGateway = true;
+                   gatewayType = lowerCase(identity.getType());
+                   break;
+               }
+            }
+            if (!hasIdentityGateway || !info.containsFeature("jabber:iq:register")) {
+                continue;
+            }
+            DomainBareJid serviceDomain = serviceJid.asDomainBareJid();
             Transport gateway;
-            String transportPrefix = entityName.substring(0, dotPos).toLowerCase();
-            switch (transportPrefix) {
+            if (gatewayType == null) {
+                String transportPrefix = substringBefore(serviceDomain.toString(), ".").toLowerCase();
+                gatewayType = transportPrefix;
+            }
+            switch (gatewayType) {
                 case "discord":
                     gateway = new DiscordTransport(serviceDomain, item.getName());
                     break;
@@ -175,11 +198,9 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     gateway = new WhatsappTransport(serviceDomain, item.getName());
                     break;
                 default:
-                    gateway = null;
+                    gateway = new GatewayDescription(serviceDomain, item.getName());
             }
-            if (gateway != null) {
-                TransportUtils.addTransport(serviceDomain, gateway);
-            }
+            TransportUtils.addTransport(serviceDomain, gateway);
         }
     }
 

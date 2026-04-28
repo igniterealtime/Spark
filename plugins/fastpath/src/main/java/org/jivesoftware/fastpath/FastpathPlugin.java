@@ -28,6 +28,7 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -39,6 +40,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -84,14 +86,13 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             mainPanel = new BackgroundPane();
         });
         try {
-            DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            for (DiscoverItems.Item item : items.getItems() ) {
-                String entityID = item.getEntityID() != null ? item.getEntityID().toString() : "";
-                if (entityID.startsWith("workgroup")) {
-                    // Log into workgroup
-                    final DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
-                    final EntityFullJid jid = SparkManager.getSessionManager().getJID();
-
+            SessionManager sessionManager = SparkManager.getSessionManager();
+            DomainBareJid serverDomain = sessionManager.getServerAddress();
+            final EntityFullJid jid = sessionManager.getJID();
+            var items = sessionManager.getDiscoveredItems();
+            Jid workgroupService = JidCreate.fromOrNull("workgroup." + serverDomain);
+            if (items.containsKey(workgroupService)) {
+                // Log into workgroup
                     SwingWorker worker = new SwingWorker() {
                         @Override
                         public Object construct() {
@@ -113,7 +114,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                         }
                     };
                     worker.start();
-                }
             }
         }
         catch (Exception e) {

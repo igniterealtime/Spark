@@ -20,8 +20,12 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -128,22 +132,19 @@ public class Enterprise {
 
     private void populateFeatureSet() {
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        for (DiscoverItems.Item item : items.getItems() ) {
-            String entity = item.getEntityID().toString();
-            if (entity.startsWith("manager.")) {
-                sparkManagerInstalled = true;
-                // Populate with feature sets.
-                try {
-                    featureInfo = discoManager.discoverInfo(item.getEntityID());
-                }
-                catch (XMPPException | SmackException | InterruptedException e) {
-                    Log.error("Error while retrieving feature list for SparkManager.", e);
-                }
-
+        SessionManager sessionManager = SparkManager.getSessionManager();
+        DomainBareJid serverDomain = sessionManager.getServerAddress();
+        var discoveredInfos = sessionManager.getDiscoveredInfos();
+        Jid serviceJid = JidCreate.fromOrNull("manager." + serverDomain);
+        featureInfo = discoveredInfos.get(serviceJid);
+        if (featureInfo == null) {
+            return;
+        }
+        // Populate with feature sets.
+        sparkManagerInstalled = true;
                 // Check for nodes.
                 try {
-                    final DiscoverItems discoveredItems = discoManager.discoverItems(item.getEntityID());
+                    final DiscoverItems discoveredItems = discoManager.discoverItems(serviceJid);
                     for (DiscoverItems.Item discoveredItem : discoveredItems.getItems()) {
                         final String node = discoveredItem.getNode();
                         if (node != null) {
@@ -161,7 +162,5 @@ public class Enterprise {
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Error while retrieving feature list for SparkManager.", e);
                 }
-            }
-        }
     }
 }

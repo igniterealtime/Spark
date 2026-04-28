@@ -20,6 +20,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
@@ -29,10 +30,14 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -55,7 +60,10 @@ public final class SessionManager implements ConnectionListener {
     private final CopyOnWriteArrayList<PresenceListener> presenceListeners = new CopyOnWriteArrayList<>();
 
     private EntityBareJid userBareAddress;
-    private DiscoverItems discoverItems;
+    /** Key: service domain JID, value discovered items. Sorted as received from server */
+    private final Map<Jid, DiscoverItems.Item> discoverItems = new LinkedHashMap<>();
+    /** Key: service domain JID, value discovered infos. Sorted as received from server, same as discoverItems. */
+    private final Map<Jid, DiscoverInfo> discoverInfos = new LinkedHashMap<>();
 
     // Stores our presence state at the time that the last connectionClosedOnError happened.
     private Presence preError;
@@ -92,11 +100,24 @@ public final class SessionManager implements ConnectionListener {
     private void discoverItems() {
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         try {
-            discoverItems = discoManager.discoverItems(connection.getXMPPServiceDomain());
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+            DomainBareJid xmppServiceDomain = connection.getXMPPServiceDomain();
+            DiscoverItems discoServiceItems = discoManager.discoverItems(xmppServiceDomain);
+            for (DiscoverItems.Item item : discoServiceItems.getItems()) {
+                Jid serviceJid = item.getEntityID();
+                discoverItems.put(serviceJid, item);
+            }
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
-            discoverItems = new DiscoverItems();
+            throw new RuntimeException("Unable to discover root services");
+        }
+        for (Map.Entry<Jid, DiscoverItems.Item> entry : discoverItems.entrySet()) {
+            Jid serviceJid = entry.getKey();
+            try {
+                DiscoverInfo info = discoManager.discoverInfo(serviceJid);
+                discoverInfos.put(serviceJid, info);
+            } catch (Exception e) {
+                Log.error("Unable to discover root services info " + serviceJid, e);
+            }
         }
     }
 
@@ -254,8 +275,12 @@ public final class SessionManager implements ConnectionListener {
     /**
      * Returns the Discovered Items found on startup.
      */
-    public DiscoverItems getDiscoveredItems() {
+    public Map<Jid, DiscoverItems.Item> getDiscoveredItems() {
         return discoverItems;
+    }
+
+    public Map<Jid, DiscoverInfo> getDiscoveredInfos() {
+        return discoverInfos;
     }
 
     public void setConnection(AbstractXMPPConnection con) {

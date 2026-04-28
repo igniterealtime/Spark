@@ -21,8 +21,8 @@ import org.jivesoftware.smack.util.ExceptionCallback;
 import org.jivesoftware.smack.util.SuccessCallback;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
@@ -33,6 +33,7 @@ import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 public class TransportUtils {
 
-    private static final Map<DomainBareJid, Transport> transports = new HashMap<>();
+    private static final Map<DomainBareJid, Transport> transports = new LinkedHashMap<>();
     private static GatewayPrivateData gatewayPreferences;
 
     private TransportUtils() {
@@ -112,20 +113,14 @@ public class TransportUtils {
      * Checks if the user is registered with a gateway.
      */
     public static boolean isRegistered(Transport transport) {
-        if (!SparkManager.getConnection().isConnected()) {
+        SessionManager sessionManager = SparkManager.getSessionManager();
+        Map<Jid, DiscoverInfo> discoInfos = sessionManager.getDiscoveredInfos();
+        DiscoverInfo info = discoInfos.get(transport.getXMPPServiceDomain());
+        if (info == null) {
             return false;
         }
-
         // jabber:iq:registered is an older XMPP protocol used for checking if a user is registered with a gateway. Was used by Kraken.
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        try {
-            DiscoverInfo info = discoManager.discoverInfo(transport.getXMPPServiceDomain());
-            return info.containsFeature("jabber:iq:registered");
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
-            Log.error("Error on discovery " + transport.getXMPPServiceDomain(), e);
-        }
-        return false;
+        return info.containsFeature("jabber:iq:registered");
     }
 
     /**
