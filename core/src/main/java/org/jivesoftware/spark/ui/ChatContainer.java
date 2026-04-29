@@ -562,11 +562,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
 
         if(domainMUC != null && jid.hasNoResource()){
-            for(DomainBareJid domain : domainMUC){
-                if(jid.getDomain().equals(domain.getDomain())){
-                    return true;
-                }
-            }
+            return domainMUC.contains(jid.asDomainBareJid());
         }
         return false;
     }
