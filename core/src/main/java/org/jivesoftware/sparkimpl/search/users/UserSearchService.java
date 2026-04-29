@@ -129,8 +129,6 @@ public class UserSearchService implements Searchable {
 
     /**
      * Returns a collection of search services found on the server.
-     *
-     * @return a Collection of search services found on the server.
      */
     private Collection<DomainBareJid> getServices() {
         List<DomainBareJid> searchServices = new ArrayList<>(2);
@@ -144,11 +142,8 @@ public class UserSearchService implements Searchable {
             }
                 if (info.containsFeature("jabber:iq:search")) {
                     // Check that the search service belongs to user searches (and not room searches or other searches)
-                    for (DiscoverInfo.Identity identity : info.getIdentities() ) {
-                        if ("directory".equals(identity.getCategory()) && "user".equals(identity.getType())) {
+                    if (info.hasIdentity("directory", "user")) {
                             searchServices.add(serviceJid.asDomainBareJid());
-                            break;
-                        }
                     }
                 }
         }
