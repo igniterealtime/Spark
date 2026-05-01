@@ -25,8 +25,9 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.packet.MUCInitialPresence;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
 import org.jivesoftware.spark.ui.*;
@@ -52,6 +53,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static java.util.Collections.swap;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>.
@@ -423,8 +426,27 @@ public class ChatManager {
             return conferenceServices;
         }
         try {
-            MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
-            conferenceServices = multiUserChatManager.getMucServiceDomains();
+            SessionManager sessionManager = SparkManager.getSessionManager();
+            Map<Jid, DiscoverInfo> discoInfos = sessionManager.getDiscoveredInfos();
+            int mainConferenceIdx = -1;
+            List<DomainBareJid> mucServiceDomains = new ArrayList<>(discoInfos.size());
+            for (var entry : discoInfos.entrySet()) {
+                Jid serviceJid = entry.getKey();
+                DiscoverInfo info = entry.getValue();
+                if (!info.containsFeature(MUCInitialPresence.NAMESPACE)) {
+                    continue;
+                }
+                mucServiceDomains.add(serviceJid.asDomainBareJid());
+                if (mainConferenceIdx == -1 && info.hasIdentity("conference", "text")) {
+                    mainConferenceIdx = mucServiceDomains.size() - 1;
+                }
+            }
+            // the main conference may come after gateway chats so we need to make it first
+            if (mainConferenceIdx != -1 && mainConferenceIdx != 0) {
+                // swap first and main conferences
+                swap(mucServiceDomains, 0, mainConferenceIdx);
+            }
+            conferenceServices = mucServiceDomains;
             return conferenceServices;
         } catch (Exception e) {
             Log.error(e);

@@ -288,6 +288,9 @@ public class BookmarksUI extends JPanel {
         rooms.invoke();
     }
 
+    /**
+     * Add conference services from the current domain
+     */
     private void addRegisteredServices() {
         ChatManager chatManager = SparkManager.getChatManager();
         List<DomainBareJid> mucServices = chatManager.getConferenceServices();
