@@ -25,6 +25,7 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.muc.MultiUserChatConstants;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -59,7 +60,6 @@ public class BookmarksUI extends JPanel {
      */
     private Tree tree;
     private JiveTreeNode rootNode;
-    private List<DomainBareJid> mucServices;
     private final Set<EntityBareJid> autoJoinRooms = new HashSet<>();
     private final CopyOnWriteArrayList<ContextMenuListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -289,22 +289,8 @@ public class BookmarksUI extends JPanel {
     }
 
     private void addRegisteredServices() {
-        SwingWorker worker = new SwingWorker() {
-
-            @Override
-            public Object construct() {
-                try {
-                    if (SparkManager.getConnection().isConnected()) {
-                        mucServices = SparkManager.getMucManager().getMucServiceDomains();
-                    }
-                } catch (XMPPException | SmackException | InterruptedException e) {
-                    Log.error("Unable to load MUC Service Names.", e);
-                }
-                return mucServices;
-            }
-
-            @Override
-            public void finished() {
+        ChatManager chatManager = SparkManager.getChatManager();
+        List<DomainBareJid> mucServices = chatManager.getConferenceServices();
                 if (mucServices == null) {
                     return;
                 }
@@ -313,10 +299,6 @@ public class BookmarksUI extends JPanel {
                         addServiceToList(service);
                     }
                 }
-            }
-        };
-
-        worker.start();
     }
 
     /**
@@ -540,13 +522,6 @@ public class BookmarksUI extends JPanel {
             addBookmark(serviceNode, roomName, roomJidNick);
             tree.expandPath(path);
         }
-    }
-
-    /**
-     * Returns all MUC services available.
-     */
-    public List<DomainBareJid> getMucServices() {
-        return mucServices;
     }
 
     /**

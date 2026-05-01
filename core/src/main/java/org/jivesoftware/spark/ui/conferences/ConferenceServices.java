@@ -175,7 +175,9 @@ public class ConferenceServices implements InvitationListener {
     }
 
     public static DomainBareJid getDefaultServiceName() {
-        return bookmarksUI.getMucServices() != null ? bookmarksUI.getMucServices().get(0) : null;
+        ChatManager chatManager = SparkManager.getChatManager();
+        DomainBareJid defaultConferenceService = chatManager.getDefaultConferenceService();
+        return defaultConferenceService;
     }
 
     private void addPopupListeners() {

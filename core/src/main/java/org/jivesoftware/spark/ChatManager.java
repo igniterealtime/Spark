@@ -78,7 +78,8 @@ public class ChatManager {
     private final CopyOnWriteArrayList<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
     private final ChatContainer chatContainer;
-    private String conferenceService;
+    private DomainBareJid conferenceService;
+    private List<DomainBareJid> conferenceServices;
     private final CopyOnWriteArrayList<ContactItemHandler> contactItemHandlers = new CopyOnWriteArrayList<>();
     private final Set<ChatRoom> typingNotificationList = new HashSet<>();
     private final CopyOnWriteArrayList<ChatMessageHandler> chatMessageHandlers = new CopyOnWriteArrayList<>();
@@ -402,20 +403,33 @@ public class ChatManager {
     /**
      * Returns the default conference service to interact with MUC. (ex. conference.jivesoftware.com)
      */
-    public String getDefaultConferenceService() {
-        if (conferenceService == null) {
-            try {
-                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
-                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                if (!col.isEmpty()) {
-                    conferenceService = col.iterator().next().toString();
-                }
-            }
-            catch (XMPPException | SmackException | InterruptedException e) {
-                Log.error(e);
-            }
+    public DomainBareJid getDefaultConferenceService() {
+        if (conferenceService != null) {
+            return conferenceService;
         }
+        getConferenceServices();
+        if (conferenceServices == null || conferenceServices.isEmpty()) {
+            return null;
+        }
+        conferenceService = conferenceServices.get(0);
         return conferenceService;
+    }
+
+    /**
+     * Returns all MUC services available.
+     */
+    public List<DomainBareJid> getConferenceServices () {
+        if (conferenceServices != null) {
+            return conferenceServices;
+        }
+        try {
+            MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
+            conferenceServices = multiUserChatManager.getMucServiceDomains();
+            return conferenceServices;
+        } catch (Exception e) {
+            Log.error(e);
+            return null;
+        }
     }
 
     /**

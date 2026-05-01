@@ -51,6 +51,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
 import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
@@ -280,12 +281,11 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                         public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
-                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.isEmpty()) {
+                                ChatManager chatManager = SparkManager.getChatManager();
+                                DomainBareJid serviceName = chatManager.getDefaultConferenceService();
+                                if (serviceName == null) {
                                     return;
                                 }
-                                DomainBareJid serviceName = col.get(0);
                                 EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
                                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                                 MultiUserChat muc = groupChatRoom.getMultiUserChat();
@@ -331,12 +331,11 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
-                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
-                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.isEmpty()) {
+                                ChatManager chatManager = SparkManager.getChatManager();
+                                DomainBareJid serviceName = chatManager.getDefaultConferenceService();
+                                if (serviceName == null) {
                                     return;
                                 }
-                                DomainBareJid serviceName = col.get(0);
                                 EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                             }

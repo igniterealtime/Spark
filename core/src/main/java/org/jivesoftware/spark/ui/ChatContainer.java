@@ -71,7 +71,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private final TimerTask focusTask;
-    private static List<DomainBareJid> domainMUC;
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public ChatContainer() {
@@ -551,20 +550,16 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         throw new ChatRoomNotFoundException(jid + " not found.");
     }
 
+    /**
+     * Check if the JID of conference
+     */
     private static boolean isMUC(EntityJid jid){
-        if(domainMUC == null){
-            try {
-                MultiUserChatManager mucManager = SparkManager.getMucManager();
-                domainMUC = mucManager.getMucServiceDomains();
-            }catch (XMPPException | SmackException | InterruptedException e) {
-                Log.error("Unable to load MUC Service Names.", e);
-            }
+        if (jid.hasResource()) {
+            return false;
         }
-
-        if(domainMUC != null && jid.hasNoResource()){
-            return domainMUC.contains(jid.asDomainBareJid());
-        }
-        return false;
+        ChatManager chatManager = SparkManager.getChatManager();
+        List<DomainBareJid> conferenceServices = chatManager.getConferenceServices();
+        return conferenceServices != null && conferenceServices.contains(jid.asDomainBareJid());
     }
 
     /**
