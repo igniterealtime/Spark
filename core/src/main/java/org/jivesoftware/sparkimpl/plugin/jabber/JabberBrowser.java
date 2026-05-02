@@ -41,7 +41,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -64,7 +66,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Jabber Browser.
- * Discovering items on an XMPP server
+ * Discovering services on an XMPP server.
  *
  * @author Derek DeMoro
  */
@@ -142,6 +144,7 @@ public class JabberBrowser implements Plugin {
         SwingWorker swingWorker = new SwingWorker() {
             DiscoverItems discoItems;
             DiscoverInfo discoFeatures;
+            final Map<Jid, DiscoverInfo> itemDiscoInfos = new LinkedHashMap<>();
 
             @Override
             public Object construct() {
@@ -151,6 +154,15 @@ public class JabberBrowser implements Plugin {
                     discoFeatures = discoManager.discoverInfo(serviceName);
                 } catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error(e);
+                    return null;
+                }
+                for (DiscoverItems.Item item : discoItems.getItems()) {
+                    try {
+                        DiscoverInfo itemDisoInfo = discoManager.discoverInfo(item.getEntityID());
+                        itemDiscoInfos.put(item.getEntityID(), itemDisoInfo);
+                    } catch (Exception e) {
+                        Log.error(e);
+                    }
                 }
                 return null;
             }
@@ -159,10 +171,15 @@ public class JabberBrowser implements Plugin {
             public void finished() {
                 if (discoItems != null && discoFeatures != null) {
                     addAddress(serviceName.toString(), addressField);
+                    List<Entity> list = new ArrayList<>();
+                    Entity rootEntity = new Entity(serviceName, null, discoFeatures, browsePanel, addressField);
+                    browsePanel.add(rootEntity);
+                    list.add(rootEntity);
+                    // add sub items
                     List<DiscoverItems.Item> resultItems = discoItems.getItems();
-                    List<Entity> list = new ArrayList<>(resultItems.size());
                     for (DiscoverItems.Item item : resultItems) {
-                        Entity entity = new Entity(item, discoFeatures, browsePanel, addressField);
+                        DiscoverInfo itemInfo = itemDiscoInfos.get(item.getEntityID());
+                        Entity entity = new Entity(item.getEntityID(), item.getName(), itemInfo, browsePanel, addressField);
                         browsePanel.add(entity);
                         list.add(entity);
                     }
@@ -177,29 +194,27 @@ public class JabberBrowser implements Plugin {
     }
 
     public class Entity extends RolloverButton {
-        private final DiscoverItems.Item item;
 
-        public Entity(final DiscoverItems.Item item, DiscoverInfo discoFeatures, JPanel browsePanel, JComboBox<String> addressField) {
-            this.item = item;
+        public Entity(Jid itemJid, String itemName, DiscoverInfo discoFeatures, JPanel browsePanel, JComboBox<String> addressField) {
             setVerticalTextPosition(JLabel.BOTTOM);
             setHorizontalTextPosition(JLabel.CENTER);
-            setText(item.getName() != null ? item.getName() : item.getEntityID().toString());
+            boolean hasItems = discoFeatures != null && discoFeatures.containsFeature(DiscoverItems.NAMESPACE);
+            String title = (hasItems ? "/" : "") + itemJid.toString() + (itemName != null ? " " + itemName: "");
+            setText(title);
             setIcon(SparkRes.getImageIcon(SparkRes.Icon.USER1_MESSAGE_24x24));
-            String tipText = "Identities:\n";
-            for (DiscoverInfo.Identity identity : discoFeatures.getIdentities()) {
-                tipText += "Name: " + trimToEmpty(identity.getName()) + ", Category: " + trimToEmpty(identity.getCategory()) + ", Lang: " + trimToEmpty(identity.getLanguage()) + "\n";
+            if (discoFeatures != null) {
+                String tipText = "Identities:\n";
+                for (DiscoverInfo.Identity identity : discoFeatures.getIdentities()) {
+                    tipText += "Name: " + trimToEmpty(identity.getName()) + ", Category: " + trimToEmpty(identity.getCategory()) + ", Lang: " + trimToEmpty(identity.getLanguage()) + "\n";
+                }
+                tipText += "Features:\n";
+                for (DiscoverInfo.Feature feature : discoFeatures.getFeatures()) {
+                    tipText += feature.getVar() + "\n";
+                }
+                setToolTipText(tipText);
             }
-            tipText += "Features:\n";
-            for (DiscoverInfo.Feature feature : discoFeatures.getFeatures()) {
-                tipText += feature.getVar() + "\n";
-            }
-            setToolTipText(tipText);
 
-            addActionListener(e -> browse(item.getEntityID().toString(), browsePanel, addressField));
-        }
-
-        public DiscoverItems.Item getItem() {
-            return item;
+            addActionListener(e -> browse(itemJid.toString(), browsePanel, addressField));
         }
     }
 
