@@ -512,22 +512,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Returns a ChatRoom by name.
      *
-     * @param roomName the name of the ChatRoom.
-     * @throws ChatRoomNotFoundException if the room was not found.
-     */
-    public ChatRoom getChatRoom(CharSequence roomName) throws ChatRoomNotFoundException {
-        EntityBareJid roomAddress = JidCreate.entityBareFromOrThrowUnchecked(roomName);
-        return getChatRoom(roomAddress);
-    }
-
-    /**
-     * Returns a ChatRoom by name.
-     *
      * @param jid the name of the ChatRoom.
      * @return the ChatRoom
      * @throws ChatRoomNotFoundException if the room was not found.
      */
-    public ChatRoom getChatRoom(EntityJid jid) throws ChatRoomNotFoundException {
+    public ChatRoom getChatRoom(Jid jid) throws ChatRoomNotFoundException {
         for (int i = 0; i < getTabCount(); i++) {
             ChatRoom room = null;
             try {
@@ -553,7 +542,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Check if the JID of conference
      */
-    private static boolean isMUC(EntityJid jid){
+    private static boolean isMUC(Jid jid){
         if (jid.hasResource()) {
             return false;
         }

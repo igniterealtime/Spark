@@ -253,22 +253,6 @@ public class ChatManager {
         chatRooms.activateChatRoom(chatRoom);
     }
 
-    /**
-     * Checks if a <code>ChatRoom</code> exists.
-     */
-    public boolean chatRoomExists(String jid) {
-        try {
-            getChatContainer().getChatRoom(jid);
-        }
-        catch (ChatRoomNotFoundException e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Adds a new <code>MessageFilter</code>.
-     */
     public void addMessageFilter(MessageFilter filter) {
         messageFilters.addIfAbsent(filter);
     }
