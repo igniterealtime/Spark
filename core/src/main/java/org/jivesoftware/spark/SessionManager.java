@@ -99,8 +99,16 @@ public final class SessionManager implements ConnectionListener {
      */
     private void discoverItems() {
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
+        DomainBareJid xmppServiceDomain = connection.getXMPPServiceDomain();
+        // discover the domain info
         try {
-            DomainBareJid xmppServiceDomain = connection.getXMPPServiceDomain();
+            DiscoverInfo info = discoManager.discoverInfo(xmppServiceDomain);
+            discoverInfos.put(xmppServiceDomain, info);
+        } catch (Exception e) {
+            Log.error("Unable to discover info for root", e);
+        }
+        // discover subdomain services
+        try {
             DiscoverItems discoServiceItems = discoManager.discoverItems(xmppServiceDomain);
             for (DiscoverItems.Item item : discoServiceItems.getItems()) {
                 Jid serviceJid = item.getEntityID();
@@ -110,6 +118,7 @@ public final class SessionManager implements ConnectionListener {
             Log.error(e);
             throw new RuntimeException("Unable to discover root services");
         }
+        // discover subdomain services infos
         for (Map.Entry<Jid, DiscoverItems.Item> entry : discoverItems.entrySet()) {
             Jid serviceJid = entry.getKey();
             try {
