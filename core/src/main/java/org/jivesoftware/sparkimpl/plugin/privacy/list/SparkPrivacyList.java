@@ -39,11 +39,6 @@ public class SparkPrivacyList {
     private final List<PrivacyItem> _privacyItems = new LinkedList<>();
     private final PrivacyList _myPrivacyList;
     private final CopyOnWriteArrayList<SparkPrivacyItemListener> _listeners = new CopyOnWriteArrayList<>();
-    /**
-     * Action associated with the items, it MUST be filled and will allow or deny
-     * the communication by default
-     */
-
 
     public SparkPrivacyList(PrivacyList list) {
         _listName = list.getName();
@@ -53,10 +48,8 @@ public class SparkPrivacyList {
         loadItems();
     }
 
-    
     private void loadItems() {
        List<PrivacyItem> itemList = _myPrivacyList.getItems();
-       
        for (PrivacyItem item: itemList)
        {
            if (item.getValue() == null || item.getType() == null)
@@ -66,11 +59,8 @@ public class SparkPrivacyList {
        }   
     }
 
-
     /**
      * Get maximal Order value from PrivacyItemList
-     *
-     * @return
      */
     private long getMaxItemOrder() {
         if(getLastItem() != null) {
@@ -82,7 +72,6 @@ public class SparkPrivacyList {
     /**
      * Checks is jid already blocked
      * @param jid user to check
-     * @return is user blocked
      */
     public boolean isBlockedItem(String jid) {
         return searchPrivacyItem(jid) != null;
@@ -90,8 +79,6 @@ public class SparkPrivacyList {
 
     /**
      * Get last PrivacyItem from list ordered by PrivacyItem.order
-     *
-     * @return last PrivacyItem ordered by Item order
      */
     public PrivacyItem getLastItem() {
         long order = 0;
@@ -108,8 +95,6 @@ public class SparkPrivacyList {
 
     /**
      * Return order id for new PrivacyItem
-     * 
-     * @return
      */
     public long getNewItemOrder() {
         return (getMaxItemOrder()+1);
@@ -165,13 +150,11 @@ public class SparkPrivacyList {
         return items; //error
     }
 
-    
     public void addItem (PrivacyItem item) {
         _privacyItems.add(item);
         fireItemAdded(item);
     }
 
-    
     public void removeItem(PrivacyItem item) {
         _privacyItems.remove(item);
         fireItemRemoved(item);
@@ -191,7 +174,6 @@ public class SparkPrivacyList {
     
     /**
      * Returns Privasy List name
-     * @return PrivacyList name
      */
     public String getListName() {
         return _listName;
@@ -199,17 +181,13 @@ public class SparkPrivacyList {
 
     /**
      * Answer the privacy list items with the allowed and blocked permissions.
-     * @return list items
      */
     public ArrayList<PrivacyItem> getPrivacyItems() {
         return new ArrayList<>( _privacyItems );
     }
 
-
     /**
      * Is PrivacyList Active
-     * 
-     * @return is This list active or not
      */
     public boolean isActive() {
         return _isActive;
@@ -217,8 +195,6 @@ public class SparkPrivacyList {
 
     /**
      * Is PrivacyList set as default
-     *
-     * @return is this list default
      */
     public boolean isDefault() {
        return _isDefault;
@@ -226,8 +202,6 @@ public class SparkPrivacyList {
 
     /**
      * Set PrivacyList as active on server
-     * @param active 
-     * @throws XMPPException
      */
     public void setListAsActive(boolean active)
     {
@@ -236,19 +210,10 @@ public class SparkPrivacyList {
 //       {
 //           fireListActivated();
 //       }
-
     }
-
-
-
-
-
-
 
     /**
      * Store PrivacyList on server
-     * 
-     * @throws XMPPException
      */
     public void save() {
         try {
@@ -258,8 +223,7 @@ public class SparkPrivacyList {
             PrivacyManager.getInstance().getPrivacyListManager().getPrivacyList(_listName).getItems().remove(item);
             _privacyItems.remove(item);
         } catch (XMPPException | SmackException | InterruptedException e) {
-            Log.warning("Could not save PrivacyList "+_listName);
-            e.printStackTrace();
+            Log.error("Could not save PrivacyList "+_listName, e);
         }
     }
 
@@ -270,7 +234,6 @@ public class SparkPrivacyList {
     public String toString() {
         return getListName();
     }
-
 
     /**
      * @param item user was added into blockList
@@ -306,7 +269,6 @@ public class SparkPrivacyList {
         }
     }
 
-    
     public void addSparkPrivacyListener(SparkPrivacyItemListener listener)
     {
         _listeners.addIfAbsent(listener);
@@ -316,7 +278,6 @@ public class SparkPrivacyList {
     {
         _listeners.remove(listener);
     }
-
 
     public void setListIsDefault(boolean b) {
        _isDefault = b;   

@@ -18,9 +18,6 @@ package org.jivesoftware.sparkimpl.plugin.privacy;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo.Feature;
 import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
@@ -31,15 +28,15 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyPresenceHandler;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 
 /**
  * @author Zolotarev Konstantin, Bergunde Holger
  */
 public class PrivacyManager {
-
     private static PrivacyManager singleton;
     private static final Object LOCK = new Object();
 
@@ -52,72 +49,48 @@ public class PrivacyManager {
     // such as "visible-to-Group1 Group2 Group3".
     private static final String INVISIBLE_LIST_NAME = "invisible";
     private final List<SparkPrivacyList> _privacyLists = new ArrayList<>();
-    private PrivacyListManager privacyManager;
+    private final PrivacyListManager privacyManager;
     private final PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
     private final CopyOnWriteArrayList<SparkPrivacyListListener> _listListeners = new CopyOnWriteArrayList<>();
     private final boolean _active;
     private SparkPrivacyList previousActiveList;
 
-    /**
-     * Creating PrivacyListManager instance
-     */
     private PrivacyManager() {
         XMPPConnection conn = SparkManager.getConnection();
         if (conn == null) {
             Log.error("Privacy plugin: Connection not initialized.");
         }
+        privacyManager = PrivacyListManager.getInstanceFor(conn);
 
-       _active = checkIfPrivacyIsSupported(conn);
-    
+       _active = checkIfPrivacyIsSupported();
         if (_active)
         {
-            privacyManager = PrivacyListManager.getInstanceFor(conn);
             initializePrivacyLists();
         }
     }
     
-    /**
-     * Get Class instance
-     * 
-     * @return instance of {@link PrivacyManager}
-     */
     public static PrivacyManager getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
-            if (null == singleton) {
+            if (singleton == null) {
                 singleton = new PrivacyManager();
-                
             }
         }
-
         return singleton;
     }
 
-    
-    private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        DiscoverInfo info = null;
-    	try {
-            info = discoManager.discoverInfo(conn.getXMPPServiceDomain());
-        } catch (XMPPException | SmackException | InterruptedException e) {
-            	// We could not query the server
+    private boolean checkIfPrivacyIsSupported() {
+        try {
+            return privacyManager.isSupported();
+        } catch (Exception e) {
+            Log.error(e);
+            return false;
         }
-        if (info != null) {
-            for ( final Feature feature : info.getFeatures() ) {
-                if (feature.getVar().contains("jabber:iq:privacy")) {
-                    return true;
-                }
-            }
-        } 
-        return false;
     }
     
     private void initializePrivacyLists()
     {
         try {
             List<PrivacyList> lists = privacyManager.getPrivacyLists();
-            
             for (PrivacyList list: lists)
             {
                SparkPrivacyList sparkList = new SparkPrivacyList(list);
@@ -128,30 +101,23 @@ public class PrivacyManager {
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Could not load PrivacyLists", e);
         }
-        
         if(hasDefaultList())
         {
             setListAsActive(getDefaultList().getListName());
         }
     }
-    
-    
-    
+
     public void removePrivacyList(String listName) {
         try {
             privacyManager.deletePrivacyList(listName);
-           
             _privacyLists.remove(getPrivacyList(listName));
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not remove PrivacyList " + listName, e);
         }
     }
 
-
     /**
      * Check for active list existence
-     * 
-     * @return boolean
      */
     public boolean hasActiveList() {
         for (SparkPrivacyList list: _privacyLists)
@@ -176,14 +142,12 @@ public class PrivacyManager {
         return null;
     }
 
-
     /**
      * Returns the sparkprivacylist that the manager keeps local, to get updated
      * version try to forcereloadlists
      * 
      * @param s
      *            the name of the list
-     * @return SparkPrivacyList
      */
     public SparkPrivacyList getPrivacyList(String s) {
         for (SparkPrivacyList list: _privacyLists)
@@ -196,8 +160,6 @@ public class PrivacyManager {
 
     /**
      * Check if active list exist
-     * 
-     * @return boolean
      */
     public boolean hasDefaultList() {
         for (SparkPrivacyList list: _privacyLists)
@@ -217,12 +179,9 @@ public class PrivacyManager {
         }
         return null;
     }
-    
 
     /**
      * Get <code>org.jivesoftware.smackx.privacy.PrivacyListManager</code> instance
-     * 
-     * @return PrivacyListManager
      */
     public PrivacyListManager getPrivacyListManager() {
         return privacyManager;
@@ -242,9 +201,7 @@ public class PrivacyManager {
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not create PrivacyList "+listName, e);
         }
-        
         return sparklist;
-        
     }
 
     /**
@@ -253,18 +210,10 @@ public class PrivacyManager {
      * 
      * @return All Listnames
      */
-
-
-
-
-
-
     public List<SparkPrivacyList> getPrivacyLists() {
         return new ArrayList<>( _privacyLists );
     }
 
-    
-    
     public void setListAsActive(String listname)
     {
         try {
@@ -280,14 +229,12 @@ public class PrivacyManager {
                     plist.setListAsActive(false);
             }
             _presenceHandler.setIconsForList(getActiveList());
-            
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not activate PrivacyList " + listname, e);
         }
     }
     
     public void setListAsDefault(String listname) {
-
         try {
             privacyManager.setDefaultListName(listname);
             fireListSetAsDefault(listname);
@@ -299,13 +246,11 @@ public class PrivacyManager {
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not set PrivacyList " + listname+" as default", e);
         }
-
     }
     
     public void declineActiveList()
     {
         try {
-            
             if(hasActiveList())
             {
                 privacyManager.declineActiveList();
@@ -415,7 +360,6 @@ public class PrivacyManager {
     {
     	if (!_active)
     		return;
-    	
         ensureGloballyInvisibleListExists();
         // make it active
         activateGloballyInvisibleList();
@@ -425,7 +369,6 @@ public class PrivacyManager {
     {
     	if (!_active)
     		return;
-    	
         try {
             if (!isGloballyInvisibleListActive()) 
                 return;
@@ -437,7 +380,6 @@ public class PrivacyManager {
                 setListAsActive(previousActiveList.getListName());
                 Log.debug("List \"" + previousActiveList.getListName() + "\" has been activated instead. ");
             }
-            
         } catch (Exception e) {
         	Log.error("PrivacyManager#goToVisible: ", e);
         }
@@ -467,7 +409,6 @@ public class PrivacyManager {
     public boolean isGloballyInvisibleListActive() {
     	if (!_active)
     		return false; 
-    	
     	try {
     		String pl = privacyManager.getActiveListName();
     		return INVISIBLE_LIST_NAME.equalsIgnoreCase(pl);
@@ -482,14 +423,11 @@ public class PrivacyManager {
     private PrivacyList ensureGloballyInvisibleListExists() {
     	if (!_active)
     		return null; 
-    	
         PrivacyList list = null;
         try 
         {
             list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
-            if (list != null)
                 return list;
-            
         } catch (XMPPException | SmackException | InterruptedException e1) {
             Log.debug("PrivacyManager#ensureGloballyInvisibleListExists: Could not find globally invisible list. We need to create one");
         }
@@ -507,7 +445,6 @@ public class PrivacyManager {
         {
             Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME, e);
         }
-        
         return list;
     }
 }
