@@ -133,6 +133,13 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0071.html"/>
+                <xmpp:status>partial</xmpp:status>
+                <xmpp:note>Only receiving of the formatted text from Pidgin2 and Psi</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0077.html"/>
                 <xmpp:status>complete</xmpp:status>
             </xmpp:SupportedXep>

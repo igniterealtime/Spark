@@ -23,6 +23,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.xhtmlim.XHTMLManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -52,6 +53,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
+
+import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.rawHtmlToMarkup;
 
 /**
  * Provides a window in which a chat is presented to the end user, by listing all chat messages in order. This
@@ -257,12 +260,35 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
     private static String getMessageBodyByLang(Message message) {
         String preferredLocale = Locale.getDefault().getLanguage();
+        // First try to get XHTML-IM body sent by old clients (Pidgin, Psi) and convert to known XEP-0393 Message Styling
+        List<CharSequence> bodies = XHTMLManager.getBodies(message);
+        if (bodies != null && !bodies.isEmpty()) {
+            String msgBodyRawHtml = unwrapBody(bodies.get(0).toString());
+            if (msgBodyRawHtml != null) {
+                return rawHtmlToMarkup(msgBodyRawHtml);
+            }
+        }
         String body = message.getBody(preferredLocale);
         if (body == null) {
             // return default body (no language)
             body = message.getBody();
         }
         return body;
+    }
+
+    /**
+     * Unwrap "<body>TEXT</body>" to "TEXT"
+     */
+    private static String unwrapBody(String rawHtmlBody) {
+        int bodyOpenTagEndPos = rawHtmlBody.indexOf('>'); // end of "<body xmlns='http://www.w3.org/1999/xhtml'>"
+        if (bodyOpenTagEndPos == -1) {
+            return null;
+        }
+        int bodyCloseTagStartPos = rawHtmlBody.lastIndexOf("</body>");
+        if (bodyCloseTagStartPos == -1) {
+            return null;
+        }
+        return rawHtmlBody.substring(bodyOpenTagEndPos + 1, bodyCloseTagStartPos);
     }
 
 
