@@ -288,6 +288,13 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0394.html"/>
+                <xmpp:status>partial</xmpp:status>
+                <xmpp:note>Only receiving, only basic formatting</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0483.html"/>
                 <xmpp:status>complete</xmpp:status>
                 <xmpp:note>Online Meetings (meet) plugin</xmpp:note>

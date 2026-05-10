@@ -1,7 +1,17 @@
 package org.jivesoftware.spark.ui.transctipt;
 
+import org.jivesoftware.smackx.message_markup.element.CodeBlockElement;
+import org.jivesoftware.smackx.message_markup.element.MarkupElement;
+import org.jivesoftware.smackx.message_markup.element.SpanElement;
+import org.jivesoftware.smackx.message_markup.element.SpanElement.SpanStyle;
 import org.junit.Test;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.jivesoftware.smackx.message_markup.element.SpanElement.SpanStyle.*;
+import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.applySpans;
 import static org.junit.Assert.*;
 
 public class MarkupConverterTest {
@@ -52,5 +62,40 @@ public class MarkupConverterTest {
             "```\n";
         String md = MarkupConverter.rawHtmlToMarkdown(html);
         assertEquals(expectedMd, md);
+    }
+
+    @Test
+    public void testApplySpans() {
+        String text = "plain bold italic code strikethrough\n" +
+            "code block\n" +
+            "\n" +
+            "* list 1\n" +
+            "* list 2\n" +
+            "\n" +
+            "> quote";
+        Set<SpanStyle> codeEm = new LinkedHashSet<>(2);
+        codeEm.add(emphasis);
+        codeEm.add(code);
+        List<MarkupElement.MarkupChildElement> spans = List.of(
+            new SpanElement(6, 10, Set.of()),
+            new SpanElement(11, 17, codeEm),
+            new SpanElement(18, 22, Set.of(code)),
+            new SpanElement(23, 36, Set.of(deleted)),
+            new CodeBlockElement(37, 47)
+        );
+
+        String formatted = applySpans(text, spans);
+        String expected = "plain *bold* _`italic`_ `code` ~strikethrough~\n" +
+            "\n" +
+            "```\n" +
+            "code block\n" +
+            "```\n" +
+            "\n" +
+            "\n" +
+            "* list 1\n" +
+            "* list 2\n" +
+            "\n" +
+            "> quote";
+        assertEquals(expected, formatted);
     }
 }

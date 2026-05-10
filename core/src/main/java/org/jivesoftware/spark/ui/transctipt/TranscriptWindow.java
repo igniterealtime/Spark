@@ -23,6 +23,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.message_markup.element.MarkupElement;
 import org.jivesoftware.smackx.xhtmlim.XHTMLManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -54,6 +55,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
 
+import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.applySpans;
 import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.rawHtmlToMarkup;
 
 /**
@@ -272,6 +274,10 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         if (body == null) {
             // return default body (no language)
             body = message.getBody();
+        }
+        var markup = message.getExtension(MarkupElement.class);
+        if (markup != null) {
+            return applySpans(body, markup.getChildElements());
         }
         return body;
     }

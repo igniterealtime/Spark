@@ -2,15 +2,22 @@ package org.jivesoftware.spark.ui.transctipt;
 
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jivesoftware.smackx.message_markup.element.CodeBlockElement;
+import org.jivesoftware.smackx.message_markup.element.ListElement;
+import org.jivesoftware.smackx.message_markup.element.MarkupElement;
+import org.jivesoftware.smackx.message_markup.element.SpanElement;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class MarkupConverter {
 
     /**
-     * Pidgin 2 and Psi sends formatted text with this
-      */
-
+     * Pidgin 2 and Psi sends formatted text as XHTML-IM body with style in &lt;span&gt; and we should replace them.
+     */
     private static final Pattern[] KNOWN_HTML_PATTERNS = new Pattern[]{
         Pattern.compile("<span style='font-weight: bold;'>(.*?)</span>", Pattern.MULTILINE), // Pidgin 2
         Pattern.compile("<span style='.?text-decoration: underline;'>(.*?)</span>", Pattern.MULTILINE), // Pidgin 2, Psi. The underline becomes just bold
@@ -100,4 +107,68 @@ public class MarkupConverter {
         String unescaped = StringEscapeUtils.unescapeHtml4(markup);
         return unescaped;
     }
+
+    public static String applySpans(String text, List<MarkupElement.MarkupChildElement> spans) {
+        // Tags to insert at each position
+        Map<Integer, List<String>> openingTags = new HashMap<>();
+        Map<Integer, List<String>> closingTags = new HashMap<>();
+        for (var span : spans) {
+            if (span instanceof SpanElement) {
+                SpanElement spanEl = (SpanElement) span;
+                if (spanEl.getStyles().isEmpty()) { // Dino IM leaves empty style for strong
+                    addTags(span, openingTags, "*", closingTags, "*");
+                }
+                for (SpanElement.SpanStyle style : spanEl.getStyles()) {
+                    switch (style) {
+                        case emphasis:
+                            addTags(span, openingTags, "_", closingTags, "_");
+                            break;
+                        case code:
+                            addTags(span, openingTags, "`", closingTags, "`");
+                            break;
+                        case deleted:
+                            addTags(span, openingTags, "~", closingTags, "~");
+                            break;
+                        default: // strong
+                            addTags(span, openingTags, "*", closingTags, "*");
+                            break;
+                    }
+                }
+            } else if (span instanceof CodeBlockElement) {
+                addTags(span, openingTags, "\n```\n", closingTags, "\n```\n");
+            } else if (span instanceof ListElement) {
+                // not supported
+            }
+        }
+
+        StringBuilder result = new StringBuilder(text.length() + 200);
+        for (int i = 0; i <= text.length(); i++) {
+            // Insert closing tags before character at position i
+            List<String> closes = closingTags.get(i);
+            if (closes != null) {
+                for (String tag : closes) {
+                    result.append(tag);
+                }
+            }
+            // Insert opening tags before character at position i
+            List<String> opens = openingTags.get(i);
+            if (opens != null) {
+                for (String tag : opens) {
+                    result.append(tag);
+                }
+            }
+            // Append character
+            if (i < text.length()) {
+                result.append(text.charAt(i));
+            }
+        }
+        return result.toString();
+    }
+
+    private static void addTags(MarkupElement.MarkupChildElement span, Map<Integer, List<String>> openingTags, String startTag, Map<Integer, List<String>> closingTags, String endTag) {
+        openingTags.computeIfAbsent(span.getStart(), k -> new ArrayList<>()).add(startTag);
+        // endPos is exclusive
+        closingTags.computeIfAbsent(span.getEnd(), k -> new ArrayList<>()).add(0, endTag); // prepend for proper nesting
+    }
+
 }
