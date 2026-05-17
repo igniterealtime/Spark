@@ -59,7 +59,6 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         // Add the preferences
         NotificationsPreference notifications = new NotificationsPreference();
         SparkManager.getPreferenceManager().addPreference(notifications);
-        notifications.load();
         final TimerTask registerTask = new SwingTimerTask() {
             @Override
 			public void doRun() {
