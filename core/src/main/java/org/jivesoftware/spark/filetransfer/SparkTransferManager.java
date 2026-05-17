@@ -134,7 +134,7 @@ public class SparkTransferManager {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         // Create the listener
         transferManager = FileTransferManager.getInstanceFor(SparkManager.getConnection());
-        transferManager.addFileTransferListener(request -> SwingUtilities.invokeLater(() -> handleTransferRequest(request, contactList)));
+        transferManager.addFileTransferListener(request -> handleTransferRequest(request, contactList));
         //SPARK-1869
         InBandBytestreamManager ibbmanager = InBandBytestreamManager.getByteStreamManager(SparkManager.getConnection());
         ibbmanager.setDefaultBlockSize(61_440);
@@ -234,7 +234,7 @@ public class SparkTransferManager {
         ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, chatName, chatName);
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);
+        transcriptWindow.insertNotificationMessage(Res.getString("message.file.transfer.chat.window"), Color.BLACK);
 
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
@@ -242,7 +242,7 @@ public class SparkTransferManager {
         transcriptWindow.addComponent(receivingMessageUI);
         chatRoom.increaseUnreadMessageCount();
         chatRoom.scrollToBottom();
-        String fileTransMsg = contactItem.getDisplayName() + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
+        String fileTransMsg = chatName + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileTransMsg, Res.getString("message.file.transfer.notification"));
     }
 
@@ -484,7 +484,7 @@ public class SparkTransferManager {
         });
 
         try {
-            sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getDisplayName());
+            sendingUI.sendFile(transfer, transferManager, fullJID, chatName);
         } catch (NullPointerException e) {
             Log.error(e);
         }

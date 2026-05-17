@@ -283,6 +283,10 @@ public class SendFileTransfer extends JPanel {
         } else if (status == Status.in_progress) {
             titleLabel.setText(Res.getString("message.sending.file.to", nickname));
             showAlert(false);
+            // skip showing progress for small transfers
+            if (transfer.getFileSize() <= 10*1024) {
+                return;
+            }
             if (!progressBar.isVisible()) {
                 progressBar.setVisible(true);
                 progressLabel.setVisible(true);
@@ -292,8 +296,8 @@ public class SendFileTransfer extends JPanel {
                 SwingUtilities.invokeAndWait(() -> {
                     // 100 % = Filesize
                     // x %   = Currentsize
-                    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize());
-                    progressBar.setValue(Math.round(p));
+                    long p = transfer.getFileSize() > 0 ? transfer.getBytesSent() * 100 / transfer.getFileSize() : 100;
+                    progressBar.setValue((int)p);
                 });
             } catch (Exception e) {
                 Log.error("An error occurred while trying to update the file transfer progress bar.", e);

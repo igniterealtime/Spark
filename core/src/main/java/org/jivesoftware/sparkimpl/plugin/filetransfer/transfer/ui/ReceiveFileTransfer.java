@@ -321,6 +321,10 @@ public class ReceiveFileTransfer extends JPanel {
             Log.error("An error occurred while accepting a file transfer request.", e);
         }
 
+        progressBarTasks(request, downloadedFile, contactItem);
+    }
+
+    private void progressBarTasks(FileTransferRequest request, File downloadedFile, ContactItem contactItem) {
         progressBar.setMaximum(100); // setting it to percent
         progressBar.setStringPainted(true);
 
@@ -340,10 +344,9 @@ public class ReceiveFileTransfer extends JPanel {
                 } else {
                     // 100 % = FileSize
                     // x %   = CurrentSize
-                    long p = (transfer.getAmountWritten() * 100 / transfer.getFileSize());
-                    progressBar.setValue(Math.round(p));
+                    long p = transfer.getFileSize() > 0 ? transfer.getAmountWritten() * 100 / transfer.getFileSize() : 100;
+                    progressBar.setValue((int)p);
                 }
-
             }
         };
 
