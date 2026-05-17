@@ -43,6 +43,8 @@ import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import static java.util.Objects.requireNonNull;
+
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
     /**
      * flowpanel is the right panel, where the plugin specific UI is displayed
@@ -55,15 +57,13 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     /**
      * <h1>Constructor - PreferencesPanel</h1>
      * This is an option to select the transmitted preference by code
-     * If the given preference is null or not contained in the preference-list,
-     * the first index of the list will be selected.
-     * 
+     *
      * @param preferences the preference list
      * @param displayPref the preference you want to select
      */
     public PreferencesPanel (Iterable<Preference> preferences, Preference displayPref){
-        this(preferences);
-        if ( displayPref != null || listModel.getSize() == 1){
+        this(requireNonNull(preferences));
+        requireNonNull(displayPref);
             // iterate through all preference-ui items
             for (int i = 0; i < listModel.size(); i++){
                 PreferenceUI p = listModel.get( i );
@@ -76,7 +76,6 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
             }
             // if we got a valid target, we trigger the selection changed method
             if (list.getSelectedIndex() > -1) selectionChanged();
-        }
     }
     
     public PreferencesPanel(Iterable<Preference> preferences) {
@@ -85,9 +84,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         JLabel titleLabel = new JLabel();
         titleLabel.setText(Res.getString("title.preferences"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        /*
-      scrollPane is the left panel displaying the preference icons
-     */
+        // scrollPane is the left panel displaying the preference icons
         JScrollPane scrollPane = new JScrollPane( list );
         scrollPane.setPreferredSize(new Dimension(125, 0));
         scrollPane.setMinimumSize(new Dimension(125,100));
@@ -95,7 +92,6 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
 
         add( scrollPane, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 50, 0));
         add(flowPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
 
         list.setCellRenderer(new JLabelIconRenderer());
         list.addListSelectionListener(this);
@@ -139,12 +135,13 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
 
     @Override
 	public void valueChanged(ListSelectionEvent e) {
-
-        if (!e.getValueIsAdjusting()) {
-
+        if (e.getValueIsAdjusting()) {
+            return;
+        }
             if (currentPreference != null) {
                 try {
                     if (currentPreference.isDataValid()) {
+                        Log.debug("Saving preference " + currentPreference.getNamespace());
                         currentPreference.commit();
                     }
                     else {
@@ -169,12 +166,12 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 }
             }
             selectionChanged();
-        }
     }
 
     public boolean closing() {
         if (currentPreference != null) {
             if (currentPreference.isDataValid()) {
+                Log.debug("Saving preference " + currentPreference.getNamespace());
                 currentPreference.commit();
                 SettingsManager.fireListeners();
                 return true;
