@@ -26,51 +26,42 @@ public interface Preference {
 
     /**
      * Return the title to use in the preference window.
-     *
-     * @return the title to use inside the preferences list.
      */
     String getTitle();
 
     /**
      * Return the icon to use inside the Preferences list. The standard icon size
      * for preferences is 24x24.
-     *
-     * @return the icon to use inside the Preferences list.
      */
     Icon getIcon();
 
     /**
      * Return the tooltip to use for this preference. The tooltip is displayed
      * whenever a user places their mouse cursor over the icon.
-     *
-     * @return the tooltip to display.
      */
     String getTooltip();
 
     /**
      * Return the title to use inside the Preferences list. The title is displayed below
      * and centered of the icon.
-     *
-     * @return the title to use inside the preferences list.
      */
     String getListName();
 
     /**
      * Returns the associated namespace of this preference.
-     *
-     * @return the associated namespace of this preference.
      */
     String getNamespace();
 
     /**
      * Return the UI to display whenever this preference is selected in the preference dialog.
-     *
-     * @return the UI to display when this preference is selected.
+     * Loads preferences into a GUI panel.
      */
     JComponent getGUI();
 
     /**
      * Called whenever the preference is invoked from the Preference list.
+     * Loads the underlined settings data model from a file.
+     * Use {@link #getData()} to retrieve the settings data model.
      */
     void load();
 
@@ -81,27 +72,27 @@ public interface Preference {
 
     /**
      * Return true if the data supplied is valid, otherwise return false.
-     *
-     * @return true if the data supplied is valid.
      */
     boolean isDataValid();
 
     /**
      * The error message to display if #isDataDisplayed returns false.
-     *
-     * @return the error message to display.
      */
     String getErrorMessage();
 
     /**
      * Returns the data model representing this preference.
-     *
-     * @return the data model representing this preference.
+     * You can retrieve it with {@link PreferenceManager#getPreferenceData(String)}.
+     * If you don't use the settings data model then return null.
      */
-    Object getData();
+    default Object getData() {
+        return null;
+    }
 
     /**
      * Called when Spark is closing. This should be used to persist any information at that time.
+     * @deprecated the saving of properties should happen only on commit(). Not used anymore.
      */
-    void shutdown();
+    @Deprecated
+    default void shutdown() {}
 }

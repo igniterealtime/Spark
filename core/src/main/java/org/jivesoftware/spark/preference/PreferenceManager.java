@@ -15,7 +15,6 @@
  */ 
 package org.jivesoftware.spark.preference;
 
-import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.ui.PrivacyPreferences;
@@ -23,11 +22,12 @@ import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
 import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.groupchat.GroupChatPreference;
-//import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.JDialog;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Usage of the PreferenceManager to handle loading of preferences within Spark.
@@ -59,13 +59,6 @@ public class PreferenceManager {
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);
         localPreferences.load();
-
-        SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            @Override
-			public void shutdown() {
-                fireShutdown();
-            }
-        });
     }
 
     /**
@@ -105,21 +98,6 @@ public class PreferenceManager {
 
     public Collection<Preference> getPreferences() {
         return map.values();
-    }
-
-    private void fireShutdown()
-    {
-        for ( final Preference preference : map.values() )
-        {
-            try
-            {
-                preference.shutdown();
-            }
-            catch ( Exception e )
-            {
-                Log.error( "An exception occurred while trying to shutdown preference: " + preference, e );
-            }
-        }
     }
 
     public JDialog getPreferenceDialog() {
