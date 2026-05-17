@@ -43,7 +43,6 @@ public class FileTransferSettings {
 
     /**
      * Returns a {@link List} of strings - one for each blocked file extension. Strings are in the form <tt>*.{extension}</tt>.
-     * @return a {@link List} of blocked file extensions
      */
     public List<String> getBlockedExtensions(){
         return extensions;
@@ -59,7 +58,6 @@ public class FileTransferSettings {
 
     /**
      * Returns a {@link List} of blocked JIDs. File transfers from users with those JIDs will be automaticlly rejected.
-     * @return a {@link List} of blocked JIDs.
      */
     public List<EntityBareJid> getBlockedJIDs() {
         return JIDs;
@@ -76,7 +74,6 @@ public class FileTransferSettings {
     /**
      * Returns the maximum file size in kilobytes for file transfers. If {@link #getCheckFileSize} returns true,
      * files larger than this maximum will not be accepted.
-     * @return the maximum file size in kilobytes for file transfers.
      */
     public int getMaxFileSize(){
         return kb;
@@ -92,7 +89,6 @@ public class FileTransferSettings {
 
     /**
      * Returns true if there is a maximum allowable file size for transfers.
-     * @return true if there is a maximum allowable file size for transfers.
      */
     public boolean getCheckFileSize(){
         return checkSize;
@@ -110,7 +106,6 @@ public class FileTransferSettings {
     /**
      * Returns the text of a canned message sent to requestors whose file transfers were automatically rejected. If this
      * returns null or an empty string, no message will be sent.
-     * @return the text of a canned message sent to requestors whose file transfers were automatically rejected.
      */
     public String getCannedRejectionMessage() {
         return cannedRejectionMessage;
@@ -130,36 +125,36 @@ public class FileTransferSettings {
      */
     public void load() {
         Properties props = new Properties();
-        if (BACKING_STORE.exists()) {
-            try {
-                props.load(new FileInputStream(BACKING_STORE));
+        if (!BACKING_STORE.exists()) {
+            return;
+        }
+        try {
+            props.load(new FileInputStream(BACKING_STORE));
 
-                String types = props.getProperty("extensions");
-                if (types != null) {
-                    this.extensions = convertSettingsStringToList(types);
-                }
-
-                String users = props.getProperty("jids");
-                if (users != null) {
-                    List<String> jidStrings = convertSettingsStringToList(users);
-                    Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
-                    this.JIDs = new ArrayList<>(jidSet);
-                }
-
-                String ignore = props.getProperty("checkFileSize");
-                if (ignore != null) {
-                    this.checkSize = Boolean.parseBoolean(ignore);
-                }
-
-                String maxSize = props.getProperty("maxSize");
-                if (maxSize != null) {
-                    this.kb = Integer.parseInt(maxSize);
-                }
-                this.cannedRejectionMessage = props.getProperty("cannedResponse");
-            } catch (IOException ioe) {
-                System.out.println("Error Loading properties from Filesystem"+ioe);
-                //TODO handle error better.
+            String types = props.getProperty("extensions");
+            if (types != null) {
+                this.extensions = convertSettingsStringToList(types);
             }
+
+            String users = props.getProperty("jids");
+            if (users != null) {
+                List<String> jidStrings = convertSettingsStringToList(users);
+                Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
+                this.JIDs = new ArrayList<>(jidSet);
+            }
+
+            String ignore = props.getProperty("checkFileSize");
+            if (ignore != null) {
+                this.checkSize = Boolean.parseBoolean(ignore);
+            }
+
+            String maxSize = props.getProperty("maxSize");
+            if (maxSize != null) {
+                this.kb = Integer.parseInt(maxSize);
+            }
+            this.cannedRejectionMessage = props.getProperty("cannedResponse");
+        } catch (IOException ioe) {
+            Log.error("Error loading Transfer Guard settings", ioe);
         }
     }
 
@@ -176,7 +171,7 @@ public class FileTransferSettings {
             if (cannedRejectionMessage != null) {
                 props.setProperty("cannedResponse", cannedRejectionMessage);
             }
-            props.store(new FileOutputStream(BACKING_STORE), BACKING_STORE.getAbsolutePath());
+            props.store(new FileOutputStream(BACKING_STORE), null);
         } catch (IOException ioe) {
             Log.error(ioe);
         }
@@ -185,7 +180,6 @@ public class FileTransferSettings {
     /**
      * Converts a list of strings to a single comma separated string
      * @param settings the {@link List} of strings.
-     * @return a comma separated string.
      */
     public static String convertSettingsListToString(List<? extends CharSequence> settings) {
         StringBuilder buffer = new StringBuilder();
@@ -205,7 +199,6 @@ public class FileTransferSettings {
      * Converts the supplied string to a {@link List} of strings. The input is split
      * with the tokensL: ',' ':' '\n' '\t' '\r' and ' '.
      * @param settings  the string to convert.
-     * @return  the resultant {@link List}.
      */
     public static List<String> convertSettingsStringToList(String settings) {
         List<String> list = new ArrayList<>();

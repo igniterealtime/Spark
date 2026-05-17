@@ -28,43 +28,52 @@ import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Spark plugin which allows configuration of allowed file sizes, types, and senders for file transfer.
- * Transfer requests which don't meet the configured preferences are automatically rejecte.
+ * Transfer requests which don't meet the configured preferences are automatically rejected.
  */
 public class FileTransferSettingsPlugin implements Plugin {
-
     private PreferenceManager prefManager;
+    private FileTransferListener fileTransferListener;
 
-    /**
-     * Called after Spark is loaded to initialize the new plugin.
-     */
     @Override
     public void initialize() {
-        addTransferListener();
         prefManager = SparkManager.getPreferenceManager();
         prefManager.addPreference(new TransferSettingsPreference());
+        fileTransferListener = request -> {
+            FileTransferSettings settings = (FileTransferSettings) prefManager.getPreferenceData(TransferSettingsPreference.NAMESPACE);
+            try {
+                if (!requestContainsBannedFile(request, settings)) {
+                    return false;
+                }
+                request.reject();
+
+                String responseMessage = settings.getCannedRejectionMessage();
+                if (responseMessage != null && !responseMessage.isEmpty()) {
+                    Message message = StanzaBuilder.buildMessage()
+                        .to(request.getRequestor())
+                        .setBody(responseMessage)
+                        .build();
+                    SparkManager.getConnection().sendStanza(message);
+                }
+                return true;
+            } catch (SmackException | InterruptedException ex) {
+                Log.warning("Unable to handle file transfer.", ex);
+                return false;
+            }
+        };
+        SparkTransferManager transferManager = SparkManager.getTransferManager();
+        transferManager.addTransferListener(fileTransferListener);
     }
 
-    /**
-     * Called when Spark is shutting down to allow for persistence of information
-     * or releasing of resources.
-     */
     @Override
     public void shutdown() {
-
+        SparkTransferManager transferManager = SparkManager.getTransferManager();
+        transferManager.removeTransferListener(fileTransferListener);
     }
 
-    /**
-     * Called when the plugin is uninstalled with the Spark plugin manager.
-     */
     @Override
     public void uninstall() {
     }
 
-    /**
-     * Return true if the Spark can shutdown on users request.
-     *
-     * @return true if Spark can shutdown on users request.
-     */
     @Override
     public boolean canShutDown() {
         return true;
@@ -82,7 +91,7 @@ public class FileTransferSettingsPlugin implements Plugin {
         if (settings.getCheckFileSize() && request.getFileSize() > settings.getMaxFileSize()) {
             return true;
         }
-        if (settings.getBlockedJIDs().contains(request.getRequestor().asBareJid())) {
+        if (settings.getBlockedJIDs().contains(request.getRequestor().asEntityBareJidIfPossible())) {
             return true;
         }
         return settings.getBlockedExtensions().contains(getFileExtensionFromName(request.getFileName()));
@@ -100,47 +109,7 @@ public class FileTransferSettingsPlugin implements Plugin {
         if (dotIdx > 0 && dotIdx < (filename.length() - 1)) {
             return "*" + filename.substring( dotIdx );
         }
-
         return null;
     }
 
-    /**
-     * Adds a {@link FileTransferListener} to allow this plugin to intercept {@link FileTransferRequest}s.
-     */
-    private void addTransferListener() {
-
-        SparkTransferManager transferManager = SparkManager.getTransferManager();
-
-        transferManager.addTransferListener( request -> {
-            FileTransferSettings settings = (FileTransferSettings)prefManager.getPreferenceData("transferSettings");
-
-            try
-            {
-                if ( requestContainsBannedFile( request, settings ) )
-                {
-                    request.reject();
-
-                    String responseMessage = settings.getCannedRejectionMessage();
-                    if ( responseMessage != null && !responseMessage.isEmpty())
-                    {
-                        Message message = StanzaBuilder.buildMessage()
-                            .setBody( responseMessage )
-                            .build();
-                        message.setTo( request.getRequestor() );
-                        SparkManager.getConnection().sendStanza( message );
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SmackException | InterruptedException ex)
-            {
-                Log.warning( "Unable to handle file transfer.", ex );
-                return false;
-            }
-        } );
-    }
 }
