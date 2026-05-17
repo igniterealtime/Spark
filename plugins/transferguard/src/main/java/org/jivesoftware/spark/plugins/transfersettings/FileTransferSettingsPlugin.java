@@ -31,12 +31,11 @@ import org.jivesoftware.spark.util.log.Log;
  * Transfer requests which don't meet the configured preferences are automatically rejected.
  */
 public class FileTransferSettingsPlugin implements Plugin {
-    private PreferenceManager prefManager;
     private FileTransferListener fileTransferListener;
 
     @Override
     public void initialize() {
-        prefManager = SparkManager.getPreferenceManager();
+        PreferenceManager prefManager = SparkManager.getPreferenceManager();
         prefManager.addPreference(new TransferSettingsPreference());
         fileTransferListener = request -> {
             FileTransferSettings settings = (FileTransferSettings) prefManager.getPreferenceData(TransferSettingsPreference.NAMESPACE);

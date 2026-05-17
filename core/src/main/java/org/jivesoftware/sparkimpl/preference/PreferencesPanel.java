@@ -37,9 +37,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -106,7 +108,8 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     private synchronized void selectionChanged(){
         PreferenceUI o = list.getSelectedValue();
         Preference pref = o.getPreference();
-        pref.load();
+        PreferenceManager prefManager = SparkManager.getPreferenceManager();
+        prefManager.getPreferenceData(pref.getNamespace());
 
         JComponent comp = pref.getGUI();
         flowPanel.removeAll();

@@ -16,131 +16,74 @@
 package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.preference.PreferenceManager;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 /**
  * Preference object for file transfer settings. Used by Spark to show the associated UI and commit changes to preference settings.
  */
 public class TransferSettingsPreference implements Preference {
-    private final TransferSettingsPanel gui = new TransferSettingsPanel();
+    static final String NAMESPACE = "transferSettings";
+    private TransferSettingsPanel gui;
     private final FileTransferSettings settings = new FileTransferSettings();
 
-    /**
-     * Called when preference settings should be persisted.
-     */
     @Override
     public void commit() {
         gui.storeSettings(settings);
         settings.store();
     }
 
-    /**
-     * Returns the underlying data object. In this case it is a {@link FileTransferSettings} instance.
-     *
-     * @return object data
-     */
     @Override
     public Object getData() {
         return settings;
     }
 
-    /**
-     * Returns an error message to display if calls to {@link #isDataValid} return false.
-     *
-     * @return an error message to display if calls to {@link #isDataValid} return false.
-     */
     @Override
     public String getErrorMessage() {
         return "What happened here?";
     }
 
-    /**
-     * Returns the GUI for setting and viewing preference settings.
-     *
-     * @return the GUI for setting and viewing preference settings.
-     */
     @Override
-    public javax.swing.JComponent getGUI() {
+    public JComponent getGUI() {
+        gui = new TransferSettingsPanel();
         gui.applySettings(settings);
         return gui;
     }
 
-    /**
-     * Returns the {@link Icon} to show in the preferences ui.
-     *
-     * @return the {@link Icon} to show in the preferences ui.
-     */
     @Override
-    public javax.swing.Icon getIcon() {
+    public Icon getIcon() {
         return new ImageIcon(getClass().getResource("/images/guard.png"));
     }
 
-    /**
-     * Returns the name displayed in the list of preferences.
-     *
-     * @return the name displayed in the list of preferences.
-     */
     @Override
     public String getListName() {
     	return TGuardRes.getString("guard.settings.title.list");
     }
 
-    /**
-     * Returns the key to retrive this instance from the {@link PreferenceManager}.
-     *
-     * @return the key to retrive this instance from the {@link PreferenceManager}.
-     */
     @Override
     public String getNamespace() {
-        return "transferSettings";
+        return NAMESPACE;
     }
 
-    /**
-     * Returns the title of the preference panel for this preference.
-     *
-     * @return the title of the preference panel for this preference.
-     */
     @Override
     public String getTitle() {
         return TGuardRes.getString("guard.settings.title.settings");
     }
 
-    /**
-     * Returns the tooltip text to display in the preferences list.
-     *
-     * @return the tooltip text to display in the preferences list.
-     */
     @Override
     public String getTooltip() {
         return "Configure allowed file transfer types, sizes, and senders";
     }
 
-    /**
-     * Returns true if the supplied preference settings are valid. If not, an associated error message
-     * can be retrieved by a call to {@link #getErrorMessage}. This implementation always returns true.
-     *
-     * @return true.
-     */
     @Override
     public boolean isDataValid() {
         return true;
     }
 
-    /**
-     * Called when data should be loaded from the persistent store.
-     */
     @Override
     public void load() {
         settings.load();
-    }
-
-    /**
-     * Called when the application shuts down.
-     */
-    @Override
-    public void shutdown() {
     }
 }

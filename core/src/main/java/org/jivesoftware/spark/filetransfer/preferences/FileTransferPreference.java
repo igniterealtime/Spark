@@ -23,24 +23,17 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
-/**
- */
 public class FileTransferPreference implements Preference {
-
-    private final FileTransferPreferencePanel ui;
-    private final LocalPreferences localPreferences;
+    public static final String NAMESPACE = "FILE_TRANSFER";
+    private final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+    private FileTransferPreferencePanel ui;
 
     public FileTransferPreference() {
-        localPreferences = SettingsManager.getLocalPreferences();
-        int timeout = localPreferences.getFileTransferTimeout();
-
-        timeout = timeout * 60 * 1000;
-
+        int timeout = localPreferences.getFileTransferTimeout() * 60 * 1000;
         OutgoingFileTransfer.setResponseTimeout(timeout);
-
-        ui = new FileTransferPreferencePanel();
     }
 
     @Override
@@ -65,16 +58,12 @@ public class FileTransferPreference implements Preference {
 
     @Override
 	public String getNamespace() {
-        return "FILE_TRANSFER";
+        return NAMESPACE;
     }
 
     @Override
 	public JComponent getGUI() {
-        return ui;
-    }
-
-    @Override
-	public void load() {
+        ui = new FileTransferPreferencePanel();
         boolean ibb = localPreferences.isFileTransferIbbOnly();
         int timeout = localPreferences.getFileTransferTimeout();
         boolean auto = localPreferences.isAutoAcceptFileTransferFromContacts();
@@ -82,6 +71,11 @@ public class FileTransferPreference implements Preference {
         ui.setTimeout(Integer.toString(timeout));
         ui.setIbbOnly(ibb);
         ui.setAutoAccept(auto);
+        return ui;
+    }
+
+    @Override
+	public void load() {
     }
 
     @Override
@@ -120,13 +114,4 @@ public class FileTransferPreference implements Preference {
         return null;
     }
 
-    @Override
-	public Object getData() {
-        return null;
-    }
-
-    @Override
-	public void shutdown() {
-        commit();
-    }
 }

@@ -31,7 +31,7 @@ import javax.swing.*;
  */
 public class NotificationsPreference implements Preference {
 
-	private final NotificationsUI panel = new NotificationsUI();
+	private NotificationsUI panel;
 
 	/**
 	 * Define the Namespace used for this preference.
@@ -60,66 +60,11 @@ public class NotificationsPreference implements Preference {
 
 	@Override
 	public void load() {
-		SwingWorker thread = new SwingWorker() {
-			LocalPreferences localPreferences;
-
-			@Override
-			public Object construct() {
-				localPreferences = SettingsManager.getLocalPreferences();
-				return localPreferences;
-			}
-
-			@Override
-			public void finished() {
-				boolean toaster = localPreferences.getShowToasterPopup();
-				boolean asteriskToaster = localPreferences.getDisableAsteriskToasterPopup();
-				boolean windowFocus = localPreferences.getWindowTakesFocus();
-				boolean offlineNotification = localPreferences
-						.isOfflineNotificationsOn();
-				boolean onlineNotification = localPreferences
-						.isOnlineNotificationsOn();
-				boolean betaChecking = localPreferences.isBetaCheckingEnabled();
-				int DisplayTime = localPreferences.getNotificationsDisplayTime();
-				boolean typingNotification = localPreferences
-						.isTypingNotificationShown();
-				boolean systemTrayNotification = localPreferences
-						.isSystemTrayNotificationEnabled();
-
-				panel.setShowToaster(toaster);
-				panel.setDisableAsteriskToaster(asteriskToaster);
-				panel.setShowWindowPopup(windowFocus);
-				panel.setOfflineNotification(offlineNotification);
-				panel.setOnlineNotification(onlineNotification);
-				panel.setCheckForBeta(betaChecking);
-				panel.setNotificationsDisplayTime(DisplayTime);
-				panel.setTypingNotification(typingNotification);
-				panel.setSystemTrayNotification(systemTrayNotification);
-				
-				// when windowFocus is selected the systemtraynotification doesn't work --> disable it
-				if(windowFocus) {
-					panel.setSystemTrayNotification(false);
-					panel.setSystemTrayNotificationEnabled(false);
-				}
-				else
-					panel.setSystemTrayNotificationEnabled(true);
-				
-				if(systemTrayNotification) {
-					panel.setShowWindowPopup(false);
-					panel.setShowWindowPopupEnabled(false);
-				}
-				else
-					panel.setShowWindowPopupEnabled(true);
-			}
-		};
-
-		thread.start();
-
 	}
 
 	@Override
 	public void commit() {
 		LocalPreferences pref = SettingsManager.getLocalPreferences();
-
 		pref.setShowToasterPopup(panel.showToaster());
 		pref.setDisableAsteriskToasterPopup(panel.disableAsteriskToaster());
 		pref.setWindowTakesFocus(panel.shouldWindowPopup());
@@ -133,7 +78,7 @@ public class NotificationsPreference implements Preference {
 
 	@Override
 	public Object getData() {
-		return SettingsManager.getLocalPreferences();
+		return null;
 	}
 
 	@Override
@@ -148,6 +93,42 @@ public class NotificationsPreference implements Preference {
 
 	@Override
 	public JComponent getGUI() {
+        panel = new NotificationsUI();
+        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        boolean toaster = localPreferences.getShowToasterPopup();
+        boolean asteriskToaster = localPreferences.getDisableAsteriskToasterPopup();
+        boolean windowFocus = localPreferences.getWindowTakesFocus();
+        boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
+        boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
+        boolean betaChecking = localPreferences.isBetaCheckingEnabled();
+        int DisplayTime = localPreferences.getNotificationsDisplayTime();
+        boolean typingNotification = localPreferences.isTypingNotificationShown();
+        boolean systemTrayNotification = localPreferences.isSystemTrayNotificationEnabled();
+
+        panel.setShowToaster(toaster);
+        panel.setDisableAsteriskToaster(asteriskToaster);
+        panel.setShowWindowPopup(windowFocus);
+        panel.setOfflineNotification(offlineNotification);
+        panel.setOnlineNotification(onlineNotification);
+        panel.setCheckForBeta(betaChecking);
+        panel.setNotificationsDisplayTime(DisplayTime);
+        panel.setTypingNotification(typingNotification);
+        panel.setSystemTrayNotification(systemTrayNotification);
+
+        // when windowFocus is selected the SystemTrayNotification doesn't work --> disable it
+        if (windowFocus) {
+            panel.setSystemTrayNotification(false);
+            panel.setSystemTrayNotificationEnabled(false);
+        } else {
+            panel.setSystemTrayNotificationEnabled(true);
+        }
+
+        if (systemTrayNotification) {
+            panel.setShowWindowPopup(false);
+            panel.setShowWindowPopupEnabled(false);
+        } else {
+            panel.setShowWindowPopupEnabled(true);
+        }
 		return panel;
 	}
 
@@ -155,10 +136,4 @@ public class NotificationsPreference implements Preference {
 	public String getNamespace() {
 		return NAMESPACE;
 	}
-
-	@Override
-	public void shutdown() {
-		commit();
-	}
-
 }

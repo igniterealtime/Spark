@@ -26,8 +26,10 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
 
 import javax.swing.JDialog;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Usage of the PreferenceManager to handle loading of preferences within Spark.
@@ -36,29 +38,30 @@ import java.util.Map;
  */
 public class PreferenceManager {
     private final Map<String, Preference> map = new LinkedHashMap<>();
+    private final Set<String> loadedPrefs = new HashSet<>();
     private PreferenceDialog preferenceDialog;
 
     public PreferenceManager() {
         // Initialize base preferences
         ChatPreference chatPreferences = new ChatPreference();
         addPreference(chatPreferences);
-        chatPreferences.load();
-        
+        getPreferenceData(ChatPreference.NAMESPACE);
+
         GroupChatPreference groupChatPreferences = new GroupChatPreference();
         addPreference(groupChatPreferences);
-        groupChatPreferences.load();
-        
+        getPreferenceData(GroupChatPreference.NAMESPACE);
+
 //        MediaPreference preferences = new MediaPreference();
 //        addPreference(preferences);
-//        preferences.load();
-        
+//        getPreferenceData(MediaPreference.NAMESPACE);
+
         PrivacyPreferences privacy = new PrivacyPreferences();
         addPreference(privacy);
-        privacy.load();
+        getPreferenceData(PrivacyPreferences.NAMESPACE);
 
         LocalPreference localPreferences = new LocalPreference();
         addPreference(localPreferences);
-        localPreferences.load();
+        getPreferenceData(LocalPreference.NAMESPACE);
     }
 
     /**
@@ -93,7 +96,20 @@ public class PreferenceManager {
     }
 
     public Object getPreferenceData(String namespace) {
-        return getPreference(namespace).getData();
+        Preference preference = getPreference(namespace);
+        if (preference == null) {
+            Log.error("Unable to load preference " + namespace + ": not registered");
+            return null;
+        }
+        boolean notLoaded = loadedPrefs.add(namespace);
+        if (notLoaded) {
+            try {
+                preference.load();
+            } catch (Exception e) {
+                Log.error("Unable to load preference " + namespace, e);
+            }
+        }
+        return preference.getData();
     }
 
     public Collection<Preference> getPreferences() {

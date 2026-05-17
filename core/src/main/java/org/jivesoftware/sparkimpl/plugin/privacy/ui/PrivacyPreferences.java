@@ -25,12 +25,9 @@ import org.jivesoftware.spark.preference.Preference;
  * @author Bergunde Holger
  */
 public class PrivacyPreferences implements Preference {
-
+    public static final String NAMESPACE = "jabber:iq:privacy";
     private final String _title = Res.getString("privacy.label.preferences");
     private final String _toolTip = Res.getString("privacy.tooltip.preferences");
-
-    public PrivacyPreferences() {
-    }
 
     @Override
     public String getTitle() {
@@ -54,7 +51,7 @@ public class PrivacyPreferences implements Preference {
 
     @Override
     public String getNamespace() {
-        return "jabber:iq:privacy";
+        return NAMESPACE;
     }
 
     @Override
@@ -78,14 +75,5 @@ public class PrivacyPreferences implements Preference {
     @Override
     public String getErrorMessage() {
         return "error in privacy plugin?";
-    }
-
-    @Override
-    public Object getData() {
-        return null;
-    }
-
-    @Override
-    public void shutdown() {
     }
 }

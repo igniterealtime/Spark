@@ -24,15 +24,10 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 
-/**
- */
 public class ThemePreference implements Preference {
-
     private MainThemePanel panel;
 
     public static final String NAMESPACE = "themes";
-
-    public ThemePreference() {}
 
     @Override
 	public String getTitle() {
@@ -79,11 +74,6 @@ public class ThemePreference implements Preference {
     }
 
     @Override
-	public Object getData() {
-        return null;
-    }
-
-    @Override
 	public void commit() {
         final String pack = panel.getThemePanel().getSelectedEmoticonPack();
         boolean emotEnabled = panel.getThemePanel().areEmoticonsEnabled();
@@ -112,13 +102,6 @@ public class ThemePreference implements Preference {
         catch (NumberFormatException e) {
             Log.error(e);
         }
-        
-        
         ColorSettingManager.saveColorSettings();
     }
-
-    @Override
-	public void shutdown() {}
 }
-
-

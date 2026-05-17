@@ -15,17 +15,26 @@
  */
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
-import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.util.log.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class SparkMeetPreference implements Preference {
-	public static final String NAMESPACE = "ofmeet";
-	
+	static final String NAMESPACE = "ofmeet";
 	private SparkMeetPlugin plugin;
-	private final MeetingPanel panel = new MeetingPanel();
+    private MeetingPanel panel;
+
+    private final File pluginSettingsFile = new File(Spark.getSparkUserHome(), "ofmeet.properties");
+    public Properties props = new Properties();
 
 	public SparkMeetPreference(SparkMeetPlugin plugin) {
 		this.plugin = plugin;
@@ -33,12 +42,17 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public void commit() {
-		plugin.commit(panel.getUrl());	
+        String meetingsBaseUrl = panel.getMeetingsBaseUrl();
+        props = new Properties();
+        props.setProperty("url", meetingsBaseUrl);
+        savePreferences();
+        // notify plugin about the change
+        plugin.commit(meetingsBaseUrl);
 	}
 
 	@Override
 	public Object getData() {
-		return plugin.props;
+		return props;
 	}
 
 	@Override
@@ -48,7 +62,8 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public JComponent getGUI() {
-		panel.setUrl(plugin.props.getProperty("url"));
+        panel = new MeetingPanel();
+		panel.setMeetingsBaseUrl(props.getProperty("url"));
 		return panel;
 	}
 
@@ -84,33 +99,29 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public void load() {
-	}
+        loadFromFile();
+    }
 
-	@Override
-	public void shutdown() {
-
-	}
-	
-    private static class MeetingPanel extends JPanel {
-	private final JTextArea txtMessage = new JTextArea();
-    private JLabel url = new JLabel(SparkMeetResource.getString("preference.url"));
-
-        MeetingPanel() {
-            txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            txtMessage.setLineWrap(true);
-            setLayout(new VerticalFlowLayout());
-            setBorder(BorderFactory.createTitledBorder(SparkMeetResource.getString("preference.title")));
-            add(url, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(txtMessage, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+    private void loadFromFile() {
+        if (!pluginSettingsFile.exists()) {
+            Log.debug("Meet plugin settings file does not exist= " + pluginSettingsFile.getPath() + ", using default");
+            return;
         }
-
-        public void setUrl(String message) {
-            txtMessage.setText(message);
+        Log.debug("Meet plugin: load settings from " + pluginSettingsFile.getPath());
+        try {
+            props.load(new FileInputStream(pluginSettingsFile));
+        } catch (IOException ioe) {
+            Log.error("Unable to load Meet plugin settings:", ioe);
         }
+    }
 
-        public String getUrl() {
-            return txtMessage.getText().trim();
+    private void savePreferences() {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(pluginSettingsFile);
+            props.store(outputStream, null);
+            outputStream.close();
+        } catch (Exception e) {
+            Log.error("Meet plugin: unable to save settings", e);
         }
-    }	
-
+    }
 }

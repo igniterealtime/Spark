@@ -35,7 +35,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * to be used and showing dates and times of chat posts.
  */
 public class ChatPreference implements Preference {
-    private final ChatPreferencePanel panel = new ChatPreferencePanel();
+    private ChatPreferencePanel panel;
     private String errorMessage = "Error";
 
     /**
@@ -65,41 +65,6 @@ public class ChatPreference implements Preference {
 
     @Override
 	public void load() {
-        SwingWorker thread = new SwingWorker() {
-            LocalPreferences localPreferences;
-
-            @Override
-			public Object construct() {
-                localPreferences = SettingsManager.getLocalPreferences();
-                return localPreferences;
-            }
-
-            @Override
-			public void finished() {
-                boolean showTime = localPreferences.isTimeDisplayedInChat();
-                boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
-                boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
-                boolean prevChatHistoryHidden = !localPreferences.isPrevChatHistoryEnabled();
-                boolean tabsOnTop = localPreferences.isTabTopPosition();
-                boolean buzzAllowed = localPreferences.isBuzzEnabled();
-                boolean closeUnreadMessage = localPreferences.isCloseUnreadMessage();
-                boolean isChatHistoryAscending = localPreferences.getChatHistoryAscending();
-                boolean tabsScroll = localPreferences.isTabsScroll();
-                panel.setShowTime(showTime);
-                panel.setGroupChatNotificationsOn(notificationsOn);
-                panel.setChatHistoryHidden(chatHistoryHidden);
-                panel.setPrevChatHistoryHidden(prevChatHistoryHidden);
-                panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
-                panel.setTabsOnTop(tabsOnTop);
-                panel.setTabsScrollBox(tabsScroll);
-                panel.setBuzzEnabled(buzzAllowed);
-                panel.setCloseUnreadMessageEnabled(closeUnreadMessage);
-                panel.setSortChatHistoryAscending(isChatHistoryAscending);
-            }
-        };
-
-        thread.start();
-
     }
 
     @Override
@@ -135,15 +100,9 @@ public class ChatPreference implements Preference {
     }
 
     @Override
-	public Object getData() {
-        return SettingsManager.getLocalPreferences();
-    }
-
-    @Override
 	public String getErrorMessage() {
         return errorMessage;
     }
-
 
     @Override
 	public boolean isDataValid() {
@@ -159,6 +118,28 @@ public class ChatPreference implements Preference {
 
     @Override
 	public JComponent getGUI() {
+        panel = new ChatPreferencePanel();
+        LocalPreferences localPreferences;
+        localPreferences = SettingsManager.getLocalPreferences();
+        boolean showTime = localPreferences.isTimeDisplayedInChat();
+        boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
+        boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
+        boolean prevChatHistoryHidden = !localPreferences.isPrevChatHistoryEnabled();
+        boolean tabsOnTop = localPreferences.isTabTopPosition();
+        boolean buzzAllowed = localPreferences.isBuzzEnabled();
+        boolean closeUnreadMessage = localPreferences.isCloseUnreadMessage();
+        boolean isChatHistoryAscending = localPreferences.getChatHistoryAscending();
+        boolean tabsScroll = localPreferences.isTabsScroll();
+        panel.setShowTime(showTime);
+        panel.setGroupChatNotificationsOn(notificationsOn);
+        panel.setChatHistoryHidden(chatHistoryHidden);
+        panel.setPrevChatHistoryHidden(prevChatHistoryHidden);
+        panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
+        panel.setTabsOnTop(tabsOnTop);
+        panel.setTabsScrollBox(tabsScroll);
+        panel.setBuzzEnabled(buzzAllowed);
+        panel.setCloseUnreadMessageEnabled(closeUnreadMessage);
+        panel.setSortChatHistoryAscending(isChatHistoryAscending);
         return panel;
     }
 
@@ -166,11 +147,5 @@ public class ChatPreference implements Preference {
 	public String getNamespace() {
         return NAMESPACE;
     }
-
-    @Override
-	public void shutdown() {
-        commit();
-    }
-
 
 }

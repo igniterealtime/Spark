@@ -14,50 +14,58 @@
  * limitations under the License.
  */
 
-
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import java.awt.*;
-import javax.swing.*;
-import java.util.*;
-import java.util.zip.*;
-import java.io.*;
-import java.net.*;
-
-
+import de.mxro.process.ProcessListener;
+import de.mxro.process.Spawn;
+import de.mxro.process.XProcess;
+import org.jitsi.util.OSUtils;
 import org.jivesoftware.Spark;
-import org.jivesoftware.spark.*;
-
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.packet.IQ;
-
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-
-import org.jivesoftware.spark.plugin.*;
-import org.jivesoftware.spark.ui.*;
-import org.jivesoftware.spark.util.log.*;
-
-import org.jitsi.util.OSUtils;
-import de.mxro.process.*;
+import org.jivesoftware.spark.ChatManager;
+import org.jivesoftware.spark.SessionManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.GlobalMessageListener;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.parts.*;
+import org.jxmpp.jid.parts.Localpart;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
-    public Properties props = new Properties();
     /**
      * Online conference URL e.g. <code>https://meet.jit.si/Lobby</code>.
      * Can be configured in preferences or retrived from server if configured there.
      * By default, it will be <code>https://yourxmppdomain:7443/ofmeet/</code>.
      */
     public String url = null;
-	
-    private final File pluginsettings = new File(Spark.getSparkUserHome(), "ofmeet.properties");
 
     /** Key: BareJid  for groups or chats, EntityJid for 1-1 chats */
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
@@ -72,52 +80,30 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         ProviderManager.addIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE, new QueryRequest.Provider());
         getElectronPath();
 
-        ChatManager chatManager = SparkManager.getChatManager();
-
         String server = SparkManager.getSessionManager().getServerAddress().toString();
         String port = "7443";
         url = "https://" + server + ":" + port + "/ofmeet/";
 
-        loadPreferences();
-        Log.debug("ofmeet-info: ofmeet url from properties-file is= " + url);
-
-        chatManager.addChatRoomListener(this);
-        chatManager.addGlobalMessageListener(this);
-		
-		SparkMeetPreference preference = new SparkMeetPreference(this);
-		SparkManager.getPreferenceManager().addPreference(preference);
+        SparkMeetPreference preference = new SparkMeetPreference(this);
+        PreferenceManager prefManager = SparkManager.getPreferenceManager();
+        prefManager.addPreference(preference);
+        Properties props = (Properties) prefManager.getPreferenceData(SparkMeetPreference.NAMESPACE);
+        if (props.getProperty("url") != null) {
+            url = props.getProperty("url");
+            Log.debug("Meet plugin: url from setting is " + url);
+        }
 
         initializeOnlineMeetings();
-    }
 
-    private void loadPreferences() {
-        if (!pluginsettings.exists()) {
-            Log.debug("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default");
-            return;
-        }
-        Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
-        try {
-            props.load(new FileInputStream(pluginsettings));
-            if (props.getProperty("url") != null)
-            {
-                url = props.getProperty("url");
-            }
-        } catch (IOException ioe) {
-             Log.error("ofmeet-Error:", ioe);
-        }
+        ChatManager chatManager = SparkManager.getChatManager();
+        chatManager.addChatRoomListener(this);
+        chatManager.addGlobalMessageListener(this);
     }
 
     private void initializeOnlineMeetings() {
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-
-        DiscoverInfo discoverInfo;
-        DomainBareJid serverJid = SparkManager.getSessionManager().getServerAddress();
-        try {
-            discoverInfo = discoManager.discoverInfo(serverJid);
-        } catch (Exception e) {
-            Log.debug("Unable to disco " + serverJid);
-            return;
-        }
+        SessionManager sessionManager = SparkManager.getSessionManager();
+        DomainBareJid serverJid = sessionManager.getServerAddress();
+        DiscoverInfo discoverInfo = sessionManager.getDiscoveredInfos().get(serverJid);
         if (discoverInfo == null) {
             return;
         }
@@ -158,19 +144,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
 	public void commit(String url) {
 		this.url = url;
-        savePreferences();
-    }
-
-    private void savePreferences() {
-        Properties props = new Properties();
-        props.setProperty("url", url);
-        try {
-            FileOutputStream outputStream = new FileOutputStream(pluginsettings);
-            props.store(outputStream, null);
-            outputStream.close();
-        } catch (Exception e) {
-             Log.error("ofmeet-Error:", e);
-        }
     }
 
     @Override
@@ -178,7 +151,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         try
         {
-            Log.debug("shutdown");
             SparkManager.getChatManager().removeChatRoomListener(this);
             ProviderManager.removeIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE);
 

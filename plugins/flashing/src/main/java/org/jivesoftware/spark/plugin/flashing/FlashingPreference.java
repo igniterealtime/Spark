@@ -15,32 +15,16 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
-import java.awt.EventQueue;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.log.Log;
 
 public class FlashingPreference implements Preference {
 	public static final String NAMESPACE = "flashing";
 
 	private FlashingPreferenceDialog dialog;
-	private final FlashingPreferences preferences;
-
-	public FlashingPreference() {
-	   	preferences = new FlashingPreferences();
-	   	
-		try {
-            if (EventQueue.isDispatchThread()) {
-                dialog = new FlashingPreferenceDialog();
-            } else {
-                EventQueue.invokeAndWait( () -> dialog = new FlashingPreferenceDialog() );
-            }
-		} catch (Exception e) {
-            Log.error(e);
-		}		
-	}
+	private final FlashingPreferences preferences = new FlashingPreferences();
 
 	public FlashingPreferences getPreferences() {
 		return preferences;
@@ -65,6 +49,9 @@ public class FlashingPreference implements Preference {
 
 	@Override
 	public JComponent getGUI() {
+        dialog = new FlashingPreferenceDialog();
+        dialog.setFlashing(preferences.isFlashingEnabled());
+        dialog.setFlashingType(preferences.getFlashingType());
 		return dialog;
 	}
 
@@ -100,12 +87,5 @@ public class FlashingPreference implements Preference {
 
 	@Override
 	public void load() {
-		dialog.setFlashing(preferences.isFlashingEnabled());
-		dialog.setFlashingType(preferences.getFlashingType());
 	}
-
-	@Override
-	public void shutdown() {
-	}
-
 }

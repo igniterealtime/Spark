@@ -27,11 +27,10 @@ import javax.swing.*;
 /**
  * Essentially adds a new panel to the menu.
  * Allows users to define MUC/Group Chat functions.
- *
  */
 public class GroupChatPreference implements Preference {
 
-    private final GroupChatPreferencePanel panel = new GroupChatPreferencePanel();
+    private GroupChatPreferencePanel panel;
 
     /**
      * Define the Namespace used for this preference.
@@ -60,39 +59,6 @@ public class GroupChatPreference implements Preference {
 
     @Override
 	public void load() {
-        SwingWorker thread = new SwingWorker() {
-            LocalPreferences localPreferences;
-
-            @Override
-			public Object construct() {
-                localPreferences = SettingsManager.getLocalPreferences();
-                return localPreferences;
-            }
-
-            @Override
-			public void finished() {
-                boolean highlightMyName 	= localPreferences.isMucHighNameEnabled();
-                boolean highlightMyText 	= localPreferences.isMucHighTextEnabled();
-                boolean highlightPopName	= localPreferences.isMucHighToastEnabled();
-                boolean showjoinleavemessage 	= localPreferences.isShowJoinLeaveMessagesEnabled();
-                boolean showroleicons 		= localPreferences.isShowingRoleIcons();
-                boolean autoAcceptMucInvite	= localPreferences.isAutoAcceptMucInvite();
-                boolean randomColors 		= localPreferences.isMucRandomColors();
-                boolean inviteToBookmark    = !localPreferences.isUseAdHocRoom();
-
-                panel.setMucHighNameEnabled(highlightMyName);
-                panel.setMucHighTextEnabled(highlightMyText);
-                panel.setMuchHighToastEnabled(highlightPopName);
-                panel.setShowJoinLeaveMessagesEnabled(showjoinleavemessage);
-                panel.setShowRoleIconInsteadStatusIcon(showroleicons);
-                panel.setAutoAcceptMuc(autoAcceptMucInvite);
-                panel.setRandomColors(randomColors);
-                panel.setInviteToBookmark(inviteToBookmark);
-            }
-        };
-
-        thread.start();
-
     }
 
     @Override
@@ -110,15 +76,9 @@ public class GroupChatPreference implements Preference {
     }
 
     @Override
-	public Object getData() {
-        return SettingsManager.getLocalPreferences();
-    }
-
-    @Override
 	public String getErrorMessage() {
         return null;
     }
-
 
     @Override
 	public boolean isDataValid() {
@@ -127,6 +87,25 @@ public class GroupChatPreference implements Preference {
 
     @Override
 	public JComponent getGUI() {
+        panel = new GroupChatPreferencePanel();
+        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        boolean highlightMyName = localPreferences.isMucHighNameEnabled();
+        boolean highlightMyText = localPreferences.isMucHighTextEnabled();
+        boolean highlightPopName = localPreferences.isMucHighToastEnabled();
+        boolean showJoinLeaveMessage = localPreferences.isShowJoinLeaveMessagesEnabled();
+        boolean showRoleIcons = localPreferences.isShowingRoleIcons();
+        boolean autoAcceptMucInvite = localPreferences.isAutoAcceptMucInvite();
+        boolean randomColors = localPreferences.isMucRandomColors();
+        boolean inviteToBookmark = !localPreferences.isUseAdHocRoom();
+
+        panel.setMucHighNameEnabled(highlightMyName);
+        panel.setMucHighTextEnabled(highlightMyText);
+        panel.setMuchHighToastEnabled(highlightPopName);
+        panel.setShowJoinLeaveMessagesEnabled(showJoinLeaveMessage);
+        panel.setShowRoleIconInsteadStatusIcon(showRoleIcons);
+        panel.setAutoAcceptMuc(autoAcceptMucInvite);
+        panel.setRandomColors(randomColors);
+        panel.setInviteToBookmark(inviteToBookmark);
         return panel;
     }
 
@@ -134,11 +113,5 @@ public class GroupChatPreference implements Preference {
 	public String getNamespace() {
         return NAMESPACE;
     }
-
-    @Override
-	public void shutdown() {
-        commit();
-    }
-
 }
 

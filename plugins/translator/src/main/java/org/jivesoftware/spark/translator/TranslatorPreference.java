@@ -7,23 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TranslatorPreference implements Preference {
-
+    private static final String NAMESPACE = "translator";
     private TranslatorPreferencePanel _prefPanel;
-    private final TranslatorProperties _props;
-
-    public TranslatorPreference() {
-        _props = TranslatorProperties.getInstance();
-
-        try {
-            if (EventQueue.isDispatchThread()) {
-                _prefPanel = new TranslatorPreferencePanel();
-            } else {
-                EventQueue.invokeAndWait( () -> _prefPanel = new TranslatorPreferencePanel() );
-            }
-        } catch (Exception e) {
-            Log.error(e);
-        }
-    }
+    private final TranslatorProperties _props = TranslatorProperties.getInstance();
 
     @Override
     public String getTitle() {
@@ -48,17 +34,18 @@ public class TranslatorPreference implements Preference {
 
     @Override
     public String getNamespace() {
-       return TranslatorResource.getString("translator.title");
+       return NAMESPACE;
     }
 
     @Override
     public JComponent getGUI() {
+        _prefPanel = new TranslatorPreferencePanel();
+        _prefPanel.initializeValues();
         return _prefPanel;
     }
 
     @Override
     public void load() {
-        _prefPanel.initializeValues();
     }
 
     @Override
@@ -79,10 +66,5 @@ public class TranslatorPreference implements Preference {
     @Override
     public Object getData() {
         return _props;
-    }
-
-    @Override
-    public void shutdown() {
-
     }
 }

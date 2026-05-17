@@ -13,8 +13,8 @@ import org.jivesoftware.spark.preference.Preference;
  * @author Bergunde Holger
  */
 public class OTRPreferences implements Preference {
-
-    private OTRPrefPanel pref = new OTRPrefPanel();
+    private static final String NAMESPACE = "OTR";
+    private OTRPrefPanel pref;
 
     @Override
     public String getTitle() {
@@ -38,7 +38,7 @@ public class OTRPreferences implements Preference {
 
     @Override
     public String getNamespace() {
-        return null;
+        return NAMESPACE;
     }
 
     @Override
@@ -68,14 +68,4 @@ public class OTRPreferences implements Preference {
     public String getErrorMessage() {
         return null;
     }
-
-    @Override
-    public Object getData() {
-        return null;
-    }
-
-    @Override
-    public void shutdown() {
-    }
-
 }

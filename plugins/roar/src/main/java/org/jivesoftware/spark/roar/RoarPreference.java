@@ -15,42 +15,21 @@
  */
 package org.jivesoftware.spark.roar;
 
-import java.awt.EventQueue;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.roar.gui.RoarPreferencePanel;
-import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Awesome Preference
  * 
  * @author Wolf Posdorfer
- *
  */
 public class RoarPreference implements Preference {
-
     private RoarPreferencePanel _prefPanel;
-    private final RoarProperties _props;
-
-    public RoarPreference() {
-
-        _props = RoarProperties.getInstance();
-
-        try {
-            if (EventQueue.isDispatchThread()) {
-                _prefPanel = new RoarPreferencePanel();
-            } else {
-                EventQueue.invokeAndWait( () -> _prefPanel = new RoarPreferencePanel() );
-            }
-        } catch (Exception e) {
-            Log.error(e);
-        }
-
-    }
+    private final RoarProperties _props = RoarProperties.getInstance();
 
     @Override
     public String getTitle() {
@@ -80,12 +59,13 @@ public class RoarPreference implements Preference {
 
     @Override
     public JComponent getGUI() {
+        _prefPanel = new RoarPreferencePanel();
+        _prefPanel.initializeValues();
         return _prefPanel;
     }
 
     @Override
     public void load() {
-        _prefPanel.initializeValues();
     }
 
     @Override
@@ -107,10 +87,4 @@ public class RoarPreference implements Preference {
     public Object getData() {
         return _props;
     }
-
-    @Override
-    public void shutdown() {
-
-    }
-
 }

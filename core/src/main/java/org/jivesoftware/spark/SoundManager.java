@@ -15,12 +15,18 @@
  */
 package org.jivesoftware.spark;
 
+import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
 import java.io.File;
 import java.util.WeakHashMap;
 
@@ -40,8 +46,8 @@ public class SoundManager {
     private boolean soundSystemUnavailableLogged;
 
     public void playClip(Event e) {
-        SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
-        SoundPreferences preferences = soundPreference.getPreferences();
+        PreferenceManager prefManager = SparkManager.getPreferenceManager();
+        SoundPreferences preferences = (SoundPreferences) prefManager.getPreferenceData(SoundPreference.NAMESPACE);
         if (preferences == null) {
             return;
         }

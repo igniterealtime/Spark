@@ -39,11 +39,10 @@ import static org.jivesoftware.spark.Event.*;
  * @author Derek DeMoro
  */
 public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
-    private SoundPreference soundPreference;
 
     @Override
 	public void initialize() {
-        soundPreference = new SoundPreference();
+        SoundPreference soundPreference = new SoundPreference();
         SparkManager.getPreferenceManager().addPreference(soundPreference);
 
         SparkManager.getChatManager().addChatRoomListener(this);
@@ -63,10 +62,6 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
             }
         }, new StanzaTypeFilter(Presence.class));
 
-        // Load sound preferences.
-        final Runnable soundLoader = () -> soundPreference.loadFromFile();
-
-        TaskEngine.getInstance().submit(soundLoader);
         MultiUserChatManager mucManager = SparkManager.getMucManager();
         mucManager.addInvitationListener( ( xmppConnection, muc, inviter, reason, password, message, invitation ) -> {
             SparkManager.getSoundManager().playClip(INCOMING_INVITATION);

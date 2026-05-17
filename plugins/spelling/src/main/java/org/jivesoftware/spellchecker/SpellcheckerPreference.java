@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.spellchecker;
 
-import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
@@ -30,7 +29,8 @@ import org.jivesoftware.spark.preference.Preference;
 public class SpellcheckerPreference implements Preference {
     public static String NAMESPACE = "spellchecking";
     private SpellcheckerPreferenceDialog dialog;
-    private SpellcheckerPreferences preferences;
+    private final SpellcheckerPreferences preferences = new SpellcheckerPreferences();
+    private final ArrayList<String> languages;
 
     /**
      * Intializes the SpellcheckerPreference
@@ -39,24 +39,7 @@ public class SpellcheckerPreference implements Preference {
      *            , an {@link ArrayList} of {@link String} containing the supported languages
      */
     public SpellcheckerPreference(final ArrayList<String> languages) {
-	preferences = new SpellcheckerPreferences();
-	try {
-	    if (EventQueue.isDispatchThread()) {
-		dialog = new SpellcheckerPreferenceDialog(languages);
-	    } else {
-		EventQueue.invokeAndWait(new Runnable() {
-
-		    @Override
-		    public void run() {
-			dialog = new SpellcheckerPreferenceDialog(languages);
-
-		    }
-		});
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-
+        this.languages = languages;
     }
 
     /**
@@ -92,7 +75,13 @@ public class SpellcheckerPreference implements Preference {
 
     @Override
     public JComponent getGUI() {
-	return dialog;
+        dialog = new SpellcheckerPreferenceDialog(languages);
+        dialog.setAutoSpellCheckingEnabled(preferences.isAutoSpellCheckerEnabled());
+        dialog.setSelectedLanguage(preferences.getSpellLanguage());
+        dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
+        dialog.setEnableLanuageSelection(preferences.getLanguageSelectionInChatRoom());
+        dialog.setIgnoreUppercase(preferences.getIgnoreUppercase());
+	    return dialog;
     }
 
     @Override
@@ -128,17 +117,5 @@ public class SpellcheckerPreference implements Preference {
 
     @Override
     public void load() {
-	dialog.setAutoSpellCheckingEnabled(preferences
-		.isAutoSpellCheckerEnabled());
-	dialog.setSelectedLanguage(preferences.getSpellLanguage());
-	dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
-	dialog.setEnableLanuageSelection(preferences.getLanguageSelectionInChatRoom());
-	dialog.setIgnoreUppercase(preferences.getIgnoreUppercase());
     }
-
-    @Override
-    public void shutdown() {
-
-    }
-
 }

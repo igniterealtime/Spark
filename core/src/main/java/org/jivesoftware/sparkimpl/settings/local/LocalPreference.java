@@ -26,16 +26,10 @@ import javax.swing.*;
  * Represents the Local Preference inside the Preference Manager.
  */
 public class LocalPreference implements Preference {
+    public static final String NAMESPACE = "LOGIN";
     private LocalPreferencePanel panel;
-    private LocalPreferences preferences;
+    private final LocalPreferences preferences = SettingsManager.getLocalPreferences();
     private String errorMessage = "Error";
-
-    /**
-     * Initalize and load local preference.
-     */
-    public LocalPreference() {
-        preferences = SettingsManager.getLocalPreferences();
-    }
 
     @Override
 	public String getTitle() {
@@ -59,17 +53,10 @@ public class LocalPreference implements Preference {
 
     @Override
 	public void load() {
-        preferences = SettingsManager.getLocalPreferences();
     }
 
     @Override
 	public void commit() {
-        getData();
-    }
-
-    @Override
-	public Object getData() {
-        preferences = SettingsManager.getLocalPreferences();
         preferences.setAutoLogin(panel.getAutoLogin());
         preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
         preferences.setReconnectDelay(Integer.parseInt(panel.getReconnectDelay()));
@@ -81,8 +68,6 @@ public class LocalPreference implements Preference {
         preferences.setStartOnStartup(panel.startOnStartup());
         preferences.setIdleMessage(panel.getIdleMessage());
         preferences.setUsingSingleTrayClick(panel.useSingleClickInTray());
-
-        return preferences;
     }
 
     @Override
@@ -117,18 +102,12 @@ public class LocalPreference implements Preference {
     @Override
 	public JComponent getGUI() {
         panel = new LocalPreferencePanel();
-
+        // UI panel field values are loaded inside the LocalPreferencePanel constructor
         return panel;
     }
 
     @Override
 	public String getNamespace() {
-        return "LOGIN";
+        return NAMESPACE;
     }
-
-    @Override
-	public void shutdown() {
-        // Commit to file.
-    }
-
 }

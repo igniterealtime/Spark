@@ -251,7 +251,7 @@ public class ReceiveFileTransfer extends JPanel {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     Preference p = SparkManager.getPreferenceManager().getPreference(
-                        new FileTransferPreference().getNamespace());
+                        FileTransferPreference.NAMESPACE);
                     // retrieve the file transfer preferences and show the preference menu
                     // to the user
                     SparkManager.getPreferenceManager().showPreferences(p);

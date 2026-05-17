@@ -28,16 +28,14 @@ import org.jivesoftware.spark.preference.Preference;
  * Apple, the Apple logo, Mac, and Macintosh are trademarks of Apple Inc
  * 
  * @author Wolf Posdorfer
- * 
  */
 public class ApplePreference implements Preference {
-
+    private static final String NAMESPACE = "OSX";
     private final AppleProperties _props;
-    private final ApplePreferencePanel _prefpanel;
+    private ApplePreferencePanel _prefpanel;
 
     public ApplePreference(AppleProperties props) {
 	_props = props;
-	_prefpanel = new ApplePreferencePanel();
     }
 
     @Override
@@ -49,18 +47,17 @@ public class ApplePreference implements Preference {
     }
 
     @Override
-    public Object getData() {
-	return _prefpanel;
-    }
-
-    @Override
     public String getErrorMessage() {
 	return "error with apple plugin";
     }
 
     @Override
     public JComponent getGUI() {
-	return _prefpanel;
+        _prefpanel = new ApplePreferencePanel();
+        _prefpanel.setdockbadges(_props.getDockBadges());
+        _prefpanel.setdockbounce(_props.getDockBounce());
+        _prefpanel.setrepeatbouncing(_props.getRepeatBounce());
+        return _prefpanel;
     }
 
     @Override
@@ -79,7 +76,7 @@ public class ApplePreference implements Preference {
 
     @Override
     public String getNamespace() {
-	return "OSX";
+	    return NAMESPACE;
     }
 
     @Override
@@ -99,13 +96,6 @@ public class ApplePreference implements Preference {
 
     @Override
     public void load() {
-	_prefpanel.setdockbadges(_props.getDockBadges());
-	_prefpanel.setdockbounce(_props.getDockBounce());
-	_prefpanel.setrepeatbouncing(_props.getRepeatBounce());
-    }
-
-    @Override
-    public void shutdown() {
     }
 
 }
