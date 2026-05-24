@@ -41,12 +41,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.*;
 
+import org.jdesktop.swingx.JXDatePicker;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -811,8 +815,28 @@ public final class GraphicUtils {
         }
 	}
 
-    // public static void centerWindowOnScreen(Runnable runnable) {
-    // // This method is never used
-    //
-    // }
+    public static void localDatePickerSet(JXDatePicker localDatePicker, String dayStr) {
+        if (dayStr == null) {
+            localDatePicker.setDate(null);
+            return;
+        }
+        LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(dayStr);
+        } catch (Exception e) {
+            return;
+        }
+        Date dayDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        localDatePicker.setDate(dayDate);
+    }
+
+    public static String localDatePickerGet(JXDatePicker localDatePicker) {
+        Date dayDate = localDatePicker.getDate();
+        if (dayDate == null) {
+            return null;
+        }
+        LocalDate localDate = LocalDate.ofInstant(dayDate.toInstant(), ZoneId.systemDefault());
+        return localDate.toString();
+    }
+
 }

@@ -16,25 +16,7 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
@@ -54,21 +36,37 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jivesoftware.resource.Default;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Handles the UI for viewing and editing of VCard information.
  */
 public class VCardEditor {
-
     private BusinessPanel businessPanel;
     private PersonalPanel personalPanel;
     private HomePanel homePanel;
     private AvatarPanel avatarPanel;
     private JLabel avatarLabel;
-    //TODO REMOVE
-    @SuppressWarnings("unused")
-    private VCard _vcard;
 
     /**
      * Displays the VCard for an individual.
@@ -135,7 +133,7 @@ public class VCardEditor {
         if (bounds == null || bounds.width <= 0 || bounds.height <= 0) {
             // Use default settings.
             dlg.setLocationRelativeTo(parent);
-            dlg.setSize(600, 400);
+            dlg.setSize(600, 500);
         } else {
             dlg.setBounds(bounds);
         }
@@ -381,6 +379,9 @@ public class VCardEditor {
         personalPanel.setLastName(vcard.getLastName());
         personalPanel.setEmailAddress(vcard.getEmailHome());
         personalPanel.setNickname(vcard.getNickName());
+        personalPanel.setGender(vcard.getField("GENDER"));
+        personalPanel.setBirthday(vcard.getField("BDAY"));
+        personalPanel.setDescription(vcard.getField("DESC"));
         personalPanel.setJID(vcard.getJabberId());
         // Load business info
         businessPanel.setCompany(vcard.getOrganization());
@@ -408,9 +409,6 @@ public class VCardEditor {
         homePanel.setMobile(vcard.getPhoneHome("CELL"));
     }
 
-    /**
-     * Saves the VCard.
-     */
     private void saveVCard() {
         VCard vcard = new VCard();
         // Save personal info
@@ -419,6 +417,9 @@ public class VCardEditor {
         vcard.setMiddleName(personalPanel.getMiddleName());
         vcard.setEmailHome(personalPanel.getEmailAddress());
         vcard.setNickName(personalPanel.getNickname());
+        vcard.setField("GENDER", personalPanel.getGender());
+        vcard.setField("BDAY", personalPanel.getBirthday());
+        vcard.setField("DESC", personalPanel.getDescription());
         // Save business info
         vcard.setOrganization(businessPanel.getCompany());
         vcard.setAddressFieldWork("STREET", businessPanel.getStreetAddress());
@@ -482,10 +483,8 @@ public class VCardEditor {
                 if (ModelUtil.hasLength(fullName)) {
                     statusBar.setNickname(fullName);
                 }
-
                 statusBar.setAvatar(null);
             }
-
             // Notify listeners
             SparkManager.getVCardManager().notifyVCardListeners();
         } catch (XMPPException | SmackException | InterruptedException e) {
