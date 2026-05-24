@@ -54,7 +54,7 @@ import java.util.Properties;
 import java.io.File; 
 import java.io.FileInputStream; 
 import java.io.FileOutputStream;
-import java.io.IOException; 
+import java.io.IOException;
 
 
 /**
@@ -154,11 +154,12 @@ public class UserSearchForm extends JPanel {
                         try {
                             DomainBareJid serviceJid = JidCreate.domainBareFrom(serviceName);
                             newForm = searchManager.getSearchForm(serviceJid).getDataForm();
+                            return newForm;
                         }
                         catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
-                            // Nothing to do
+                           Log.error("Unable to get search form", e);
+                           return null;
                         }
-                        return newForm;
                     }
 
                     @Override
@@ -194,9 +195,7 @@ public class UserSearchForm extends JPanel {
                             }
 
                         }
-
                     }
-
                 };
                 findServiceThread.start();
             }
@@ -224,13 +223,10 @@ public class UserSearchForm extends JPanel {
         } );
 
         add(cardPanel, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
- 
     }
 
     /**
      * Displays the specified search service.
-     *
-     * @param service the search service to display.
      */
     public void showService(String service) {
         if (!serviceMap.containsKey(service)) {
@@ -243,20 +239,14 @@ public class UserSearchForm extends JPanel {
 
         SearchForm searchForm = serviceMap.get(service);
         DataForm form = searchForm.getSearchForm();
-        StringBuilder description = new StringBuilder();
-        for (String instruction : form.getInstructions()) {
-            description.append(instruction).append('\n');
-        }
+        String description = String.join("\n", form.getInstructions());
 
         titlePanel.setTitle(Res.getString("title.person.search"));
-        titlePanel.setDescription(description.toString());
+        titlePanel.setDescription(description);
     }
-
 
     /**
      * Returns the selected search service.
-     *
-     * @return the selected search service.
      */
     public String getSearchService() {
         return (String)servicesBox.getSelectedItem();
@@ -264,8 +254,6 @@ public class UserSearchForm extends JPanel {
 
     /**
      * Return the QuestionForm retrieved by the search service.
-     *
-     * @return the QuestionForm retrieved by the search service.
      */
     public DataFormUI getQuestionForm() {
         SearchForm searchForm = serviceMap.get(getSearchService());
@@ -282,8 +270,6 @@ public class UserSearchForm extends JPanel {
 
     /**
      * Returns the UI that represent the UserSearchForm
-     *
-     * @return the UserSearchForm
      */
     public Component getGUI() {
         return this;

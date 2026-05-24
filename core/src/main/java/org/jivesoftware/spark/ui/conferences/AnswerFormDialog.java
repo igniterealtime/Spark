@@ -15,8 +15,13 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
@@ -29,9 +34,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jxmpp.jid.parts.Resourcepart;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
 import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
 import static org.jivesoftware.sparkimpl.settings.local.SettingsManager.getLocalPreferences;
@@ -80,19 +83,10 @@ public class AnswerFormDialog {
     }
 
     private void preFillForm() {
-        Resourcepart defaultNickname = getLocalPreferences().getNickname();
-        JComponent nicknameField = dataFormUI.getComponent("muc#register_roomnick");
-        if (nicknameField instanceof JTextField && isBlank(((JTextField)nicknameField).getText())) {
-            ((JTextField)nicknameField).setText(defaultNickname.toString());
-        }
-        JComponent firstNameField = dataFormUI.getComponent("muc#register_first");
-        if (firstNameField instanceof JTextField && isBlank(((JTextField)firstNameField).getText())) {
-            ((JTextField)firstNameField).setText(defaultNickname.toString()); //TODO get First Name
-        }
-        JComponent lastNameField = dataFormUI.getComponent("muc#register_last");
-        if (lastNameField instanceof JTextField && isBlank(((JTextField)lastNameField).getText())) {
-            ((JTextField)lastNameField).setText(defaultNickname.toString()); //TODO get Last Name
-        }
+        String defaultNickname = getLocalPreferences().getNickname().toString();
+        dataFormUI.setFieldValue("muc#register_roomnick", defaultNickname);
+        dataFormUI.setFieldValue("muc#register_first", defaultNickname); //TODO get First Name
+        dataFormUI.setFieldValue("muc#register_last", defaultNickname); //TODO get Last Name
     }
 
     /**

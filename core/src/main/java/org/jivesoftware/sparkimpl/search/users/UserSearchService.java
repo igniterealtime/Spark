@@ -17,11 +17,7 @@ package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.search.Searchable;
@@ -32,8 +28,14 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.Jid;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.Icon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class UserSearchService implements Searchable {
     private Collection<DomainBareJid> searchServices;
@@ -82,25 +84,15 @@ public class UserSearchService implements Searchable {
             return;
         }
 
-        JTextField textField = (JTextField)dataFormUI.getComponent("search");
-        if (textField != null) {
-            textField.setText(query);
+        boolean querySet = dataFormUI.setFieldValue("search", query);
+        if (!querySet) {
+            querySet = dataFormUI.setFieldValue("last", query);
         }
-        else {
-            textField = (JTextField)dataFormUI.getComponent("last");
-            if (textField != null) {
-                textField.setText(query);
-            }
+        if (!querySet) {
+            querySet = dataFormUI.setFieldValue("userName", query);
         }
 
-        if (textField == null) {
-            textField = (JTextField)dataFormUI.getComponent("userName");
-            if (textField != null) {
-                textField.setText(query);
-            }
-        }
-
-        if (textField != null) {
+        if (querySet) {
             searchForm.performSearch();
         }
 

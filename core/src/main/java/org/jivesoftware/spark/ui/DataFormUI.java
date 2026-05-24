@@ -15,20 +15,20 @@
  */
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.smackx.xdata.*;
+import org.jdesktop.swingx.JXDatePicker;
+import org.jivesoftware.smackx.xdata.BooleanFormField;
+import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.FormFieldChildElement;
+import org.jivesoftware.smackx.xdata.ListMultiFormField;
+import org.jivesoftware.smackx.xdata.ListSingleFormField;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.jivesoftware.smackx.xdatavalidation.packet.ValidateElement;
+import org.jivesoftware.smackx.xdatavalidation.packet.ValidateElement.BasicValidateElement;
 import org.jivesoftware.spark.component.CheckBoxList;
+import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,25 +37,386 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
-import static java.awt.GridBagConstraints.*;
+import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.WEST;
+import static org.jivesoftware.spark.util.GraphicUtils.localDatePickerGet;
+import static org.jivesoftware.spark.util.GraphicUtils.localDatePickerSet;
 
 /**
  * Builds the UI for any DataForm (JEP-0004: Data Forms), and allow for creation
  * of an answer form to send back the server.
  */
 public class DataFormUI extends JPanel {
-    private final Map<String, JComponent> valueMap = new HashMap<>();
+    private final Map<String, UiField> valueMap = new HashMap<>();
     private final DataForm form;
     private int row = 5;
 
-    /**
-     * Creates a new DataFormUI
-     *
-     * @param form the <code>DataForm</code> to build a UI with.
-     */
+    private abstract static class UiField {
+        protected final String variable;
+        protected final String label;
+
+        public UiField(FormField field) {
+            this.variable = field.getFieldName();
+            this.label = field.getLabel();
+        }
+
+        public abstract Object getValue();
+
+        public abstract void setValue(Object fieldValue);
+
+        /**
+         * Add labeled component to form and map variable to the component
+         */
+        public abstract void addField();
+    }
+
+    private class FixedUiField extends UiField {
+        private final JLabel comp;
+
+        private FixedUiField(FormField field) {
+            super(field);
+            String value = field.getFirstValue();
+            comp = value != null ? new JLabel(value) : null;
+        }
+
+        @Override
+        public Object getValue() {
+            return null;
+        }
+
+        @Override
+        public void setValue(Object fieldValue) {
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(comp, new GridBagConstraints(0, row, 2, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class BooleanUiField extends UiField {
+        private final JCheckBox comp;
+
+        private BooleanUiField(FormField field) {
+            super(field);
+            comp = new JCheckBox(label);
+            BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+            boolean isSelected = booleanField.getValueAsBoolean();
+            setValue(isSelected);
+        }
+
+        @Override
+        public Boolean getValue() {
+            return comp.isSelected();
+        }
+
+        @Override
+        public void setValue(Object isSelected) {
+            comp.setSelected((Boolean) isSelected);
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(comp, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class TextSingleUiField extends UiField {
+        private final JComponent comp;
+        private final String datatype;
+
+        private TextSingleUiField(FormField field) {
+            super(field);
+            String v = field.getFirstValue();
+            datatype = getValidationDataType(field);
+            if (datatype == null) {
+                JTextField textField = new JTextField();
+                comp = textField;
+                setValue(v);
+                return;
+            }
+            switch (datatype) {
+                case "xs:byte":
+                case "xs:short":
+                case "xs:integer":
+                case "xs:int":
+                case "xs:long": {
+                    JSpinner spinner = new JSpinner();
+                    comp = spinner;
+                    break;
+                }
+                case "xs:dateTime": {
+                    JXDatePicker datePicker = new JXDatePicker();
+                    comp = datePicker;
+                    break;
+                }
+                case "xs:time": {
+                    SpinnerDateModel model = new SpinnerDateModel();
+                    JSpinner spinner = new JSpinner(model);
+                    spinner.setEditor(new JSpinner.DateEditor(spinner, "HH:mm"));
+                    comp = spinner;
+                    break;
+                }
+                case "xs:language": {
+                    JTextField textField = new JTextField();
+                    comp = textField;
+                    break;
+                }
+                case "xs:decimal":
+                case "xs:double":
+                default: {
+                    JTextField textField = new JTextField();
+                    comp = textField;
+                    break;
+                }
+            }
+            setValue(v);
+        }
+
+        @Override
+        public String getValue() {
+            if (datatype == null) {
+                return ((JTextField) comp).getText();
+            }
+            switch (datatype) {
+                case "xs:byte":
+                case "xs:short":
+                case "xs:integer":
+                case "xs:int":
+                case "xs:long": {
+                    Object value = ((JSpinner) comp).getValue();
+                    String valueStr = value != null ? value.toString() : null;
+                    return valueStr;
+                }
+                case "xs:dateTime": {
+                    return localDatePickerGet((JXDatePicker) comp);
+                }
+                case "xs:time": {
+                    Object value = ((JSpinner) comp).getValue();
+                    String valueStr = value != null ? value.toString() : null;
+                    return valueStr;
+                }
+                case "xs:language": {
+                    return ((JTextField) comp).getText();
+                }
+                case "xs:decimal":
+                case "xs:double":
+                default: {
+                    return ((JTextField) comp).getText();
+                }
+            }
+        }
+
+        @Override
+        public void setValue(Object textVal) {
+            if (datatype == null) {
+                ((JTextField) comp).setText((String) textVal);
+                return;
+            }
+            switch (datatype) {
+                case "xs:byte":
+                case "xs:short":
+                case "xs:integer":
+                case "xs:int":
+                case "xs:long": {
+                    try {
+                        Long numVal = Long.valueOf((String) textVal);
+                        ((JSpinner) comp).setValue(numVal);
+                    } catch (Exception e) {
+                        Log.warning("bad number field value " + variable + ": " + e);
+                    }
+                    return;
+                }
+                case "xs:dateTime": {
+                    localDatePickerSet((JXDatePicker) comp, (String) textVal);
+                    return;
+                }
+                case "xs:time": {
+                    ((JSpinner) comp).setValue(textVal);
+                    return;
+                }
+                case "xs:language": {
+                    ((JTextField) comp).setText((String) textVal);
+                    return;
+                }
+                case "xs:decimal":
+                case "xs:double":
+                default: {
+                    ((JTextField) comp).setText((String) textVal);
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class JidSingleUiField extends UiField {
+        private final JTextField comp = new JTextField();
+
+        private JidSingleUiField(FormField field) {
+            super(field);
+            String v = field.getFirstValue();
+            setValue(v);
+        }
+
+        @Override
+        public String getValue() {
+            return comp.getText();
+        }
+
+        @Override
+        public void setValue(Object jid) {
+            comp.setText((String) jid);
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class TextMultiUiField extends UiField {
+        private final JTextArea comp = new JTextArea();
+
+        private TextMultiUiField(FormField field) {
+            super(field);
+            setValue(field.getValues());
+        }
+
+        @Override
+        public List<String> getValue() {
+            String value = comp.getText();
+            String[] parts = value.split("[,\n]");
+            List<String> list = new ArrayList<>(parts.length);
+            for (String token : parts) {
+                String t = token.trim();
+                if (!t.isEmpty()) {
+                    list.add(t);
+                }
+            }
+            return list;
+        }
+
+        @Override
+        public void setValue(Object values) {
+            String text = String.join("\n", (Iterable) values);
+            comp.setText(text);
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(new JScrollPane(comp), new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 100, 50));
+        }
+    }
+
+    private class TextPrivateUiField extends UiField {
+        private final JPasswordField comp = new JPasswordField();
+
+        private TextPrivateUiField(FormField field) {
+            super(field);
+            String v = field.getFirstValue();
+            setValue(v);
+        }
+
+        @Override
+        public String getValue() {
+            char[] pwd = comp.getPassword();
+            return new String(pwd);
+        }
+
+        @Override
+        public void setValue(Object fieldValue) {
+            comp.setText((String) fieldValue);
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class ListSingleUiField extends UiField {
+        private final JComboBox<String> comp = new JComboBox<>();
+
+        private ListSingleUiField(FormField field) {
+            super(field);
+            ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
+            for (FormField.Option option : listSingleFormField.getOptions()) {
+                comp.addItem(option.getValueString());
+            }
+            String v = field.getFirstValue();
+            setValue(v);
+        }
+
+        @Override
+        public Object getValue() {
+            return comp.getSelectedItem();
+        }
+
+        @Override
+        public void setValue(Object fieldValue) {
+            comp.setSelectedItem(fieldValue);
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        }
+    }
+
+    private class ListMultiUiField extends UiField {
+        private final CheckBoxList comp = new CheckBoxList();
+
+        private ListMultiUiField(FormField field) {
+            super(field);
+            List<? extends CharSequence> valueList = field.getValues();
+            ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
+            for (FormField.Option option : listMultiFormField.getOptions()) {
+                String optionLabel = option.getLabel();
+                String optionValue = option.getValueString();
+                boolean isSelected = valueList.contains(optionValue);
+                comp.addCheckBox(new JCheckBox(optionLabel, isSelected), optionValue);
+            }
+//            setValue(valueList);
+        }
+
+        @Override
+        public Object getValue() {
+            return comp.getSelectedValues();
+        }
+
+        @Override
+        public void setValue(Object fieldValue) {
+            // not implemented
+        }
+
+        @Override
+        public void addField() {
+            Insets insets = new Insets(5, 5, 5, 5);
+            DataFormUI.this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+            DataFormUI.this.add(comp, new GridBagConstraints(1, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 50));
+        }
+    }
+
     public DataFormUI(DataForm form) {
         this.setLayout(new GridBagLayout());
         this.form = form;
@@ -69,77 +430,53 @@ public class DataFormUI extends JPanel {
         // Add default answers to the form to submit
         for (final FormField field : form.getFields()) {
             String variable = field.getFieldName();
-            String label = field.getLabel();
             FormField.Type type = field.getType();
-            List<? extends CharSequence> valueList = field.getValues();
+            UiField uiField;
             switch (type) {
                 case bool: {
-                    BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                    boolean isSelected = booleanField.getValueAsBoolean();
-                    JCheckBox box = new JCheckBox(label);
-                    box.setSelected(isSelected);
-                    addField(label, box, variable);
+                    uiField = new BooleanUiField(field);
                     break;
                 }
-                case text_single:
+                case text_single: {
+                    uiField = new TextSingleUiField(field);
+                    break;
+                }
                 case jid_single: {
-                    String v = "";
-                    if (!valueList.isEmpty()) {
-                        v = valueList.get(0).toString();
-                    }
-                    addField(label, new JTextField(v), variable);
+                    uiField = new JidSingleUiField(field);
                     break;
                 }
                 case text_multi:
                 case jid_multi: {
-                    String text = String.join(",", valueList);
-                    addField(label, new JTextArea(text), variable);
+                    uiField = new TextMultiUiField(field);
                     break;
                 }
                 case text_private: {
-                    String v = "";
-                    if (!valueList.isEmpty()) {
-                        v = valueList.get(0).toString();
-                    }
-                    addField(label, new JPasswordField(v), variable);
+                    uiField = new TextPrivateUiField(field);
                     break;
                 }
                 case list_single: {
-                    ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                    JComboBox<String> box = new JComboBox<>();
-                    for (FormField.Option option : listSingleFormField.getOptions()) {
-                        box.addItem(option.getValueString());
-                    }
-                    if (!valueList.isEmpty()) {
-                        String defaultValue = valueList.get(0).toString();
-                        box.setSelectedItem(defaultValue);
-                    }
-                    addField(label, box, variable);
+                    uiField = new ListSingleUiField(field);
                     break;
                 }
                 case list_multi: {
-                    ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
-                    CheckBoxList checkBoxList = new CheckBoxList();
-                    for (FormField.Option option : listMultiFormField.getOptions()) {
-                        String optionLabel = option.getLabel();
-                        String optionValue = option.getValueString();
-                        boolean isSelected = valueList.contains(optionValue);
-                        checkBoxList.addCheckBox(new JCheckBox(optionLabel, isSelected), optionValue);
-                    }
-                    addField(label, checkBoxList, variable);
+                    uiField = new ListMultiUiField(field);
                     break;
                 }
                 case fixed: {
-                    if (!valueList.isEmpty()) {
-                        String v = valueList.get(0).toString();
-                        addField(label, new JLabel(v), variable);
-                    }
+                    uiField = new FixedUiField(field);
                     break;
                 }
-                case hidden: {
+                case hidden:
+                default: {
                     // nothing to render
+                    uiField = null;
                     break;
                 }
+            }
+            if (uiField != null) {
+                uiField.addField();
+                row++;
+                valueMap.put(variable, uiField);
             }
         }
     }
@@ -150,66 +487,43 @@ public class DataFormUI extends JPanel {
     public FillableForm getFilledForm() {
         // Now submit all information
         FillableForm answerForm = new FillableForm(form);
-        for (Map.Entry<String, JComponent> entry : valueMap.entrySet()) {
+        for (Map.Entry<String, UiField> entry : valueMap.entrySet()) {
             String answer = entry.getKey();
-            JComponent o = entry.getValue();
-            // Extract form values from components; populates submit form
-            if (o instanceof JCheckBox) {
-                boolean isSelected = ((JCheckBox) o).isSelected();
-                answerForm.setAnswer(answer, isSelected);
-            } else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<>();
-                String value = ((JTextArea) o).getText();
-                StringTokenizer tokenizer = new StringTokenizer(value, ",", false);
-                while (tokenizer.hasMoreTokens()) {
-                    list.add(tokenizer.nextToken().trim());
-                }
-                // an empty list is not allowed
-                if (!list.isEmpty()) {
-                    answerForm.setAnswer(answer, list);
-                }
-            } else if (o instanceof JTextField) {
-                String value = ((JTextField) o).getText();
-                answerForm.setAnswer(answer, value);
-            } else if (o instanceof JComboBox) {
-                String value = (String) ((JComboBox<?>) o).getSelectedItem();
-                answerForm.setAnswer(answer, value);
-            } else if (o instanceof CheckBoxList) {
-                List<String> list = ((CheckBoxList) o).getSelectedValues();
-                // an empty list is not allowed
-                if (!list.isEmpty()) {
-                    answerForm.setAnswer(answer, list);
-                }
+            UiField uiField = entry.getValue();
+            Object value = uiField.getValue();
+            if (value == null) {
+                continue;
+            }
+            if (value instanceof Boolean) {
+                answerForm.setAnswer(answer, (Boolean) value);
+            } else if (value instanceof List) {
+                answerForm.setAnswer(answer, (List<String>) value);
+            } else {
+                answerForm.setAnswer(answer, value.toString());
             }
         }
 
         return answerForm;
     }
 
-
-    /**
-     * Add labeled component to form and map variable to the component
-     */
-    private void addField(String label, JComponent comp, String variable) {
-        Insets insets = new Insets(5, 5, 5, 5);
-        if (!(comp instanceof JCheckBox)) {
-            this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+    public boolean setFieldValue(String variable, String fieldValue) {
+        UiField field = valueMap.get(variable);
+        if (!(field instanceof TextSingleUiField)) {
+            return false;
         }
-        if (comp instanceof JTextArea) {
-            this.add(new JScrollPane(comp), new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 100, 50));
-        } else if (comp instanceof JCheckBox) {
-            this.add(comp, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 0));
-        } else if (comp instanceof CheckBoxList) {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 50));
-        } else {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
-        }
-        valueMap.put(variable, comp);
-        row++;
+        field.setValue(fieldValue);
+        return true;
     }
 
-    public JComponent getComponent(String variable) {
-        return valueMap.get(variable);
+    private static String getValidationDataType(FormField field) {
+        List<FormFieldChildElement> childElements = field.getFormFieldChildElements(ValidateElement.QNAME);
+        for (FormFieldChildElement childEl : childElements) {
+            if (childEl instanceof BasicValidateElement) {
+                BasicValidateElement basicValidateEl = (BasicValidateElement) childEl;
+                return basicValidateEl.getDatatype();
+            }
+        }
+        return null;
     }
 }
 
