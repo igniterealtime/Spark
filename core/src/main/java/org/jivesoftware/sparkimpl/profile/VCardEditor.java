@@ -78,7 +78,6 @@ public class VCardEditor {
         JTabbedPane tabbedPane = new JTabbedPane();
         // Initialize Panels
         personalPanel = new PersonalPanel();
-        personalPanel.showJID(false);
 
         tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
@@ -191,7 +190,6 @@ public class VCardEditor {
         // Initialize Panels
         personalPanel = new PersonalPanel();
         personalPanel.allowEditing(false);
-        personalPanel.showJID(false);
 
         tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
@@ -382,7 +380,6 @@ public class VCardEditor {
         personalPanel.setGender(vcard.getField("GENDER"));
         personalPanel.setBirthday(vcard.getField("BDAY"));
         personalPanel.setDescription(vcard.getField("DESC"));
-        personalPanel.setJID(vcard.getJabberId());
         // Load business info
         businessPanel.setCompany(vcard.getOrganization());
         businessPanel.setDepartment(vcard.getOrganizationUnit());

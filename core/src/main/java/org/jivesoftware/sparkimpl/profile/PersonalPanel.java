@@ -49,7 +49,6 @@ public class PersonalPanel extends JPanel {
     private final JTextField emailAddressField = new JTextField();
     private final JTextField jidField = new JTextField();
     private final JTextArea descriptionField = new JTextArea();
-    private final JLabel jidLabel = new JLabel();
 
     public PersonalPanel() {
         setLayout(new GridBagLayout());
@@ -106,14 +105,6 @@ public class PersonalPanel extends JPanel {
         add(descriptionLabel, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
         row++;
         add(descriptionField, new GridBagConstraints(0, row, 2, 2, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
-
-        row++;
-        ResourceUtils.resLabel(jidLabel, jidField, Res.getString("label.jid") + ":");
-        add(jidLabel, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        add(jidField, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
-
-        showJID(false);
-        showJID(true);
     }
 
     public String getFirstName() {
@@ -155,10 +146,10 @@ public class PersonalPanel extends JPanel {
         }
         int selectedIndex;
         switch (gender) {
-            case "male":
+            case "M":
                 selectedIndex = 1;
                 break;
-            case "female":
+            case "F":
                 selectedIndex = 2;
                 break;
             default:
@@ -170,9 +161,9 @@ public class PersonalPanel extends JPanel {
     public String getGender() {
         switch (genderField.getSelectedIndex()) {
             case 1:
-                return "male";
+                return "M";
             case 2:
-                return "female";
+                return "F";
             default:
                 return "";
         }
@@ -204,15 +195,6 @@ public class PersonalPanel extends JPanel {
 
     public void focus() {
         firstNameField.requestFocus();
-    }
-
-    public void setJID(String jid) {
-        jidField.setText(jid);
-    }
-
-    public void showJID(boolean show) {
-        jidLabel.setVisible(show);
-        jidField.setVisible(show);
     }
 
     public void allowEditing(boolean allowEditing) {

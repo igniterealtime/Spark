@@ -43,6 +43,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.jivesoftware.spark.util.GraphicUtils.toHTMLColor;
+
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
  *
@@ -55,8 +60,6 @@ public class VCardViewer extends JPanel {
     private final BareJid jid;
     private final JLabel avatarImage;
 
-    private String emailAddress = "";
-
     /**
      * Generate a VCard Panel using the specified jid.
      *
@@ -68,7 +71,7 @@ public class VCardViewer extends JPanel {
 
         this.jid = jid;
         avatarImage = new JLabel();
-        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+        add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
         try {
             Image aImage = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24).getImage();
@@ -128,14 +131,12 @@ public class VCardViewer extends JPanel {
     }
 
     private void buildUI(final VCard vcard) {
-        String fullName = vcard.getField("FN");
-
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
         usernameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
-
         usernameLabel.setForeground(Color.GRAY);
-        if (ModelUtil.hasLength(fullName)) {
+        String fullName = vcard.getField("FN");
+        if (!isEmpty(fullName)) {
             usernameLabel.setText(fullName);
         }
         else {
@@ -143,57 +144,52 @@ public class VCardViewer extends JPanel {
             usernameLabel.setText(nickname);
         }
 
-
         final Icon icon = SparkManager.getChatManager().getIconForContactHandler(vcard.getJabberId());
         if (icon != null) {
             usernameLabel.setIcon(icon);
         }
 
-
-        add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
+        int row = 0;
+        add(usernameLabel, new GridBagConstraints(1, row++, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
 
         String title = vcard.getField("TITLE");
-        if (ModelUtil.hasLength(title)) {
+        if (!isEmpty(title)) {
             final JLabel titleLabel = new JLabel(title);
             titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
-            add(titleLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
+            add(titleLabel, new GridBagConstraints(1, row++, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
         }
 
+        Color linkColor = new Color(49, 89, 151);
+        String emailAddress = vcard.getEmailHome();
+        if (!isEmpty(emailAddress)) {
+            String unselectedText = "<html><body><font color=" + toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
+            String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
+            JLabel emailTime = new JLabel(unselectedText);
+            emailTime.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    startEmailClient(emailAddress);
+                }
 
-        if (ModelUtil.hasLength(vcard.getEmailHome())) {
-            emailAddress = vcard.getEmailHome();
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    emailTime.setText(hoverText);
+                    setCursor(LINK_CURSOR);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    emailTime.setText(unselectedText);
+                    setCursor(DEFAULT_CURSOR);
+                }
+            });
+
+            add(emailTime, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 7, 10, 0), 0, 0));
         }
-
-        final Color linkColor = new Color(49, 89, 151);
-        final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
-        final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
-        final JLabel emailTime = new JLabel(unselectedText);
-        emailTime.addMouseListener(new MouseAdapter() {
-            @Override
-			public void mouseClicked(MouseEvent e) {
-                startEmailClient(emailAddress);
-            }
-
-            @Override
-			public void mouseEntered(MouseEvent e) {
-                emailTime.setText(hoverText);
-                setCursor(LINK_CURSOR);
-
-            }
-
-            @Override
-			public void mouseExited(MouseEvent e) {
-                emailTime.setText(unselectedText);
-                setCursor(DEFAULT_CURSOR);
-            }
-        });
-
-
-        add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 10, 0), 0, 0));
 
         // Add JID Label
         final String jid = UserManager.unescapeJID(vcard.getJabberId());
-        final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + jid + "</u></font></body></html>");
+        final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + toHTMLColor(linkColor) + "><u>" + jid + "</u></font></body></html>");
         jidLabel.setToolTipText("Click to copy jid to clipboard.");
         jidLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -204,7 +200,6 @@ public class VCardViewer extends JPanel {
             @Override
 			public void mouseExited(MouseEvent mouseEvent) {
                 jidLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
             }
 
             @Override
@@ -213,40 +208,66 @@ public class VCardViewer extends JPanel {
             }
         });
 
-        add(jidLabel, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
+        Insets insets = new Insets(0, 7, 2, 0);
+        add(jidLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
 
         // Add Home Phone
         String homeNumber = vcard.getPhoneHome("VOICE");
-        if (!ModelUtil.hasLength(homeNumber)) {
-            homeNumber = Res.getString("label.na");
+        if (!isEmpty(homeNumber)) {
+            JLabel homePhoneLabel = new JLabel(Res.getString("label.home").replace("&", "") + ": " + homeNumber);
+            add(homePhoneLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
         }
-        final JLabel homePhoneLabel = new JLabel(Res.getString("label.home").replace("&", "") + ": " + homeNumber);
-        add(homePhoneLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Work Phone
         String workNumber = vcard.getPhoneWork("VOICE");
-        if (!ModelUtil.hasLength(workNumber)) {
-            workNumber = Res.getString("label.na");
+        if (!isEmpty(workNumber)) {
+            JLabel workPhoneLabel = new JLabel(Res.getString("label.work").replace("&", "") + ": " + workNumber);
+            add(workPhoneLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
         }
-        final JLabel workPhoneLabel = new JLabel(Res.getString("label.work").replace("&", "") + ": " + workNumber);
-        add(workPhoneLabel, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Cell Phone
         String cellNumber = vcard.getPhoneWork("CELL");
-        if (!ModelUtil.hasLength(cellNumber)) {
-            cellNumber = Res.getString("label.na");
+        if (!isEmpty(cellNumber)) {
+            JLabel cellPhoneLabel = new JLabel(Res.getString("label.cell").replace("&", "") + ": " + cellNumber);
+            add(cellPhoneLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
         }
-
-        final JLabel cellPhoneLabel = new JLabel(Res.getString("label.cell").replace("&", "") + ": " + cellNumber);
-        add(cellPhoneLabel, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
 
         // Add Company
         String company = vcard.getOrganization();
-        final JLabel orgLabel = new JLabel(Res.getString("label.company").replace("&", "") + ": " + company);
-        add(orgLabel, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 2, 0), 0, 0));
-
+        if (!isEmpty(company)) {
+            JLabel orgLabel = new JLabel(Res.getString("label.company").replace("&", "") + ": " + company);
+            add(orgLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
+        }
+        // Birthday
+        String bdayField = vcard.getField("BDAY");
+        if (!isEmpty(bdayField)) {
+            JLabel bdayLabel = new JLabel(Res.getString("label.birthday") + ": " + bdayField);
+            add(bdayLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
+        }
+        // Gender
+        String genderField = vcard.getField("GENDER");
+        if (!isEmpty(genderField)) {
+            String genderTitle;
+            switch (genderField) {
+                case "M":
+                    genderTitle = Res.getString("label.gender.male");
+                    break;
+                case "F":
+                    genderTitle = Res.getString("label.gender.female");
+                    break;
+                default:
+                    genderTitle = genderField;
+            }
+            JLabel genderLabel = new JLabel(Res.getString("label.gender") + ": " + genderTitle);
+            add(genderLabel, new GridBagConstraints(1, row++, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
+        }
+        // About me
+        String descField = vcard.getField("DESC");
+        if (!isEmpty(descField)) {
+            JLabel descLabel = new JLabel(Res.getString("label.description") + ": " + descField);
+            add(descLabel, new GridBagConstraints(1, row++, 1, 2, 1, 0, NORTHWEST, HORIZONTAL, insets, 0, 0));
+        }
     }
-
 
     private void startEmailClient(String emailAddress) {
    		try {
@@ -257,6 +278,5 @@ public class VCardViewer extends JPanel {
 			Log.error("URI Wrong", e);
 		}
     }
-
 
 }
