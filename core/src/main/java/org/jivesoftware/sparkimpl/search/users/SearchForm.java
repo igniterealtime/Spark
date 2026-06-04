@@ -123,7 +123,7 @@ public class SearchForm extends JPanel {
 			public Object construct() {
                 try {
                     FillableForm filledForm = questionForm.getFilledForm();
-                    data = searchManager.sendSimpleSearchForm(filledForm.getDataFormToSubmit(), serviceName);
+                    data = searchManager.search(filledForm, serviceName);
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);
