@@ -73,8 +73,7 @@ public class UserSearchForm extends JPanel {
 
     private final Map<String,SearchForm> serviceMap = new HashMap<>();
 
-    
-    private static final File pluginsettings = new File(Spark.getSparkUserHome(), "search.properties"); //new
+    private static final File searchSettingsFile = new File(Spark.getSparkUserHome(), "search.properties");
     
     /**
      * Initializes the UserSearchForm with all available search services.
@@ -97,39 +96,11 @@ public class UserSearchForm extends JPanel {
             String service = searchService.toString();
             servicesBox.addItem(service);
         }
-        // Load the property file and add the search services that are read
-        final Properties props = new Properties();
-        String nextprop;
-        boolean numbprop_bool;
-        int numbprop;
-        if (pluginsettings.exists()) { 
-	    // Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 
-            try { 
-                numbprop=0;
-                props.load(new FileInputStream(pluginsettings)); 
-               	String testsearch; 
-               	numbprop_bool=true;
-               	while (numbprop_bool) {
-               		nextprop = "search"+numbprop;
-               		testsearch = props.getProperty(nextprop);
-               		if (null != testsearch) {
-               			Log.warning("Search-Info: SearchService-" + numbprop + " from properties-file is " + nextprop + " : " + testsearch); 
-               			servicesBox.addItem(testsearch); 
-                   		numbprop++;
-               			} 
-               		else 
-               			numbprop_bool=false; 
-               		}
+        Properties searchSettings = loadCustomSearchServices();
+        if (servicesBox.getItemCount() > 0) {
+            servicesBox.setSelectedIndex(0);
+        }
 
-               	} catch (IOException ioe) {
-                Log.error(ioe);
-                
-               } 
-           }
-           if (servicesBox.getItemCount() > 0) {
-               servicesBox.setSelectedIndex(0);
-           }
-        
         titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
@@ -172,28 +143,7 @@ public class UserSearchForm extends JPanel {
                             servicesBox.addItem(serviceName);
                             servicesBox.setSelectedItem(serviceName);
 
-                            int numbprop1 =0;
-                            boolean numbprop_bool1 = true;
-                            String nextprop1, testsearch;
-                            while ( numbprop_bool1 )
-                            {
-                            nextprop1 = "search"+ numbprop1;
-                               testsearch = props.getProperty( nextprop1 );
-                               if (testsearch != null)
-                                   numbprop1++;
-                               else
-                                   {
-                                   Log.warning("Search-Service: " + nextprop1 + " : " + serviceName + " added");
-                                   props.setProperty( nextprop1, serviceName);
-                                   numbprop_bool1 = false;
-                                   }
-                               }
-                            try {
-                                props.store(new FileOutputStream(pluginsettings), null);
-                            } catch (IOException e) {
-                                Log.error(e);
-                            }
-
+                            saveCustomSearchService(searchSettings, serviceName);
                         }
                     }
                 };
@@ -275,4 +225,49 @@ public class UserSearchForm extends JPanel {
         return this;
     }
 
+    private static void saveCustomSearchService(Properties props, String serviceName) {
+        int numbProp = 0;
+        while (true) {
+            String nextProp = "search" + numbProp;
+            String testSearch = props.getProperty(nextProp);
+            if (testSearch != null)
+                numbProp++;
+            else {
+                Log.warning("Search-Service: " + nextProp + " : " + serviceName + " added");
+                props.setProperty(nextProp, serviceName);
+                break;
+            }
+        }
+        try {
+            props.store(new FileOutputStream(searchSettingsFile), null);
+        } catch (IOException e) {
+            Log.error(e);
+        }
+    }
+
+    private Properties loadCustomSearchServices() {
+        // Load the property file and add the search services that are read
+        Properties props = new Properties();
+        if (searchSettingsFile.exists()) {
+            Log.warning("Search-service Properties-file does exist= " + searchSettingsFile.getPath());
+            try {
+                int numbProp = 0;
+                props.load(new FileInputStream(searchSettingsFile));
+                while (true) {
+                    String nextProp = "search" + numbProp;
+                    String testSearch = props.getProperty(nextProp);
+                    if (testSearch != null) {
+                        Log.warning("Search-Info: SearchService-" + numbProp + " from properties-file is " + nextProp + " : " + testSearch);
+                        servicesBox.addItem(testSearch);
+                        numbProp++;
+                    } else {
+                       break;
+                    }
+                }
+            } catch (IOException ioe) {
+                Log.error(ioe);
+            }
+        }
+        return props;
+    }
 }
