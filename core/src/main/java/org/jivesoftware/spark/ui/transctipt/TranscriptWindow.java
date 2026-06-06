@@ -133,7 +133,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             {
                 Log.debug( "A chat entry appears to have been delivered out of order. The transcript window must be reordered!" );
                 if (!isReordingScheduled) {
-                    Log.warning( "Scheduling new re-ordering of entries in the transcript window." );
+                    Log.debug( "Scheduling new re-ordering of entries in the transcript window." );
                     isReordingScheduled = true;
                     TaskEngine.getInstance().schedule(new TimerTask()
                     {
