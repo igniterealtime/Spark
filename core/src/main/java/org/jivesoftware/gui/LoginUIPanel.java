@@ -670,8 +670,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
         // Enterprise initialization, which can pull in additional plugin configuration (eg: blacklist).
         PluginManager.getInstance().loadPlugins();
-        // Initialize and write default values from "Advanced Connection Preferences" to disk
-        initAdvancedDefaults();
         Log.debug("Finished post-login tasks");
     }
 
@@ -1555,36 +1553,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
             }
             localPref.setFileTransferIbbOnly(Enterprise.containsFeature(Enterprise.IBB_FEATURE));
-        }
-    }
-
-    private void initAdvancedDefaults() {
-        localPref.setCompressionEnabled(localPref.isCompressionEnabled());
-        localPref.setDebuggerEnabled(localPref.isDebuggerEnabled());
-        localPref.setDisableHostnameVerification(localPref.isDisableHostnameVerification());
-        localPref.setHostAndPortConfigured(localPref.isHostAndPortConfigured());
-        localPref.setProtocol("SOCKS");
-        localPref.setProxyEnabled(localPref.isProxyEnabled());
-        //  localPref.setProxyPassword("");
-        //  localPref.setProxyUsername("");
-        localPref.setResource(localPref.getResource());
-        localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
-        localPref.setDirectTls(localPref.isDirectTls());
-        localPref.setSecurityMode(localPref.getSecurityMode());
-        localPref.setSSOEnabled(localPref.isSSOEnabled());
-        localPref.setSSOMethod("file");
-        localPref.setTimeOut(localPref.getTimeOut());
-        //  localPref.setTrustStorePassword("");
-        //  localPref.setTrustStorePath("");
-        localPref.setUseHostnameAsResource(localPref.isUseHostnameAsResource());
-        localPref.setUseVersionAsResource(localPref.isUseVersionAsResource());
-        //  localPref.setXmppHost("");
-        localPref.setXmppPort(localPref.getXmppPort());
-
-        if(Default.getBoolean(Default.IDLE_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_FEATURE)) {
-            localPref.setIdleTime(Default.getInt(Default.IDLE_TIME));
-            localPref.setIdleMessage(Res.getString("status.away"));
-            localPref.setIdleOn(true);
         }
     }
 
