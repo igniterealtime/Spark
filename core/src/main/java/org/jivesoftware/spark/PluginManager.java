@@ -94,10 +94,7 @@ public class PluginManager implements MainWindowListener
     private final Collection<String> blacklistPlugins = Default.getPluginBlacklist();
     private final List<String> deactivatedPlugins = SettingsManager.getLocalPreferences().getDeactivatedPlugins();
 
-    /**
-     * Returns the singleton instance of PluginManager, creating it if necessary.
-     */
-    public synchronized static PluginManager getInstance()
+    public static PluginManager getInstance()
     {
         if ( null == singleton )
         {
@@ -537,58 +534,11 @@ public class PluginManager implements MainWindowListener
     }
 
     /**
-     * Returns the plugin classloader.
-     *
-     * @return the plugin classloader.
-     */
-    public ClassLoader getPluginClassLoader()
-    {
-        return classLoader;
-    }
-
-    /**
      * Registers a plugin.
-     *
-     * @param plugin the plugin to register.
      */
     public void registerPlugin( Plugin plugin )
     {
         plugins.add( plugin );
-    }
-
-    /**
-     * Removes a plugin from the plugin list.
-     *
-     * @param plugin the plugin to remove.
-     */
-    public void removePlugin( Plugin plugin )
-    {
-        plugins.remove( plugin );
-    }
-
-    /**
-     * Returns a Collection of Plugins.
-     */
-    public Collection<Plugin> getPlugins()
-    {
-        return plugins;
-    }
-
-    /**
-     * Returns the instance of the plugin class initialized during startup.
-     *
-     * @param communicatorPlugin the plugin to find.
-     */
-    public Plugin getPlugin( Class<? extends Plugin> communicatorPlugin )
-    {
-        for ( Plugin plugin : getPlugins() )
-        {
-            if ( plugin.getClass() == communicatorPlugin )
-            {
-                return plugin;
-            }
-        }
-        return null;
     }
 
     /**
@@ -603,7 +553,6 @@ public class PluginManager implements MainWindowListener
             Log.debug("Start plugin dependency check");
             int j;
             boolean dependencyFound;
-
             // Dependency check
             for ( int i = 0; i < publicPlugins.size(); i++ )
             {
@@ -612,13 +561,11 @@ public class PluginManager implements MainWindowListener
                 if (!publicPlugin.getDependency().isEmpty())
                 {
                     List<PluginDependency> dependencies = publicPlugin.getDependency();
-
                     // go through all dependencies
                     for ( PluginDependency dependency : dependencies )
                     {
                         j = 0;
                         dependencyFound = false;
-
                         // look for the specific plugin
                         for ( PublicPlugin plugin : publicPlugins )
                         {
@@ -628,7 +575,6 @@ public class PluginManager implements MainWindowListener
                                 if ( dependency.compareVersion( plugin.getVersion() ) )
                                 {
                                     dependencyFound = true;
-
                                     // when the depended Plugin hadn't been installed yet
                                     if ( j > i )
                                     {
