@@ -1304,15 +1304,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         EventQueue.invokeLater(()-> {
             lblProgress.setText(Res.getString("message.connecting.please.wait"));
-
             // Startup Spark
             startSpark();
-
-            // dispose login dialog
-            loginDialog.dispose();
-
-            // Show ChangeLog if we need to.
-            // new ChangeLogDialog().showDialog();
         });
     }
 
