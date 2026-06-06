@@ -1043,10 +1043,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             }
 
             String ssoMethod = localPref.getSSOMethod();
-            if (!ModelUtil.hasLength(ssoMethod)) {
-                ssoMethod = "file";
-            }
-
             System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
             GSSAPIConfiguration config = new GSSAPIConfiguration(ssoMethod.equals("file"));
             Configuration.setConfiguration(config);

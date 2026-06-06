@@ -907,7 +907,7 @@ public class LocalPreferences {
     }
 
     public String getSSOMethod() {
-        return getString("ssoMethod");
+        return getString("ssoMethod", "file");
     }
 
     public void setSSORealm(String realm) {

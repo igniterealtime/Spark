@@ -69,8 +69,6 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         wrappedLabel.setBackground( Color.lightGray );
 
         final String method = localPreferences.getSSOMethod();
-        if ( ModelUtil.hasLength( method ) )
-        {
             switch ( method )
             {
                 case "dns":
@@ -84,11 +82,6 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
                     methodFileRadio.setSelected( true );
                     break;
             }
-        }
-        else
-        {
-            methodFileRadio.setSelected( true );
-        }
 
         if ( ModelUtil.hasLength( localPreferences.getSSORealm() ) )
         {
