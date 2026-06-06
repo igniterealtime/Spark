@@ -35,6 +35,7 @@ import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.UserStatusListener;
 import org.jivesoftware.smackx.muc.packet.Destroy;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.spark.ChatManager;
@@ -59,6 +60,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -115,7 +117,9 @@ public class GroupChatRoom extends ChatRoom {
 
         setupListeners();
 
-        subjectPanel = new SubjectPanel(roomBareJid, tabTitle, chat.getSubject());
+        VCard vcard = SparkManager.getVCardManager().getVCard(roomBareJid);
+        byte[] avatar = vcard != null ? vcard.getAvatar() : null;
+        subjectPanel = new SubjectPanel(roomBareJid, tabTitle, chat.getSubject(), avatar);
         // Do not show the top toolbar
         getToolBar().add(subjectPanel,
             new GridBagConstraints(0, 1, 1, 1, 1, 0,
