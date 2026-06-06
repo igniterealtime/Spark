@@ -19,6 +19,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
@@ -42,11 +43,13 @@ public class ChatArgumentsPlugin implements Plugin {
             : JidCreate.entityBareFromUnescapedOrThrowUnchecked(Objects.requireNonNull(value));
 
         if (start_chat_jid != null) {
+            Log.error("DEPRECATED replace start_chat_jid=juliet@capulet.lit with xmpp:juliet@capulet.lit");
             Localpart nickname = start_chat_jid.getLocalpart();
             SparkManager.getChatManager().createChatRoom(start_chat_jid, nickname.toString(), start_chat_jid.toString());
         }
 
         if (start_chat_muc != null) {
+            Log.error("DEPRECATED replace start_chat_muc=balcony@capulet.lit with xmpp:balcony@capulet.lit?join");
             ConferenceUtils.joinConferenceOnSeparateThread(start_chat_muc, start_chat_muc, null, null);
         }
     }
