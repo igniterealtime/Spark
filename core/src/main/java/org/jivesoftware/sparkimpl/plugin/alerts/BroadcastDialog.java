@@ -190,9 +190,7 @@ public class BroadcastDialog extends JPanel {
      */
     public void invokeDialog() {
         final JDialog dlg;
-
         TitlePanel titlePanel;
-
         // Create the title panel for this dialog
         titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), null, true);
 
@@ -248,19 +246,15 @@ public class BroadcastDialog extends JPanel {
         dlg.setResizable(false);
 
         // Add listener
-        okButton.addActionListener( e -> {
-try
-{
-if (sendBroadcasts(dlg)) {
-dlg.setVisible(false);
-}
-}
-catch ( SmackException.NotConnectedException e1 )
-{
-Log.warning( "Unable to broadcast.", e1 );
-}
-
-} );
+        okButton.addActionListener(e -> {
+            try {
+                if (sendBroadcasts(dlg)) {
+                    dlg.setVisible(false);
+                }
+            } catch (SmackException.NotConnectedException e1) {
+                Log.warning("Unable to broadcast.", e1);
+            }
+        });
 
         closeButton.addActionListener( e -> dlg.setVisible(false) );
 
@@ -269,70 +263,57 @@ Log.warning( "Unable to broadcast.", e1 );
         dlg.requestFocus();
 
         messageBox.requestFocus();        
-        
     }
 
     private void hideOfflineUsers() {
-
-	int i;
-	if (OfflineUsers.isSelected()) {
-	    final ContactList contactList = SparkManager.getWorkspace()
-		    .getContactList();
-	    i = 0;
-	    for (CheckNode node : nodes) {
-		if (contactList.getContactItemByDisplayName(node.toString())
-			.getPresence().getType() == Presence.Type.unavailable) {
-		    if (node.getParent() != null) {
-			TreeNode parent = node.getParent();
-			TreeNode[] path = ((DefaultTreeModel) checkTree
-				.getTree().getModel()).getPathToRoot(parent);
-			((DefaultTreeModel) checkTree.getTree().getModel())
-				.removeNodeFromParent(node);
-			checkTree.getTree()
-				.setSelectionPath(new TreePath(path));
-			NodesGroups.add( new ArrayList<>());
-			NodesGroups.get(i).add(parent);
-			NodesGroups.get(i).add(node);
-			i++;
-		    }
-		}
-	    }
-	    for (int x = 0; x < groupNodes.size(); x++) {
-		if (groupNodes.get(x).toString()
-			.equals(Res.getString("group.offline"))) {
-		    OfflineGroup = x;
-		    TreeNode parent = groupNodes.get(x).getParent();
-		    TreeNode[] path = ((DefaultTreeModel) checkTree.getTree()
-			    .getModel()).getPathToRoot(parent);
-		    ((DefaultTreeModel) checkTree.getTree().getModel())
-			    .removeNodeFromParent(groupNodes.get(x));
-		    checkTree.getTree().setSelectionPath(new TreePath(path));
-		}
-	    }
-	} else {
-	    i = 0;
-	    DefaultMutableTreeNode child = groupNodes.get(OfflineGroup);
-	    ((DefaultTreeModel) checkTree.getTree().getModel()).insertNodeInto(
-		    child, rosterNode, rosterNode.getChildCount());
-	    TreeNode[] path = ((DefaultTreeModel) checkTree.getTree()
-		    .getModel()).getPathToRoot(rosterNode);
-	    checkTree.getTree().expandPath(new TreePath(path));
-	    checkTree.expandTree();
-	    for (CheckNode node : nodes) {
-		if (node.getParent() == null) {
-		    child = (CheckNode) NodesGroups.get(i).get(1);
-		    ((DefaultTreeModel) checkTree.getTree().getModel())
-			    .insertNodeInto(child, ((CheckNode) NodesGroups
-				    .get(i).get(0)), ((CheckNode) NodesGroups
-				    .get(i).get(0)).getChildCount());
-		    path = ((DefaultTreeModel) checkTree.getTree().getModel())
-			    .getPathToRoot(node);
-		    checkTree.getTree().expandPath(new TreePath(path));
-		    checkTree.expandTree();
-		    i++;
-		}
-	    }
-	}
+        if (OfflineUsers.isSelected()) {
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
+            int i = 0;
+            for (CheckNode node : nodes) {
+                String jidStr = (String)node.getAssociatedObject();
+                if (contactList.getContactItemByJID(jidStr).getPresence().getType() == Presence.Type.unavailable) {
+                    if (node.getParent() == null) {
+                        continue;
+                    }
+                    TreeNode parent = node.getParent();
+                    TreeNode[] path = ((DefaultTreeModel) checkTree.getTree().getModel()).getPathToRoot(parent);
+                    ((DefaultTreeModel) checkTree.getTree().getModel()).removeNodeFromParent(node);
+                    checkTree.getTree().setSelectionPath(new TreePath(path));
+                    NodesGroups.add(new ArrayList<>());
+                    NodesGroups.get(i).add(parent);
+                    NodesGroups.get(i).add(node);
+                    i++;
+                }
+            }
+            for (int x = 0; x < groupNodes.size(); x++) {
+                if (groupNodes.get(x).toString().equals(Res.getString("group.offline"))) {
+                    OfflineGroup = x;
+                    TreeNode parent = groupNodes.get(x).getParent();
+                    TreeNode[] path = ((DefaultTreeModel) checkTree.getTree().getModel()).getPathToRoot(parent);
+                    ((DefaultTreeModel) checkTree.getTree().getModel()).removeNodeFromParent(groupNodes.get(x));
+                    checkTree.getTree().setSelectionPath(new TreePath(path));
+                }
+            }
+        } else {
+            DefaultMutableTreeNode child = groupNodes.get(OfflineGroup);
+            ((DefaultTreeModel) checkTree.getTree().getModel()).insertNodeInto(child, rosterNode, rosterNode.getChildCount());
+            TreeNode[] path = ((DefaultTreeModel) checkTree.getTree().getModel()).getPathToRoot(rosterNode);
+            checkTree.getTree().expandPath(new TreePath(path));
+            checkTree.expandTree();
+            int i = 0;
+            for (CheckNode node : nodes) {
+                if (node.getParent() != null) {
+                    continue;
+                }
+                child = (CheckNode) NodesGroups.get(i).get(1);
+                CheckNode parent = (CheckNode) NodesGroups.get(i).get(0);
+                ((DefaultTreeModel) checkTree.getTree().getModel()).insertNodeInto(child, parent, parent.getChildCount());
+                path = ((DefaultTreeModel) checkTree.getTree().getModel()).getPathToRoot(node);
+                checkTree.getTree().expandPath(new TreePath(path));
+                checkTree.expandTree();
+                i++;
+            }
+        }
     }
     
     /**
