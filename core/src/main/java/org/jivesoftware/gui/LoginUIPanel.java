@@ -624,11 +624,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      */
     public void invoke() {
         // Before creating any connections. Update proxy if needed.
-        try {
-            updateProxyConfig();
-        } catch (Exception e) {
-            Log.error(e);
-        }
+        updateProxyConfig();
         loginDialog = new JFrame(JiveInfo.getName());
 
         // Construct Dialog
@@ -1407,10 +1403,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     /**
      * Updates System properties with Proxy configuration.
-     *
-     * @throws Exception thrown if an exception occurs.
      */
-    private void updateProxyConfig() throws Exception {
+    private void updateProxyConfig() {
         if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
             String host = Default.getString(Default.PROXY_HOST);
