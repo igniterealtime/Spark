@@ -21,7 +21,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -63,7 +62,6 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.BroadcastPlugin;
@@ -205,6 +203,49 @@ public class Workspace extends JPanel implements StanzaListener {
         // Send Available status
         SparkManager.getSessionManager().changePresence(statusBox.getPresence());
         // Add presence and message listeners.
+        addStanzaListeners();
+
+        // Until we have better plugin management, will init after presence updates.
+        Log.debug("Manual init of gateway plugin");
+        gatewayPlugin = new GatewayPlugin();
+        gatewayPlugin.initialize();
+
+        // Load all non-presence related items.
+        Log.debug("Manual init of conference bookmarks");
+        conferences.loadConferenceBookmarks();
+        SearchManager.getInstance();
+        Log.debug("Manual init of ChatTranscriptPlugin");
+        transcriptPlugin = new ChatTranscriptPlugin();
+
+        // Load Broadcast Plugin
+        Log.debug("Manual init of BroadcastPlugin");
+        broadcastPlugin = new BroadcastPlugin();
+        broadcastPlugin.initialize();
+
+        // Load BookmarkPlugin
+        Log.debug("Manual init of BookmarkPlugin");
+        bookmarkPlugin = new BookmarkPlugin();
+        bookmarkPlugin.initialize();
+
+        Log.debug("Done with manual plugin inits");
+
+                Log.debug("Initializing plugin manager");
+                final PluginManager pluginManager = PluginManager.getInstance();
+                SparkManager.getMainWindow().addMainWindowListener(pluginManager);
+                Log.debug("Initializing plugins");
+                pluginManager.initializePlugins();
+                Log.debug("Set roster subscriptions mode to be always manual");
+                Roster roster = SparkManager.getRoster();
+                roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
+
+        // Check URI Mappings
+        String uri = Spark.getArgumentValue("uri");
+        if (uri != null) {
+            SparkManager.getUriManager().handleURIMapping(uri, true);
+        }
+    }
+
+    private void addStanzaListeners() {
         // We listen for these to force to open a 1-1 peer chat window from other operators if one isn't already open
         StanzaFilter workspaceMessageFilter = new StanzaTypeFilter(Message.class);
         // Add the packetListener to this instance
@@ -231,53 +272,6 @@ public class Workspace extends JPanel implements StanzaListener {
         };
 
         SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(workspacePresenceListener, new StanzaTypeFilter(Presence.class));
-
-        // Until we have better plugin management, will init after presence updates.
-        Log.debug("Manual init of gateway plugin");
-        gatewayPlugin = new GatewayPlugin();
-        gatewayPlugin.initialize();
-
-        // Load all non-presence related items.
-        Log.debug("Manual init of conference bookmarks");
-        conferences.loadConferenceBookmarks();
-        SearchManager.getInstance();
-        Log.debug("Manual init of ChatTranscriptPlugin");
-        transcriptPlugin = new ChatTranscriptPlugin();
-
-        // Load Broadcast Plugin
-        Log.debug("Manual init of BroadcastPlugin");
-        broadcastPlugin = new BroadcastPlugin();
-        broadcastPlugin.initialize();
-
-        // Load BookmarkPlugin
-        Log.debug("Manual init of BookmarkPlugin");
-        bookmarkPlugin = new BookmarkPlugin();
-        bookmarkPlugin.initialize();
-
-        Log.debug("Done with manual plugin inits");
-
-        // Schedule the loading of the plugins after two seconds.
-        TaskEngine.getInstance().schedule(new TimerTask() {
-            @Override
-			public void run() {
-                Log.debug("Initializing plugin manager");
-                final PluginManager pluginManager = PluginManager.getInstance();
-                Log.debug("Add main window listener");
-                SparkManager.getMainWindow().addMainWindowListener(pluginManager);
-                Log.debug("Initializing plugins");
-                pluginManager.initializePlugins();
-                // Subscriptions are always manual
-                Log.debug("Set roster mode");
-                Roster roster = SparkManager.getRoster();
-                roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-            }
-        }, 2000);
-
-        // Check URI Mappings
-        String uri = Spark.getArgumentValue("uri");
-        if (uri != null) {
-            SparkManager.getUriManager().handleURIMapping(uri, true);
-        }
     }
 
 

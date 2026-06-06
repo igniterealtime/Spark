@@ -35,8 +35,10 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -44,8 +46,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -83,8 +96,6 @@ public class PluginManager implements MainWindowListener
 
     /**
      * Returns the singleton instance of PluginManager, creating it if necessary.
-     *
-     * @return the singleton instance of PluginManager (never null).
      */
     public synchronized static PluginManager getInstance()
     {
@@ -465,13 +476,11 @@ public class PluginManager implements MainWindowListener
         }
     }
 
-
     /**
      * Loads an internal plugin.
      */
     private void loadInternalPlugins() {
         for (PublicPlugin plugin : getInternalPlugins()) {
-            EventQueue.invokeLater(() -> {
                 try {
                     Class<? extends Plugin> pluginType = Class.forName(plugin.getPluginClass()).asSubclass(Plugin.class);
                     Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
@@ -480,7 +489,6 @@ public class PluginManager implements MainWindowListener
                 } catch (Throwable ex) {
                     Log.error("Unable to load plugin " + plugin.getPluginClass(), ex);
                 }
-            });
         }
     }
 
@@ -689,12 +697,10 @@ public class PluginManager implements MainWindowListener
             }
             Log.debug("Completed plugin dependency check");
 
-            EventQueue.invokeLater( () -> {
                 for ( Plugin plugin : plugins )
                 {
                     initializePlugin(plugin);
                 }
-            } );
         }
         catch ( Exception e )
         {
@@ -874,7 +880,7 @@ public class PluginManager implements MainWindowListener
         if (pluginInstance == null) {
             return;
         }
-        EventQueue.invokeLater(() -> initializePlugin(pluginInstance));
+        initializePlugin(pluginInstance);
     }
 
     /**
