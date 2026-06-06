@@ -110,7 +110,7 @@ public class HistoryTranscript extends SwingWorker {
      * Show the History for the given Contact.
      */
     public void showHistory(BareJid jid) {
-        vacardPanel = new VCardPanel(jid);
+        vacardPanel = new VCardPanel(jid.asEntityBareJidIfPossible());
         frame.setTitle(Res.getString("title.history.for", jid));
         this.jid = jid;
         this.start();

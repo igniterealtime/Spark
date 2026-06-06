@@ -35,6 +35,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.BorderFactory;
@@ -262,7 +263,7 @@ public class VCardEditor {
 
                 if (Res.getString("refresh").equals(value)) {
                     VCardManager manager = SparkManager.getVCardManager();
-                    BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(vCard.getJabberId());
+                    EntityBareJid bareJid = JidCreate.entityBareFromOrThrowUnchecked(vCard.getJabberId());
                     VCard card = manager.reloadVCard(bareJid);
                     fillUI(card);
                 }

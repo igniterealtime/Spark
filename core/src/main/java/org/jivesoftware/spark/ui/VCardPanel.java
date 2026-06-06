@@ -23,6 +23,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -64,10 +65,8 @@ public class VCardPanel extends JPanel {
 
     /**
      * Generate a VCard Panel using the specified jid.
-     *
-     * @param jid the jid to use when retrieving the vcard information.
      */
-    public VCardPanel(final BareJid jid) {
+    public VCardPanel(final EntityBareJid jid) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 

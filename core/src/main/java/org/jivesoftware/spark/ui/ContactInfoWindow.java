@@ -233,8 +233,7 @@ public class ContactInfoWindow extends JPanel {
             Log.warning("Unable to update avatar in contact info window", e);
         }
 
-        // Get VCard from memory (if available)
-        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(contactItem.getJid());
+        VCard vcard = SparkManager.getVCardManager().getVCard(contactItem.getJid());
         if (vcard != null) {
             String title = vcard.getField("TITLE");
             String phone = vcard.getPhoneWork("VOICE");

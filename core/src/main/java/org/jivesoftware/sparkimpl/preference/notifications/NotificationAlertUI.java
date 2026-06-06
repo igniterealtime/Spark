@@ -69,7 +69,7 @@ public class NotificationAlertUI extends JPanel {
         setLayout(new GridBagLayout());
         this.available = available;
         this.jid = jid;
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
+        vcard = SparkManager.getVCardManager().getVCard(jid);
         final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
 
         topLabel.setIcon(presenceIcon);

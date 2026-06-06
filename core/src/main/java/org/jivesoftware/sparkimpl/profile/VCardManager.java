@@ -75,7 +75,7 @@ public class VCardManager {
     private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash; // lazy loaded cache of avatar hash.
 
-    private final Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
+    private final Map<EntityBareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
     private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
@@ -87,7 +87,7 @@ public class VCardManager {
 
     private final File vcardStorageDirectory = SparkManager.getVCardsDir();
 
-    private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<EntityBareJid> queue = new LinkedBlockingQueue<>();
     
     private final File contactsDir = SparkManager.getContactsDir();
 
@@ -164,11 +164,11 @@ public class VCardManager {
     	final Runnable queueListener = () -> {
             while (true) {
                 try {
-                   BareJid jid = queue.take();
+                   EntityBareJid jid = queue.take();
                    reloadVCard(jid);
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.warning(e.getMessage());
                     break;
                 }
             }
@@ -185,7 +185,7 @@ public class VCardManager {
             if (stanza instanceof VCard)
             {
                 VCard VCardpacket = (VCard)stanza;
-                BareJid jid = VCardpacket.getFrom().asBareJid();
+                EntityBareJid jid = VCardpacket.getFrom().asEntityBareJidIfPossible();
                 if (VCardpacket.getType().equals(IQ.Type.result) && delayedContacts.contains(jid))
                 {
                     delayedContacts.remove(jid);
@@ -200,14 +200,11 @@ public class VCardManager {
 
     /**
      * Adds a jid to lookup vCard.
-     *
-     * @param jid the jid to lookup.
      */
-    public void addToQueue(BareJid jid) {
+    public void addToQueue(EntityBareJid jid) {
         if (!queue.contains(jid)) {
             queue.add(jid);
         }
-
     }
 
     /**
@@ -282,7 +279,7 @@ public class VCardManager {
      */
     public void viewProfile(final BareJid jid, final JComponent parent) {
         final SwingWorker vcardThread = new SwingWorker() {
-            VCard vcard = new VCard();
+            VCard vcard;
 
             @Override
 			public Object construct() {
@@ -315,7 +312,7 @@ public class VCardManager {
      */
     public void viewFullProfile(final BareJid jid, final JComponent parent) {
         final SwingWorker vcardThread = new SwingWorker() {
-            VCard vcard = new VCard();
+            VCard vcard;
 
             @Override
 			public Object construct() {
@@ -408,20 +405,28 @@ public class VCardManager {
 	 * @return the VCard.
 	 */
     public VCard getVCard(BareJid jid) {
-        return getVCard(jid, true);
+        EntityBareJid entityBareJid = jid.asEntityBareJidIfPossible();
+        if (entityBareJid == null) {
+            return emptyVcard(jid);
+        }
+        return getVCard(entityBareJid, true);
     }
 
-	/**
+    private static VCard emptyVcard(BareJid jid) {
+        VCard vCard = new VCard();
+        vCard.setJabberId(jid);
+        return vCard;
+    }
+
+    /**
 	 * Loads the vCard from memory. If no vCard is found in memory, will add it
 	 * to a loading queue for future loading. Users of this method should only
 	 * use it if the correct vCard is not important the first time around. You
 	 * will get a dummy vCard if there is currently no vCard in memory.
 	 * 
-	 * @param jid
-	 *            the users jid.
 	 * @return the users VCard or an empty VCard.
 	 */
-    public VCard getVCardFromMemory(BareJid jid) {
+    private VCard getVCardFromMemory(EntityBareJid jid) {
         // Check in memory first.
         VCard currentVcard = vcards.get(jid);
         if (currentVcard != null) {
@@ -432,10 +437,8 @@ public class VCardManager {
         VCard vcard = loadFromFileSystem(jid);
         if (vcard == null) {
             addToQueue(jid);
-
             // Create temp vcard.
-            vcard = new VCard();
-            vcard.setJabberId(jid.toString());
+            return emptyVcard(jid);
         }
 
         return vcard;
@@ -454,18 +457,15 @@ public class VCardManager {
 	 * are still listening for vCards that are too late. Be patient for some
 	 * seconds and try again, maybe we will get it.
 	 * 
-	 * @param jid
-	 *            the users jid.
 	 * @param useCachedVCards
 	 *            true to check in cache and hdd, otherwise false will do a new
 	 *            network vcard operation.
 	 * @return the VCard.
 	 */
-    public VCard getVCard(BareJid jid, boolean useCachedVCards) {
+    private VCard getVCard(EntityBareJid jid, boolean useCachedVCards) {
         if (useCachedVCards)
         {
         	return getVCardFromMemory(jid);
-            
         } else {
         	return reloadVCard(jid);
         }
@@ -480,42 +480,32 @@ public class VCardManager {
 	 * jid) if you want VCardManager to update the VCard by the given jid. The
 	 * method will block until the result is available or a timeout occurs.
 	 * 
-	 * @param jidString the JID of the user.
-	 * 
-	 * @return the new network vCard or a vCard with an error 
+	 * @return the new network vCard or a vCard with an error
 	 */
-    public VCard reloadVCard(BareJid jidString) {
-        EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked(jidString);
-        VCard vcard = new VCard();
+    public VCard reloadVCard(EntityBareJid jid) {
         try {
-            vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard( jid );
+            VCard vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard(jid);
             vcard.setJabberId(jid.toString());
             if (vcard.getNickName() != null && !vcard.getNickName().isEmpty())
             {
             	// update nickname.
-            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid.toString());
+            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
             	item.setNickname(vcard.getNickName());
             	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
             }
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
+            return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {
-        	////System.out.println(jid+" Fehler in reloadVCard ----> null");
+        	Log.warning("Unable to reload vCard for " + jid, e);
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.resource_constraint);
+            VCard vcard = new VCard();
         	vcard.setError(errorBuilder.build());
         	vcard.setJabberId(jid.toString());
             delayedContacts.add(jid);
         	return vcard;
-        	//We dont want cards with error
-           // vcard.setError(new StanzaError(XMPPError.Condition.request_timeout));
-           //addVCard(jid, vcard);
         }
-
-        // Persist XML
-        
-
-        return vcard;
     }
 
     
@@ -525,7 +515,7 @@ public class VCardManager {
      * @param jid   the jid of the user.
      * @param vcard the users vcard to cache.
      */
-    public void addVCard(BareJid jid, VCard vcard) {
+    public void addVCard(EntityBareJid jid, VCard vcard) {
         if (vcard == null)
         	return; 
         vcard.setJabberId(jid.toString());
@@ -533,7 +523,6 @@ public class VCardManager {
         if (currentVcard != null && currentVcard.getError() == null && vcard.getError()!= null)
         {
         	return;
-        	
         }
         vcards.put(jid, vcard);
     }
@@ -670,13 +659,15 @@ public class VCardManager {
 	 * Get URL for avatar from vcard. If there is no vcard available we will try
 	 * to get it from the server and return null.
 	 * 
-	 * @param jid
-	 *            the users jid
 	 * @return the vcard if there is already one, otherwise null and we try to
 	 *         load vcard in background
 	 * 
 	 */
-	public URL getAvatarURLIfAvailable(BareJid jid) {
+	public URL getAvatarURLIfAvailable(BareJid bareJid) {
+        EntityBareJid jid = bareJid.asEntityBareJidIfPossible();
+        if (jid == null) {
+            return null;
+        }
 		if (getVCard(jid) != null) {
 			return getAvatarURL(jid);
 		} else {
@@ -696,16 +687,7 @@ public class VCardManager {
         if (jid == null || vcard == null) {
         	return;
         }
-        
-        
         String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
-        // remove tab
-        fileName   = fileName.replaceAll("\t", "");
-        // remove new line (Unix)
-        fileName          = fileName.replaceAll("\n", "");
-        // remove new line (Windows)
-        fileName          = fileName.replaceAll("\r", "");
-
         byte[] bytes = vcard.getAvatar();
         if (bytes != null && bytes.length > 0) {
             vcard.setAvatar(bytes);
@@ -720,7 +702,6 @@ public class VCardManager {
                         Log.warning("Unable to write out avatar for " + jid);
                     }
                     else {
-                    	
 						if (writingQueue.contains(jid)) {
 							writeAvatarSync(image, avatarFile);
 						} else {
@@ -728,8 +709,6 @@ public class VCardManager {
 							ImageIO.write(image, "PNG", avatarFile);
 							writingQueue.remove(jid);
 						}
-                    	
-                    	
                     }
                 }
             }
@@ -740,11 +719,8 @@ public class VCardManager {
 
         // Set timestamp
         vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
-
         final String xml = vcard.toXML().toString();
-
         File vcardFile = new File(vcardStorageDirectory, fileName);
-
         // write xml to file
         try {
             Files.write(vcardFile.toPath(), xml.getBytes(StandardCharsets.UTF_8));
@@ -764,7 +740,7 @@ public class VCardManager {
      * @param jid the jid of the user.
      * @return the VCard if found, otherwise null.
      */
-    private VCard loadFromFileSystem(BareJid jid) {
+    private VCard loadFromFileSystem(EntityBareJid jid) {
     	if (jid == null) {
     		return null;
     	}

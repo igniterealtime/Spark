@@ -692,7 +692,7 @@ public class ChatRoomImpl extends ChatRoom {
 
     protected void loadHistory() {
     	// Add VCard Panel
-    	vcardPanel = new VCardPanel(participantJID.asBareJid());
+    	vcardPanel = new VCardPanel(participantJID.asEntityBareJidIfPossible());
     	getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
        	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {

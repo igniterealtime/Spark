@@ -47,6 +47,7 @@ import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.util.XmppStringUtils;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -394,7 +395,11 @@ public class ContactItem extends JPanel {
      * Persists the avatar locally based on the new hash.
      */
     private void updateAvatar() {
-    	SparkManager.getVCardManager().addToQueue(getJid());
+        EntityBareJid jid = getJid().asEntityBareJidIfPossible();
+        if (jid == null) {
+            return;
+        }
+        SparkManager.getVCardManager().addToQueue(jid);
     }
 
     @Override
