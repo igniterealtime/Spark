@@ -528,12 +528,8 @@ public class ChatManager {
 
     /**
      * Returns the icon from a <code>ContactItemHandler</code>.
-     *
-     * @param jid the jid.
      */
-    public Icon getIconForContactHandler( String jid )
-    {
-        BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
+    public Icon getIconForContactHandler(BareJid bareJid) {
         for ( ContactItemHandler handler : contactItemHandlers )
         {
             try
@@ -546,7 +542,7 @@ public class ChatManager {
             }
             catch ( Exception e )
             {
-                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing an icon request for: '" + jid + "'.", e );
+                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing an icon request for: " + bareJid, e );
             }
         }
         return null;

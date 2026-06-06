@@ -15,6 +15,19 @@
  */
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
+import org.jxmpp.jid.BareJid;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -29,24 +42,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.*;
-
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.Sizes;
-import org.jxmpp.jid.BareJid;
-
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.spark.util.GraphicUtils.toHTMLColor;
+import static org.jivesoftware.spark.util.XEP0392Utils.colorOfContact;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -65,7 +65,7 @@ public class VCardViewer extends JPanel {
      *
      * @param jid the jid to use when retrieving the vcard information.
      */
-    public VCardViewer(final BareJid jid) {
+    public VCardViewer(final BareJid jid, VCard vcard) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 
@@ -74,26 +74,6 @@ public class VCardViewer extends JPanel {
         add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
         try {
-            Image aImage = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24).getImage();
-            aImage = aImage.getScaledInstance(-1, Sizes.Avatar.VCARD_VIEW, Image.SCALE_SMOOTH);
-            ImageIcon ico = new ImageIcon(aImage);
-
-            avatarImage.setIcon(ico);
-
-            final SwingWorker vcardLoader = new SwingWorker()
-            {
-                VCard vcard = null;
-
-                @Override
-                public Object construct()
-                {
-                    vcard = SparkManager.getVCardManager().getVCard(jid);
-                    return vcard;
-                }
-
-                @Override
-                public void finished()
-                {
                     if (vcard == null) {
                         // Do nothing.
                         return;
@@ -112,19 +92,14 @@ public class VCardViewer extends JPanel {
                             Log.warning("Unable to get scaled avatar from vcard.", e);
                         }
                     } else {
-                        icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_32x32_IMAGE);
+                        icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE);
                     }
 
                     if (icon != null && icon.getIconWidth() > 0) {
                         avatarImage.setIcon(icon);
                         avatarImage.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
                     }
-
-                    vcard.setJabberId(jid);
                     buildUI(vcard);
-                }
-            };
-            vcardLoader.start();
         } catch (Exception e) {
             Log.warning("Unable to get avatar from vcard.", e);
         }
@@ -134,7 +109,7 @@ public class VCardViewer extends JPanel {
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
         usernameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
-        usernameLabel.setForeground(Color.GRAY);
+        usernameLabel.setForeground(colorOfContact(jid));
         String fullName = vcard.getField("FN");
         if (!isEmpty(fullName)) {
             usernameLabel.setText(fullName);
@@ -144,7 +119,7 @@ public class VCardViewer extends JPanel {
             usernameLabel.setText(nickname);
         }
 
-        final Icon icon = SparkManager.getChatManager().getIconForContactHandler(vcard.getJabberId());
+        final Icon icon = SparkManager.getChatManager().getIconForContactHandler(jid);
         if (icon != null) {
             usernameLabel.setIcon(icon);
         }
@@ -188,7 +163,6 @@ public class VCardViewer extends JPanel {
         }
 
         // Add JID Label
-        final String jid = UserManager.unescapeJID(vcard.getJabberId());
         final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + toHTMLColor(linkColor) + "><u>" + jid + "</u></font></body></html>");
         jidLabel.setToolTipText("Click to copy jid to clipboard.");
         jidLabel.addMouseListener(new MouseAdapter() {
@@ -204,7 +178,7 @@ public class VCardViewer extends JPanel {
 
             @Override
 			public void mouseClicked(MouseEvent mouseEvent) {
-                SparkManager.setClipboard(jid);
+                SparkManager.setClipboard("xmpp:" + jid.toString());
             }
         });
 

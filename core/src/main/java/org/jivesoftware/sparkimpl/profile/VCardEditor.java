@@ -287,7 +287,7 @@ public class VCardEditor {
      * @param parent the parent component, used for location handling.
      */
     public void displayProfile(final BareJid jid, VCard vcard, JComponent parent) {
-        VCardViewer viewer = new VCardViewer(jid);
+        VCardViewer viewer = new VCardViewer(jid, vcard);
         JFrame dlg = new JFrame(Res.getString("title.view.profile.for", jid));
 
         avatarLabel = new JLabel();

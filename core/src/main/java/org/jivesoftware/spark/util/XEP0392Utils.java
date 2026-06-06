@@ -1,10 +1,11 @@
 package org.jivesoftware.spark.util;
 
 import org.jivesoftware.smackx.colors.ConsistentColor;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Resourcepart;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class XEP0392Utils {
 
@@ -14,6 +15,10 @@ public class XEP0392Utils {
 
     public static Color colorOfMuc(EntityBareJid mucJid) {
         return toColor(ConsistentColor.RGBFrom(mucJid));
+    }
+
+    public static Color colorOfContact(BareJid contactJid) {
+        return toColor(ConsistentColor.RGBFrom(contactJid));
     }
 
     private static Color toColor(float[] rgb) {
