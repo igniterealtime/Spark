@@ -15,17 +15,17 @@ public class SubjectPanel extends JPanel
     private final JLabel roomJIDLabel;
     private final JLabel subjectLabel;
 
-    public SubjectPanel( GroupChatRoom groupChatRoom )
+    public SubjectPanel(EntityBareJid roomJid, String roomName, String subject)
     {
         setLayout( new GridBagLayout() );
-        EntityBareJid roomJid = groupChatRoom.getBareJid();
-        roomJIDLabel = new JLabel( "<" + roomJid + ">" );
+        roomJIDLabel = new JLabel(roomName);
         roomJIDLabel.setFont( roomJIDLabel.getFont().deriveFont( Font.BOLD ) );
         if (SettingsManager.getLocalPreferences().isMucRandomColors()) {
             roomJIDLabel.setForeground(XEP0392Utils.colorOfMuc(roomJid));
         }
+        roomJIDLabel.setToolTipText("xmpp:" + roomJid + "?join");
 
-        subjectLabel = new JLabel( groupChatRoom.getMultiUserChat().getSubject() );
+        subjectLabel = new JLabel(subject);
 
         add( roomJIDLabel,
                 new GridBagConstraints( 1, 0, 1, 1, 1.0, 0.0,
@@ -47,8 +47,4 @@ public class SubjectPanel extends JPanel
         this.setToolTipText( subject );
     }
 
-    public void setRoomLabel( String label )
-    {
-        roomJIDLabel.setText( label );
-    }
 }

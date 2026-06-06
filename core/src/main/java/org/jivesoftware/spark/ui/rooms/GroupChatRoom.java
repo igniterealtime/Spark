@@ -115,7 +115,7 @@ public class GroupChatRoom extends ChatRoom {
 
         setupListeners();
 
-        subjectPanel = new SubjectPanel(this);
+        subjectPanel = new SubjectPanel(roomBareJid, tabTitle, chat.getSubject());
         // Do not show the top toolbar
         getToolBar().add(subjectPanel,
             new GridBagConstraints(0, 1, 1, 1, 1, 0,
@@ -791,10 +791,10 @@ public class GroupChatRoom extends ChatRoom {
     }
 
     /**
-     * Changes the label that is displayed for this room. Does not send an update to the XMPP server (UI only).
+     * Changes the subject that is displayed for this room. Does not send an update to the XMPP server (UI only).
      */
-    public void setRoomLabel(String label) {
-        subjectPanel.setRoomLabel(label);
+    public void setRoomSubject(String subject) {
+        subjectPanel.setSubject(subject);
     }
 
     /**

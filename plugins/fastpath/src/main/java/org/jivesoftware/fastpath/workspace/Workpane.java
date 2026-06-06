@@ -31,9 +31,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.MetaData;
 import org.jivesoftware.smackx.workgroup.agent.*;
@@ -566,7 +564,7 @@ public class Workpane {
                 SparkManager.getChatManager().notifySparkTabHandlers(groupChatRoom);
 
                 // Change the subject line.
-                groupChatRoom.setRoomLabel("<html><body><b>Fastpath Conversation with " + roomName + "</b></body></html>");
+                groupChatRoom.setRoomSubject("<html><body><b>Fastpath Conversation</b></body></html>");
                 return true;
             }
             else if (message != null) {
