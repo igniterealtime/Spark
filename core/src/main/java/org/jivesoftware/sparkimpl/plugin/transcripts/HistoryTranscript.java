@@ -40,6 +40,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -65,7 +66,7 @@ public class HistoryTranscript extends SwingWorker {
     private final JLabel pageCounter = new JLabel("0 / 0");
     private final JButton pageLeft = new JButton("<");
     private final JButton pageRight = new JButton(">");
-    private BareJid jid = null;
+    private EntityJid jid;
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
@@ -109,7 +110,7 @@ public class HistoryTranscript extends SwingWorker {
     /**
      * Show the History for the given Contact.
      */
-    public void showHistory(BareJid jid) {
+    public void showHistory(EntityJid jid) {
         vacardPanel = new VCardPanel(jid.asEntityBareJidIfPossible());
         frame.setTitle(Res.getString("title.history.for", jid));
         this.jid = jid;

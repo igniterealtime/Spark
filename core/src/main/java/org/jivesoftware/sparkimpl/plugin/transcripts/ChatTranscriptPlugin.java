@@ -50,7 +50,6 @@ import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -85,10 +84,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().get(0);
-                final BareJid jid = item.getJid();
+                EntityJid jid = item.getJid().asEntityBareJidIfPossible();
+                if (jid == null) {
+                    return;
+                }
                 transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
                 transcript.showHistory(jid);
-                //showHistory(jid);
             }
         };
 
@@ -139,12 +140,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     public void persistConversations() {
         for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
-            if (room instanceof ChatRoomImpl) {
-                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
-                if (roomImpl.isActive()) {
-                    persistChatRoom(roomImpl);
+                if (room.isActive()) {
+                    persistChatRoom(room);
                 }
-            }
         }
     }
 
@@ -162,9 +160,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         if (!transcriptFile.exists()) {
             return;
         }
-        if (room instanceof ChatRoomImpl) {
-            new ChatRoomDecorator(room);
-        }
+        new ChatRoomDecorator(room);
     }
 
     @Override
@@ -179,16 +175,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
-        // If this is a MUC then don't persist this chat.
-        if (room.getChatType() == Message.Type.groupchat) {
-            return;
-        }
-
-        EntityJid jid = room.getBareJid();
-        //If private chat in MUC then use EntityJid
-        if (((ChatRoomImpl) room).isPrivateChat()) {
-            jid = room.getJid();
-        }
+        EntityJid jid = room.getJid();
 
         final List<Message> transcripts = room.getTranscripts();
         int count = 0;
@@ -279,9 +266,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ChatRoomImpl roomImpl = (ChatRoomImpl) chatRoom;
             transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
-            transcript.showHistory(roomImpl.getParticipantJID());
+            transcript.showHistory(chatRoom.getJid());
         }
     }
 

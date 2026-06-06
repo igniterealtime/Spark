@@ -190,7 +190,7 @@ public final class ChatTranscripts {
      * @return the settings file.
      */
     public static File getTranscriptFile(Jid jid) {
-        return new File(SparkManager.getTranscriptDir(), jid.asUnescapedString() + ".xml");
+        return new File(SparkManager.getTranscriptDir(), jid.asUrlEncodedString() + ".xml");
     }
 
     /**
@@ -200,7 +200,7 @@ public final class ChatTranscripts {
      * @return the current transcript file.
      */
     public static File getCurrentHistoryFile(Jid jid) {
-        return new File(SparkManager.getTranscriptDir(), jid.asUnescapedString() + "_current.xml");
+        return new File(SparkManager.getTranscriptDir(), jid.asUrlEncodedString() + "_current.xml");
     }
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
@@ -211,12 +211,12 @@ public final class ChatTranscripts {
             XmlPullParser.Event eventType = parser.next();
             if (eventType == XmlPullParser.Event.START_ELEMENT && "to".equals(parser.getName())) {
                 String jidString = parser.nextText();
-                Jid jid = JidCreate.from(jidString);
+                Jid jid = JidCreate.fromOrNull(jidString);
                 message.setTo(jid);
             }
             else if (eventType == XmlPullParser.Event.START_ELEMENT && "from".equals(parser.getName())) {
                 String jidString = parser.nextText();
-                Jid jid = JidCreate.from(jidString);
+                Jid jid = JidCreate.fromOrNull(jidString);
                 message.setFrom(jid);
             }
             else if (eventType == XmlPullParser.Event.START_ELEMENT && "body".equals(parser.getName())) {
