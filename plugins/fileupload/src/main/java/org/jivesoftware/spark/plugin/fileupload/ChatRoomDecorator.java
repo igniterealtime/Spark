@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2010 Jive Software. 2023 Ignite Realtime Foundation. All rights reserved.
+ * Copyright (C) 2004-2010 Jive Software. 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
+import org.jivesoftware.smack.packet.StanzaError.Condition;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.httpfileupload.UploadService;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -37,7 +38,8 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 
-import static org.jivesoftware.smack.XMPPException.*;
+import static org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import static org.jivesoftware.smack.packet.StanzaError.Condition.not_acceptable;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
 import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
@@ -53,7 +55,7 @@ public class ChatRoomDecorator {
         // Adds file upload button to chat room
         fileuploadButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.UPLOAD_ICON));
         try {
-            fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
+            fileuploadButton.setToolTipText(GraphicUtils.createToolTip(Res.getString("title.file.upload")));
             fileuploadButton.addActionListener(event -> {
                 getUploadUrl(room);
             });
@@ -64,7 +66,6 @@ public class ChatRoomDecorator {
     }
 
     public void finished() {
-        Log.debug("ChatRoomDecorator finished for room: " + room.getBareJid());
     }
 
     private void getUploadUrl(ChatRoom room) {
@@ -108,8 +109,11 @@ public class ChatRoomDecorator {
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (e instanceof XMPPErrorException) {
-                if (((XMPPErrorException)e).getStanzaError().getCondition() == resource_constraint) {
+                Condition condition = ((XMPPErrorException) e).getStanzaError().getCondition();
+                if (condition == resource_constraint) {
                     errMsg += "\n" + Res.getString("message.file.transfer.history.send.quota");
+                } else if (condition == not_acceptable) {
+                    errMsg += "\n" + Res.getString("message.file.transfer.history.send.notAllowed");
                 }
             } else {
                 Log.error("Error while attempting to uploading file", e);
