@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 /**
  * <code>MessageDialog</code> class is used to easily display the most commonly used dialogs.
  */
@@ -79,14 +81,20 @@ public final class MessageDialog
         EventQueue.invokeLater( () ->
         {
             // Create the title panel for this dialog
-            final String desc = description == null || description.isBlank() ? null : description.trim();
+            final String desc = trimToNull(description);
             final TitlePanel titlePanel = new TitlePanel(Res.getString("message.default.error"), desc, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE), true);
 
             final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );
 
-            final JLabel descriptionLabel = new JLabel(desc);
-            descriptionLabel.setFont(new Font("dialog", Font.PLAIN, 10 ) );
+            final JTextArea descriptionArea = new JTextArea(desc);
+            descriptionArea.setFont(new Font("Dialog", Font.PLAIN, 11));
+            descriptionArea.setEditable(false);
+            descriptionArea.setOpaque(false);
+            descriptionArea.setLineWrap(true);
+            descriptionArea.setWrapStyleWord(true);
+            descriptionArea.setBorder(null);
+            descriptionArea.setPreferredSize( new Dimension( 400, 120 ) );
 
             // The stacktrace content.
             final JTextArea textPane = new JTextArea();
@@ -103,9 +111,8 @@ public final class MessageDialog
             mainPanel.setLayout( new BorderLayout() );
 
             mainPanel.add( titleLabel, BorderLayout.NORTH );
-            if (description != null && !description.isBlank())
-            {
-                mainPanel.add( descriptionLabel, BorderLayout.CENTER );
+            if (desc != null) {
+                mainPanel.add( descriptionArea, BorderLayout.CENTER );
             }
             mainPanel.add( scrollPane, BorderLayout.SOUTH );
 
@@ -141,7 +148,7 @@ public final class MessageDialog
             // By setting the preferred size to whatever is the size after packaging, the size of these components is
             // unlikely to be modified by the expanding/collapsing of the stack trace pane.
             titleLabel.setPreferredSize( titleLabel.getSize() );
-            descriptionLabel.setPreferredSize( descriptionLabel.getSize() );
+            descriptionArea.setPreferredSize( descriptionArea.getSize() );
 
             dlg.setVisible( true );
             dlg.toFront();
