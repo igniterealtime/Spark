@@ -374,7 +374,8 @@ public class LocalPreferences {
     }
 
     /**
-     * Returns the Download Directory, doesnt return <code>null</code>
+     * Returns the Download Directory, doesn't return <code>null</code>.
+     * Uses ~/Downloads as the standard location across all platforms.
      */
     public String getDownloadDir() {
         var propVal = getString("downloadDirectory");
@@ -383,26 +384,11 @@ public class LocalPreferences {
             new File(propVal).mkdir();
             return propVal;
         }
-        File downloadedDir;
-        if (Spark.isLinux() || Spark.isMac()) {
-            downloadedDir = new File(System.getProperty("user.home"), "Downloads");
-            //noinspection ResultOfMethodCallIgnored
-            downloadedDir.mkdir();
-            Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
-        } else if (Spark.isWindows()) {
-            File docDir = new File(System.getProperty("user.home"), "Documents");
-            if (docDir.canWrite()) {
-                downloadedDir = new File(docDir, "Downloads");
-                //noinspection ResultOfMethodCallIgnored
-                downloadedDir.mkdir();
-            } else {
-                // if for some Reason there is no "My Documents" Folder we should select the Desktop
-                downloadedDir = new File(System.getProperty("user.home"), "Desktop");
-            }
-        } else {
-            downloadedDir = new File(System.getProperty("user.home"));
-        }
-        return downloadedDir.getAbsolutePath();
+        var downloadDir = new File(System.getProperty("user.home"), "Downloads");
+        //noinspection ResultOfMethodCallIgnored
+        downloadDir.mkdir();
+        Log.debug("Absolute path for download directory: " + downloadDir.getAbsolutePath());
+        return downloadDir.getAbsolutePath();
     }
 
     public void setDownloadDir(String downloadDir) {
