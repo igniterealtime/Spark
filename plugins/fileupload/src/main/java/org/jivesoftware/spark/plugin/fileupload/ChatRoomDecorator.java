@@ -22,18 +22,25 @@ import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
+import org.jivesoftware.smackx.httpfileupload.UploadService;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+
+import static org.jivesoftware.smack.XMPPException.*;
+import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
+import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
+import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
 
 public class ChatRoomDecorator {
     private final HttpFileUploadManager httpFileUploadManager;
@@ -73,16 +80,43 @@ public class ChatRoomDecorator {
 
     private void handleUpload(File file, ChatRoom room) {
         Log.debug("Uploading file: " + file.getAbsolutePath());
+        long fileSize = file.length();
+        if (fileSize == 0) {
+            return;
+        }
+        UploadService uploadService = httpFileUploadManager.getDefaultUploadService();
+        Long maxSize = uploadService.getMaxFileSize();
+        if (maxSize != null) {
+            if (fileSize > maxSize) {
+                String maxsizeString = TransferUtils.getAppropriateByteWithSuffix(maxSize);
+                String yoursizeString = TransferUtils.getAppropriateByteWithSuffix(fileSize);
+                String fileMaxSizeMsg = Res.getString("message.file.transfer.file.too.big.error", maxsizeString, yoursizeString);
+                room.getTranscriptWindow().insertNotificationMessage(fileMaxSizeMsg, ERROR_COLOR);
+                return;
+            }
+        }
         try {
-            URL uploadedFile = httpFileUploadManager.uploadFile(file);
+            Instant start = Instant.now();
+            URL uploadedFile = httpFileUploadManager.uploadFile(file, (uploadedBytes, totalBytes) -> {
+                if (Duration.between(start, Instant.now()).toSeconds() < 10) {
+                    return;
+                }
+                long progress = totalBytes > 0 ? uploadedBytes / totalBytes : 100;
+                room.getTranscriptWindow().insertNotificationMessage(progress + "%", NOTIFICATION_COLOR);
+            });
             broadcastUploadUrl(uploadedFile.toString());
         } catch (Exception e) {
-            Log.error("Error while attempting to uploading file", e);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(room,
-                "Upload failed: " + e.getMessage(),
-                "Http File Upload Plugin",
-                JOptionPane.ERROR_MESSAGE);
+            String errMsg = e.getMessage();
+            if (e instanceof XMPPErrorException) {
+                if (((XMPPErrorException)e).getStanzaError().getCondition() == resource_constraint) {
+                    errMsg += "\n" + Res.getString("message.file.transfer.history.send.quota");
+                }
+            } else {
+                Log.error("Error while attempting to uploading file", e);
+            }
+            String fileSendErrorMsg = Res.getString("message.file.transfer.history.send.error",
+                file.getAbsolutePath(), room.getTabTitle()) + ":\n" + errMsg;
+            room.getTranscriptWindow().insertNotificationMessage(fileSendErrorMsg, ERROR_COLOR);
         }
     }
 
