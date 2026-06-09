@@ -49,7 +49,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.jivesoftware.MainWindow;
@@ -109,13 +108,10 @@ public class SparkTransferManager {
     private Robot robot;
 
     public static SparkTransferManager getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
-            if (null == singleton) {
-                SparkTransferManager controller = new SparkTransferManager();
-                singleton = controller;
-                return controller;
+            if (singleton == null) {
+                singleton = new SparkTransferManager();
+                return singleton;
             }
         }
         return singleton;
@@ -434,8 +430,7 @@ public class SparkTransferManager {
         }
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(jid.asBareJid());
-        EntityBareJid bareJid = fullJID.asEntityBareJid();
+        EntityBareJid bareJid = jid.asEntityBareJidIfPossible();
         if (!PresenceManager.isOnline(bareJid)) {
             ArrayList<File> list = waitMap.get(bareJid);
             if (list == null) {
@@ -452,6 +447,7 @@ public class SparkTransferManager {
         }
 
         // Create the outgoing file transfer
+        EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(bareJid);
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
 
         ContactItem contactItem = contactList.getContactItemByJID(bareJid);
@@ -508,7 +504,6 @@ public class SparkTransferManager {
 
         String imageName = "image_" + StringUtils.randomString(2) + ".png";
         final File imageFile = new File(tmpDirectory, imageName);
-
         // Write image to system.
         room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 

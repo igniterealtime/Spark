@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software. 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.*;
@@ -56,6 +55,11 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.WEST;
+import static org.jivesoftware.sparkimpl.settings.Sizes.Transfer.THUMBNAIL;
+
 public class SendFileTransfer extends JPanel {
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
@@ -79,27 +83,26 @@ public class SendFileTransfer extends JPanel {
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
         setBackground(new Color(250, 249, 242));
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         cancelButton.setText(Res.getString("cancel"));
         retryButton.setText(Res.getString("retry"));
         cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         retryButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
 
-        add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-        add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
         retryButton.setVisible(false);
 
         retryButton.addActionListener(e -> {
             try {
-                File file = new File(transfer.getFilePath());
                 transfer = transferManager.createOutgoingFileTransfer(fullJID);
-                transfer.sendFile(file, "Sending");
+                transfer.sendFile(fileToSend, "Sending");
             } catch (SmackException e1) {
                 Log.error("An error occurred while creating an outgoing file transfer.", e1);
             }
@@ -136,8 +139,9 @@ public class SendFileTransfer extends JPanel {
         ByteFormat format = new ByteFormat();
         String fileSizeString = format.format(fileSize);
 
-        fileToSend = new File(transfer.getFilePath());
+        fileToSend = new File(filePath);
         imageLabel.setFile(fileToSend);
+        imageLabel.setIcon(getFileIcon());
 
         fileLabel.setText(fileName + " (" + fileSizeString + ")");
 
@@ -147,21 +151,6 @@ public class SendFileTransfer extends JPanel {
         saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.request.sent", filePath, fileSizeString, nickname));
         titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getDisplayName()));
 
-        if (isImage(fileName)) {
-            try {
-                URL imageURL = new File(transfer.getFilePath()).toURI().toURL();
-                ImageIcon image = new ImageIcon(imageURL);
-                image = GraphicUtils.scaleImageIcon(image, Sizes.Transfer.THUMBNAIL, Sizes.Transfer.THUMBNAIL);
-                imageLabel.setIcon(image);
-            } catch (MalformedURLException e) {
-                Log.error("Could not locate image.", e);
-                imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32));
-            }
-        } else {
-            File file = new File(transfer.getFilePath());
-            Icon icon = GraphicUtils.getIcon(file);
-            imageLabel.setIcon(icon);
-        }
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
@@ -184,8 +173,9 @@ public class SendFileTransfer extends JPanel {
         progressBar.setMaximum(100);
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
-        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
+        Insets progressInsets = new Insets(0, 5, 0, 5);
+        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1, 0, WEST, NONE, progressInsets, 150, 0));
+        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1, 0, WEST, NONE, progressInsets, 150, 0));
 
         SwingWorker worker = new SwingWorker() {
             @Override
@@ -238,6 +228,21 @@ public class SendFileTransfer extends JPanel {
         makeClickable(titleLabel);
     }
 
+    private Icon getFileIcon() {
+        if (isImage(fileToSend.getName())) {
+            try {
+                URL imageURL = fileToSend.toURI().toURL();
+                ImageIcon image = new ImageIcon(imageURL);
+                image = GraphicUtils.scaleImageIcon(image, THUMBNAIL, THUMBNAIL);
+                return image;
+            } catch (Exception e) {
+                Log.warning("Could not make thumbnail for image.", e);
+            }
+        }
+        Icon icon = GraphicUtils.getIcon(fileToSend);
+        return icon;
+    }
+
     private void makeClickable(final JLabel label) {
         label.setToolTipText(Res.getString("message.click.to.open"));
         label.addMouseListener(new MouseAdapter() {
@@ -268,72 +273,89 @@ public class SendFileTransfer extends JPanel {
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname, String kBperSecond) {
         FileTransfer.Status status = transfer.getStatus();
-        if (status == Status.negotiating_stream) {
-            titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
-        } else if (status == Status.error) {
-            if (transfer.getException() != null) {
-                Log.error("Error occurred during file transfer.", transfer.getException());
+        switch (status) {
+            case negotiating_stream: {
+                titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
+                break;
             }
-            progressBar.setVisible(false);
-            progressLabel.setVisible(false);
-            titleLabel.setText(Res.getString("message.unable.to.send.file", nickname));
-            cancelButton.setVisible(false);
-            retryButton.setVisible(true);
-            showAlert(true);
-        } else if (status == Status.in_progress) {
-            titleLabel.setText(Res.getString("message.sending.file.to", nickname));
-            showAlert(false);
-            // skip showing progress for small transfers
-            if (transfer.getFileSize() <= 10*1024) {
-                return;
+            case error: {
+                if (transfer.getException() != null) {
+                    Log.error("Error occurred during file transfer.", transfer.getException());
+                }
+                progressBar.setVisible(false);
+                progressLabel.setVisible(false);
+                titleLabel.setText(Res.getString("message.unable.to.send.file", nickname));
+                cancelButton.setVisible(false);
+                retryButton.setVisible(true);
+                showAlert(true);
+                break;
             }
-            if (!progressBar.isVisible()) {
-                progressBar.setVisible(true);
-                progressLabel.setVisible(true);
-            }
+            case in_progress: {
+                titleLabel.setText(Res.getString("message.sending.file.to", nickname));
+                showAlert(false);
+                // skip showing progress for small transfers
+                if (transfer.getFileSize() <= 10 * 1024) {
+                    return;
+                }
+                if (!progressBar.isVisible()) {
+                    progressBar.setVisible(true);
+                    progressLabel.setVisible(true);
+                }
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        long p = transfer.getFileSize() > 0 ? transfer.getBytesSent() * 100 / transfer.getFileSize() : 100;
+                        progressBar.setValue((int) p);
+                    });
+                } catch (Exception e) {
+                    Log.error("An error occurred while trying to update the file transfer progress bar.", e);
+                }
 
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    // 100 % = Filesize
-                    // x %   = Currentsize
-                    long p = transfer.getFileSize() > 0 ? transfer.getBytesSent() * 100 / transfer.getFileSize() : 100;
-                    progressBar.setValue((int)p);
-                });
-            } catch (Exception e) {
-                Log.error("An error occurred while trying to update the file transfer progress bar.", e);
+                ByteFormat format = new ByteFormat();
+                String bytesSent = format.format(transfer.getBytesSent());
+                String est = TransferUtils.calculateEstimate(transfer.getBytesSent(), transfer.getFileSize(), _startTime, System.currentTimeMillis());
+                progressLabel.setText(Res.getString("message.transfer.progressbar.text.sent", bytesSent, kBperSecond, est));
+                break;
             }
-
-            ByteFormat format = new ByteFormat();
-            String bytesSent = format.format(transfer.getBytesSent());
-            String est = TransferUtils.calculateEstimate(transfer.getBytesSent(), transfer.getFileSize(), _startTime, System.currentTimeMillis());
-
-            progressLabel.setText(Res.getString("message.transfer.progressbar.text.sent", bytesSent, kBperSecond, est));
-        } else if (status == Status.complete) {
-            progressBar.setVisible(false);
-
-            if ( _startTime == 0 ) { // SPARK-2192: Sometimes, the startTime of the transfer hasn't been recorded yet when it already finished.
-                _startTime = System.currentTimeMillis();
+            case complete: {
+                progressBar.setVisible(false);
+                if (_startTime == 0) { // SPARK-2192: Sometimes, the startTime of the transfer hasn't been recorded yet when it already finished.
+                    _startTime = System.currentTimeMillis();
+                }
+                String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(Math.max(0, System.currentTimeMillis() - _startTime)) / 1000);
+                _startTime = 0;
+                progressLabel.setText(Res.getString("label.time", fin));
+                titleLabel.setText(Res.getString("message.you.have.sent", nickname));
+                cancelButton.setVisible(false);
+                showAlert(true);
+                break;
             }
-            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(Math.max(0, System.currentTimeMillis() - _startTime)) / 1000);
-            _startTime = 0;
-            progressLabel.setText(Res.getString("label.time", fin));
-            titleLabel.setText(Res.getString("message.you.have.sent", nickname));
-            cancelButton.setVisible(false);
-            showAlert(true);
-        } else if (status == Status.cancelled) {
-            progressBar.setVisible(false);
-            progressLabel.setVisible(false);
-            titleLabel.setText(Res.getString("message.file.transfer.canceled"));
-            cancelButton.setVisible(false);
-            retryButton.setVisible(true);
-            showAlert(true);
-        } else if (status == Status.refused) {
-            progressBar.setVisible(false);
-            progressLabel.setVisible(false);
-            titleLabel.setText(Res.getString("message.file.transfer.rejected", nickname));
-            cancelButton.setVisible(false);
-            retryButton.setVisible(true);
-            showAlert(true);
+            case cancelled: {
+                progressBar.setVisible(false);
+                progressLabel.setVisible(false);
+                titleLabel.setText(Res.getString("message.file.transfer.canceled"));
+                cancelButton.setVisible(false);
+                retryButton.setVisible(true);
+                showAlert(true);
+                break;
+            }
+            case refused: {
+                progressBar.setVisible(false);
+                progressLabel.setVisible(false);
+                titleLabel.setText(Res.getString("message.file.transfer.rejected", nickname));
+                cancelButton.setVisible(false);
+                retryButton.setVisible(true);
+                showAlert(true);
+                break;
+            }
+            case initial: {
+                break;
+            }
+            case negotiating_transfer: {
+                break;
+            }
+            case negotiated: {
+                break;
+            }
         }
     }
 
