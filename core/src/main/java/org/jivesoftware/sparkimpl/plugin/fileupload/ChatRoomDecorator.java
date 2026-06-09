@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jivesoftware.spark.plugin.fileupload;
+package org.jivesoftware.sparkimpl.plugin.fileupload;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -27,22 +27,19 @@ import org.jivesoftware.smackx.httpfileupload.UploadService;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 
-import javax.swing.SwingUtilities;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
 import java.net.URL;
-import java.time.Duration;
-import java.time.Instant;
 
 import static org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.not_acceptable;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
-import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
 
 public class ChatRoomDecorator {
     private final HttpFileUploadManager httpFileUploadManager;
@@ -74,9 +71,16 @@ public class ChatRoomDecorator {
         fd.setVisible(true);
         File[] files = fd.getFiles();
 
-        for (File file : files) {
-            SwingUtilities.invokeLater(() -> handleUpload(file, room));
-        }
+        SwingWorker worker = new SwingWorker() {
+            @Override
+            public Object construct() {
+               for (File file : files) {
+                    handleUpload(file, room);
+               }
+               return null;
+            }
+        };
+        worker.start();
     }
 
     private void handleUpload(File file, ChatRoom room) {
@@ -97,14 +101,7 @@ public class ChatRoomDecorator {
             }
         }
         try {
-            Instant start = Instant.now();
-            URL uploadedFile = httpFileUploadManager.uploadFile(file, (uploadedBytes, totalBytes) -> {
-                if (Duration.between(start, Instant.now()).toSeconds() < 10) {
-                    return;
-                }
-                long progress = totalBytes > 0 ? uploadedBytes / totalBytes : 100;
-                room.getTranscriptWindow().insertNotificationMessage(progress + "%", NOTIFICATION_COLOR);
-            });
+            URL uploadedFile = httpFileUploadManager.uploadFile(file);
             broadcastUploadUrl(uploadedFile.toString());
         } catch (Exception e) {
             String errMsg = e.getMessage();

@@ -15,7 +15,7 @@
  */
 
 
-package org.jivesoftware.spark.plugin.fileupload;
+package org.jivesoftware.sparkimpl.plugin.fileupload;
 
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.spark.ChatManager;
@@ -30,7 +30,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SparkFileUploadPlugin implements Plugin, ChatRoomListener  {
+/**
+ * Http File Upload Plugin.
+ * Allows users to share files by uploading to a server (via XEP-0363).
+ *
+ * @author Dele Olajide
+ */
+public class SparkFileUploadPlugin implements Plugin, ChatRoomListener {
     private HttpFileUploadManager httpFileUploadManager;
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
 

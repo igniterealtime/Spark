@@ -19,6 +19,7 @@ public class InternalPlugins {
             new PublicPlugin("Emoticon Plugin", "org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonPlugin", "1.1"),
             new PublicPlugin("Notes Plugin", "org.jivesoftware.sparkimpl.plugin.scratchpad.ScratchPadPlugin", "1.1"),
             new PublicPlugin("Buzz Plugin", "org.jivesoftware.sparkimpl.plugin.alerts.BuzzPlugin", "1.1"),
+            new PublicPlugin("Http File Upload Plugin", "org.jivesoftware.sparkimpl.plugin.fileupload.SparkFileUploadPlugin", "1.1"),
             new PublicPlugin("Notifications Plugin", "org.jivesoftware.sparkimpl.preference.notifications.NotificationPlugin", "1.1"),
             new PublicPlugin("Shortcut Plugin", "org.jivesoftware.sparkimpl.plugin.chat.ShortcutPlugin", "1.1"),
             new PublicPlugin("History Plugin", "org.jivesoftware.sparkimpl.plugin.history.ConversationHistoryPlugin", "1.1"),

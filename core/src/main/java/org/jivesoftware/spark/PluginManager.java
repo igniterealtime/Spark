@@ -77,6 +77,7 @@ public class PluginManager implements MainWindowListener
 {
     public static final Map<String, String> INCOMPATIBLE_PLUGINS = Map.of(
 //        normalizePluginName("OTR Plugin"), "0.4 Beta"
+        normalizePluginName("Http File Upload Plugin"), ""
     );
 
     private final List<Plugin> plugins = new ArrayList<>();
@@ -318,7 +319,7 @@ public class PluginManager implements MainWindowListener
             String lower = normalizePluginName(publicPlugin.getName());
             // Don't load the plugin if it's known to be incompatible with this version of Spark.
             String incompatibleVersion = INCOMPATIBLE_PLUGINS.get(lower);
-            if (incompatibleVersion != null && incompatibleVersion.compareTo(publicPlugin.getVersion()) >= 0) {
+            if (incompatibleVersion != null && (incompatibleVersion.isEmpty() || incompatibleVersion.compareTo(publicPlugin.getVersion()) >= 0)) {
                 Log.warning("Not loading plugin " + publicPlugin.getName() + " (version " + publicPlugin.getVersion() + ") as it is incompatible with this version of Spark.");
                 return null;
             }
