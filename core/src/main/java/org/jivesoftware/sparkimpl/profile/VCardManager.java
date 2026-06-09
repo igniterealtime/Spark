@@ -21,6 +21,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -49,20 +50,38 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static org.jivesoftware.smack.packet.StanzaError.Condition.item_not_found;
+import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -74,32 +93,17 @@ public class VCardManager {
     private VCard personalVCard;
     private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash; // lazy loaded cache of avatar hash.
-
     private final Map<EntityBareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
-
     private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
-    
     private boolean vcardLoaded;
-
     private final File imageFile;
-
     private final VCardEditor editor;
-
     private final File vcardStorageDirectory = SparkManager.getVCardsDir();
-
     private final LinkedBlockingQueue<EntityBareJid> queue = new LinkedBlockingQueue<>();
-    
-    private final File contactsDir = SparkManager.getContactsDir();
-
     private final CopyOnWriteArrayList<VCardListener> listeners = new CopyOnWriteArrayList<>();
-
 	private final List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
-    /**
-     * Initialize VCardManager.
-     */
     public VCardManager() {
-
         // Register providers
         ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
@@ -132,7 +136,6 @@ public class VCardManager {
             }
 
             if (personalVCard != null) {
-
                 if ( personalVCardAvatar == null )
                 {
                     personalVCardAvatar = personalVCard.getAvatar();
@@ -152,7 +155,6 @@ public class VCardManager {
         }, presenceFilter);
 
         editor = new VCardEditor();
-
         // Start Listener
         startQueueListener();
     }
@@ -186,7 +188,7 @@ public class VCardManager {
             {
                 VCard VCardpacket = (VCard)stanza;
                 EntityBareJid jid = VCardpacket.getFrom().asEntityBareJidIfPossible();
-                if (VCardpacket.getType().equals(IQ.Type.result) && delayedContacts.contains(jid))
+                if (VCardpacket.getType() == IQ.Type.result && delayedContacts.contains(jid))
                 {
                     delayedContacts.remove(jid);
                     addVCard(jid, VCardpacket);
@@ -270,7 +272,6 @@ public class VCardManager {
         } );
     }
 
-
     /**
      * Displays <code>VCardViewer</code> for a particular JID.
      *
@@ -322,7 +323,7 @@ public class VCardManager {
 
             @Override
 			public void finished() {
-                if (vcard.getError() != null || vcard == null) {
+                if (vcard.getError() != null) {
                     // Show vcard not found
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
@@ -340,7 +341,7 @@ public class VCardManager {
     /**
      * Returns the VCard for this Spark user. This information will be cached after loading.
      *
-     * @return this users VCard.
+     * @return this user's VCard.
      */
     public VCard getVCard() {
         if (!vcardLoaded) {
@@ -352,8 +353,7 @@ public class VCardManager {
     
     /**
      * Loads the vcard for this Spark user     
-     * @return this users VCard.
-     */    
+     */
 	public void reloadPersonalVCard() {
 		try {
             personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
@@ -498,16 +498,22 @@ public class VCardManager {
             return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {
-        	Log.warning("Unable to reload vCard for " + jid, e);
-            StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.resource_constraint);
+            StanzaError.Condition condition = resource_constraint;
+            if (e instanceof XMPPErrorException) {
+                condition = ((XMPPErrorException) e).getStanzaError().getCondition();
+                if (condition != item_not_found) {
+                    Log.warning("Unable to reload vCard for " + jid, e);
+                }
+            }
+
+            StanzaError stanzaError = StanzaError.getBuilder(condition).build();
             VCard vcard = new VCard();
-        	vcard.setError(errorBuilder.build());
+            vcard.setError(stanzaError);
         	vcard.setJabberId(jid.toString());
             delayedContacts.add(jid);
         	return vcard;
         }
     }
-
     
     /**
      * Adds a new vCard to the cache.
@@ -644,7 +650,7 @@ public class VCardManager {
                 return null;
             }
 
-            final File avatarFile = new File(contactsDir, hash);
+            final File avatarFile = new File(SparkManager.getContactsDir(), hash);
             try {
                 return avatarFile.toURI().toURL();
             }
@@ -693,7 +699,7 @@ public class VCardManager {
             vcard.setAvatar(bytes);
             try {
                 String hash = vcard.getAvatarHash();
-                final File avatarFile = new File(contactsDir, hash);
+                final File avatarFile = new File(SparkManager.getContactsDir(), hash);
                 ImageIcon icon = new ImageIcon(bytes);
                 icon = VCardManager.scale(icon);
                 if (icon != null && icon.getIconWidth() != -1) {
