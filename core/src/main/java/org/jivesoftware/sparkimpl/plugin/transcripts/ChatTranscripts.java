@@ -18,12 +18,11 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 
@@ -41,6 +40,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
+import static org.jivesoftware.spark.util.JidUtils.jidAsFileName;
+
 /**
  * A Utility class that manages the Chat Transcripts within Spark.
  *
@@ -55,7 +56,7 @@ public final class ChatTranscripts {
     /**
      * Appends the given ChatTranscript to the transcript file associated with a JID.
      */
-    public static void appendToTranscript(Jid jid, ChatTranscript transcript) {
+    public static void appendToTranscript(EntityJid jid, ChatTranscript transcript) {
     	final File transcriptFile = getTranscriptFile(jid);
         if (Default.getBoolean(Default.HISTORY_DISABLED) || !Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
             return;
@@ -142,14 +143,14 @@ public final class ChatTranscripts {
     /**
      * Retrieve the current chat history (default = last 20 messages max).
      */
-    public static ChatTranscript getCurrentChatTranscript(Jid jid) {
+    public static ChatTranscript getCurrentChatTranscript(EntityJid jid) {
         return getTranscript(getCurrentHistoryFile(jid));
     }
 
     /**
      * Retrieve the full chat history.
      */
-    public static ChatTranscript getChatTranscript(Jid jid) {
+    public static ChatTranscript getChatTranscript(EntityJid jid) {
         return getTranscript(getTranscriptFile(jid));
     }
 
@@ -189,8 +190,8 @@ public final class ChatTranscripts {
      * @param jid the
      * @return the settings file.
      */
-    public static File getTranscriptFile(Jid jid) {
-        return new File(SparkManager.getTranscriptDir(), jid.asUrlEncodedString() + ".xml");
+    public static File getTranscriptFile(EntityJid jid) {
+        return jidAsFileName(jid, ".xml");
     }
 
     /**
@@ -199,8 +200,8 @@ public final class ChatTranscripts {
      * @param jid the jid of the user.
      * @return the current transcript file.
      */
-    public static File getCurrentHistoryFile(Jid jid) {
-        return new File(SparkManager.getTranscriptDir(), jid.asUrlEncodedString() + "_current.xml");
+    public static File getCurrentHistoryFile(EntityJid jid) {
+        return jidAsFileName(jid, "_current.xml");
     }
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
