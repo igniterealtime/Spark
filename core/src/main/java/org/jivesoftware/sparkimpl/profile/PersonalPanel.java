@@ -29,6 +29,7 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -47,7 +48,6 @@ public class PersonalPanel extends JPanel {
     private final JComboBox<String> genderField = new JComboBox<>();
     private final JXDatePicker birthdayField = new JXDatePicker();
     private final JTextField emailAddressField = new JTextField();
-    private final JTextField jidField = new JTextField();
     private final JTextArea descriptionField = new JTextArea();
 
     public PersonalPanel() {
@@ -94,17 +94,19 @@ public class PersonalPanel extends JPanel {
         add(birthdayField, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         // Handle Email Address
         row++;
-        JLabel emaiAddressLabel = new JLabel();
-        ResourceUtils.resLabel(emaiAddressLabel, emailAddressField, Res.getString("label.email.address") + ":");
-        add(emaiAddressLabel, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        JLabel emailAddressLabel = new JLabel();
+        ResourceUtils.resLabel(emailAddressLabel, emailAddressField, Res.getString("label.email.address") + ":");
+        add(emailAddressLabel, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
         add(emailAddressField, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         // About memo
         row++;
         JLabel descriptionLabel = new JLabel();
         ResourceUtils.resLabel(descriptionLabel, descriptionField, Res.getString("label.description") + ":");
+        descriptionField.setLineWrap(true);
         add(descriptionLabel, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
         row++;
-        add(descriptionField, new GridBagConstraints(0, row, 2, 2, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        JScrollPane descriptionScrollPane = new JScrollPane(descriptionField);
+        add(descriptionScrollPane, new GridBagConstraints(0, row, 2, 4, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
     }
 
     public String getFirstName() {
