@@ -80,6 +80,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replaceChars;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.item_not_found;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
 
@@ -89,7 +91,6 @@ import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_const
  * @author Derek DeMoro
  */
 public class VCardManager {
-
     private VCard personalVCard;
     private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash; // lazy loaded cache of avatar hash.
@@ -109,28 +110,23 @@ public class VCardManager {
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
 
         imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
-
         // Initialize vCard.
         personalVCard = new VCard();
         personalVCardAvatar = null;
         personalVCardHash = null;
 
         initializeUI();
-
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence newPresence = (Presence)stanza;
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
-
             XmlElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
             XmlElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
-
             if (updateExt != null) {
                 newPresence.removeExtension(updateExt.getElementName(), updateExt.getNamespace());
             }
-
             if (jabberExt != null) {
                 newPresence.removeExtension(jabberExt.getElementName(), jabberExt.getNamespace());
             }
@@ -255,7 +251,7 @@ public class VCardManager {
         contactsMenu.insert(viewProfileMenu, size > 0 ? size - 3 : 0);
         viewProfileMenu.addActionListener( e -> {
             String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-            if (!ModelUtil.hasLength(jidToView)) {
+            if (isBlank(jidToView)) {
                 return;
             }
             BareJid bareJid;
@@ -292,10 +288,9 @@ public class VCardManager {
                     // Show vcard not found
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-                else {
-                    editor.displayProfile(jid, vcard, parent);
-                }
+                editor.displayProfile(jid, vcard, parent);
             }
         };
 
@@ -304,8 +299,6 @@ public class VCardManager {
 
     /**
      * Returns the VCard for this Spark user. This information will be cached after loading.
-     *
-     * @return this user's VCard.
      */
     public VCard getVCard() {
         if (!vcardLoaded) {
@@ -323,7 +316,6 @@ public class VCardManager {
             personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
             personalVCardAvatar = personalVCard.getAvatar();
             personalVCardHash = null; // reload lazy later, when need
-
             // If VCard is loaded, then save the avatar to the personal folder.
 			if (personalVCardAvatar != null && personalVCardAvatar.length > 0) {
 				ImageIcon icon = new ImageIcon(personalVCardAvatar);
@@ -396,7 +388,6 @@ public class VCardManager {
         if (currentVcard != null) {
             return currentVcard;
         }
-
         // if not in memory
         VCard vcard = loadFromFileSystem(jid);
         if (vcard == null) {
@@ -404,7 +395,6 @@ public class VCardManager {
             // Create temp vcard.
             return emptyVcard(jid);
         }
-
         return vcard;
     }
 
@@ -434,7 +424,6 @@ public class VCardManager {
         	return reloadVCard(jid);
         }
     }
-
 
 	/**
 	 * Forces a reload of a <code>VCard</code>. To load a VCard you should use
@@ -508,7 +497,6 @@ public class VCardManager {
         if (icon.getIconHeight() > Sizes.Avatar.VCARD_VIEW || icon.getIconWidth() > Sizes.Avatar.VCARD_VIEW) {
             avatarImage = avatarImage.getScaledInstance(-1, Sizes.Avatar.VCARD_VIEW, Image.SCALE_SMOOTH);
         }
-
         return new ImageIcon(avatarImage);
     }
 
@@ -583,22 +571,11 @@ public class VCardManager {
      * @return the phone number only (5551212)
      */
     public static String getNumbersFromPhone(String number) {
-        if (number == null) {
-            return null;
-        }
-
-        number = number.replace("-", "");
-        number = number.replace("(", "");
-        number = number.replace(")", "");
-        number = number.replace(" ", "");
-
-        return number;
+        return replaceChars(number, "()- ", "");
     }
 
     /**
      * Sets the personal vcard of the user.
-     *
-     * @param vcard the users vCard.
      */
     public void setPersonalVCard(VCard vcard) {
         this.personalVCard = vcard;
@@ -610,10 +587,9 @@ public class VCardManager {
         VCard vcard = getVCard(jid);
         if (vcard != null) {
             String hash = vcard.getAvatarHash();
-            if (!ModelUtil.hasLength(hash)) {
+            if (isBlank(hash)) {
                 return null;
             }
-
             final File avatarFile = new File(SparkManager.getContactsDir(), hash);
             try {
                 return avatarFile.toURI().toURL();
@@ -628,10 +604,6 @@ public class VCardManager {
 	/**
 	 * Get URL for avatar from vcard. If there is no vcard available we will try
 	 * to get it from the server and return null.
-	 * 
-	 * @return the vcard if there is already one, otherwise null and we try to
-	 *         load vcard in background
-	 * 
 	 */
 	public URL getAvatarURLIfAvailable(BareJid bareJid) {
         EntityBareJid jid = bareJid.asEntityBareJidIfPossible();
@@ -645,7 +617,6 @@ public class VCardManager {
 			return null;
 		}
 	}
-    
 
     /**
      * Persist vCard information out for caching.
@@ -714,7 +685,6 @@ public class VCardManager {
     	if (jid == null) {
     		return null;
     	}
-    	
         // Unescape JID
         String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
         final File vcardFile = new File(vcardStorageDirectory, fileName);
@@ -727,18 +697,17 @@ public class VCardManager {
         {
             // Otherwise load from file system.
             XmlPullParser parser = SmackXmlParser.newXmlParser(in);
-
             // Skip forward until we're at <vCard xmlns='vcard-temp'>
             while ( !( parser.getEventType() == XmlPullParser.Event.START_ELEMENT && VCard.ELEMENT.equals( parser.getName() ) && VCard.NAMESPACE.equals( parser.getNamespace() ) ) )
             {
                 parser.next();
             }
-
             VCardProvider provider = new VCardProvider();
             vcard = provider.parse( parser, null );
         }
         catch (Exception e) {
             Log.warning("Unable to load vCard for " + jid, e);
+            //noinspection ResultOfMethodCallIgnored
             vcardFile.delete();
             return null;
         }
@@ -759,28 +728,14 @@ public class VCardManager {
         return vcard;
     }
 
-
-    /**
-     * Add <code>VCardListener</code>. Listens to the personalVCard.
-     *
-     * @param listener the listener to add.
-     */
     public void addVCardListener(VCardListener listener) {
         listeners.addIfAbsent(listener);
     }
 
-    /**
-     * Remove <code>VCardListener</code>.
-     *
-     * @param listener the listener to remove.
-     */
     public void removeVCardListener(VCardListener listener) {
         listeners.remove(listener);
     }
 
-    /**
-     * Notify all <code>VCardListener</code> implementations.
-     */
     protected void notifyVCardListeners() {
         for (VCardListener listener : listeners) {
             listener.vcardChanged(personalVCard);
