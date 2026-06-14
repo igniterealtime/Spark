@@ -186,17 +186,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
         return baos.toByteArray();
     }
 
-    public void allowEditing(boolean allowEditing) {
-        Component[] comps = getComponents();
-        if (comps != null) {
-            for (Component comp : comps) {
-                if (comp instanceof JTextField) {
-                    ((JTextField) comp).setEditable(allowEditing);
-                }
-            }
-        }
-    }
-
     public void initFileChooser() {
         if (fileChooser == null) {
             fileChooser = new FileDialog(dlg, "Choose Avatar", FileDialog.LOAD);

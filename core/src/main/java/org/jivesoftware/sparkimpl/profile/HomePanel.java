@@ -184,14 +184,4 @@ public class HomePanel extends JPanel {
         return webPageField.getText();
     }
 
-    public void allowEditing(boolean allowEditing) {
-        Component[] comps = getComponents();
-        if (comps != null) {
-            for (Component comp : comps) {
-                if (comp instanceof JTextField) {
-                    ((JTextField) comp).setEditable(allowEditing);
-                }
-            }
-        }
-    }
 }

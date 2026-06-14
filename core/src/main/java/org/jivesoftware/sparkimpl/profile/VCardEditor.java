@@ -35,8 +35,6 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -180,107 +178,6 @@ public class VCardEditor {
     }
 
     /**
-     * Displays the VCard for an individual.
-     *
-     * @param vCard  the users vcard.
-     * @param parent the parent component, used for location.
-     */
-    public void viewFullProfile(final VCard vCard, JComponent parent) {
-        JTabbedPane tabbedPane = new JTabbedPane();
-
-        // Initialize Panels
-        personalPanel = new PersonalPanel();
-        personalPanel.allowEditing(false);
-
-        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
-
-        businessPanel = new BusinessPanel();
-        businessPanel.allowEditing(false);
-        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
-
-        homePanel = new HomePanel();
-        homePanel.allowEditing(false);
-        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
-
-        // See if we should remove the Avatar tab in profile dialog
-        if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
-            avatarPanel = new AvatarPanel();
-            avatarPanel.allowEditing(false);
-            tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
-        }
-
-        // Build the UI
-        buildUI(vCard);
-
-        ImageIcon icon = VCardManager.getAvatarIcon(vCard);
-        if (icon == null) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24);
-        }
-
-        // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.profile.information"),
-            "", icon, true);
-
-        // Construct main panel w/ layout.
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-        // The user should only be able to close this dialog.
-        Object[] options = {
-            Res.getString("close"),
-            Res.getString("refresh")
-        };
-        JOptionPane pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        mainPanel.add(pane, BorderLayout.CENTER);
-
-        JOptionPane p = new JOptionPane();
-        JDialog dlg = p.createDialog(parent, Res.getString("title.profile.information"));
-        dlg.setModal(false);
-
-        dlg.pack();
-        dlg.setSize(600, 400);
-        dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent e) {
-                Object o = pane.getValue();
-                if (o instanceof Integer) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                    return;
-                }
-
-                String value = (String) pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                }
-
-                if (Res.getString("refresh").equals(value)) {
-                    VCardManager manager = SparkManager.getVCardManager();
-                    EntityBareJid bareJid = JidCreate.entityBareFromOrThrowUnchecked(vCard.getJabberId());
-                    VCard card = manager.reloadVCard(bareJid);
-                    fillUI(card);
-                }
-
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
-
-        dlg.setVisible(true);
-        dlg.toFront();
-        dlg.requestFocus();
-
-        personalPanel.focus();
-    }
-
-    /**
      * Displays a users profile.
      *
      * @param jid    the jid of the user.
@@ -297,15 +194,11 @@ public class VCardEditor {
 
         // The user should only be able to close this dialog.
         Object[] options = {
-            Res.getString("button.view.profile"),
             Res.getString("close")
         };
         JOptionPane pane = new JOptionPane(viewer,
             JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null,
             options, options[0]);
-
-        // mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
-        // GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
         dlg.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16).getImage());
 
@@ -327,9 +220,6 @@ public class VCardEditor {
                 if (Res.getString("close").equals(value)) {
                     pane.removePropertyChangeListener(this);
                     dlg.dispose();
-                } else if (Res.getString("button.view.profile").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    SparkManager.getVCardManager().viewFullProfile(jid, pane);
                 }
             }
         };

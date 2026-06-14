@@ -197,15 +197,4 @@ public class PersonalPanel extends JPanel {
         firstNameField.requestFocus();
     }
 
-    public void allowEditing(boolean allowEditing) {
-        Component[] comps = getComponents();
-        if (comps != null) {
-            for (Component comp : comps) {
-                if (comp instanceof JTextField) {
-                    ((JTextField) comp).setEditable(allowEditing);
-                }
-            }
-        }
-    }
-
 }

@@ -213,10 +213,8 @@ public class VCardManager {
      * Adds VCard capabilities to menus and other components in Spark.
      */
     private void initializeUI() {
-
         // See if we should disable the "Edit my profile" option under "File"
         if (Default.getBoolean(Default.DISABLE_EDIT_PROFILE) || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
-
         // Add Actions Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
         final JMenu communicatorMenu = SparkManager.getMainWindow().getJMenuBar().getMenu(0);
@@ -302,40 +300,6 @@ public class VCardManager {
         };
 
         vcardThread.start();
-
-    }
-
-    /**
-     * Displays the full profile for a particular JID.
-     *
-     * @param jid    the jid of the user to display.
-     * @param parent the parent component to use for displaying dialog.
-     */
-    public void viewFullProfile(final BareJid jid, final JComponent parent) {
-        final SwingWorker vcardThread = new SwingWorker() {
-            VCard vcard;
-
-            @Override
-			public Object construct() {
-                vcard = getVCard(jid);
-                return vcard;
-            }
-
-            @Override
-			public void finished() {
-                if (vcard.getError() != null) {
-                    // Show vcard not found
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
-                }
-                else {
-                    editor.viewFullProfile(vcard, parent);
-                }
-            }
-        };
-
-        vcardThread.start();
-
     }
 
     /**
