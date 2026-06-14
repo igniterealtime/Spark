@@ -110,14 +110,4 @@ public class LayoutSettings
     {
         this.broadcastMessageBounds = broadcastMessageBounds;
     }
-
-    public Rectangle getVCardEditorBounds()
-    {
-        return vCardEditorBounds;
-    }
-
-    public void setVCardEditorBounds( Rectangle vCardEditorBounds )
-    {
-        this.vCardEditorBounds = vCardEditorBounds;
-    }
 }

@@ -31,7 +31,6 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
@@ -49,9 +48,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -77,15 +74,11 @@ public class VCardEditor {
         JTabbedPane tabbedPane = new JTabbedPane();
         // Initialize Panels
         personalPanel = new PersonalPanel();
-
         tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
-
         businessPanel = new BusinessPanel();
         tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
-
         homePanel = new HomePanel();
         tabbedPane.addTab(Res.getString("tab.home"), homePanel);
-
         // See if we should remove the Avatar tab in profile dialog
         if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
             avatarPanel = new AvatarPanel();
@@ -103,12 +96,10 @@ public class VCardEditor {
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.edit.profile"),
             Res.getString("message.save.profile"), icon, true);
-
         // Construct main panel w/ layout.
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
-
         // The user should only be able to close this dialog.
         Object[] options = {
             Res.getString("save"),
@@ -123,30 +114,10 @@ public class VCardEditor {
         JDialog dlg = p.createDialog(parent, Res.getString("title.profile.information"));
         dlg.setModal(false);
 
+        dlg.setMinimumSize(new Dimension(600, 500));
+        dlg.setContentPane(mainPanel);
         dlg.pack();
         dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
-
-        Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getVCardEditorBounds();
-        if (bounds == null || bounds.width <= 0 || bounds.height <= 0) {
-            // Use default settings.
-            dlg.setLocationRelativeTo(parent);
-            dlg.setSize(600, 500);
-        } else {
-            dlg.setBounds(bounds);
-        }
-
-        dlg.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds(dlg.getBounds());
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds(dlg.getBounds());
-            }
-        });
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
@@ -202,10 +173,9 @@ public class VCardEditor {
 
         dlg.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16).getImage());
 
-        dlg.pack();
-        dlg.setSize(350, 250);
-        dlg.setResizable(true);
         dlg.setContentPane(pane);
+        dlg.pack();
+        dlg.setResizable(true);
         dlg.setLocationRelativeTo(parent);
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
