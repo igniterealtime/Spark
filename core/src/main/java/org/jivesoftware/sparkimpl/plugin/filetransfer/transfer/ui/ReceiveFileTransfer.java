@@ -69,6 +69,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 
+import static org.jivesoftware.spark.util.BrowserLauncher.openFolder;
+
 public class ReceiveFileTransfer extends JPanel {
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
@@ -569,7 +571,7 @@ public class ReceiveFileTransfer extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent event) {
-                launchFile(Downloads.getDownloadDirectory());
+                openFolder(Downloads.getDownloadDirectory());
             }
         });
 

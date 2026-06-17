@@ -36,10 +36,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +83,7 @@ import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
+import static org.jivesoftware.spark.util.BrowserLauncher.openFolder;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -167,7 +164,7 @@ public class SparkTransferManager {
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
-        downloadsMenu.addActionListener(e -> launchFile(Downloads.getDownloadDirectory()));
+        downloadsMenu.addActionListener(e -> openFolder(Downloads.getDownloadDirectory()));
 
         if (defaultDirectory == null) {
             defaultDirectory = new File(System.getProperty("user.home"));
@@ -192,29 +189,6 @@ public class SparkTransferManager {
 //        });
     }
 
-
-    /**
-     * Return correct URI for filePath. dont mind of local or remote path
-     */
-    private static URI getFileURI(String filePath) {
-        URI uri = null;
-        filePath = filePath.trim();
-        if (filePath.startsWith("https") || filePath.startsWith("http") || filePath.startsWith("\\")) {
-            if (filePath.indexOf("\\") == 0)
-                filePath = "file:" + filePath;
-            try {
-                filePath = filePath.replace(" ", "%20");
-                URL url = new URL(filePath);
-                uri = url.toURI();
-            } catch (MalformedURLException | URISyntaxException ex) {
-                Log.error(ex);
-            }
-        } else {
-            File file = new File(filePath);
-            uri = file.toURI();
-        }
-        return uri;
-    }
 
     private void handleTransferRequest(FileTransferRequest request, ContactList contactList) {
         // Check if a listener handled this request
@@ -569,25 +543,6 @@ public class SparkTransferManager {
             }
         }
         return false;
-    }
-
-    /**
-     * Launches a file browser or opens a file with java Desktop.open() if is
-     * supported
-     */
-    private void launchFile(File file) {
-        if (!Desktop.isDesktopSupported())
-            return;
-        Desktop dt = Desktop.getDesktop();
-        try {
-            dt.open(file);
-        } catch (IOException ex) {
-            try {
-                dt.browse(getFileURI(file.getPath()));
-            } catch (Exception exBrowse) {
-                Log.error(exBrowse);
-            }
-        }
     }
 
     /**

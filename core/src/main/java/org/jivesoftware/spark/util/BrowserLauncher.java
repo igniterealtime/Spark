@@ -15,8 +15,11 @@
  */
 package org.jivesoftware.spark.util;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 public class BrowserLauncher {
@@ -47,6 +50,17 @@ public class BrowserLauncher {
                     Desktop.getDesktop().browse(new URI("http:" + url));
                 }
             }
+        }
+    }
+
+    public static void openFolder(File file) {
+        if (!Desktop.isDesktopSupported())
+            return;
+        Desktop dt = Desktop.getDesktop();
+        try {
+            dt.open(file);
+        } catch (IOException ex) {
+            Log.error("Unable to open folder: " + file, ex);
         }
     }
 }

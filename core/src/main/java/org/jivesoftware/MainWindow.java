@@ -44,7 +44,6 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -222,12 +221,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     public void shutdown() {
         final AbstractXMPPConnection con = SparkManager.getConnection();
-
         if (con.isConnected()) {
             // Send disconnect.
             con.disconnect();
         }
-
         // Notify all MainWindowListeners
         try {
             fireWindowShutdown();
@@ -236,8 +233,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error(ex);
         }
         // Close application.
-        System.exit(1);
-
+        System.exit(0);
     }
 
     /**
@@ -249,7 +245,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     public void logout(boolean sendStatus) {
         final XMPPConnection con = SparkManager.getConnection();
         String status = null;
-
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
@@ -323,7 +318,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         File libDir = getLibDirectory();
         String libPath = null;
         String[] files = new String[0];
-
         if (libDir != null) {
             libPath = libDir.getCanonicalPath();
             files = libDir.list((dir, name) -> name.endsWith(".jar"));
@@ -402,10 +396,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Setup the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
-
         // setup file menu
         final JMenuItem exitMenuItem = new JMenuItem();
-
         // Setup ResourceUtils
         ResourceUtils.resButton(connectMenu, "&" + Res.getString("menuitem.connect"));
         ResourceUtils.resButton(contactsMenu, Res.getString("menuitem.contacts"));
@@ -420,7 +412,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         mainWindowBar.add(actionsMenu);
         //mainWindowBar.add(pluginsMenu);
         mainWindowBar.add(helpMenu);
-
 
         preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.PREFERENCES_IMAGE));
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
@@ -823,11 +814,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
             @Override
             public void mousePressed(MouseEvent event) {
-                try {
-                    Desktop.getDesktop().open(Spark.getLogDirectory());
-                } catch (IOException e) {
-                    Log.error("An error occurred while trying to open logs file: " + Spark.getLogDirectory(), e);
-                }
+                BrowserLauncher.openFolder(Spark.getLogDirectory());
             }
         });
 
