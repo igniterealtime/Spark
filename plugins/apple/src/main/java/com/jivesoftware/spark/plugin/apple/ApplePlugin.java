@@ -51,7 +51,6 @@ import com.apple.eawt.ApplicationEvent;
  * @author Wolf Posdorfer
  */
 public class ApplePlugin implements Plugin, NativeHandler {
-
     @SuppressWarnings("unused")
     private AppleDock _appledock;
 
@@ -60,17 +59,12 @@ public class ApplePlugin implements Plugin, NativeHandler {
     private int previousPriority;
     private boolean addedFrameListener;
     private long lastActive;
-
     private ChatFrame chatFrame;
-
     private Application _application;
-
     private AppleProperties _props;
 
     @Override
-    @SuppressWarnings("deprecation")
     public void initialize() {
-
 	_props = new AppleProperties();
 	ApplePreference pref = new ApplePreference(_props);
 	SparkManager.getPreferenceManager().addPreference(pref);
@@ -79,9 +73,7 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	_appledock = new AppleDock();
 
 	SparkManager.getNativeManager().addNativeHandler(this);
-
 	handleIdle();
-
 	// // register an application listener to show the about box
 	_application = Application.getApplication();
 
@@ -118,14 +110,10 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    }
 
 	});
-
     }
 
     @Override
     public void shutdown() {
-	if (Spark.isMac()) {
-	    SparkManager.getNativeManager().removeNativeHandler(this);
-	}
     }
 
     @Override
@@ -146,7 +134,6 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
     @Override
     public void flashWindowStopWhenFocused(Window window) {
-
     }
 
     @Override
@@ -210,7 +197,6 @@ public class ApplePlugin implements Plugin, NativeHandler {
 		    });
 
 		    addedFrameListener = true;
-
 		}
 
 		setActivity();
@@ -237,7 +223,6 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	}, 10000, 10000);
 
 	lastActive = System.currentTimeMillis();
-
     }
 
     public void setActivity() {
@@ -250,7 +235,6 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	if (!localPref.isIdleOn()) {
 	    return;
 	}
-
 	try {
 	    // Handle if spark is not connected to the server.
 	    if (SparkManager.getConnection() == null || !SparkManager.getConnection().isConnected()) {
@@ -310,22 +294,5 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    unavailable = false;
 	    lastActive = System.currentTimeMillis();
 	}
-    }
-
-    public boolean openFile(File file) {
-	return false;
-    }
-
-    public boolean launchEmailClient(String to, String subject) {
-	return false;
-    }
-
-    public boolean launchBrowser(String url) {
-        try {
-            BrowserLauncher.openURL(url);
-        } catch (Exception e) {
-            Log.error(e);
-        }
-        return true;
     }
 }
