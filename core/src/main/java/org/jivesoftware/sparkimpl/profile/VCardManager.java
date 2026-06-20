@@ -97,7 +97,6 @@ public class VCardManager {
     private final Map<EntityBareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
     private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     private boolean vcardLoaded;
-    private final File imageFile;
     private final VCardEditor editor;
     private final File vcardStorageDirectory = SparkManager.getVCardsDir();
     private final LinkedBlockingQueue<EntityBareJid> queue = new LinkedBlockingQueue<>();
@@ -108,13 +107,8 @@ public class VCardManager {
         // Register providers
         ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
-
-        imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
         // Initialize vCard.
         personalVCard = new VCard();
-        personalVCardAvatar = null;
-        personalVCardHash = null;
-
         initializeUI();
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
@@ -316,15 +310,6 @@ public class VCardManager {
             personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
             personalVCardAvatar = personalVCard.getAvatar();
             personalVCardHash = null; // reload lazy later, when need
-            // If VCard is loaded, then save the avatar to the personal folder.
-			if (personalVCardAvatar != null && personalVCardAvatar.length > 0) {
-				ImageIcon icon = new ImageIcon(personalVCardAvatar);
-				icon = VCardManager.scale(icon);
-				if (icon.getIconWidth() != -1) {
-					BufferedImage image = GraphicUtils.convert(icon.getImage());
-					ImageIO.write(image, "PNG", imageFile);
-				}
-			}
 		}
 		catch (Exception e) {
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
@@ -507,22 +492,6 @@ public class VCardManager {
      * @return the URL of the image. If not image is found, a default avatar is returned.
      */
     public URL getAvatar(BareJid jid) {
-        // Handle own avatar file.
-        if (jid != null && SparkManager.getSessionManager().getUserBareAddress().equals(jid)) {
-            if (imageFile.exists()) {
-                try {
-                    return imageFile.toURI().toURL();
-                }
-                catch (MalformedURLException e) {
-                    Log.error(e);
-                }
-            }
-            else {
-                return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
-            }
-        }
-
-        // Handle other users JID
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         URL avatarURL = null;
         if (item != null) {
