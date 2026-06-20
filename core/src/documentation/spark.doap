@@ -55,6 +55,12 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0008.html"/>
+                <xmpp:status>removed</xmpp:status>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0012.html"/>
                 <xmpp:status>complete</xmpp:status>
             </xmpp:SupportedXep>

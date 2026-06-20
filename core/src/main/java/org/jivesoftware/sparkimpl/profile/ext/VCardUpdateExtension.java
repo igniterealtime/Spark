@@ -26,6 +26,10 @@ import org.jxmpp.JxmppContext;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 
+/**
+ * Hash of the contact's avatar, if it was changed then reload its vCard to get the new avatar.
+ * XEP-0153: vCard-Based Avatars
+ */
 public class VCardUpdateExtension implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "x";

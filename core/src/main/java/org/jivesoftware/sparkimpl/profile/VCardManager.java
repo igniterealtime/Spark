@@ -26,9 +26,7 @@ import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
-import org.jivesoftware.smack.packet.XmlElement;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
@@ -40,7 +38,6 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
@@ -103,7 +100,6 @@ public class VCardManager {
 
     public VCardManager() {
         // Register providers
-        ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
         // Initialize vCard.
         personalVCard = new VCard();
