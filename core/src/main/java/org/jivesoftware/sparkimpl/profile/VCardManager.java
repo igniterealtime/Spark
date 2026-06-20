@@ -92,8 +92,6 @@ import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_const
  */
 public class VCardManager {
     private VCard personalVCard;
-    private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
-    private transient String personalVCardHash; // lazy loaded cache of avatar hash.
     private final Map<EntityBareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
     private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     private boolean vcardLoaded;
@@ -110,40 +108,6 @@ public class VCardManager {
         // Initialize vCard.
         personalVCard = new VCard();
         initializeUI();
-        // Intercept all presence packets being sent and append vcard information.
-        StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
-        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
-            Presence newPresence = (Presence)stanza;
-            VCardUpdateExtension update = new VCardUpdateExtension();
-            JabberAvatarExtension jax = new JabberAvatarExtension();
-            XmlElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
-            XmlElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
-            if (updateExt != null) {
-                newPresence.removeExtension(updateExt.getElementName(), updateExt.getNamespace());
-            }
-            if (jabberExt != null) {
-                newPresence.removeExtension(jabberExt.getElementName(), jabberExt.getNamespace());
-            }
-
-            if (personalVCard != null) {
-                if ( personalVCardAvatar == null )
-                {
-                    personalVCardAvatar = personalVCard.getAvatar();
-                }
-                if (personalVCardAvatar != null && personalVCardAvatar.length > 0) {
-                    if ( personalVCardHash == null )
-                    {
-                        personalVCardHash = personalVCard.getAvatarHash();
-                    }
-                    update.setPhotoHash(personalVCardHash);
-                    jax.setPhotoHash(personalVCardHash);
-
-                    newPresence.addExtension(update);
-                    newPresence.addExtension(jax);
-                }
-            }
-        }, presenceFilter);
-
         editor = new VCardEditor();
         // Start Listener
         startQueueListener();
@@ -233,8 +197,6 @@ public class VCardManager {
                 @Override
 				public void finished() {
                     editor.editProfile(personalVCard, SparkManager.getWorkspace());
-                    personalVCardAvatar = null;
-                    personalVCardHash = null;
                 }
             };
             vcardLoaderWorker.start();
@@ -308,14 +270,10 @@ public class VCardManager {
 	public void reloadPersonalVCard() {
 		try {
             personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
-            personalVCardAvatar = personalVCard.getAvatar();
-            personalVCardHash = null; // reload lazy later, when need
 		}
 		catch (Exception e) {
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
 			personalVCard.setError(errorBuilder.build());
-            personalVCardAvatar = null;
-            personalVCardHash = null;
 			Log.error(e);
 		}
 	}
@@ -548,8 +506,6 @@ public class VCardManager {
      */
     public void setPersonalVCard(VCard vcard) {
         this.personalVCard = vcard;
-        this.personalVCardHash = null;
-        this.personalVCardAvatar = null;
     }
 
     public URL getAvatarURL(BareJid jid) {
