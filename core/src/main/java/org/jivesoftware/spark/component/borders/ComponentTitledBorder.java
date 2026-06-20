@@ -75,7 +75,7 @@ public class ComponentTitledBorder implements Border, MouseListener, SwingConsta
             pt.translate(-offset, 0);
             comp.setBounds(rect);
             comp.dispatchEvent(new MouseEvent(comp, me.getID()
-                    , me.getWhen(), me.getModifiers()
+                    , me.getWhen(), me.getModifiersEx()
                     , pt.x, pt.y, me.getClickCount()
                     , me.isPopupTrigger(), me.getButton()));
             if (!comp.isValid())

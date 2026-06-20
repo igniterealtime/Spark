@@ -68,6 +68,7 @@ import org.jxmpp.jid.parts.Localpart;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -1160,7 +1161,7 @@ public class ContactList extends JPanel implements
     @Override
     public void contactItemClicked(ContactItem item) {
         activeItem = item;
-        if (activeKeyEvent == null || ((activeKeyEvent.getModifiers() & KeyEvent.CTRL_MASK) == 0)) {
+        if (activeKeyEvent == null || ((activeKeyEvent.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0)) {
             clearSelectionList(item);
         }
         fireContactItemClicked(item);

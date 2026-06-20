@@ -76,8 +76,8 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
     @Override
 	public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_V) {
-            int i = ke.getModifiers();
-            if ((i & InputEvent.CTRL_MASK) == InputEvent.CTRL_MASK) {
+            int i = ke.getModifiersEx();
+            if ((i & InputEvent.CTRL_DOWN_MASK) != 0) {
                 Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
                 Transferable contents = clb.getContents(ke.getSource());
                 if (contents != null && contents.getTransferDataFlavors().length == 1) {
