@@ -28,10 +28,18 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.io.File;
+import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -40,6 +48,8 @@ import java.util.Properties;
 import org.jivesoftware.gui.LoginUIPanel;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.createTempDirectory;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 
@@ -59,6 +69,7 @@ public final class Spark {
     private static File SECURITY_DIRECTORY;
     private static File USER_DIRECTORY;
     private static File XTRA_DIRECTORY;
+    private static File CACHE_DIRECTORY;
 
     private static synchronized File initializeDirectory(File directoryHome, String directoryName) {
         File targetDir = new File(directoryHome, directoryName).getAbsoluteFile();
@@ -312,6 +323,70 @@ public final class Spark {
      */
     public static File getSparkUserHome() {
         return USER_SPARK_HOME;
+    }
+
+    /**
+     * Return an application-specific cache directory. This method prefers the APP_CACHE_DIR
+     * environment variable if present. Otherwise it chooses per-platform locations:
+     *  - Windows: %LOCALAPPDATA% -> %APPDATA% -> ${user.home}/AppData/Local
+     *  - macOS: ${user.home}/Library/Caches
+     *  - Linux/Unix: $XDG_CACHE_HOME -> ${user.home}/.cache
+     *
+     * @return a File pointing to the cache directory
+     */
+    public static File getCacheDir() {
+        if (CACHE_DIRECTORY != null) {
+            return CACHE_DIRECTORY;
+        }
+        try {
+            String basePath;
+            if (isWindows()) {
+                String localAppData = System.getenv("LOCALAPPDATA");
+                if (!isEmpty(localAppData)) {
+                    basePath = localAppData;
+                } else {
+                    basePath = System.getProperty("user.home") + File.separator + "AppData" + File.separator + "Local";
+                }
+            } else if (isMac()) {
+                basePath = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Caches";
+            } else {
+                String xdg = System.getenv("XDG_CACHE_HOME");
+                if (!isEmpty(xdg)) {
+                    basePath = xdg;
+                } else {
+                    basePath = System.getProperty("user.home") + File.separator + ".cache";
+                }
+            }
+
+            File dir = new File(basePath, "Spark").getAbsoluteFile();
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    Log.error("Unable to create cache directory at: " + dir.getAbsolutePath(), null);
+                    // fallback to temporary directory
+                    Path tmp = createTempDirectory("Spark");
+                    CACHE_DIRECTORY = tmp.toFile();
+                    return CACHE_DIRECTORY;
+                }
+            }
+            CACHE_DIRECTORY = dir;
+            return CACHE_DIRECTORY;
+        } catch (IOException e) {
+            Log.error("Failed to create cache directory for " + "Spark", e);
+            try {
+                Path tmp = createTempDirectory("Spark");
+                CACHE_DIRECTORY = tmp.toFile();
+                return CACHE_DIRECTORY;
+            } catch (IOException ex) {
+                Log.error("Failed to create temporary cache directory", ex);
+                File systemTemp = new File(System.getProperty("java.io.tmpdir"), "Spark");
+                if (!systemTemp.exists()) {
+                    //noinspection ResultOfMethodCallIgnored
+                    systemTemp.mkdirs();
+                }
+                CACHE_DIRECTORY = systemTemp.getAbsoluteFile();
+                return CACHE_DIRECTORY;
+            }
+        }
     }
 
     public static boolean disableUpdatesOnCustom() {
