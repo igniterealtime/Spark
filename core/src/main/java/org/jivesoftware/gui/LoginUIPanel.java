@@ -112,7 +112,7 @@ import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.jivesoftware.XmppProviders.PROVIDERS_A;
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
@@ -234,10 +234,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             }
         }
 
-        if (userProp != null) {
+        if (!isBlank(userProp)) {
             setUsername(userProp);
         }
-        if (serverProp != null) {
+        if (!isBlank(serverProp)) {
             setServerName(serverProp);
         }
 
@@ -282,22 +282,22 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             TaskEngine.getInstance().submit(this::login);
         }
 
-        if (isEmpty(getServerName())) {
+        if (isBlank(getServerName())) {
             String lockedDownURL = Default.getString(Default.HOST_NAME);
-            if (!isEmpty(lockedDownURL)) {
+            if (!isBlank(lockedDownURL)) {
                 setServerName(lockedDownURL);
             } else {
                 // Pick the computer's domain from Active Directory. XMPP domain may be there or on its subdomain.
                 String userDnsDomain = System.getenv("USERDNSDOMAIN");
-                if (!isEmpty(userDnsDomain)) {
+                if (!isBlank(userDnsDomain)) {
                     setServerName(userDnsDomain);
                 }
             }
         }
         // Pre-populate username from OS user
-        if (isEmpty(getUsername())) {
+        if (isBlank(getUsername())) {
             String osUsername = System.getProperty("user.name");
-            if (!isEmpty(osUsername)) {
+            if (!isBlank(osUsername)) {
                 setUsername(osUsername);
             }
         }
@@ -640,7 +640,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                     quitLogin();
                 }
             });
-            if (ModelUtil.hasLength(getUsername())) {
+            if (!isBlank(getUsername())) {
                 tfPassword.requestFocus();
             }
 
@@ -908,9 +908,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
         }
         btnLogin.setEnabled(cbAnonymous.isSelected()
-                || ModelUtil.hasLength(getUsername())
-                && (ModelUtil.hasLength(getPassword()) || localPref.isSSOEnabled())
-                && ModelUtil.hasLength(getServerName()));
+                || !isBlank(getUsername())
+                && (!isBlank(getPassword()) || localPref.isSSOEnabled())
+                && !isBlank(getServerName()));
     }
 
     /**
