@@ -26,7 +26,10 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-import org.jdesktop.swingx.calendar.DateUtils;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -218,16 +221,10 @@ public class HistoryTranscript extends SwingWorker {
 
             long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
 
-            int diff;
-            if (DateUtils.getDaysDiff(lastPostTime, message.getDate()
-                    .getTime()) != 0) {
-                diff = DateUtils.getDaysDiff(lastPostTime, message
-                        .getDate().getTime());
-            } else {
-                diff = DateUtils.getDayOfWeek(lastPostTime)
-                        - DateUtils.getDayOfWeek(message.getDate()
-                                .getTime());
-            }
+            ZoneId zone = ZoneId.systemDefault();
+            LocalDate lastPostDate = Instant.ofEpochMilli(lastPostTime).atZone(zone).toLocalDate();
+            LocalDate messageDate = Instant.ofEpochMilli(message.getDate().getTime()).atZone(zone).toLocalDate();
+            int diff = (int) ChronoUnit.DAYS.between(lastPostDate, messageDate);
 
             if (diff != 0) {
                 if (initialized) {

@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PresenceListener;
@@ -80,7 +79,7 @@ public class GroupChatParticipantList extends JPanel {
 
     private final DefaultListModel<JLabel> model = new DefaultListModel<>();
 
-    private final JXList participantsList;
+    private final JList<JLabel> participantsList;
 
     private PresenceListener listener = null;
 
@@ -100,7 +99,7 @@ public class GroupChatParticipantList extends JPanel {
         chatManager = SparkManager.getChatManager();
 
         agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
-        participantsList = new JXList(model);
+        participantsList = new JList<>(model);
         participantsList.setCellRenderer(new ParticipantRenderer());
 
         // Set the room to track
@@ -1016,7 +1015,7 @@ public class GroupChatParticipantList extends JPanel {
         return model;
     }
 
-    protected JXList getParticipantsList() {
+    protected JList<JLabel> getParticipantsList() {
         return participantsList;
     }
 

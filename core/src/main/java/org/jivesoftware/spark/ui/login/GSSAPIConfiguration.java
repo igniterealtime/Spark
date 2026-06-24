@@ -18,14 +18,15 @@ package org.jivesoftware.spark.ui.login;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 
 public class GSSAPIConfiguration extends Configuration
 {
-    Map<String, Vector<AppConfigurationEntry>> configs;
+    Map<String, List<AppConfigurationEntry>> configs;
 
     public GSSAPIConfiguration()
     {
@@ -67,7 +68,7 @@ public class GSSAPIConfiguration extends Configuration
 	public AppConfigurationEntry[] getAppConfigurationEntry( String name )
     {
         AppConfigurationEntry[] a = new AppConfigurationEntry[ 1 ];
-        Vector<AppConfigurationEntry> v = configs.get( name );
+        List<AppConfigurationEntry> v = configs.get( name );
         if ( v != null )
         {
             a = v.toArray( a );
@@ -81,7 +82,7 @@ public class GSSAPIConfiguration extends Configuration
 
     public boolean putAppConfigurationEntry( String name, String module, AppConfigurationEntry.LoginModuleControlFlag controlFlag, Map<String, String> options )
     {
-        Vector<AppConfigurationEntry> v = configs.computeIfAbsent(name, k -> new Vector<>());
+        List<AppConfigurationEntry> v = configs.computeIfAbsent(name, k -> new ArrayList<>());
 
         return v.add( new AppConfigurationEntry( module, controlFlag, options ) );
     }

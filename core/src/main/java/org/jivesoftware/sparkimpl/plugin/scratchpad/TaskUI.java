@@ -29,7 +29,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jdesktop.swingx.calendar.DateUtils;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import org.jivesoftware.resource.SparkRes;
 
 /**
@@ -74,7 +77,8 @@ public class TaskUI extends JPanel {
             dueLabel.setText(theDate);
         }
 
-        int diff = DateUtils.getDaysDiff(dueDate, new Date().getTime());
+        LocalDate dueLocalDate = Instant.ofEpochMilli(dueDate).atZone(ZoneId.systemDefault()).toLocalDate();
+        int diff = (int) ChronoUnit.DAYS.between(dueLocalDate, LocalDate.now());
         if (diff > 0){
             dueLabel.setForeground(Color.red);
         }
