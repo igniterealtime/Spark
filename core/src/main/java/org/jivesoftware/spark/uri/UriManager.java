@@ -516,18 +516,18 @@ public class UriManager {
             SubmitForm submitForm = fillableForm.getSubmitForm();
             commandResult = remoteCommand.complete(submitForm);
         }
-        System.out.println("status: " + remoteCommand.getStatus());
+        Log.debug("status: " + remoteCommand.getStatus());
         if (commandResult.getResponse().getNotes() != null) {
-            System.out.println("notes:");
+            Log.debug("notes:");
             for (AdHocCommandNote note : commandResult.getResponse().getNotes()) {
-                System.out.println(note.getType() + " " + note.getValue());
+                Log.debug(note.getType() + " " + note.getValue());
             }
         }
         DataForm respForm = commandResult.getResponse().getForm();
         if (respForm != null) {
             CharSequence respXml = respForm.toXML();
-            System.out.println("response:");
-            System.out.println(respXml);
+            Log.debug("response:");
+            Log.debug(respXml.toString());
         }
         if (!commandResult.isCompleted()) {
             Log.error("Ad-hoc command execution did not complete successfully for URI: " + uri);

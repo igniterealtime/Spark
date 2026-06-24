@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -53,7 +55,7 @@ public class FlashingPreferences {
 		try {
 			props.store(new FileOutputStream(getConfigFile()), "");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 

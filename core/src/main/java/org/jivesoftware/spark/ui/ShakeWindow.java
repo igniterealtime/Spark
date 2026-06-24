@@ -16,6 +16,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.Timer;
 import javax.swing.JFrame;
@@ -126,7 +127,7 @@ public class ShakeWindow {
 
     long now = System.currentTimeMillis()/1000L;
     long diff = now-startTime;
-    System.out.println(diff);
+    Log.debug(String.valueOf(diff));
     if(diff > seconds)
     {
         moveTimer.stop();

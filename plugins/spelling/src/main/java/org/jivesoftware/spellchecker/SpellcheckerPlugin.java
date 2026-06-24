@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.spellchecker;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
@@ -41,7 +43,7 @@ public class SpellcheckerPlugin implements Plugin {
 	    listener = new SpellcheckChatRoomListener();
 	    SparkManager.getChatManager().addChatRoomListener(listener);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    Log.error(e);
 	}
     }
 

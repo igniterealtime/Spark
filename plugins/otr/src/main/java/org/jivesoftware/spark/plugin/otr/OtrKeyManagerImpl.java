@@ -1,5 +1,7 @@
 package org.jivesoftware.spark.plugin.otr;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import net.java.otr4j.OtrKeyManagerStore;
 import net.java.otr4j.session.SessionID;
 
@@ -30,7 +32,7 @@ class OtrKeyManagerImpl extends net.java.otr4j.OtrKeyManagerImpl {
                 kg.initialize(1024);
                 keyPair = kg.genKeyPair();
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+                Log.error(e);
                 return;
             }
 

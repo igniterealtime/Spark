@@ -380,7 +380,7 @@ public class SparkRes {
                 prb.load(resourceAsStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 

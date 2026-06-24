@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.launcher;
 
+import org.jivesoftware.spark.util.log.Log;
+
 
 import com.install4j.api.actions.InstallAction;
 import com.install4j.api.context.Context;
@@ -56,7 +58,7 @@ public class Installer implements InstallAction {
 
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
 
         if (sparkPath != null && sparkPath.length() > 0) {
@@ -92,7 +94,7 @@ public class Installer implements InstallAction {
             WinRegistry.setValue(RegistryRoot.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Spark", sparkPath);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 

@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.spark.roar;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,7 +101,7 @@ public class RoarProperties {
         try {
             props.store(new FileOutputStream(getConfigFile()), "Storing ROAR properties");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
     

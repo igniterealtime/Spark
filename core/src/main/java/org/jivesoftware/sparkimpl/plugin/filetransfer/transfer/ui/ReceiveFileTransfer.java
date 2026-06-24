@@ -776,7 +776,7 @@ public class ReceiveFileTransfer extends JPanel {
                 URL url = new URL(filePath);
                 uri = url.toURI();
             } catch (MalformedURLException | URISyntaxException ex) {
-                ex.printStackTrace();
+                Log.error(ex);
             }
         } else {
             uri = new File(filePath).toURI();

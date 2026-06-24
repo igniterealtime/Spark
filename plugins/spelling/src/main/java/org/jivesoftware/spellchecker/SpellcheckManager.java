@@ -60,7 +60,7 @@ public class SpellcheckManager {
 
 	    checker = new SpellChecker(getDictionary(language));
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    Log.error(e);
 	}
 
     }
@@ -82,7 +82,7 @@ public class SpellcheckManager {
 		    "personalDictionary.dict");
 	    dict = new OpenOfficeSpellDictionary(dictionary, personalDictionary);
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    Log.error(e);
 	}
 	return dict;
     }
@@ -123,7 +123,7 @@ public class SpellcheckManager {
 		}
 	    }
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    Log.error(e);
 	}
     }
 }
