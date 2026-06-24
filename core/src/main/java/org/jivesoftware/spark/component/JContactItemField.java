@@ -194,7 +194,7 @@ public class JContactItemField extends JPanel {
      * @param text the text to check
      * @return true if the given text is valid, false otherwise.
      */
-    public boolean validateChars(String text) {
+    public static boolean validateChars(String text) {
         if (!ModelUtil.hasLength(text)) {
             return false;
         }
@@ -215,10 +215,9 @@ public class JContactItemField extends JPanel {
      * @param ch the character
      * @return true if the given text is valid, false otherwise.
      */
-    public boolean validateChar(char ch) {
+    public static boolean validateChar(char ch) {
         return Character.isLetterOrDigit(ch) || ch == '@' || ch == '-' || ch == '_'
-            || ch == '.' || ch == ',' || ch == ' ' || ch == KeyEvent.VK_BACK_SPACE || ch == KeyEvent.CTRL_DOWN_MASK
-            || ch == KeyEvent.CTRL_MASK;
+            || ch == '.' || ch == ',' || ch == ' ' || ch == KeyEvent.VK_BACK_SPACE;
     }
 
     public boolean isArrowKey(KeyEvent e) {

@@ -601,6 +601,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
     }
 
+    // Deliberately dispatches the deprecated ContactGroupListener.showPopup to keep plugins on the legacy interface working.
+    @SuppressWarnings("deprecation")
     private void firePopupEvent(MouseEvent event, ContactItem item) {
         for (final ContactGroupListener listener : listeners) {
             try {
@@ -611,6 +613,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
     }
 
+    // Deliberately dispatches the deprecated ContactGroupListener.showPopup to keep plugins on the legacy interface working.
+    @SuppressWarnings("deprecation")
     private void firePopupEvent(MouseEvent event, Collection<ContactItem> items) {
         for (final ContactGroupListener listener : listeners) {
             try {

@@ -195,7 +195,7 @@ public class ContactList extends JPanel implements
             }
         });
         // Handle Command-F on Macs
-        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
+        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "appleStrokeF");
         mainWindow.getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -1282,6 +1282,8 @@ public class ContactList extends JPanel implements
         activeGroup = group;
     }
 
+    // Implements the deprecated ContactGroupListener callback for backward compatibility; popup building lives in the 3-arg overload.
+    @SuppressWarnings("deprecation")
     @Override
     public void showPopup(MouseEvent e, final ContactItem item) {
         showPopup(null, e, item);
@@ -1446,6 +1448,8 @@ public class ContactList extends JPanel implements
         }
     }
 
+    // Implements the deprecated ContactGroupListener callback for backward compatibility.
+    @SuppressWarnings("deprecation")
     @Override
     public void showPopup(MouseEvent e, final Collection<ContactItem> items) {
         ContactGroup group = null;

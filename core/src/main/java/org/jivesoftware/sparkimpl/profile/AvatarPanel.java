@@ -42,7 +42,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static org.apache.commons.lang3.StringUtils.endsWithAny;
 
 /**
  * UI to view/edit avatar.
@@ -189,8 +188,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
     public void initFileChooser() {
         if (fileChooser == null) {
             fileChooser = new FileDialog(dlg, "Choose Avatar", FileDialog.LOAD);
-            fileChooser.setFilenameFilter((dir, name) -> endsWithAny(name.toLowerCase(), ".jpeg", ".jpg", ".gif", ".png"));
+            fileChooser.setFilenameFilter((dir, name) -> isSupportedImageFile(name));
         }
+    }
+
+    static boolean isSupportedImageFile(String name) {
+        String n = name.toLowerCase();
+        return n.endsWith(".jpeg") || n.endsWith(".jpg") || n.endsWith(".gif") || n.endsWith(".png");
     }
 
     public void setParentDialog(Dialog dialog) {
