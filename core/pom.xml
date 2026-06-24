@@ -16,7 +16,7 @@
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <properties>
-        <bouncycastle.version>1.79</bouncycastle.version>
+        <bouncycastle.version>1.84</bouncycastle.version>
     </properties>
 
     <build>
@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>2.1.4</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -221,12 +221,12 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
-            <version>5.12.1</version>
+            <version>5.19.1</version>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>5.12.1</version>
+            <version>5.19.1</version>
         </dependency>
 
         <dependency>
@@ -285,7 +285,7 @@
         <dependency>
         <groupId>com.formdev</groupId>
         <artifactId>flatlaf</artifactId>
-        <version>3.1.1</version>
+        <version>3.7.1</version>
         <type>jar</type>
         </dependency>
         <dependency>

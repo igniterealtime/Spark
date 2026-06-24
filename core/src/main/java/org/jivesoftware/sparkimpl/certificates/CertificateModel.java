@@ -214,7 +214,7 @@ public class CertificateModel {
 
 	private String authorityKeyIdentifierExtractor(ASN1Primitive primitive) {
 		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(primitive);
-		return Hex.toHexString(authorityKeyIdentifier.getKeyIdentifier());
+		return Hex.toHexString(authorityKeyIdentifier.getKeyIdentifierOctets());
 	}
 	
 	private String subjectKeyIdentifierExtractor(ASN1Primitive primitive) {
