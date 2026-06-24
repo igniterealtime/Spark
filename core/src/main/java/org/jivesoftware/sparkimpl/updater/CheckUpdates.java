@@ -86,7 +86,7 @@ public class CheckUpdates {
         xstream.alias("Version", SparkVersion.class);
         xstream.registerConverter(new InstantConverter());
         // Specify the main update url for JiveSoftware
-        this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
+        this.mainUpdateURL = "https://www.igniterealtime.org/updater/updater";
         sparkPluginInstalled = isSparkPluginInstalled();
     }
 
@@ -120,7 +120,7 @@ public class CheckUpdates {
         //        }
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setConnectionManager(TimeoutConnectionManager.getInstance())
                      .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.post(mainUpdateURL)
@@ -163,7 +163,7 @@ public class CheckUpdates {
         final HttpGet request = new HttpGet(version.getDownloadURL());
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setConnectionManager(TimeoutConnectionManager.getInstance())
                      .build()
         ) {
             httpClient.execute(request, response -> {
