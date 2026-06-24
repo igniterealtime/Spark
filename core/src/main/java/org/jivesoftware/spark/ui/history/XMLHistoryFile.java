@@ -1,5 +1,7 @@
 package org.jivesoftware.spark.ui.history;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -98,7 +100,7 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 			doc.getDocumentElement().normalize();
 			return doc;
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
         return null;
 	}

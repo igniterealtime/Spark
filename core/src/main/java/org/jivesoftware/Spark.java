@@ -144,7 +144,7 @@ public final class Spark {
                 dialog.invoke();
             });
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.error(ex);
         }
     }
 

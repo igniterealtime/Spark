@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.spark.component.browser;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.awt.BorderLayout;
 import java.net.MalformedURLException;
 
@@ -43,7 +45,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
             UIManager.setLookAndFeel(laf);
         }
         catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+            Log.error(e);
         }
 //        browser.addContentListener(this);
     }

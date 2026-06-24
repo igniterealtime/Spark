@@ -160,7 +160,7 @@ public class Default {
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 

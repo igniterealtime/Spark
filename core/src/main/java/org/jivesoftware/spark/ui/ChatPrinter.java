@@ -247,7 +247,7 @@ public class ChatPrinter implements Printable {
         }
         catch(java.awt.print.PrinterException pe)
         {
-           System.err.printf("Error: %s!\n",pe.toString());
+           Log.error("Error printing document", pe);
         }
     }
 

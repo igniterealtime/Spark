@@ -15,6 +15,8 @@
  */
 package com.jivesoftware.spark.plugin.apple;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,7 +61,7 @@ public class AppleProperties {
 	try {
 	    props.store(new FileOutputStream(getConfigFile()), "Storing Apple/Growl properties");
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    Log.error(e);
 	}
     }
 
