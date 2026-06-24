@@ -10,7 +10,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
+import org.jivesoftware.sparkimpl.updater.TimeoutConnectionManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ public class HttpDownloader {
         Log.debug("Start downloading " + uri.toString());
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance()) // FIXME: do not use acceptallcdertsconnectionmanager! It is unsafe. Only use trusted certificates!
+                     .setConnectionManager(TimeoutConnectionManager.getInstance())
                      .setDefaultRequestConfig(RequestConfig.custom().setResponseTimeout(SmackConfiguration.getDefaultReplyTimeout() / 10, TimeUnit.MILLISECONDS).build())
                      .build()
         ) {

@@ -42,7 +42,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
+import org.jivesoftware.sparkimpl.updater.TimeoutConnectionManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -294,7 +294,7 @@ public class PluginViewer extends JPanel implements Plugin
                 final HttpGet request = new HttpGet(retrieveListURL);
                 try (final CloseableHttpClient httpClient =
                          HttpClients.custom().useSystemProperties()
-                             .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                             .setConnectionManager(TimeoutConnectionManager.getInstance())
                              .build()
                 ) {
                     return httpClient.execute(request, response -> {
@@ -354,7 +354,7 @@ public class PluginViewer extends JPanel implements Plugin
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setConnectionManager(TimeoutConnectionManager.getInstance())
                      .build()
         ) {
             httpClient.execute(request, response -> {
