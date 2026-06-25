@@ -113,6 +113,7 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.jivesoftware.XmppProviders.PROVIDERS_A;
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
@@ -198,6 +199,15 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         // autocomplete for popular XMPP domains
         AutoCompleteDecorator.decorate(tfDomain, PROVIDERS_A, false);
 
+        // Add a clear button for username, password and domain fields
+        tfUsername.putClientProperty("JTextField.showClearButton",true);
+        tfDomain.putClientProperty("JTextField.showClearButton",true);
+        tfPassword.putClientProperty("JTextField.showClearButton",true);
+        //reset ui
+        tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
+        tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
+        tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
+
         otherUsers.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -218,10 +228,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         ResourceUtils.resButton(btnLogin, Res.getString("button.login"));
         ResourceUtils.resButton(btnAdvanced, Res.getString("button.advanced"));
 
-        // Load previous instances
-        String userProp = localPref.getLastUsername();
-        String serverProp = localPref.getServer();
-
         File file = new File(Spark.getSparkUserHome(), "/user/");
         File[] userprofiles = file.listFiles(File::isDirectory);
         userprofiles = userprofiles != null ? userprofiles : new File[]{};
@@ -229,59 +235,61 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             if (f.getName().contains("@")) {
                 _usernames.add(f.getName());
             } else {
-                Log.error("Profile contains wrong format: \"" + f.getName()
-                        + "\" located at: " + f.getAbsolutePath());
+                Log.error("Profile contains wrong format: " + f.getAbsolutePath());
             }
         }
-
-        if (!isBlank(userProp)) {
-            setUsername(userProp);
+        // If users account > 1 then show account list button "otherUsers"
+        if (_usernames.size() > 1) {
+            tfUsername.putClientProperty("JTextField.trailingComponent", otherUsers);
         }
-        if (!isBlank(serverProp)) {
-            setServerName(serverProp);
-        }
+        // When user leaves the username field check if this is a JID and extract the domain
+        tfUsername.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String jidOrLocalpart = tfUsername.getText(); // get unescaped username field value
+                if (jidOrLocalpart.contains("@")) {
+                    String[] parts = jidOrLocalpart.split("@");
+                    setUsername(parts[0]);
+                    setServerName(parts[1]);
+                }
+            }
+        });
 
         // Check Settings
-        if (localPref.isSavePassword()) {
-            String encryptedPassword = localPref.getPasswordForUser(getBareJid());
-            if (encryptedPassword != null) {
-                setPassword(encryptedPassword);
-            }
-            cbSavePassword.setSelected(true);
-            btnLogin.setEnabled(true);
-        }
         cbAutoLogin.setSelected(localPref.isAutoLogin());
         cbLoginInvisible.setSelected(localPref.isLoginAsInvisible());
         cbAnonymous.setSelected(localPref.isLoginAnonymously());
-        tfUsername.setEnabled(!cbAnonymous.isSelected());
-        tfPassword.setEnabled(!cbAnonymous.isSelected());
-        // Add a clear button for username, password and domain fields
-        tfUsername.putClientProperty("JTextField.showClearButton",true);
-        tfDomain.putClientProperty("JTextField.showClearButton",true);
-        tfPassword.putClientProperty("JTextField.showClearButton",true);
         useSSO(localPref.isSSOEnabled());
-        if (cbAutoLogin.isSelected()) {
+        setComponentsAvailable(true);
+
+        loadCredentials();
+    }
+
+    private void loadCredentials() {
+        // Handle arguments
+        setUsername(Spark.getArgumentValue("username"));
+        setPassword(Spark.getArgumentValue("password"));
+        setServerName(Spark.getArgumentValue("server"));
+        if (validateDialog()) {
             TaskEngine.getInstance().submit(this::login);
             return;
         }
 
-        // Handle arguments
-        String username = Spark.getArgumentValue("username");
-        String password = Spark.getArgumentValue("password");
-        String server = Spark.getArgumentValue("server");
-        if (username != null) {
-            setUsername(username);
+        // Load previous login and username
+        setUsername(localPref.getLastUsername());
+        setServerName(localPref.getServer());
+        if (localPref.isSavePassword()) {
+            String encryptedPassword = localPref.getPasswordForUser(getBareJid());
+            setPassword(encryptedPassword);
+            cbSavePassword.setSelected(true);
         }
-        if (password != null) {
-            setPassword(password);
-        }
-        if (server != null) {
-            setServerName(server);
-        }
-        if (username != null && server != null && password != null) {
+        // If autologin then sign in with the last time credentials
+        if (validateDialog() && cbAutoLogin.isSelected()) {
             TaskEngine.getInstance().submit(this::login);
+            return;
         }
 
+        // Pre-populate server domain
         if (isBlank(getServerName())) {
             String lockedDownURL = Default.getString(Default.HOST_NAME);
             if (!isBlank(lockedDownURL)) {
@@ -301,29 +309,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 setUsername(osUsername);
             }
         }
-
-        //reset ui
-        tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
-        tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
-        tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
-
-        //If users account > 1 then show account list button "otherUsers"
-        if(_usernames.size() > 1){
-            tfUsername.putClientProperty("JTextField.trailingComponent",otherUsers);
-        }
-        // When user leaves the username field check if this is a JID and extract the domain
-        tfUsername.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                String jidOrLocalpart = tfUsername.getText(); // get unsecaped username field value
-                if (jidOrLocalpart.contains("@")) {
-                    String[] parts = jidOrLocalpart.split("@");
-                    setUsername(parts[0]);
-                    setServerName(parts[1]);
-                }
-            }
-        });
-        setComponentsAvailable(true);
     }
 
     // Should be called only from the Event Dispatcher Thread.
@@ -543,7 +528,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             setUsername(createAccountPanel.getUsernameWithoutEscape());
             setPassword(createAccountPanel.getPassword());
             setServerName(createAccountPanel.getServer());
-            btnLogin.setEnabled(true);
+            validateDialog();
             btnLoginActionPerformed(null);
         }
     }//GEN-LAST:event_btnCreateAccountActionPerformed
@@ -798,7 +783,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }
 
     private void setUsername(String username) {
-        tfUsername.setText(XmppStringUtils.unescapeLocalpart(username));
+        tfUsername.setText(trimToEmpty(XmppStringUtils.unescapeLocalpart(username)));
     }
 
 
@@ -821,7 +806,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }
 
     private void setPassword(String password) {
-        tfPassword.setText(password.trim());
+        tfPassword.setText(trimToEmpty(password));
     }
 
     /**
@@ -834,7 +819,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }
 
     private void setServerName(String xmppDomain) {
-        tfDomain.setText(xmppDomain.trim());
+        tfDomain.setText(trimToEmpty(xmppDomain));
     }
 
     /**
@@ -880,7 +865,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        validate(e);
+        if (e.getKeyChar() == KeyEvent.VK_ENTER)
+            if (btnLogin.isEnabled()) {
+                TaskEngine.getInstance().submit(this::login);
+            }
     }
 
     @Override
@@ -902,24 +890,16 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      *
      * Should be called only from the Event Dispatcher Thread.
      */
-    private void validateDialog() {
+    private boolean validateDialog() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
         if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
             throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
         }
-        btnLogin.setEnabled(cbAnonymous.isSelected()
-                || !isBlank(getUsername())
-                && (!isBlank(getPassword()) || localPref.isSSOEnabled())
-                && !isBlank(getServerName()));
-    }
-
-    /**
-     * Validates key input.
-     */
-    private void validate(KeyEvent e) {
-        if (btnLogin.isEnabled() && e.getKeyChar() == KeyEvent.VK_ENTER) {
-            TaskEngine.getInstance().submit(this::login);
-        }
+        boolean loginIsPossible = !isBlank(getServerName())
+            && (!isBlank(getUsername()) || cbAnonymous.isSelected())
+            && (!isBlank(getPassword()) || localPref.isSSOEnabled());
+        btnLogin.setEnabled(loginIsPossible);
+        return loginIsPossible;
     }
 
     @Override
@@ -952,7 +932,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         cbAutoLogin.setEnabled(available);
         cbLoginInvisible.setEnabled(available);
         cbAnonymous.setEnabled(available);
-        btnLogin.setEnabled(available);
         btnAdvanced.setEnabled(available);
         btnSignUp.setEnabled(available);
 
@@ -1029,7 +1008,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                         princName = name.substring(0, indexOne);
                         princRealm = name.substring(indexOne + 1);
                     }
-                    btnLogin.setEnabled(true);
                 }
             } catch (LoginException le) {
                 Log.debug(le.getMessage());
@@ -1071,7 +1049,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             cbAnonymous.setVisible(true);
 
             Configuration.setConfiguration(null);
-            validateDialog();
         }
     }
 
