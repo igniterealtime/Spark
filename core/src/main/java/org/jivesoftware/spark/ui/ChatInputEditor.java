@@ -108,8 +108,8 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 		}
 	    }
 	};
-        undoKeyStroke = KeyStroke.getKeyStroke('z', InputEvent.CTRL_MASK);
-        ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK);
+        undoKeyStroke = KeyStroke.getKeyStroke('z', InputEvent.CTRL_DOWN_MASK);
+        ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK);
         escapeKeyStroke = KeyStroke.getKeyStroke("ESCAPE");
         
         getInputMap().put(ctrlbackspaceKeyStroke, "ctrlbackspace");
@@ -117,8 +117,8 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         getInputMap().put(escapeKeyStroke, "escape");
         getInputMap().put(KeyStroke.getKeyStroke("ctrl W"), "escape");
         
-        registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        registerKeyboardAction(ctrlbackspace, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        registerKeyboardAction(ctrlbackspace, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         registerKeyboardAction(escape, KeyStroke.getKeyStroke("ESCAPE"), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         
         getDocument().addDocumentListener(this);

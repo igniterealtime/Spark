@@ -195,7 +195,7 @@ public class ContactList extends JPanel implements
             }
         });
         // Handle Command-F on Macs
-        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
+        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "appleStrokeF");
         mainWindow.getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
             @Override
             public void actionPerformed(ActionEvent evt) {
