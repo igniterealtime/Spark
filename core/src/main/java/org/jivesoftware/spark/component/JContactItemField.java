@@ -191,34 +191,12 @@ public class JContactItemField extends JPanel {
      * Validate the given text - to pass it must contain letters, digits, '@', '-', '_', '.', ','
      * or a space character.
      *
-     * @param text the text to check
-     * @return true if the given text is valid, false otherwise.
-     */
-    public boolean validateChars(String text) {
-        if (!ModelUtil.hasLength(text)) {
-            return false;
-        }
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            if (!Character.isLetterOrDigit(ch) && ch != '@' && ch != '-' && ch != '_'
-                    && ch != '.' && ch != ',' && ch != ' ') {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Validate the given text - to pass it must contain letters, digits, '@', '-', '_', '.', ','
-     * or a space character.
-     *
      * @param ch the character
      * @return true if the given text is valid, false otherwise.
      */
-    public boolean validateChar(char ch) {
+    public static boolean validateChar(char ch) {
         return Character.isLetterOrDigit(ch) || ch == '@' || ch == '-' || ch == '_'
-            || ch == '.' || ch == ',' || ch == ' ' || ch == KeyEvent.VK_BACK_SPACE || ch == KeyEvent.CTRL_DOWN_MASK
-            || ch == KeyEvent.CTRL_MASK;
+            || ch == '.' || ch == ',' || ch == ' ' || ch == KeyEvent.VK_BACK_SPACE;
     }
 
     public boolean isArrowKey(KeyEvent e) {
