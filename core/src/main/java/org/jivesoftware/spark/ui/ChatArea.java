@@ -161,7 +161,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     @Override
 	public void mouseClicked(MouseEvent e) {
         try {
-            final int pos = viewToModel(e.getPoint());
+            final int pos = viewToModel2D(e.getPoint());
             final Element element = getStyledDocument().getCharacterElement(pos);
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
@@ -252,7 +252,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     private void checkForLink(MouseEvent e) {
         try {
-            final int pos = viewToModel(e.getPoint());
+            final int pos = viewToModel2D(e.getPoint());
             final Element element = getStyledDocument().getCharacterElement(pos);
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
