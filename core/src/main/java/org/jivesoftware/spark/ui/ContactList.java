@@ -1438,7 +1438,7 @@ public class ContactList extends JPanel implements
         // Fire Context Menu Listener
         fireContextMenuListenerPopup(popup, item);
         ContactGroup group = getContactGroup(item.getGroupName());
-        if (component == null) {
+        if (component == null && group.getList() != null) {
             popup.show(group.getList(), e.getX(), e.getY());
         } else {
             popup.show(component, e.getX(), e.getY());
