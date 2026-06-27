@@ -33,8 +33,8 @@ public class LookAndFeelManager {
         for (Class<? extends LookAndFeel> laf : lafs) {
             String name;
             try {
-                name = laf.newInstance().getName();
-            } catch (InstantiationException | IllegalAccessException e) {
+                name = laf.getDeclaredConstructor().newInstance().getName();
+            } catch (ReflectiveOperationException e) {
                 name = laf.getTypeName();
             }
             UIManager.installLookAndFeel(name, laf.getName());
