@@ -15,7 +15,8 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import org.jdesktop.swingx.calendar.DateUtils;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -263,9 +264,9 @@ public class ScratchPadPlugin implements Plugin {
             showActiveAction.actionPerformed(null);
         }
 
-        long tomorrow = DateUtils.addDays(new Date().getTime(), 1);
+        Instant tomorrow = ZonedDateTime.now().plusDays(1).toInstant();
         SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
-        dueDateField.setText(formatter.format(new Date(tomorrow)));
+        dueDateField.setText(formatter.format(Date.from(tomorrow)));
 
         final JScrollPane pane = new JScrollPane(mainPanel);
 
