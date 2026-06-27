@@ -43,7 +43,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ImageCombiner;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 
@@ -53,6 +52,8 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
+import static org.apache.commons.lang3.Strings.CS;
+import static org.jivesoftware.spark.util.StringUtils.replaceMe;
 
 /**
  * Class to show toasters in multiplatform.
@@ -338,8 +339,8 @@ public class SparkToaster {
         if (icon != null) {
             titleLabel.setIcon(icon);
         }
-        if (ModelUtil.hasLength(msg) && msg.startsWith("/me ")) {
-            msg = msg.replaceFirst("/me", getTitle());
+        if (CS.startsWith(msg, "/me ")) {
+            msg = replaceMe(msg, getTitle());
             singleToaster.message.setForeground(COLOR_ME_SAYS);
         }
         singleToaster.message.setText(msg);

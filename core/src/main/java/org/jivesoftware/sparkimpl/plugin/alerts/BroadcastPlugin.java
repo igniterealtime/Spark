@@ -69,9 +69,9 @@ import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.jivesoftware.spark.Event.MSG_INCOMING;
-import static org.jivesoftware.spark.util.StringUtils.*;
 
 /**
  * Handles broadcasts from a server and allows for roster wide broadcasts.
@@ -233,7 +233,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         if (!from.hasLocalpart()) {
             // if there's no "@" it means the message came from the server
             if (Default.getBoolean(Default.BROADCAST_IN_CHAT_WINDOW)
-                || body.length() > 1000 || countNumberOfOccurences(body, '\n') > 20) {
+                || body.length() > 1000 || countMatches(body, '\n') > 20) {
                 // If the message has more than 20 linebreaks or is longer than 1000 characters
                 // we should broadcast in a normal chat window.
                 broadcastInChat(message);

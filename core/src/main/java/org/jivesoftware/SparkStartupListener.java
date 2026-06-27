@@ -18,8 +18,6 @@ package org.jivesoftware;
 
 import org.jivesoftware.spark.SparkManager;
 
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
-
 /**
  * Uses the Windows registry to perform URI XMPP mappings.
  *

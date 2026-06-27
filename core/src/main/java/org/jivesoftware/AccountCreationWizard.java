@@ -17,7 +17,6 @@
 
 package org.jivesoftware;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;

@@ -20,9 +20,11 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.ui.transctipt.TranscriptWindowInterceptor;
-import org.jivesoftware.spark.util.ModelUtil;
 
 import java.awt.Color;
+
+import static org.apache.commons.lang3.Strings.CS;
+import static org.jivesoftware.spark.util.StringUtils.replaceMe;
 
 /**
  * Adds simple IRC style shortcuts.
@@ -53,8 +55,8 @@ public class ShortcutPlugin implements Plugin, TranscriptWindowInterceptor {
     @Override
 	public boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message) {
         String body = message.getBody();
-        if (ModelUtil.hasLength(body) && body.startsWith("/me ")) {
-            body = body.replaceFirst("/me", userid);
+        if (CS.startsWith(body, "/me ")) {
+            body = replaceMe(body, userid);
             window.insertNotificationMessage(body, Color.MAGENTA);
             return true;
         }

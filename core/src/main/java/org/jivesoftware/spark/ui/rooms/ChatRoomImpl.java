@@ -58,6 +58,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.apache.commons.lang3.Strings.CS;
+import static org.jivesoftware.spark.util.StringUtils.replaceMe;
+
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
  * This room only allows for 1 to 1 conversations.
@@ -735,9 +738,8 @@ public class ChatRoomImpl extends ChatRoom {
     				    }
     				}
     			}
-
-    			if (ModelUtil.hasLength(messageBody) && messageBody.startsWith("/me ")) {
-    				messageBody = nickname + messageBody.substring("/me ".length());
+                if (CS.startsWith(messageBody, "/me ")) {
+                    messageBody = replaceMe(messageBody, nickname);
     			}
     			final Date messageDate = message.getDate();
     			getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
