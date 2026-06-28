@@ -84,16 +84,15 @@ public class ConferenceServices implements InvitationListener {
         // Add Presence Listener to send directed presence to Group Chat Rooms.
         PresenceListener presenceListener = presence -> SwingUtilities.invokeLater(() -> {
             for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
-                if (room instanceof GroupChatRoom) {
+                if (!(room instanceof GroupChatRoom)) {
+                    continue;
+                }
                     GroupChatRoom groupChatRoom = (GroupChatRoom) room;
                     EntityBareJid jid = groupChatRoom.getMultiUserChat().getRoom();
-                    int priority = presence.getPriority();
-                    //Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
-                    priority = (priority < -128 || priority > 128) ? 1 : priority;
                     final Presence p = StanzaBuilder.buildPresence()
                         .ofType(presence.getType())
                         .setStatus(presence.getStatus())
-                        .setPriority(priority)
+                        .setPriority(presence.getPriority())
                         .setMode(presence.getMode())
                         .to(jid)
                         .build();
@@ -103,7 +102,6 @@ public class ConferenceServices implements InvitationListener {
                         Log.warning("Unable to send stanza to " + p.getTo(), e);
                     }
                 }
-            }
         });
         SparkManager.getSessionManager().addPresenceListener(presenceListener);
     }

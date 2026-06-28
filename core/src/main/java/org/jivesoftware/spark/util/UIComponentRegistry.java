@@ -48,13 +48,11 @@ import org.jxmpp.jid.parts.Resourcepart;
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 
 /**
- * This is a registry for components that may be replaced by plugins. Also
- * doubles as a factory to instantiate those components.
- *
+ * This is a registry for components that may be replaced by plugins.
+ * Also doubles as a factory to instantiate those components.
  */
 public final class UIComponentRegistry {
-    // use Spark defaults, so without any plugins we still have Spark's
-    // functionality
+    // use Spark defaults, so without any plugins we still have Spark's functionality
     private static Class<? extends ContactItem> contactItemClass = ContactItem.class;
     private static Class<? extends ContactInfoWindow> contactInfoWindowClass = ContactInfoWindow.class;
     private static Class<? extends ContactGroup> contactGroupClass = ContactGroup.class;
@@ -67,26 +65,20 @@ public final class UIComponentRegistry {
     private static Class<? extends ConferenceServices> conferenceServicesClass = ConferenceServices.class;
     private static Class<? extends TranscriptWindow> transcriptWindowClass = TranscriptWindow.class;
     private static Class<? extends ChatRoom> chatRoomClass = ChatRoomImpl.class;
-        private static Class<? extends GroupChatRoom> groupChatRoomClass=GroupChatRoom.class;
-        private static Class<? extends GroupChatParticipantList> groupChatParticipantListClass=GroupChatParticipantList.class;
+    private static Class<? extends GroupChatRoom> groupChatRoomClass = GroupChatRoom.class;
+    private static Class<? extends GroupChatParticipantList> groupChatParticipantListClass = GroupChatParticipantList.class;
     private static Class<? extends ChatContainer> chatContainerClass = ChatContainer.class;
     private static Class<? extends ButtonFactory> buttonFactoryClass = ButtonFactory.class;
 
-
-
     private UIComponentRegistry() {
-        // disable instantiation
     }
 
     /**
      * Registers a new class implementing a contact item.
-     *
-     * @param clazz
      */
     public static void registerLoginDialog(Class<? extends LoginUIPanel> clazz) {
         if (loginDialogClass != clazz) {
-            Log.debug("Registering new contract item class: "
-                    + clazz.getName());
+            Log.debug("Registering new contract item class: " + clazz.getName());
             loginDialogClass = clazz;
         } else {
             Log.warning("Class " + clazz.getName() + " already registered.");
@@ -95,13 +87,10 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a contact item.
-     *
-     * @param clazz
      */
     public static void registerContactItem(Class<? extends ContactItem> clazz) {
         if (contactItemClass != clazz) {
-            Log.debug("Registering new contract item class: "
-                    + clazz.getName());
+            Log.debug("Registering new contract item class: " + clazz.getName());
             contactItemClass = clazz;
         } else {
             Log.warning("Class " + clazz.getName() + " already registered.");
@@ -110,14 +99,11 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a contact info window.
-     *
-     * @param clazz
      */
     public static void registerContactInfoWindow(
-            Class<? extends ContactInfoWindow> clazz) {
+        Class<? extends ContactInfoWindow> clazz) {
         if (contactInfoWindowClass != clazz) {
-            Log.debug("Registering new contact info window class: "
-                    + clazz.getName());
+            Log.debug("Registering new contact info window class: " + clazz.getName());
             contactInfoWindowClass = clazz;
         } else {
             Log.warning("Class " + clazz.getName() + " already registered.");
@@ -126,13 +112,10 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a contact group.
-     *
-     * @param clazz
      */
     public static void registerContactGroup(Class<? extends ContactGroup> clazz) {
         if (contactGroupClass != clazz) {
-            Log.debug("Registering new contact group class: "
-                    + clazz.getName());
+            Log.debug("Registering new contact group class: " + clazz.getName());
             contactGroupClass = clazz;
         } else {
             Log.warning("Class " + clazz.getName() + " already registered.");
@@ -141,8 +124,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a contact group.
-     *
-     * @param clazz
      */
     public static void registerStatusBar(Class<? extends StatusBar> clazz) {
         if (statusBarClass != clazz) {
@@ -155,13 +136,10 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a command panel.
-     *
-     * @param clazz
      */
     public static void registerCommandPanel(Class<? extends CommandPanel> clazz) {
         if (commandPanelClass != clazz) {
-            Log.debug("Registering new command panel class: "
-                    + clazz.getName());
+            Log.debug("Registering new command panel class: " + clazz.getName());
             commandPanelClass = clazz;
         } else {
             Log.warning("Class " + clazz.getName() + " already registered.");
@@ -171,8 +149,6 @@ public final class UIComponentRegistry {
     /**
      * Registers a new class implementing a tab panel, for use within the main
      * application window.
-     *
-     * @param clazz
      */
     public static void registerWorkspaceTabPanel(Class<? extends SparkTabbedPane> clazz) {
         if (workspaceTabPaneClass != clazz) {
@@ -186,8 +162,6 @@ public final class UIComponentRegistry {
     /**
      * Registers a new class implementing a contact group. Registers a new class
      * implementing a contact list.
-     *
-     * @param clazz
      */
     public static void registerContactList(Class<? extends ContactList> clazz) {
         if (contactListClass != clazz) {
@@ -200,8 +174,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a theme panel.
-     *
-     * @param clazz
      */
     public static void registerThemePanel(Class<? extends ThemePanel> clazz) {
         if (themePanelClass != clazz) {
@@ -214,8 +186,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing conference services.
-     *
-     * @param clazz
      */
     public static void registerConferenceServices(Class<? extends ConferenceServices> clazz) {
         if (conferenceServicesClass != clazz) {
@@ -228,8 +198,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing transcript window.
-     *
-     * @param clazz
      */
     public static void registerTranscriptWindow(Class<? extends TranscriptWindow> clazz) {
         if (transcriptWindowClass != clazz) {
@@ -242,8 +210,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a chat room.
-     *
-     * @param clazz
      */
     public static void registerChatRoom(Class<? extends ChatRoom> clazz) {
         if (chatRoomClass != clazz) {
@@ -254,28 +220,26 @@ public final class UIComponentRegistry {
         }
     }
 
-        public static void registerGroupChatRoom(Class<? extends GroupChatRoom> clazz) {
-                if (groupChatRoomClass != clazz){
-                    Log.debug("Registering new group chat room class: " + clazz.getName());
-                    groupChatRoomClass = clazz;
-                } else {
-                    Log.warning("Class " + clazz.getName() + " already registered.");
-                }
+    public static void registerGroupChatRoom(Class<? extends GroupChatRoom> clazz) {
+        if (groupChatRoomClass != clazz) {
+            Log.debug("Registering new group chat room class: " + clazz.getName());
+            groupChatRoomClass = clazz;
+        } else {
+            Log.warning("Class " + clazz.getName() + " already registered.");
         }
+    }
 
-        public static void registerGroupChatParticipantList(Class<? extends GroupChatParticipantList> clazz) {
-                if (groupChatParticipantListClass != clazz){
-                    Log.debug("Registering new group chat participant list class: " + clazz.getName());
-                    groupChatParticipantListClass = clazz;
-                } else {
-                    Log.warning("Class " + clazz.getName() + " already registered.");
-                }
+    public static void registerGroupChatParticipantList(Class<? extends GroupChatParticipantList> clazz) {
+        if (groupChatParticipantListClass != clazz) {
+            Log.debug("Registering new group chat participant list class: " + clazz.getName());
+            groupChatParticipantListClass = clazz;
+        } else {
+            Log.warning("Class " + clazz.getName() + " already registered.");
         }
+    }
 
     /**
      * Registers a new class implementing a chat room.
-     *
-     * @param clazz
      */
     public static void registerChatContainer(Class<? extends ChatContainer> clazz) {
         if (chatContainerClass != clazz) {
@@ -288,8 +252,6 @@ public final class UIComponentRegistry {
 
     /**
      * Registers a new class implementing a button factory.
-     *
-     * @param clazz
      */
     public static void registerButtonFactory(Class<? extends ButtonFactory> clazz) {
         if (buttonFactoryClass != clazz) {
@@ -303,28 +265,20 @@ public final class UIComponentRegistry {
     /**
      * Creates a new contact item object.
      *
-     * @param alias
-     * @param nickname
-     * @param fullyQualifiedJID
-     *
      * @return A new instance of the class currently registered as contact item.
      */
-    public static ContactItem createContactItem(String alias, String nickname,
-            BareJid fullyQualifiedJID) {
+    public static ContactItem createContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
         // null breaks instantiation by reflection
-        final String nick = nickname != null ? nickname : "";
-        final BareJid jid = fullyQualifiedJID != null ? fullyQualifiedJID : TESTING_JID;
-        final String aliass = alias != null ? alias : "";
-
-        return instantiate(contactItemClass, aliass, nick, jid);
+        nickname = nickname != null ? nickname : "";
+        fullyQualifiedJID = fullyQualifiedJID != null ? fullyQualifiedJID : TESTING_JID;
+        alias = alias != null ? alias : "";
+        return instantiate(contactItemClass, alias, nickname, fullyQualifiedJID);
     }
 
     /**
-     * Retrieves the contact info window instance (this is implemented as a
-     * singleton).
+     * Retrieves the contact info window instance (this is implemented as a singleton).
      *
-     * @return The instance of the class currently registered as contact info
-     *         window.
+     * @return The instance of the class currently registered as contact info window.
      */
     public static ContactInfoWindow getContactInfoWindow() {
         ContactInfoWindow instance = null;
@@ -334,21 +288,15 @@ public final class UIComponentRegistry {
             instance = contactInfoWindowClass.cast(o);
         } catch (final Exception e) {
             // not pretty but we're catching 5 exceptions we can do little about
-            Log.error(
-                    "Error calling getInstance for "
-                            + contactInfoWindowClass.getName(), e);
+            Log.error("Error calling getInstance for " + contactInfoWindowClass.getName(), e);
         }
-
         return instance;
     }
 
     /**
      * Creates a new contact group object.
      *
-     * @param name
-     *
-     * @return A new instance of the class currently registered as contact
-     *         group.
+     * @return A new instance of the class currently registered as contact group.
      */
     public static ContactGroup createContactGroup(String name) {
         return instantiate(contactGroupClass, name);
@@ -384,7 +332,7 @@ public final class UIComponentRegistry {
     /**
      * Creates a new login dialog panel object
      *
-     * @return  A new instance of the class currently registered as login dialog
+     * @return A new instance of the class currently registered as login dialog
      */
     public static LoginUIPanel createLoginDialog() {
         return instantiate(loginDialogClass);
@@ -411,8 +359,7 @@ public final class UIComponentRegistry {
     /**
      * Creates a new conference services object.
      *
-     * @return A new instance of the class currently registered as conference
-     *         services.
+     * @return A new instance of the class currently registered as conference services.
      */
     public static ConferenceServices createConferenceServices() {
         return instantiate(conferenceServicesClass);
@@ -421,8 +368,7 @@ public final class UIComponentRegistry {
     /**
      * Creates a new transcript window object.
      *
-     * @return A new instance of the class currently registered as transcript
-     *         window.
+     * @return A new instance of the class currently registered as transcript window.
      */
     public static TranscriptWindow createTranscriptWindow() {
         return instantiate(transcriptWindowClass);
@@ -437,27 +383,25 @@ public final class UIComponentRegistry {
         return instantiate(chatRoomClass, participantJID, participantNickname, title);
     }
 
-        public static GroupChatRoom createGroupChatRoom(MultiUserChat muc) {
+    public static GroupChatRoom createGroupChatRoom(MultiUserChat muc) {
         return instantiate(groupChatRoomClass, muc);
     }
 
-        public static GroupChatParticipantList createGroupChatParticipantList(){
-            return instantiate(groupChatParticipantListClass);
-        }
+    public static GroupChatParticipantList createGroupChatParticipantList() {
+        return instantiate(groupChatParticipantListClass);
+    }
 
     /**
      * Creates a new chat container object.
      *
-     * @return A new instance of the class currently registered as chat
-     *         container.
+     * @return A new instance of the class currently registered as chat container.
      */
     public static ChatContainer createChatContainer() {
         return instantiate(chatContainerClass);
     }
 
     /**
-     * Retrieves the button factory instance (this is implemented as a
-     * singleton).
+     * Retrieves the button factory instance (this is implemented as a singleton).
      *
      * @return The instance of the class currently registered as button factory.
      */
@@ -478,15 +422,11 @@ public final class UIComponentRegistry {
     /**
      * Instantiate a given class.
      *
-     * @param currentClass
-     *            Class to instantiate.
-     * @param args
-     *            Arguments for the class constructor.
-     * @return New instance, what else?
+     * @param currentClass Class to instantiate.
+     * @param args         Arguments for the class constructor.
      */
     private static <T> T instantiate(Class<? extends T> currentClass, Object... args) {
         T instance = null;
-
         Instant start = Instant.now();
         Class<?>[] classes = new Class<?>[args.length];
         try {
@@ -497,8 +437,7 @@ public final class UIComponentRegistry {
             instance = ctor.newInstance(args);
             Log.debug("Instantiated " + currentClass.getName() + " with args: " + Arrays.toString(args) + " in " + Duration.between(start, Instant.now()));
         } catch (final Exception e) {
-            // not pretty but we're catching several exceptions we can do little
-            // about
+            // not pretty but we're catching several exceptions we can do little about
             Log.error("Error calling constructor for " + currentClass.getName() + " with arguments " + Arrays.toString(classes), e);
         }
         return instance;
