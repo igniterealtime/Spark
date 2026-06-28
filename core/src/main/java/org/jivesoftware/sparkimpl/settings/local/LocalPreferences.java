@@ -26,7 +26,9 @@ import org.jivesoftware.spark.SparkManager;
 
 import java.io.File;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.UIManager;
 
@@ -45,11 +47,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class LocalPreferences {
     private final Properties props;
 
-    public LocalPreferences(Properties props) {
+    LocalPreferences(Properties props) {
         this.props = props;
     }
 
-    public Properties getProperties() {
+    Properties getProperties() {
         return props;
     }
 
@@ -181,6 +183,11 @@ public class LocalPreferences {
 
     /**
      * Is "Use ad hoc room" enabled
+     * When disabled, if there is at least one bookmark room, that
+     * room will be used in Actions/Start conference room Invitation Dialog (instead of creating an ad-hoc room)
+     * If there is more than one bookmark room, you can select the bookmarked room that you want to be used
+     * Also, when invite to join group chat room will be sent from the chat window, the bookmark room will automatically
+     * be opened.
      * @return true if it is wanted that a new ad hoc room to be created every time Actions/Start conference room is chosen,
      * 	 or, from a chat window - invite to group chat room icon is pressed.
      * 	 Returns false if it is wanted that the bookmarked room (if any) to be opened every time Actions/Start conference room is chosen,
@@ -191,13 +198,6 @@ public class LocalPreferences {
         return getBoolean("useAdHocRoom", adhoc == null || Boolean.parseBoolean(adhoc));
     }
 
-    /**
-     * Set useAdHocRoom on or off. When disabled, if there is at least one bookmark room, that
-     * room will be used in Actions/Start conference room Invitation Dialog (instead of creating an ad-hoc room)
-     * If there is more than one bookmark room, you can select the bookmarked room that you want to be used
-     * Also, when invite to join group chat room will be sent from the chat window, the bookmark room will automatically
-     * be opened.
-     */
     public void setUseAdHocRoom(boolean adHocRoom) {
         setBoolean("useAdHocRoom", adHocRoom);
     }
@@ -209,9 +209,6 @@ public class LocalPreferences {
         return getString("idleOnMessage", Res.getString("status.away"));
     }
 
-    /**
-     * Sets the idle Message when going automatically away
-     */
     public void setIdleMessage(String message) {
         setString("idleOnMessage", message);
     }
@@ -224,12 +221,8 @@ public class LocalPreferences {
         return getInt("idleTime", Default.getInt(Default.IDLE_TIME));
     }
 
-    /**
-     * Set the number of minutes to set to unavailable if the computer has no
-     * activity.
-     */
-    public void setIdleTime(int secondIdleTime) {
-        setInt("idleTime", secondIdleTime);
+    public void setIdleTime(int idleTime) {
+        setInt("idleTime", idleTime);
     }
 
     /**
@@ -239,10 +232,6 @@ public class LocalPreferences {
         return getBoolean("autoLoginEnabled", false);
     }
 
-    /**
-     * Turn on or off Auto Login. Auto Login allows a user to login to the
-     * system without inputting their signing information.
-     */
     public void setAutoLogin(boolean autoLogin) {
         setBoolean("autoLoginEnabled", autoLogin);
     }
@@ -254,9 +243,6 @@ public class LocalPreferences {
         return getBoolean("loginAsInvisibleEnabled", false);
     }
 
-    /**
-     * Turn on or off Login As Invisible option.
-     */
     public void setLoginAsInvisible(boolean loginAsInvisible) {
         setBoolean("loginAsInvisibleEnabled", loginAsInvisible);
     }
@@ -268,9 +254,6 @@ public class LocalPreferences {
         return getBoolean("loginAnonymously", false);
     }
 
-    /**
-     * Turn on or off Login Anonymously option.
-     */
     public void setLoginAnonymously(boolean loginAnonymously) {
         setBoolean("loginAnonymously", loginAnonymously);
     }
@@ -282,10 +265,6 @@ public class LocalPreferences {
         return getBoolean("passwordSaved", false);
     }
 
-    /**
-     * Set to true to encode and save password. You would use this if you wish
-     * to not always input ones password.
-     */
     public void setSavePassword(boolean savePassword) {
         setBoolean("passwordSaved", savePassword);
     }
@@ -297,9 +276,6 @@ public class LocalPreferences {
         return getString("username");
     }
 
-    /**
-     * Sets the Agents username.
-     */
     public void setLastUsername(String username) {
         setString("username", username);
     }
@@ -311,25 +287,8 @@ public class LocalPreferences {
         return getString("server");
     }
 
-    /**
-     * Sets the last Server accessed.
-     */
     public void setServer(String server) {
         setString("server", server);
-    }
-
-    /**
-     * Return true if this is a fresh install.
-     */
-    public boolean isNewInstall() {
-        return getBoolean("newInstall", false);
-    }
-
-    /**
-     * Set if this is a fresh install.
-     */
-    public void setNewInstall(boolean newInstall) {
-        setBoolean("newInstall", newInstall);
     }
 
     /**
@@ -345,15 +304,12 @@ public class LocalPreferences {
         }
     }
 
-    /**
-     * Sets the desirability of encryption.
-     */
     public void setSecurityMode(ConnectionConfiguration.SecurityMode securityMode) {
         setString("securityMode", securityMode.toString());
     }
 
     /**
-     * Returns true to use 'old style' Direct TLS.
+     * Returns true to use Direct TLS.
      * <p>
      * This type of encryption typically occurs on port 5223, and causes the socket to be TLS-encrypted immediately.
      * <p>
@@ -363,12 +319,6 @@ public class LocalPreferences {
         return getBoolean("sslEnabled", Default.getBoolean(Default.OLD_SSL_ENABLED));
     }
 
-    /**
-     * Sets if the agent should use 'old style' Direct TLS for connecting.
-     * <p>
-     * This type of encryption typically occurs on port 5223, and causes the socket to be SSL-encrypted immediately.
-     * <p>
-     */
     public void setDirectTls(boolean directTls) {
         setBoolean("sslEnabled", directTls);
     }
@@ -387,14 +337,6 @@ public class LocalPreferences {
 
     public void setDownloadDir(String downloadDir) {
         setString("downloadDirectory", downloadDir);
-    }
-
-    public String getFileExplorer() {
-        return getString("fileExplorer");
-    }
-
-    public void setFileExplorer(String fileExplorer) {
-        setString("fileExplorer", fileExplorer);
     }
 
     public boolean isProxyEnabled() {
@@ -443,14 +385,6 @@ public class LocalPreferences {
 
     public void setProtocol(String protocol) {
         setString("protocol", protocol);
-    }
-
-    public String getDefaultNickname() {
-        return getString("defaultNickname");
-    }
-
-    public void setDefaultNickname(String defaultNickname) {
-        setString("defaultNickname", defaultNickname);
     }
 
     public int getCheckForUpdates() {
@@ -527,14 +461,6 @@ public class LocalPreferences {
         return getString("timeFormat", "HH:mm");
     }
 
-    public boolean isSpellCheckerEnabled() {
-        return getBoolean("spellCheckerEnabled", true);
-    }
-
-    public void setSpellCheckerEnabled(boolean enabled) {
-        setBoolean("spellCheckerEnabled", enabled);
-    }
-
     public boolean isChatRoomNotificationsOn() {
         return getBoolean("chatNotificationOn", true);
     }
@@ -547,16 +473,16 @@ public class LocalPreferences {
         return getBoolean("showHistory", true);
     }
 
-    public void setChatHistoryEnabled(boolean hidePrevChatHistory) {
-        setBoolean("showHistory", hidePrevChatHistory);
+    public void setChatHistoryEnabled(boolean chatHistoryEnabled) {
+        setBoolean("showHistory", chatHistoryEnabled);
     }
 
     public boolean isPrevChatHistoryEnabled() {
         return getBoolean("showPrevHistory", true);
     }
 
-    public void setPrevChatHistoryEnabled(boolean hidePrevChatHistory) {
-        setBoolean("showPrevHistory", hidePrevChatHistory);
+    public void setPrevChatHistoryEnabled(boolean prevChatHistoryEnabled) {
+        setBoolean("showPrevHistory", prevChatHistoryEnabled);
     }
 
     public boolean isEmptyGroupsShown() {
@@ -652,24 +578,17 @@ public class LocalPreferences {
     }
 
     /**
-     * Sets the Reconnection display type</p>
+     * Reconnection display type</p>
      * 0 = ReconnectPanel </p>
      * 1 = Reconnect as Group</p>
-     * 2 = Reconnect as Icon</p>
-     * @param reconnect
-     */
-    public void setReconnectPanelType(int reconnect) {
-        setInt("ReconnectPanelType", reconnect);
-    }
-
-    /**
-     * Sets the Reconnection display type</p>
-     * 0 = ReconnectPanel </p>
-     * 1 = Reconnect as Group </p>
      * 2 = Reconnect as Icon</p>
      */
     public int getReconnectPanelType() {
         return getInt("ReconnectPanelType", 1);
+    }
+
+    public void setReconnectPanelType(int reconnect) {
+        setInt("ReconnectPanelType", reconnect);
     }
 
     public void setCompressionEnabled(boolean on) {
@@ -678,14 +597,6 @@ public class LocalPreferences {
 
     public boolean isCompressionEnabled() {
         return getBoolean("compressionOn", Default.getBoolean(Default.COMPRESSION_ENABLED));
-    }
-
-    public void setTheme(String theme) {
-        setString("theme", theme);
-    }
-
-    public String getTheme() {
-        return getString("theme", "Default");
     }
 
     public void setEmoticonPack(String pack) {
@@ -822,8 +733,16 @@ public class LocalPreferences {
         return getBoolean("isMucHighNameOn", false);
     }
 
+    public void setMucHighNameEnabled(boolean setMucNHigh) {
+        setBoolean("isMucHighNameOn", setMucNHigh);
+    }
+
     public boolean isMucHighTextEnabled() {
         return getBoolean("isMucHighTextOn", false);
+    }
+
+    public void setMucHighTextEnabled(boolean setMucTHigh) {
+        setBoolean("isMucHighTextOn", setMucTHigh);
     }
 
     public boolean isMucRandomColors() {
@@ -838,8 +757,16 @@ public class LocalPreferences {
         return getBoolean("isMucHighToastOn", false);
     }
 
+    public void setMuchHighToastEnabled(boolean setMucPHigh) {
+        setBoolean("isMucHighToastOn", setMucPHigh);
+    }
+
     public boolean isShowingRoleIcons() {
         return getBoolean("isShowingRoleIcons", false);
+    }
+
+    public void setShowRoleIconInsteadStatusIcon(boolean roleicons) {
+        setBoolean("isShowingRoleIcons", roleicons);
     }
 
     public boolean isShowJoinLeaveMessagesEnabled() {
@@ -848,22 +775,6 @@ public class LocalPreferences {
 
     public void setShowJoinLeaveMessagesEnabled(boolean enabled) {
         setBoolean("isShowJoinLeaveMessagesOn", enabled);
-    }
-
-    public void setMucHighNameEnabled(boolean setMucNHigh) {
-        setBoolean("isMucHighNameOn", setMucNHigh);
-    }
-
-    public void setMucHighTextEnabled(boolean setMucTHigh) {
-        setBoolean("isMucHighTextOn", setMucTHigh);
-    }
-
-    public void setMuchHighToastEnabled(boolean setMucPHigh) {
-        setBoolean("isMucHighToastOn", setMucPHigh);
-    }
-
-    public void setShowRoleIconInsteadStatusIcon(boolean roleicons) {
-        setBoolean("isShowingRoleIcons", roleicons);
     }
 
     public void setSSOEnabled(boolean enabled) {
@@ -904,14 +815,6 @@ public class LocalPreferences {
 
     public String getSSOKDC() {
         return getString("ssoKDC");
-    }
-
-    public boolean isDebug() {
-        return getBoolean("debug", false);
-    }
-
-    public void setDebug(boolean debug) {
-        setBoolean("debug", debug);
     }
 
     public void setDebuggerEnabled(boolean enabled) {
@@ -1022,16 +925,20 @@ public class LocalPreferences {
         return getString("SelectedCodecs");
     }
 
+    public void setSelectedCodecs(String value) {
+        setString("SelectedCodecs", value);
+    }
+
     public String getStunFallbackHost() {
         return getString("stunFallbackHost");
     }
 
-    public int getStunFallbackPort() {
-        return getInt("stunFallbackPort", 3478);
-    }
-
     public void setStunFallbackHost(String host) {
         setString("stunFallbackHost", host);
+    }
+
+    public int getStunFallbackPort() {
+        return getInt("stunFallbackPort", 3478);
     }
 
     public void setStunFallbackPort(int port) {
@@ -1056,10 +963,6 @@ public class LocalPreferences {
 
     public String getAvailableCodecs() {
         return getString("AvailableCodecs");
-    }
-
-    public void setSelectedCodecs(String value) {
-        setString("SelectedCodecs", value);
     }
 
     public void setAvailableCodecs(String value) {
@@ -1125,19 +1028,14 @@ public class LocalPreferences {
     }
 
     /**
-     * This will save if the message history should be display the messages<br>
-     * by {@link Date} ascending (<b>true</b>) or descending (<b>false</b>)
-     */
-    public void setChatHistoryAscending(boolean dateIsAsc) {
-        setBoolean("HISTORY_SORT_DATEASC", dateIsAsc);
-    }
-
-    /**
-     * This will return a {@link Boolean} to indicate if the message-history should display <br>
-     * the messages by {@link Date} ascending (<b>true</b>) or descending (<b>false</b>)
+     * The message-history should display the messages by date ascending (<b>true</b>) or descending (<b>false</b>)
      */
     public boolean isChatHistoryAscending() {
         return getBoolean("HISTORY_SORT_DATEASC", true);
+    }
+
+    public void setChatHistoryAscending(boolean dateIsAsc) {
+        setBoolean("HISTORY_SORT_DATEASC", dateIsAsc);
     }
 
     /**
@@ -1149,10 +1047,6 @@ public class LocalPreferences {
         return getString("HISTORY_SEARCH_PERIOD", defaultValue);
     }
 
-    /**
-     * Get the defaultVaue for the search period in the 
-     * history transcript period
-     */
     public void setSearchPeriod(String value) {
         setString("HISTORY_SEARCH_PERIOD", value);
     }
