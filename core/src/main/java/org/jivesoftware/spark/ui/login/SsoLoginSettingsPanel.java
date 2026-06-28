@@ -136,9 +136,6 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
      * @return the name (ex. derek) of the principal.
      */
     private String getPrincipalName() {
-        if (localPreferences.isDebug()) {
-            System.setProperty( "java.security.krb5.debug", "true" );
-        }
         System.setProperty( "javax.security.auth.useSubjectCredsOnly", "false" );
         GSSAPIConfiguration config = new GSSAPIConfiguration( false );
         Configuration.setConfiguration( config );

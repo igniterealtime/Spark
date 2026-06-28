@@ -976,8 +976,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             cbLoginInvisible.setVisible(true);
             cbAnonymous.setVisible(false);
 
-            System.setProperty("java.security.krb5.debug", String.valueOf(localPref.isDebug()));
-            System.setProperty("sun.security.krb5.debug", String.valueOf(localPref.isDebug()));
+            System.setProperty("java.security.krb5.debug", String.valueOf(Log.isDebugEnabled()));
+            System.setProperty("sun.security.krb5.debug", String.valueOf(Log.isDebugEnabled()));
 
             String ssoMethod = localPref.getSSOMethod();
             System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");

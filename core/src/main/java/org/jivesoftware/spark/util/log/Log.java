@@ -115,4 +115,7 @@ public class Log {
 		}
 	}
 
+    public static boolean isDebugEnabled() {
+        return debugEnabled;
+    }
 }
