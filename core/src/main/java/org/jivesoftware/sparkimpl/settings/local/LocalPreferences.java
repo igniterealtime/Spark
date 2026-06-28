@@ -377,18 +377,12 @@ public class LocalPreferences {
      * Returns the Download Directory, doesn't return <code>null</code>.
      * Uses ~/Downloads as the standard location across all platforms.
      */
-    public String getDownloadDir() {
+    public File getDownloadDir() {
         var propVal = getString("downloadDirectory");
-        if (!isBlank(propVal)) {
-            //noinspection ResultOfMethodCallIgnored
-            new File(propVal).mkdir();
-            return propVal;
-        }
-        var downloadDir = new File(System.getProperty("user.home"), "Downloads");
+        File downloadDir = !isBlank(propVal) ? new File(propVal) : new File(System.getProperty("user.home"), "Downloads");
         //noinspection ResultOfMethodCallIgnored
         downloadDir.mkdir();
-        Log.debug("Absolute path for download directory: " + downloadDir.getAbsolutePath());
-        return downloadDir.getAbsolutePath();
+        return downloadDir;
     }
 
     public void setDownloadDir(String downloadDir) {

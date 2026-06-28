@@ -35,18 +35,10 @@ public class Downloads {
     private static File downloadedDir;
     private static JFileChooser chooser;
 
-	/**
-     * Returns the Downloaddirectory
-     * 
-     * @return the download directory as <code>file</code>
-     * @throws NullPointerException 
-     * @throws SecurityException 
-     * @throws FileNotFoundException 
-     */
     public static File getDownloadDirectory() {
-	LocalPreferences pref = SettingsManager.getLocalPreferences();
-	downloadedDir = new File(pref.getDownloadDir());
-	return downloadedDir;
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        downloadedDir = pref.getDownloadDir();
+        return downloadedDir;
     }
 
     /**
@@ -79,20 +71,16 @@ public class Downloads {
     
     /**
      * Returns a {@link JFileChooser} starting at the DownloadDirectory
-     * 
-     * @return the filechooser
      */
     public static JFileChooser getFileChooser() {
-	if (chooser == null) {
-
-		LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
-	    downloadedDir = new File( _localPreferences.getDownloadDir());
-
-	    chooser = new JFileChooser(downloadedDir);
-	    if (Spark.isWindows()) {
-		chooser.setFileSystemView(new WindowsFileSystemView());
-	    }
-	}
-	return chooser;
+        if (chooser == null) {
+            LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
+            downloadedDir = _localPreferences.getDownloadDir();
+            chooser = new JFileChooser(downloadedDir);
+            if (Spark.isWindows()) {
+                chooser.setFileSystemView(new WindowsFileSystemView());
+            }
+        }
+        return chooser;
     }
 }

@@ -67,7 +67,7 @@ public class FileTransferPreference implements Preference {
         boolean ibb = localPreferences.isFileTransferIbbOnly();
         int timeout = localPreferences.getFileTransferTimeout();
         boolean auto = localPreferences.isAutoAcceptFileTransferFromContacts();
-        ui.setDownloadDirectory(localPreferences.getDownloadDir());
+        ui.setDownloadDirectory(localPreferences.getDownloadDir().getAbsolutePath());
         ui.setTimeout(Integer.toString(timeout));
         ui.setIbbOnly(ibb);
         ui.setAutoAccept(auto);
