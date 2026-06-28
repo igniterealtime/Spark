@@ -17,7 +17,17 @@
 package org.jivesoftware;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,11 +42,16 @@ import java.util.List;
 
 
 public class SparkCompatibility {
+    public static void migrateSettings() {
+        transferConfig();
+        migrateOldSettingsXml();
+    }
 
     /**
      * Copies the old USER_SPARK_HOME to the new directory if it does not exist
      */
-    public static void transferConfig(File newSparkHomeDir) {
+    private static void transferConfig() {
+        File newSparkHomeDir = Spark.getSparkUserHome();
         if (newSparkHomeDir.exists()) {
             return;
         }
@@ -52,6 +67,52 @@ public class SparkCompatibility {
             } catch (IOException e) {
                Log.error("Unable to copy old Spark home directory", e);
             }
+        }
+    }
+
+    /**
+     * Checks for historic Spark settings and upgrades the user.
+     */
+    private static void migrateOldSettingsXml() {
+        File settingsXML = new File(Spark.getSparkUserHome(), "/settings.xml");
+        if (!settingsXML.exists()) {
+            return;
+        }
+        try {
+            SAXReader saxReader = SAXReader.createDefault();
+            Document pluginXML;
+            try {
+                pluginXML = saxReader.read(settingsXML);
+            } catch (DocumentException e) {
+                Log.error(e);
+                return;
+            }
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            List<?> plugins = pluginXML.selectNodes("/settings");
+            for (Object pluginEl : plugins) {
+                if (!(pluginEl instanceof Element)) {
+                    continue;
+                }
+                Element plugin = (Element) pluginEl;
+                String username = plugin.selectSingleNode("username").getText();
+                pref.setLastUsername(username);
+                String server = plugin.selectSingleNode("server").getText();
+                pref.setServer(server);
+                String autoLogin = plugin.selectSingleNode("autoLogin").getText();
+                pref.setAutoLogin(Boolean.parseBoolean(autoLogin));
+                String savePassword = plugin.selectSingleNode("savePassword").getText();
+                pref.setSavePassword(Boolean.parseBoolean(savePassword));
+                String password = plugin.selectSingleNode("password").getText();
+                Localpart usernamePart = Localpart.formUnescapedOrNull(username);
+                DomainBareJid domainPart = JidCreate.domainBareFromOrNull(server);
+                BareJid bareJid = JidCreate.bareFrom(usernamePart, domainPart);
+                pref.setPasswordForUser(bareJid.toString(), password);
+            }
+            // Delete settings File
+            //noinspection ResultOfMethodCallIgnored
+            settingsXML.delete();
+        } catch (Exception e) {
+            Log.error(e);
         }
     }
 

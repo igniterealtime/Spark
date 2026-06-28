@@ -126,7 +126,7 @@ public final class Spark {
         setArguments(args);
         Properties sysProps = System.getProperties();
         initializeFolders(sysProps);
-        SparkCompatibility.transferConfig(USER_SPARK_HOME);
+        SparkCompatibility.migrateSettings();
 
         // Set the default language set by the user
         loadLanguage();

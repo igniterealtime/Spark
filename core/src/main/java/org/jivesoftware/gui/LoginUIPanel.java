@@ -159,12 +159,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         //SPARK-2115 SPARK-2295 Allow account creation or password changes over an insecure (e.g. unencrypted) connections.
         AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
         init();
-        // Check if upgraded needed.
-        try {
-            checkForOldSettings();
-        } catch (Exception e) {
-            Log.error(e);
-        }
     }
 
     // Should be called only from the Event Dispatcher Thread.
@@ -1368,49 +1362,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                     System.setProperty("http.proxyPassword", password);
                 }
             }
-        }
-    }
-
-    /**
-     * Checks for historic Spark settings and upgrades the user.
-     */
-    private void checkForOldSettings() throws Exception {
-        // Check for old settings.xml
-        File settingsXML = new File(Spark.getSparkUserHome(), "/settings.xml");
-        if (settingsXML.exists()) {
-            SAXReader saxReader = SAXReader.createDefault();
-            Document pluginXML;
-            try {
-                pluginXML = saxReader.read(settingsXML);
-            } catch (DocumentException e) {
-                Log.error(e);
-                return;
-            }
-
-            List<?> plugins = pluginXML.selectNodes("/settings");
-            for (Object plugin1 : plugins) {
-                Element plugin = (Element) plugin1;
-
-                String username = plugin.selectSingleNode("username").getText();
-                localPref.setLastUsername(username);
-
-                String server = plugin.selectSingleNode("server").getText();
-                localPref.setServer(server);
-
-                String autoLogin = plugin.selectSingleNode("autoLogin").getText();
-                localPref.setAutoLogin(Boolean.parseBoolean(autoLogin));
-
-                String savePassword = plugin.selectSingleNode("savePassword").getText();
-                localPref.setSavePassword(Boolean.parseBoolean(savePassword));
-
-                String password = plugin.selectSingleNode("password").getText();
-                Localpart usernamePart = Localpart.formUnescapedOrNull(username);
-                DomainBareJid domainPart = JidCreate.domainBareFromOrNull(server);
-                BareJid bareJid = JidCreate.bareFrom(usernamePart, domainPart);
-                localPref.setPasswordForUser(bareJid.toString(), password);
-            }
-            // Delete settings File
-            settingsXML.delete();
         }
     }
 
