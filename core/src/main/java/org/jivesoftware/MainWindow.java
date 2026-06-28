@@ -440,7 +440,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Set up the Logout and Exit menus...
         if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
         	connectMenu.addSeparator();
-        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.getPswdAutologin()) {
+        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.isPswdAutologin()) {
         		JMenuItem logoutMenuItem = new JMenuItem();
         		ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         		logoutMenuItem.addActionListener( e -> logout(false) );

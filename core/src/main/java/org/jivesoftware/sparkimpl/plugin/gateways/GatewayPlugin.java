@@ -73,7 +73,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
         PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
-	useTab = localPref.getShowTransportTab();
+	useTab = localPref.isShowTransportTab();
 	transferTab.setBackground((Color)UIManager.get("ContactItem.background"));
         SwingWorker thread = new SwingWorker() {
             @Override

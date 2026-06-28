@@ -28,7 +28,8 @@ public class InternalPlugins {
             new PublicPlugin("Language Plugin", "org.jivesoftware.sparkimpl.plugin.language.LanguagePlugin", "1.1"),
             new PublicPlugin("SystemTray", "org.jivesoftware.sparkimpl.plugin.systray.SysTrayPlugin", "1.1"),
             new PublicPlugin("UserIdle", "org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin", "1.1"),
-            new PublicPlugin("Privacy Lists", "org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin", "2.1")
+            new PublicPlugin("Privacy Lists", "org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin", "2.1"),
+            new PublicPlugin("Auto launch Spark on boot", "org.jivesoftware.sparkimpl.plugin.autostart.AutoStartPlugin", "1.0")
         );
     }
 }

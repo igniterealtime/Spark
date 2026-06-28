@@ -162,7 +162,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         // Logout Menu
         if (Spark.isWindows()) {
             if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
-                if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.getPswdAutologin()) {
+                if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.isPswdAutologin()) {
                     logoutMenu.addActionListener(new AbstractAction() {
                         @Override
                         public void actionPerformed(ActionEvent e) {

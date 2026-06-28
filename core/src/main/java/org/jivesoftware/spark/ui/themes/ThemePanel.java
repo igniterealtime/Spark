@@ -273,7 +273,7 @@ public class ThemePanel extends JPanel {
         add(_showReconnectBox, new GridBagConstraints(1, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         // Activate live one.
-        _useTabsForTransports.setSelected(pref.getShowTransportTab());
+        _useTabsForTransports.setSelected(pref.isShowTransportTab());
         _useTabsForTransports.addActionListener(e -> SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected()));
         _useTabsForConference.setSelected(pref.isShowConferenceTab());
         _useTabsForConference.addActionListener(e -> SettingsManager.getLocalPreferences().setShowConferenceTab(

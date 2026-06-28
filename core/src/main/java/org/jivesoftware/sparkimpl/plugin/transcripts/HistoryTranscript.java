@@ -406,9 +406,7 @@ public class HistoryTranscript extends SwingWorker {
                 int startValue;
                 int endValue;
 
-                boolean sortDateAsc = pref.getChatHistoryAscending();
-
-                if (sortDateAsc) {
+                if (pref.isChatHistoryAscending()) {
                     oldDate = transcript.getMessage(0).getDate();
                     iteratorValue = 1;
                     startValue = 0;

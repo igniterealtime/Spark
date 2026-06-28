@@ -129,7 +129,7 @@ public class PresenceChangePlugin implements Plugin {
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
                     String time = SparkManager.DATE_SECOND_FORMATTER.format(new Date());
                     String infoText = Res.getString("message.user.now.available.to.chat", nickname, time);
-                    if (localPref.getShowToasterPopup()) {
+                    if (localPref.isShowToasterPopup()) {
                         EventQueue.invokeLater(() ->
                         {
                             showToaster(nickname, infoText, jid.asEntityBareJidOrThrow());
@@ -137,7 +137,7 @@ public class PresenceChangePlugin implements Plugin {
                     }
 
                     ChatRoom room = SparkManager.getChatManager().getChatRoom(jid.asEntityBareJidOrThrow());
-                    if (localPref.getWindowTakesFocus()) {
+                    if (localPref.isWindowTakesFocus()) {
                         EventQueue.invokeLater(() -> SparkManager.getChatManager().activateChat(jid, nickname));
                     }
                     EventQueue.invokeLater(() -> room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR));

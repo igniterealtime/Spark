@@ -18,7 +18,6 @@ package org.jivesoftware.sparkimpl.preference.notifications;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -95,9 +94,9 @@ public class NotificationsPreference implements Preference {
 	public JComponent getGUI() {
         panel = new NotificationsUI();
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        boolean toaster = localPreferences.getShowToasterPopup();
-        boolean asteriskToaster = localPreferences.getDisableAsteriskToasterPopup();
-        boolean windowFocus = localPreferences.getWindowTakesFocus();
+        boolean toaster = localPreferences.isShowToasterPopup();
+        boolean asteriskToaster = localPreferences.isDisableAsteriskToasterPopup();
+        boolean windowFocus = localPreferences.isWindowTakesFocus();
         boolean offlineNotification = localPreferences.isOfflineNotificationsOn();
         boolean onlineNotification = localPreferences.isOnlineNotificationsOn();
         boolean betaChecking = localPreferences.isBetaCheckingEnabled();

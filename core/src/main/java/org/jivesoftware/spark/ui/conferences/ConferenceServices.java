@@ -46,7 +46,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 
@@ -412,7 +411,7 @@ public class ConferenceServices implements InvitationListener {
     }
 
     private void showToaster(String message, String title, GroupChatRoom groupChatRoom) {
-        if (!pref.getShowToasterPopup()) {
+        if (!pref.isShowToasterPopup()) {
             return;
         }
         SparkToaster toaster = new SparkToaster();

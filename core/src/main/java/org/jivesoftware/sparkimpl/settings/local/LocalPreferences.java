@@ -628,7 +628,7 @@ public class LocalPreferences {
         setBoolean("toasterPopup", show);
     }
 
-    public boolean getShowToasterPopup() {
+    public boolean isShowToasterPopup() {
         String toasterPopup = PluginRes.getPreferenceRes("toasterPopup");
         return getBoolean("toasterPopup", Boolean.parseBoolean(toasterPopup));
     }
@@ -637,7 +637,7 @@ public class LocalPreferences {
         setBoolean("disableAsteriskToasterPopup", disable);
     }
 
-    public boolean getDisableAsteriskToasterPopup() {
+    public boolean isDisableAsteriskToasterPopup() {
         return getBoolean("disableAsteriskToasterPopup", false);
     }
 
@@ -645,7 +645,7 @@ public class LocalPreferences {
         setBoolean("windowTakesFocus", focus);
     }
 
-    public boolean getWindowTakesFocus() {
+    public boolean isWindowTakesFocus() {
         return getBoolean("windowTakesFocus", false);
     }
 
@@ -653,7 +653,7 @@ public class LocalPreferences {
         setBoolean("startOnStartup", startup);
     }
 
-    public boolean getStartOnStartup() {
+    public boolean isStartOnStartup() {
         return getBoolean("startOnStartup", false);
     }
 
@@ -912,7 +912,7 @@ public class LocalPreferences {
         return getString("ssoKDC");
     }
 
-    public boolean getDebug() {
+    public boolean isDebug() {
         return getBoolean("debug", false);
     }
 
@@ -1044,7 +1044,7 @@ public class LocalPreferences {
         setInt("stunFallbackPort", port);
     }
 
-    public boolean getShowTransportTab() {
+    public boolean isShowTransportTab() {
         return getBoolean("useTabForTransport", false);
     }
 
@@ -1142,7 +1142,7 @@ public class LocalPreferences {
      * This will return a {@link Boolean} to indicate if the message-history should display <br>
      * the messages by {@link Date} ascending (<b>true</b>) or descending (<b>false</b>)
      */
-    public boolean getChatHistoryAscending() {
+    public boolean isChatHistoryAscending() {
         return getBoolean("HISTORY_SORT_DATEASC", true);
     }
 
@@ -1196,7 +1196,7 @@ public class LocalPreferences {
     }
 
     // The following methods are used by LoginPanel to support certain Enterprise features 
-    public boolean getAccountsReg() {
+    public boolean isAccountsReg() {
         return getBoolean("ccAccountsReg", true);
     }
 
@@ -1204,7 +1204,7 @@ public class LocalPreferences {
         setBoolean("ccAccountsReg", ccAccountsReg);
     }
 
-    public boolean getAdvancedConfig() {
+    public boolean isAdvancedConfig() {
         return getBoolean("ccAdvancedConfig", true);
     }
 
@@ -1212,7 +1212,7 @@ public class LocalPreferences {
         setBoolean("ccAdvancedConfig", ccAdvancedConfig);
     }
 
-    public boolean getHostNameChange() {
+    public boolean isHostNameChange() {
         return getBoolean("ccHostNameChange", true);
     }
 
@@ -1220,7 +1220,7 @@ public class LocalPreferences {
         setBoolean("ccHostNameChange", ccHostNameChange);
     }
 
-    public boolean getInvisibleLogin() {
+    public boolean isInvisibleLogin() {
         return getBoolean("ccInvisibleLogin", true);
     }
 
@@ -1228,7 +1228,7 @@ public class LocalPreferences {
         setBoolean("ccInvisibleLogin", ccInvisibleLogin);
     }
 
-    public boolean getAnonymousLogin() {
+    public boolean isAnonymousLogin() {
         return getBoolean("ccAnonymousLogin", true);
     }
 
@@ -1236,7 +1236,7 @@ public class LocalPreferences {
         setBoolean("ccAnonymousLogin", ccAnonymousLogin);
     }
 
-    public boolean getPswdAutologin() {
+    public boolean isPswdAutologin() {
         return getBoolean("ccPswdAutologin", true);
     }
 

@@ -72,10 +72,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import org.jivesoftware.AccountCreationWizard;
 import org.jivesoftware.MainWindow;
@@ -135,7 +132,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.minidns.dnsname.DnsName;
@@ -313,24 +309,24 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         }
 
         int height = filler3.getPreferredSize().height;
-        if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) || !localPref.getPswdAutologin()) {
+        if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) || !localPref.isPswdAutologin()) {
             pnlCheckboxes.remove(cbAutoLogin);
             pnlCheckboxes.remove(cbSavePassword);
             height = height + 20;
         }
         // Add option to hide "Login as invisible" selection on the login screen
-        if (Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) || !localPref.getInvisibleLogin()) {
+        if (Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) || !localPref.isInvisibleLogin()) {
             pnlCheckboxes.remove(cbLoginInvisible);
             height = height + 10;
         }
 
         // Add option to hide "Login anonymously" selection on the login screen
-        if (Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) || !localPref.getAnonymousLogin()) {
+        if (Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) || !localPref.isAnonymousLogin()) {
             pnlCheckboxes.remove(cbAnonymous);
             height = height + 10;
         }
 
-        if (Default.getBoolean(Default.ACCOUNT_DISABLED) || !localPref.getAccountsReg()) {
+        if (Default.getBoolean(Default.ACCOUNT_DISABLED) || !localPref.isAccountsReg()) {
             pnlBtns.remove(btnSignUp);
             height = height + 15;
         }
@@ -339,7 +335,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             pnlBtns.remove(btnReset);
         }
 
-        if (Default.getBoolean(Default.ADVANCED_DISABLED) || !localPref.getAdvancedConfig()) {
+        if (Default.getBoolean(Default.ADVANCED_DISABLED) || !localPref.isAdvancedConfig()) {
             pnlBtns.remove(btnAdvanced);
             height = height + 15;
         }
@@ -936,7 +932,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         tfPassword.setEditable(available);
         tfPassword.setEnabled(available && !cbAnonymous.isSelected());
 
-        boolean domainEditable = !Default.getBoolean(Default.HOST_NAME_CHANGE_DISABLED) && localPref.getHostNameChange();
+        boolean domainEditable = !Default.getBoolean(Default.HOST_NAME_CHANGE_DISABLED) && localPref.isHostNameChange();
         tfDomain.setEditable(available && domainEditable);
         tfDomain.setEnabled(available && domainEditable);
 
@@ -980,8 +976,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             cbLoginInvisible.setVisible(true);
             cbAnonymous.setVisible(false);
 
-            System.setProperty("java.security.krb5.debug", String.valueOf(localPref.getDebug()));
-            System.setProperty("sun.security.krb5.debug", String.valueOf(localPref.getDebug()));
+            System.setProperty("java.security.krb5.debug", String.valueOf(localPref.isDebug()));
+            System.setProperty("sun.security.krb5.debug", String.valueOf(localPref.isDebug()));
 
             String ssoMethod = localPref.getSSOMethod();
             System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");

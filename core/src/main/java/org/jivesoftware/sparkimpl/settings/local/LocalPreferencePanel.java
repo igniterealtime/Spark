@@ -159,8 +159,7 @@ public class LocalPreferencePanel extends JPanel {
         _idleStatusText.setEnabled(false);
         _idleBox.setEnabled(false);
     }
-    
-    if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+		if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().isPswdAutologin()) {
 		if (!preferences.isSSOEnabled()) {
 			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 		}
@@ -171,7 +170,7 @@ public class LocalPreferencePanel extends JPanel {
 	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,0));
 	    _launchOnStartupBox.addActionListener( e -> setStartOnStartup(_launchOnStartupBox.isSelected()) );
 
-	    _launchOnStartupBox.setSelected(preferences.getStartOnStartup());
+	    _launchOnStartupBox.setSelected(preferences.isStartOnStartup());
 	}
 
 	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 9, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));

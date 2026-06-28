@@ -25,7 +25,6 @@ import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -128,7 +127,7 @@ public class ChatPreference implements Preference {
         boolean tabsOnTop = localPreferences.isTabTopPosition();
         boolean buzzAllowed = localPreferences.isBuzzEnabled();
         boolean closeUnreadMessage = localPreferences.isCloseUnreadMessage();
-        boolean isChatHistoryAscending = localPreferences.getChatHistoryAscending();
+        boolean isChatHistoryAscending = localPreferences.isChatHistoryAscending();
         boolean tabsScroll = localPreferences.isTabsScroll();
         panel.setShowTime(showTime);
         panel.setGroupChatNotificationsOn(notificationsOn);

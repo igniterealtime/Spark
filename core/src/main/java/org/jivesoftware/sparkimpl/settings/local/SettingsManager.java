@@ -16,10 +16,7 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
@@ -27,9 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -37,7 +31,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class SettingsManager {
     private static LocalPreferences localPreferences;
-
     private static final CopyOnWriteArrayList<PreferenceListener> listeners = new CopyOnWriteArrayList<>();
 
     private SettingsManager() {
@@ -63,7 +56,7 @@ public class SettingsManager {
     /**
      * Persists the settings to the local file system.
      */
-    public static void saveSettings() {
+    private static void saveSettings() {
         if (localPreferences == null) {
             return;
         }
@@ -79,19 +72,15 @@ public class SettingsManager {
             Log.error("Error saving settings.", e);
             return;
         }
-        setUpAutostart(localPreferences.getStartOnStartup());
         Log.debug("Settings saved");
     }
 
     /**
      * Returns the settings file.
-     *
-     * @return the settings file.
      */
-    public static File getSettingsFile() {
+    private static File getSettingsFile() {
         return new File(Spark.getSparkUserHome(), "spark.properties");
     }
-
 
     private static LocalPreferences load() {
         final Properties props = new Properties();
@@ -133,51 +122,4 @@ public class SettingsManager {
         }
     }
 
-
-    private static void setUpAutostart(boolean startOnStartup) {
-        if (localPreferences.getStartOnStartup()) {
-            if (Spark.isWindows()) {
-                addToAutostartWindows();
-            }
-        } else {
-            if (Spark.isWindows()) {
-                removeFromAutostartWindows();
-            }
-        }
-    }
-
-    private static void addToAutostartWindows() {
-        try {
-            // Persists autostart via Windows registry, if executable exists
-            String PROGDIR = Spark.getBinDirectory().getParent();
-            File exeFile = new File(PROGDIR + "\\" + SparkRes.getString(SparkRes.EXECUTABLE_NAME));
-            if (exeFile.exists()) {
-                Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER,
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-                Advapi32Util.registrySetStringValue(
-                    WinReg.HKEY_CURRENT_USER,
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                    SparkRes.getString(SparkRes.APP_NAME),
-                    exeFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            Log.error("Error enabling start on reboot", e);
-        }
-    }
-
-    private static void removeFromAutostartWindows() {
-        if (!Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER,
-            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-            SparkRes.getString(SparkRes.APP_NAME))) {
-            return;
-        }
-        try {
-            Advapi32Util.registryDeleteValue(
-                WinReg.HKEY_CURRENT_USER,
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                SparkRes.getString(SparkRes.APP_NAME));
-        } catch (Exception e) {
-            Log.error("Can not delete registry entry", e);
-        }
-    }
 }

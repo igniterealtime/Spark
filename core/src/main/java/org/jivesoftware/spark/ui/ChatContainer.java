@@ -19,15 +19,12 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -44,7 +41,6 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -927,12 +923,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Handles Notification preferences for incoming messages and rooms.
      */
     private void checkNotificationPreferences(final ChatRoom room, boolean customMsg, String customMsgText, String customMsgTitle) {
-        if (pref.getWindowTakesFocus()) {
+        if (pref.isWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
             chatFrame.setVisible(true);
         }
 
-        if (pref.getShowToasterPopup()) {
+        if (pref.isShowToasterPopup()) {
             SparkToaster toaster = new SparkToaster();
             toaster.setCustomAction(new AbstractAction() {
                 @Override
@@ -1050,7 +1046,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         }
         chatFrame = pref.isDockingEnabled() ? MainWindow.getInstance() : new ChatFrame();
 
-        if (SparkManager.getMainWindow().isActive() || pref.getWindowTakesFocus()) {
+        if (SparkManager.getMainWindow().isActive() || pref.isWindowTakesFocus()) {
             chatFrame.setState(Frame.NORMAL);
         } else {
             chatFrame.setAutoRequestFocus(false);
