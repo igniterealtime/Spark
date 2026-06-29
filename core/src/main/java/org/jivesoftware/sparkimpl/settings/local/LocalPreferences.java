@@ -830,7 +830,7 @@ public class LocalPreferences {
     }
 
     public int getContactListFontSize() {
-        return getInt("contactListFontSize", 11);
+        return getInt("contactListFontSize", 14);
     }
 
     public void setContactListIconSize(int iconSize) {
@@ -846,7 +846,7 @@ public class LocalPreferences {
     }
 
     public int getChatRoomFontSize() {
-        return getInt("chatRoomFontSize", 12);
+        return getInt("chatRoomFontSize", 16);
     }
 
     public void setLanguage(String language) {

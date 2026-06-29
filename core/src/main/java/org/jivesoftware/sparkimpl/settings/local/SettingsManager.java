@@ -284,7 +284,9 @@ public class SettingsManager {
 
         var v2 = Map.of(
             "showOfflineUsers", "true",
-            "contactListIconSize", "32"
+            "contactListIconSize", "32",
+            "contactListFontSize", "14",
+            "chatRoomFontSize", "16"
         );
         return List.of(v1, v2);
     }
