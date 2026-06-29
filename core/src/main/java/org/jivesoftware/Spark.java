@@ -397,7 +397,6 @@ public final class Spark {
      * Sets Spark specific colors
      */
     public static void installBaseUIProperties() {
-        UIManager.put("ContactItem.border", BorderFactory.createLineBorder(Color.white));
         ColorSettings colorsettings = ColorSettingManager.getColorSettings();
         for (String property : colorsettings.getKeys()) {
             Color c = colorsettings.getColorFromProperty(property);
