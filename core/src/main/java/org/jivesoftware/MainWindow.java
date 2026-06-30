@@ -67,6 +67,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.INFORMATION_IMAGE));
     private final JMenuItem sparkforumItem = new JMenuItem();
+    private final JMenuItem sparkTranslationItem = new JMenuItem();
 
     private final JMenuBar mainWindowBar = new JMenuBar();
 
@@ -501,7 +502,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	helpMenu.add(viewHelpGuideAction);
         }
 
-        if (!Default.getBoolean(Default.HELP_FORUM_DISABLED) && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) helpMenu.add(sparkforumItem);
+        if (!Default.getBoolean(Default.HELP_FORUM_DISABLED) && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) {
+            helpMenu.add(sparkforumItem);
+            helpMenu.add(sparkTranslationItem);
+        }
 
 	// Build Help Menu
 	if (!Default.getBoolean(Default.DISABLE_UPDATES) && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) helpMenu.add(updateMenu);
@@ -519,6 +523,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    ResourceUtils.resButton(sparkforumItem, Default.getString(Default.HELP_FORUM_TEXT));
 	} else {
 	    ResourceUtils.resButton(sparkforumItem, Res.getString("menuitem.online.help"));
+	    ResourceUtils.resButton(sparkTranslationItem, Res.getString("menuitem.translation"));
 	}
         // Register shutdown with the exit menu.
 	exitMenuItem.addActionListener(new AbstractAction() {
@@ -540,6 +545,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 		}
 	    }
 	});
+
+        sparkTranslationItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BrowserLauncher.openURL("https://explore.transifex.com/igniterealtime/spark/");
+                } catch (Exception browserException) {
+                    Log.error("Error launching browser:", browserException);
+                }
+            }
+        });
 
         // Show About Box
 	menuAbout.addActionListener(new AbstractAction() {
