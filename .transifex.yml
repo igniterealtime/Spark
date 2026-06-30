@@ -18,7 +18,7 @@ git:
   - filter_type: file
     source_file: plugins/otr/src/main/resources/i18n/otrplugin_i18n.properties
     file_format: UNICODEPROPERTIES
-    translation_files_expression: 'plugins/meet/src/main/resources/i18n/otrplugin_i18n_<lang>.properties'
+    translation_files_expression: 'plugins/otr/src/main/resources/i18n/otrplugin_i18n_<lang>.properties'
     source_language: en
   - filter_type: file
     source_file: plugins/roar/src/main/resources/i18n/roar_i18n.properties
