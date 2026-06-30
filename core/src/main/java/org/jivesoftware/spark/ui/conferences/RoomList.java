@@ -14,7 +14,7 @@ final class RoomList extends Table {
             " ",
             Res.getString("title.name"),
             Res.getString("title.address"),
-            Res.getString("title.occupants"),
+            Res.getString("participants"),
             Res.getString("menuitem.languages"),
             Res.getString("description"),
         });

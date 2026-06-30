@@ -63,7 +63,7 @@ public class RoomBrowser extends JPanel {
         JLabel subjectLabel = new JLabel();
         subjectLabel.setText(Res.getString("subject") + ":");
         JLabel occupantsLabel = new JLabel();
-        occupantsLabel.setText(Res.getString("occupants") + ":");
+        occupantsLabel.setText(Res.getString("participants") + ":");
         JLabel roomNameLabel = new JLabel();
         roomNameLabel.setText(Res.getString("room.name") + ":");
 
