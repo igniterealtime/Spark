@@ -16,10 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
 import java.awt.event.ActionEvent;
-import java.util.Comparator;
 import java.util.List;
-import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -39,10 +36,13 @@ import org.jivesoftware.spark.ui.conferences.BookmarksUI;
 import org.jivesoftware.spark.ui.conferences.ConferenceServices;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Allows for adding and removal of Bookmarks within Spark.
@@ -97,8 +97,7 @@ public class BookmarkPlugin implements Plugin {
              */
             public void rescan(JMenu bookmarkMenu) {
                 bookmarkMenu.removeAll(); // removing old menus
-                try {
-                    setBookmarks(bookmarkMenu); // making new 
+                    setBookmarks(bookmarkMenu); // making new
                     int onPanel = SparkManager.getMainWindow().getMenu().getComponentIndex(bookmarkMenu);
                     if (onPanel < 0) {
                         if (bookmarkMenu.getMenuComponentCount() > 0) {
@@ -114,35 +113,30 @@ public class BookmarkPlugin implements Plugin {
                     SparkManager.getMainWindow().getMenu().invalidate();
                     SparkManager.getMainWindow().getMenu().validate();
                     SparkManager.getMainWindow().getMenu().repaint();
-                } catch (XMPPException | SmackException | InterruptedException ex) {
-                    Log.error(ex);
-                }
             }
 
             /**
              * Updating statusbar and generating menu items
              */
             public void createMenu(JMenu bookmarkMenu) {
-                try {
-                    setBookmarks(bookmarkMenu);
-                } catch (XMPPException | SmackException | InterruptedException ex) {
-                    Log.error(ex);
-                }
+                setBookmarks(bookmarkMenu);
             }
 
             /**
              * loading menu items and setting bookmarks listeners
              */
-            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException, SmackException, InterruptedException
-            {
+            public void setBookmarks(JMenu bookmarkMenu) {
                 BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-                if (manager != null) {
-                    final List<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences()
-                        .stream().sorted(Comparator.comparing(BookmarkedConference::getName, Comparator.nullsFirst(Comparator.naturalOrder())))
-                        .collect(Collectors.toList());
-                    final List<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs()
-                        .stream().sorted(Comparator.comparing(BookmarkedURL::getName, Comparator.nullsFirst(Comparator.naturalOrder())))
-                        .collect(Collectors.toList());
+                if (manager == null) {
+                    return;
+                }
+                try {
+                    List<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences().stream()
+                        .sorted(comparing(BookmarkedConference::getName, nullsFirst(naturalOrder())))
+                        .collect(toList());
+                    List<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs().stream()
+                        .sorted(comparing(BookmarkedURL::getName, nullsFirst(naturalOrder())))
+                        .collect(toList());
 
                     for (BookmarkedURL bookmarkedLink : bookmarkedLinks) {
                         String bookmarkedLinkURL = bookmarkedLink.getURL();
@@ -152,33 +146,24 @@ public class BookmarkPlugin implements Plugin {
                                 BrowserLauncher.openURL(bookmarkedLinkURL);
                             }
                         };
-
                         urlAction.putValue(Action.NAME, bookmarkedLink.getName());
                         urlAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
                         bookmarkMenu.add(urlAction);
                     }
-
                     bookmarkMenu.addSeparator();
                     for (BookmarkedConference bookmarkedConference : bookmarkedConferences) {
-                        final BookmarkedConference conferences = bookmarkedConference;
                         Action conferenceAction = new AbstractAction() {
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
-                                final TimerTask task = new SwingTimerTask() {
-
-                                    @Override
-                                    public void doRun() {
-                                        ConferenceUtils.joinConferenceOnSeparateThread(conferences.getName(), conferences.getJid(), conferences.getNickname(), conferences.getPassword());
-                                    }
-                                };
-                                TaskEngine.getInstance().schedule(task, 10);
+                                ConferenceUtils.joinConferenceOnSeparateThread(bookmarkedConference.getName(), bookmarkedConference.getJid(), bookmarkedConference.getNickname(), bookmarkedConference.getPassword());
                             }
                         };
-
-                        conferenceAction.putValue(Action.NAME, conferences.getName() != null && !conferences.getName().isEmpty() ? conferences.getName() : conferences.getJid().getLocalpart().asUnescapedString());
+                        conferenceAction.putValue(Action.NAME, bookmarkedConference.getName() != null && !bookmarkedConference.getName().isEmpty() ? bookmarkedConference.getName() : bookmarkedConference.getJid().getLocalpart().asUnescapedString());
                         conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
                         bookmarkMenu.add(conferenceAction);
                     }
+                } catch (XMPPException | SmackException | InterruptedException ex) {
+                    Log.error(ex);
                 }
             }
         };
