@@ -69,16 +69,12 @@ public class BookmarkItem extends JPanel {
     public void addURL(final BookmarkedURL bookmark) {
         imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
         nameLabel.setText(bookmark.getName());
-        descriptionLabel.setText(bookmark.getURL());
+        String bookmarkURL = bookmark.getURL();
+        descriptionLabel.setText(bookmarkURL);
         action = new AbstractAction() {
             @Override
-			public void actionPerformed(ActionEvent e) {
-                try {
-                    BrowserLauncher.openURL(bookmark.getURL());
-                }
-                catch (Exception e1) {
-                    Log.error(e1);
-                }
+            public void actionPerformed(ActionEvent e) {
+                BrowserLauncher.openURL(bookmarkURL);
             }
         };
     }

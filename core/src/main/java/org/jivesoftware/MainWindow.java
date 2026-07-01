@@ -482,15 +482,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
-            	final String url = Default.getString(Default.HELP_USER_GUIDE);
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    BrowserLauncher.openURL(url);
-                }
-                catch (Exception e) {
-                    Log.error("Unable to load online help.", e);
-                }
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                BrowserLauncher.openURL(Default.getString(Default.HELP_USER_GUIDE));
             }
         };
 
@@ -533,27 +527,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    }
 	});
 
-	sparkforumItem.addActionListener(new AbstractAction() {
-	    final String url = Default.getString(Default.HELP_FORUM);
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		try {
-		    BrowserLauncher.openURL(url);
-		} catch (Exception browserException) {
-		    Log.error("Error launching browser:", browserException);
-		}
-	    }
-	});
+        sparkforumItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BrowserLauncher.openURL(Default.getString(Default.HELP_FORUM));
+            }
+        });
 
         sparkTranslationItem.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    BrowserLauncher.openURL("https://explore.transifex.com/igniterealtime/spark/");
-                } catch (Exception browserException) {
-                    Log.error("Error launching browser:", browserException);
-                }
+                BrowserLauncher.openURL("https://explore.transifex.com/igniterealtime/spark/");
             }
         });
 
@@ -759,11 +743,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // handle link events
         ep.addHyperlinkListener(e -> {
             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                try {
-                    BrowserLauncher.openURL(e.getURL().toString());
-                } catch (Exception f) {
-                    Log.error("There was an error loading the URL", f);
-                }
+                BrowserLauncher.openURL(e.getURL().toString());
             }
         });
         ep.setEditable(false);

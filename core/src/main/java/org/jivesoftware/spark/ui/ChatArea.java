@@ -167,35 +167,27 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                 final AttributeSet as = element.getAttributes();
                 final String url = (String) as.getAttribute("link");
                 if (url != null) {
-                    try {
-                        boolean handled = fireLinkInterceptors(e, url);
-                        if (!handled) {
-                            if(e.getButton() == MouseEvent.BUTTON1) {
-                                if (url.startsWith("xmpp:")) {
-                                    // eg: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
-                                    SparkManager.getUriManager().handleURIMapping(url, false);
-                                } else {
-                                    BrowserLauncher.openURL(url);
-                                }
+                    boolean handled = fireLinkInterceptors(e, url);
+                    if (!handled) {
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            if (url.startsWith("xmpp:")) {
+                                // eg: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
+                                SparkManager.getUriManager().handleURIMapping(url, false);
+                            } else {
+                                BrowserLauncher.openURL(url);
                             }
-			    else if (e.getButton() == MouseEvent.BUTTON3) {
-				JPopupMenu popupmenu = new JPopupMenu();
-				JMenuItem linkcopy = new JMenuItem(
-					Res.getString("action.copy"));
-				linkcopy.addActionListener( e1 -> SparkManager.setClipboard(url) );
-				linkcopy.setEnabled(true);
-				popupmenu.add(linkcopy);
-				popupmenu.show(this, e.getX(), e.getY());
-			    }
+                        } else if (e.getButton() == MouseEvent.BUTTON3) {
+                            JPopupMenu popupmenu = new JPopupMenu();
+                            JMenuItem linkcopy = new JMenuItem(Res.getString("action.copy"));
+                            linkcopy.addActionListener(e1 -> SparkManager.setClipboard(url));
+                            linkcopy.setEnabled(true);
+                            popupmenu.add(linkcopy);
+                            popupmenu.show(this, e.getX(), e.getY());
                         }
-                    }
-                    catch (Exception ioe) {
-                        Log.error("Error launching browser:", ioe);
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.error("Visible Error", ex);
         }
     }

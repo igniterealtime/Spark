@@ -145,19 +145,15 @@ public class BookmarkPlugin implements Plugin {
                         .collect(Collectors.toList());
 
                     for (BookmarkedURL bookmarkedLink : bookmarkedLinks) {
-                        final BookmarkedURL link = bookmarkedLink;
+                        String bookmarkedLinkURL = bookmarkedLink.getURL();
                         Action urlAction = new AbstractAction() {
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
-                                try {
-                                    BrowserLauncher.openURL(link.getURL());
-                                } catch (Exception e) {
-                                    Log.error(e);
-                                }
+                                BrowserLauncher.openURL(bookmarkedLinkURL);
                             }
                         };
 
-                        urlAction.putValue(Action.NAME, link.getName());
+                        urlAction.putValue(Action.NAME, bookmarkedLink.getName());
                         urlAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
                         bookmarkMenu.add(urlAction);
                     }

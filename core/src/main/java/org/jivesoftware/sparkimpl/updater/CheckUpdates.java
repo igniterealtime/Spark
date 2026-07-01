@@ -408,16 +408,10 @@ public class CheckUpdates {
                             }
                             else {
                                 // Launch browser to download page.
-                                try {
-                                    if (sparkPluginInstalled) {
-                                        BrowserLauncher.openURL(serverVersion.getDownloadURL());
-                                    }
-                                    else {
-                                        BrowserLauncher.openURL("https://igniterealtime.org/downloads/index.jsp#spark");
-                                    }
-                                }
-                                catch (Exception e) {
-                                    Log.error(e);
+                                if (sparkPluginInstalled) {
+                                    BrowserLauncher.openURL(serverVersion.getDownloadURL());
+                                } else {
+                                    BrowserLauncher.openURL("https://igniterealtime.org/downloads/index.jsp#spark");
                                 }
                                 UPDATING = false;
                             }

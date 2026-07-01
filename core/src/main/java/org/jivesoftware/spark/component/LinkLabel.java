@@ -76,12 +76,7 @@ final public class LinkLabel extends JLabel implements MouseListener {
     @Override
 	public void mouseClicked(MouseEvent me) {
         if (invokeBrowser) {
-            try {
-                BrowserLauncher.openURL(labelURL);
-            }
-            catch (Exception e) {
-                Log.error(e);
-            }
+            BrowserLauncher.openURL(labelURL);
         }
     }
 

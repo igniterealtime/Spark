@@ -556,12 +556,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }//GEN-LAST:event_tfUsernameMousePressed
 
     private void btnResetActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        final String url = Default.getString(Default.PASSWORD_RESET_URL);
-        try {
-            BrowserLauncher.openURL(url);
-        } catch (Exception e) {
-            Log.error("Unable to load password reset.", e);
-        }
+        BrowserLauncher.openURL(Default.getString(Default.PASSWORD_RESET_URL));
     }//GEN-LAST:event_btnResetActionPerformed
 
 
