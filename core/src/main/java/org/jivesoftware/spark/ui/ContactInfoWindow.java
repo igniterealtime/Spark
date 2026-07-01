@@ -223,11 +223,10 @@ public class ContactInfoWindow extends JPanel {
 
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
-                avatarLabel.setIcon(icon);
             } else {
                 icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE);
-                avatarLabel.setIcon(icon);
             }
+            avatarLabel.setIcon(icon);
             avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         } catch (Exception e) {
             Log.warning("Unable to update avatar in contact info window", e);
@@ -243,6 +242,10 @@ public class ContactInfoWindow extends JPanel {
     }
 
     private void retrieveIdleTime(boolean isOnLeave) {
+        //FIXME sometimes the contactItem is null
+        if (contactItem == null) {
+            return;
+        }
         //If user is offline or away, try to see last activity
         try {
             //If user is away (not offline), last activity request is sent to client
