@@ -29,12 +29,14 @@ public class SoundPreferences {
     private String offlineSound;
     private String incomingInvitationSound;
     private String chatRequestSound;
+    private String attentionBuzzSound;
 
-    private boolean playOutgoingSound = false;
-    private boolean playIncomingSound = false;
-    private boolean playOfflineSound = false;
-    private boolean playIncomingInvitationSound = false;
-    private boolean playChatRequestSound = false;
+    private boolean playOutgoingSound;
+    private boolean playIncomingSound;
+    private boolean playOfflineSound;
+    private boolean playIncomingInvitationSound;
+    private boolean playChatRequestSound;
+    private boolean playAttentionBuzzSound;
 
     public SoundPreferences() {
         // Set initial sounds
@@ -44,71 +46,73 @@ public class SoundPreferences {
             incomingInvitationSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
             offlineSound = new File(Spark.getResourceDirectory(), "sounds/presence_changed.wav").getCanonicalPath();
             chatRequestSound = new File(Spark.getResourceDirectory(), "sounds/chat_request.wav").getCanonicalPath();
+            attentionBuzzSound = new File(Spark.getResourceDirectory(), "sounds/bell.wav").getCanonicalPath();
         }
         catch (IOException e) {
             Log.error(e);
         }
     }
 
-    public String getOutgoingSound() {
-        return outgoingSound;
-    }
-
-    public void setOutgoingSound(String outgoingSound) {
-        this.outgoingSound = outgoingSound;
-    }
-
     public String getIncomingSound() {
         return incomingSound;
     }
 
-    public void setIncomingSound(String incomingSound) {
-        this.incomingSound = incomingSound;
-    }
-
-    public String getOfflineSound() {
-        return offlineSound;
-    }
-
-    public void setOfflineSound(String offlineSound) {
-        this.offlineSound = offlineSound;
-    }
-
-    public boolean isPlayOutgoingSound() {
-        return playOutgoingSound;
-    }
-
-    public void setPlayOutgoingSound(boolean playOutgoingSound) {
-        this.playOutgoingSound = playOutgoingSound;
+    public void setIncomingSound(String sound) {
+        this.incomingSound = sound;
     }
 
     public boolean isPlayIncomingSound() {
         return playIncomingSound;
     }
 
-    public void setPlayIncomingSound(boolean playIncomingSound) {
-        this.playIncomingSound = playIncomingSound;
+    public void setPlayIncomingSound(boolean play) {
+        this.playIncomingSound = play;
+    }
+
+
+    public String getOutgoingSound() {
+        return outgoingSound;
+    }
+
+    public void setOutgoingSound(String sound) {
+        this.outgoingSound = sound;
+    }
+
+    public boolean isPlayOutgoingSound() {
+        return playOutgoingSound;
+    }
+
+    public void setPlayOutgoingSound(boolean play) {
+        this.playOutgoingSound = play;
+    }
+
+
+    public String getOfflineSound() {
+        return offlineSound;
+    }
+
+    public void setOfflineSound(String sound) {
+        this.offlineSound = sound;
     }
 
     public boolean isPlayOfflineSound() {
         return playOfflineSound;
     }
 
-    public void setPlayOfflineSound(boolean playOfflineSound) {
-        this.playOfflineSound = playOfflineSound;
+    public void setPlayOfflineSound(boolean play) {
+        this.playOfflineSound = play;
     }
 
 
-
-    public void setIncomingInvitationSoundFile(String sound) {
+    public void setIncomingInvitationSound(String sound) {
         incomingInvitationSound = sound;
     }
 
-    public String getIncomingInvitationSoundFile() {
+    public String getIncomingInvitationSound() {
         return incomingInvitationSound;
     }
 
-    public boolean playIncomingInvitationSound() {
+    public boolean isPlayIncomingInvitationSound() {
         return playIncomingInvitationSound;
     }
 
@@ -116,19 +120,37 @@ public class SoundPreferences {
         this.playIncomingInvitationSound = play;
     }
 
+
     public String getChatRequestSound() {
         return chatRequestSound;
     }
 
-    public void setChatRequestSound(String chatRequestSound) {
-        this.chatRequestSound = chatRequestSound;
+    public void setChatRequestSound(String sound) {
+        this.chatRequestSound = sound;
     }
 
     public boolean isPlayChatRequestSound() {
         return playChatRequestSound;
     }
 
-    public void setPlayChatRequestSound(boolean playChatRequestSound) {
-        this.playChatRequestSound = playChatRequestSound;
+    public void setPlayChatRequestSound(boolean play) {
+        this.playChatRequestSound = play;
+    }
+
+
+    public String getAttentionBuzzSound() {
+        return attentionBuzzSound;
+    }
+
+    public void setAttentionBuzzSound(String sound) {
+        this.attentionBuzzSound = sound;
+    }
+
+    public boolean isPlayAttentionBuzzSound() {
+        return playAttentionBuzzSound;
+    }
+
+    public void setPlayAttentionBuzzSound(boolean play) {
+        this.playAttentionBuzzSound = play;
     }
 }

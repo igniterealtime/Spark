@@ -70,13 +70,18 @@ public class SoundManager {
                 }
                 break;
             case INCOMING_INVITATION:
-                if (preferences.playIncomingInvitationSound()) {
-                    soundFile = preferences.getIncomingInvitationSoundFile();
+                if (preferences.isPlayIncomingInvitationSound()) {
+                    soundFile = preferences.getIncomingInvitationSound();
                 }
                 break;
             case STATUS_OFFLINE:
                 if (preferences.isPlayOfflineSound()) {
                     soundFile = preferences.getOfflineSound();
+                }
+                break;
+            case ATTENTION_BUZZ:
+                if (preferences.isPlayAttentionBuzzSound()) {
+                    soundFile = preferences.getAttentionBuzzSound();
                 }
                 break;
             default:
@@ -85,23 +90,22 @@ public class SoundManager {
         if (soundFile == null || soundFile.isEmpty()) {
             return;
         }
-        SparkManager.getSoundManager().playClip(new File(soundFile));
+        SparkManager.getSoundManager().playClip(soundFile);
     }
 
     /**
      * Plays a sound file.
-     *
-     * @param soundFile the File object representing the wav file.
      */
-    public void playClip(final File soundFile) {
+    public void playClip(String soundFilePath) {
         if (soundSystemUnavailable) {
             return;
         }
 
         final Runnable playThread = () -> {
-            Clip ac = clipCache.get(soundFile.toString());
+            Clip ac = clipCache.get(soundFilePath);
             if (ac == null) {
                 // Add new clip
+                File soundFile = new File(soundFilePath);
                 try (AudioInputStream originalStream = AudioSystem.getAudioInputStream(soundFile)) {
                     ac = tryOpenClipWithFallbacks(originalStream);
                     if (ac != null) {
@@ -120,7 +124,7 @@ public class SoundManager {
                     ac.setFramePosition(0);
                     ac.start();
                 } catch (Exception e) {
-                    Log.error("Unable to play sound: " + soundFile + "\n\t: " + e);
+                    Log.error("Unable to play sound: " + soundFilePath + "\n\t: " + e);
                 }
             }
         };

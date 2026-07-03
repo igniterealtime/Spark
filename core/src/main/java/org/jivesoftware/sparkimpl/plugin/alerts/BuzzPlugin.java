@@ -41,6 +41,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
+import static org.jivesoftware.spark.Event.ATTENTION_BUZZ;
 
 /**
  * Allows users to shake a user's frame to attract their attention and play a buzz sound.
@@ -55,39 +56,31 @@ public class BuzzPlugin implements Plugin {
     public void initialize() {
         // Add Attention to a discovered items list.
         SparkManager.addFeature(AttentionExtension.NAMESPACE);
-        SparkManager.getConnection()
-            .addAsyncStanzaListener(
-                stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
-                new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
-            );
+        SparkManager.getConnection().addAsyncStanzaListener(
+            stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
+            new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
+        );
 
-        SparkManager.getChatManager().addChatRoomListener(
-            new ChatRoomListener() {
-                @Override
-                public void chatRoomOpened(final ChatRoom room) {
-                    TimerTask task = new SwingTimerTask() {
-                        @Override
-                        public void doRun() {
-                            addBuzzFeatureToChatRoom(room);
-                        }
-                    };
-
-                    TaskEngine.getInstance().schedule(task, 100);
-                }
-            });
+        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
+            @Override
+            public void chatRoomOpened(final ChatRoom room) {
+                addBuzzFeatureToChatRoom(room);
+            }
+        });
     }
 
     private void addBuzzFeatureToChatRoom(final ChatRoom room) {
-        if (room instanceof ChatRoomImpl) {
-            SwingUtilities.invokeLater(() -> {
-                boolean hasAttentionSupport = clientOfContactSupportsAttentions(room);
-                if (!hasAttentionSupport) {
-                    return;
-                }
-                // Add the button to the toolbar
-                new BuzzRoomDecorator(room);
-            });
+        if (!(room instanceof ChatRoomImpl)) {
+            return;
         }
+        SwingUtilities.invokeLater(() -> {
+            boolean hasAttentionSupport = clientOfContactSupportsAttentions(room);
+            if (!hasAttentionSupport) {
+                return;
+            }
+            // Add the button to the toolbar
+            new BuzzRoomDecorator(room);
+        });
     }
 
     /**
@@ -131,7 +124,7 @@ public class BuzzPlugin implements Plugin {
             if (SettingsManager.getLocalPreferences().isBuzzEnabled()) {
                 chatFrame.buzz();
                 chatContainer.activateChatRoom(room);
-//TODO                SparkManager.getSoundManager().playClip(Event.ATTENTION_BUZZ);
+                SparkManager.getSoundManager().playClip(ATTENTION_BUZZ);
             }
         }
 

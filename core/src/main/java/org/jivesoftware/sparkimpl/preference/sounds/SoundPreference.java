@@ -71,19 +71,22 @@ public class SoundPreference implements Preference {
 		soundPanel = new SoundPanel();
         // Set default settings
         soundPanel.setIncomingMessageSound(preferences.getIncomingSound());
-        soundPanel.playIncomingSound(preferences.isPlayIncomingSound());
+        soundPanel.setPlayIncomingMessageSound(preferences.isPlayIncomingSound());
 
         soundPanel.setOutgoingMessageSound(preferences.getOutgoingSound());
-        soundPanel.playOutgoingSound(preferences.isPlayOutgoingSound());
+        soundPanel.setPlayOutgoingSound(preferences.isPlayOutgoingSound());
 
         soundPanel.setOfflineSound(preferences.getOfflineSound());
-        soundPanel.playOfflineSound(preferences.isPlayOfflineSound());
+        soundPanel.setPlayOfflineSound(preferences.isPlayOfflineSound());
 
-        soundPanel.setInvitationSound(preferences.getIncomingInvitationSoundFile());
-        soundPanel.setPlayInvitationSound(preferences.playIncomingInvitationSound());
+        soundPanel.setInvitationSound(preferences.getIncomingInvitationSound());
+        soundPanel.setPlayInvitationSound(preferences.isPlayIncomingInvitationSound());
 
         soundPanel.setChatRequestSound(preferences.getChatRequestSound());
         soundPanel.setPlayChatRequestSound(preferences.isPlayChatRequestSound());
+
+        soundPanel.setAttentionBuzzSound(preferences.getAttentionBuzzSound());
+        soundPanel.setPlayAttentionBuzzSound(preferences.isPlayAttentionBuzzSound());
         return soundPanel;
     }
 
@@ -121,14 +124,17 @@ public class SoundPreference implements Preference {
         preferences.setOfflineSound(soundPanel.getOfflineSound());
         preferences.setPlayOfflineSound(soundPanel.playOfflineSound());
 
-        preferences.setPlayIncomingSound(soundPanel.playIncomingSound());
-        preferences.setPlayOutgoingSound(soundPanel.playOutgoingSound());
+        preferences.setPlayIncomingSound(soundPanel.isPlayIncomingMessageSound());
+        preferences.setPlayOutgoingSound(soundPanel.isPlayOutgoingSound());
 
-        preferences.setIncomingInvitationSoundFile(soundPanel.getInvitationSound());
-        preferences.setPlayIncomingInvitationSound(soundPanel.playInvitationSound());
+        preferences.setIncomingInvitationSound(soundPanel.getInvitationSound());
+        preferences.setPlayIncomingInvitationSound(soundPanel.isPlayInvitationSound());
 
         preferences.setChatRequestSound(soundPanel.getChatRequestSound());
         preferences.setPlayChatRequestSound(soundPanel.isPlayChatRequestSound());
+
+        preferences.setAttentionBuzzSound(soundPanel.getAttentionBuzzSound());
+        preferences.setPlayAttentionBuzzSound(soundPanel.isPlayAttentionBuzzSound());
 
         saveSoundsFile();
     }

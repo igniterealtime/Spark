@@ -9,4 +9,5 @@ public enum Event {
     MSG_INCOMING,
     MSG_OUTCOMING,
     STATUS_OFFLINE,
+    ATTENTION_BUZZ,
 }
