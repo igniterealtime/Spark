@@ -168,9 +168,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         logoutButton.addActionListener(leaveAction);
         joinButton.addActionListener(joinAction);
-        // Load services immediately.
-        Thread loadServicesThread = new Thread(() -> SparkManager.getChatManager().getDefaultConferenceService());
-        loadServicesThread.start();
     }
 
     @Override
