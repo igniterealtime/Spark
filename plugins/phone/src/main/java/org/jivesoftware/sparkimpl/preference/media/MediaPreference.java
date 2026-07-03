@@ -25,14 +25,8 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class MediaPreference implements Preference {
-
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/media";
     private final MediaPreferencePanel panel = new MediaPreferencePanel();
-
-    @Override
-    public Object getData() {
-        return null;
-    }
 
     @Override
     public String getErrorMessage() {
@@ -46,7 +40,7 @@ public class MediaPreference implements Preference {
 
     @Override
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.Icons.HEADSET_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.HEADSET_IMAGE);
     }
 
     @Override
@@ -94,12 +88,5 @@ public class MediaPreference implements Preference {
         pref.setStunFallbackHost(panel.getStunServer());
         pref.setStunFallbackPort(panel.getStunPort());
         pref.setPlaybackDevice(panel.getPlaybackDevice());
-        SettingsManager.saveSettings();
     }
-
-    @Override
-    public void shutdown() {
-        commit();
-    }
-
 }

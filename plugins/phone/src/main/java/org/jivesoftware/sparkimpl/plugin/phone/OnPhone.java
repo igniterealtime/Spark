@@ -45,7 +45,7 @@ public class OnPhone extends JPanel {
         imagePanel.setBackground(Color.white);
 
         // Handle Icon Label
-        iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
+        iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.TELEPHONE_24x24));
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
         iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
         iconLabel.setHorizontalTextPosition(JLabel.CENTER);

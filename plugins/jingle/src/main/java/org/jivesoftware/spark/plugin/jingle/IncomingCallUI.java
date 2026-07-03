@@ -64,7 +64,7 @@ public class IncomingCallUI extends JPanel {
     public IncomingCallUI(Jid jidAddr) {
         setLayout(new GridBagLayout());
         jid = jidAddr.asBareJid();
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
+        vcard = SparkManager.getVCardManager().getVCard(jid);
 
         final JLabel topLabel = new JLabel();
         topLabel.setIcon(JinglePhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
@@ -145,7 +145,7 @@ public class IncomingCallUI extends JPanel {
         titleLabel.setText(title);
         titleLabel.setIcon(icon);
 
-        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icons.DEFAULT_AVATAR_64x64_IMAGE));
+        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE));
         avatarLabel.invalidate();
         avatarLabel.validate();
         avatarLabel.repaint();

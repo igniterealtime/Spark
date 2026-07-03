@@ -31,12 +31,7 @@ import java.awt.Component;
  * @author Derek DeMoro
  */
 public class JingleTabHandler extends SparkTabHandler {
-
-    private final JingleStateManager manager;
-
-    public JingleTabHandler() {
-        manager = JingleStateManager.getInstance();
-    }
+    private final JingleStateManager manager = JingleStateManager.getInstance();
 
     @Override
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
@@ -64,13 +59,13 @@ public class JingleTabHandler extends SparkTabHandler {
      */
     private void handleJingleRoom(JingleRoomState state, SparkTab tab, ChatRoom room, boolean isSelectedTab, boolean chatFrameFocused) {
         boolean isTyping = SparkManager.getChatManager().containsTypingNotification(room);
-        // Check if is typing.
+        // Check if it is typing.
         if (isTyping) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icons.SMALL_MESSAGE_EDIT_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
         } else if (JingleRoomState.ringing == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("ANSWER_PHONE_IMAGE"));
         } else if (JingleRoomState.inJingleCall == state) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icons.HEADSET_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.HEADSET_IMAGE));
         } else if (JingleRoomState.callWasEnded == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("HANG_UP_PHONE_16x16_IMAGE"));
         }
@@ -81,7 +76,6 @@ public class JingleTabHandler extends SparkTabHandler {
                 tab.setTitleColor(Color.red);
                 tab.setTabBold(true);
             }
-
             // Handle unread message count.
             int unreadMessageCount = room.getUnreadMessageCount();
             String appendedMessage = "";
@@ -97,7 +91,6 @@ public class JingleTabHandler extends SparkTabHandler {
             tab.setTitleColor(Color.black);
             tab.setTabFont(tab.getDefaultFont());
             tab.setTabTitle(room.getTabTitle());
-
             // Clear unread message count.
             room.clearUnreadMessageCount();
         }

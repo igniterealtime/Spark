@@ -16,7 +16,10 @@
 package org.jivesoftware.spark.plugin.jingle;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -37,7 +40,6 @@ import org.jivesoftware.spark.phone.Phone;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
@@ -48,20 +50,26 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
  * A simple Jingle Plugin for Spark that uses server Media Proxy for the transport and NAT Traversal
  */
 public class JinglePlugin implements Plugin, Phone, ConnectionListener {
-
     private static final String JINGLE_NAMESPACE = "http://www.xmpp.org/extensions/xep-0166.html#ns";
     private JingleManager jingleManager;
     private String stunServer = "";
@@ -75,22 +83,17 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     public void initialize() {
         // Add Jingle to a discovered items list.
         SparkManager.addFeature(JINGLE_NAMESPACE);
-
         //If there is a server entered in spark.properties use it as fallback
         if (!pref.getStunFallbackHost().isEmpty()) {
             fallbackStunEnabled = true;
         }
-
         // Get the default port
         stunPort = pref.getStunFallbackPort();
-
         // Set Jingle Enabled
         JingleManager.setJingleServiceEnabled();
         JingleManager.setServiceEnabled(SparkManager.getConnection(), true);
-
         // Add to PhoneManager
         PhoneManager.getInstance().addPhone(this);
-
         // Adds a tab handler.
         SparkManager.getChatManager().addSparkTabHandler(new JingleTabHandler());
 
@@ -114,15 +117,12 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                             }
                         }
                     }
-
                     // Initializes Jingle with STUN and media managers
                     if (readyToConnect) {
                         JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
                         List<JingleMediaManager> mediaManagers = new ArrayList<>();
-
                         // Get the Locator from the Settings
                         String locator = SettingsManager.getLocalPreferences().getAudioDevice();
-
                         mediaManagers.add(new JmfMediaManager(locator, transportManager));
                         mediaManagers.add(new SpeexMediaManager(transportManager));
                         //mediaManagers.add(new ScreenShareMediaManager(transportManager));
@@ -147,10 +147,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         };
 
         jingleLoadingThread.start();
-
         // Add Presence listener for better service discovery.
         addPresenceListener();
-
         SparkManager.getConnection().addConnectionListener(this);
     }
 
@@ -174,15 +172,12 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         if (TransportUtils.isFromGateway(jid) || jingleManager == null) {
             return List.of();
         }
-
         Boolean supportsJingle = jingleFeature.get(jid.toString());
         if (supportsJingle == null) {
             // Disco for event.
             // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
             ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-
             EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(jid);
-
             // Get the items of a given XMPP entity
             DiscoverInfo discoverInfo = null;
             try {
@@ -190,7 +185,6 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             } catch (Exception e) {
                 Log.debug("Unable to disco " + fullJID);
             }
-
             if (discoverInfo != null) {
                 // Get the discovered items of the queried XMPP entity
                 supportsJingle = discoverInfo.containsFeature(JINGLE_NAMESPACE);
@@ -217,9 +211,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         };
 
         action.putValue(Action.NAME, "<html><b>" + JingleResources.getString("label.computer.to.computer") + "</b></html>");
-        action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icons.COMPUTER_IMAGE_16x16));
-        List<Action> actions = new ArrayList<>(1);
-        actions.add(action);
+        action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.COMPUTER_IMAGE_16x16));
+        List<Action> actions = List.of(action);
         return actions;
     }
 
@@ -247,7 +240,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             return;
         }
 
-        TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+        org.jivesoftware.spark.ui.transctipt.TranscriptWindow transcriptWindow = room.getTranscriptWindow();
         StyledDocument doc = (StyledDocument) transcriptWindow.getDocument();
         Style style = doc.addStyle("StyleName", null);
 
@@ -280,7 +273,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     }
 
     /**
-     * Notify user that a new incoming jingle request has been receieved.
+     * Notify the user that a new incoming jingle request has been received.
      *
      * @param request the <code>JingleSessionRequest</code>.
      */

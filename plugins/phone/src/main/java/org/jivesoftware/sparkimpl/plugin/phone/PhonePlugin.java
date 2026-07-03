@@ -34,6 +34,7 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 
@@ -62,6 +63,10 @@ public class PhonePlugin implements Plugin {
     public void initialize() {
         ProviderManager.addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
         ProviderManager.addIQProvider("phone-action", "http://jivesoftware.com/xmlns/phone", new PhoneActionIQProvider());
+
+        MediaPreference preferences = new MediaPreference();
+        SparkManager.getPreferenceManager().addPreference(preferences);
+
         final XMPPConnection con = SparkManager.getConnection();
         SwingWorker worker = new SwingWorker() {
             @Override
@@ -91,7 +96,7 @@ public class PhonePlugin implements Plugin {
     private void setupPhoneSystem() {
         // Add Dial Menu
         final JMenu viewMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-        JMenuItem dialNumberMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
+        JMenuItem dialNumberMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE));
         ResourceUtils.resButton(dialNumberMenu, Res.getString("button.dial.number"));
 
         // Add Listener
@@ -131,11 +136,11 @@ public class PhonePlugin implements Plugin {
         viewMenu.add(dialNumberMenu);
 
         // Add ChatRoomListener to call users based on JID
-        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
+        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
             @Override
             public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
-                    final ChatRoomButton callButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
+                    final ChatRoomButton callButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.TELEPHONE_24x24));
                     callButton.setToolTipText(Res.getString("tooltip.place.a.call"));
                     final ChatRoomImpl chatRoom = (ChatRoomImpl) room;
                     boolean phoneEnabled = false;
@@ -156,7 +161,9 @@ public class PhonePlugin implements Plugin {
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, final JPopupMenu popup) {
-                if (object instanceof ContactItem) {
+                if (!(object instanceof ContactItem)) {
+                    return;
+                }
                     final ContactItem item = (ContactItem) object;
                     boolean phoneEnabled = false;
                     try {
@@ -174,14 +181,9 @@ public class PhonePlugin implements Plugin {
                         };
 
                         callAction.putValue(Action.NAME, "Call");
-                        callAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
+                        callAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE));
                         popup.add(callAction);
                     }
-                }
-            }
-
-            @Override
-            public void poppingDown(JPopupMenu popup) {
             }
 
             @Override
@@ -209,11 +211,11 @@ public class PhonePlugin implements Plugin {
     }
 
     private static void displayIncomingCallNotification(IncomingCall incomingCall) {
-        if (!SettingsManager.getLocalPreferences().getDisableAsteriskToasterPopup()) {
+        if (!SettingsManager.getLocalPreferences().isDisableAsteriskToasterPopup()) {
             SparkToaster toasterManager = new SparkToaster();
             toasterManager.setTitle("Incoming Phone Call");
             toasterManager.setDisplayTime(15000);
-            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
+            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE));
             toasterManager.setComponent(incomingCall);
         }
     }

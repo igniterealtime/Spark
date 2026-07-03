@@ -51,10 +51,6 @@ public class PreferenceManager {
         addPreference(groupChatPreferences);
         getPreferenceData(GroupChatPreference.NAMESPACE);
 
-//        MediaPreference preferences = new MediaPreference();
-//        addPreference(preferences);
-//        getPreferenceData(MediaPreference.NAMESPACE);
-
         PrivacyPreferences privacy = new PrivacyPreferences();
         addPreference(privacy);
         getPreferenceData(PrivacyPreferences.NAMESPACE);

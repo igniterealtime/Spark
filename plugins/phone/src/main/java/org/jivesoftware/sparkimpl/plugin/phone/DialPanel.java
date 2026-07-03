@@ -44,7 +44,7 @@ public class DialPanel extends JPanel {
         imagePanel.setLayout(new BorderLayout());
         imagePanel.setBackground(Color.white);
 
-        iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
+        iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.TELEPHONE_24x24));
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
         iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
         iconLabel.setHorizontalTextPosition(JLabel.CENTER);

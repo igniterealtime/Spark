@@ -219,9 +219,11 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     @Override
     public void chatRoomOpened(final ChatRoom room) {
-        if (!phones.isEmpty() && room instanceof ChatRoomImpl) {
+        if (phones.isEmpty() || !(room instanceof ChatRoomImpl)) {
+            return;
+        }
             final ChatRoomImpl chatRoomImpl = (ChatRoomImpl) room;
-            final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.Icons.DIAL_PHONE_IMAGE_24x24));
+            ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.Icon.DIAL_PHONE_IMAGE_24x24));
             dialButton.setToolTipText(Res.getString("tooltip.place.voice.call"));
 
             final List<Action> actions = new ArrayList<>();
@@ -277,7 +279,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
                 }
             });
-        }
     }
 
     @Override
@@ -326,7 +327,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
                         return;
                     }
                     final JMenu dialMenu = new JMenu(Res.getString("title.dial.phone"));
-                    dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icons.DIAL_PHONE_IMAGE_16x16));
+                    dialMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DIAL_PHONE_IMAGE_16x16));
 
                     for (Action action : actions) {
                         dialMenu.add(action);
