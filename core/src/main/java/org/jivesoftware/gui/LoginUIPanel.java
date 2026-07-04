@@ -131,6 +131,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
@@ -1212,11 +1213,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         localPref.setLastUsername(getUsername());
         // Check to see if the password should be saved or cleared from file.
         if (savePasswordAfterSuccessfulLogin.get()) {
-            try {
-                localPref.setPasswordForUser(getBareJid(), getPassword());
-            } catch (Exception e) {
-                Log.error("Error storing encrypted password.", e);
-            }
+            EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
+            localPref.setPasswordForUser(bareJid, getPassword());
         } else {
             try {
                 localPref.clearPasswordForAllUsers();

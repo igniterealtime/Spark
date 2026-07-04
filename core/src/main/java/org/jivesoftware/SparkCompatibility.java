@@ -24,8 +24,8 @@ import org.dom4j.io.SAXReader;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 
@@ -105,8 +105,8 @@ public class SparkCompatibility {
                 String password = plugin.selectSingleNode("password").getText();
                 Localpart usernamePart = Localpart.formUnescapedOrNull(username);
                 DomainBareJid domainPart = JidCreate.domainBareFromOrNull(server);
-                BareJid bareJid = JidCreate.bareFrom(usernamePart, domainPart);
-                pref.setPasswordForUser(bareJid.toString(), password);
+                EntityBareJid bareJid = JidCreate.entityBareFrom(usernamePart, domainPart);
+                pref.setPasswordForUser(bareJid, password);
             }
             // Delete settings File
             //noinspection ResultOfMethodCallIgnored

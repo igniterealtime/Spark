@@ -34,6 +34,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.jid.EntityBareJid;
 
 /**
  * UI for editing Local Preferences.
@@ -75,13 +76,9 @@ public class LocalPreferencePanel extends JPanel {
 		_savePasswordBox.addActionListener(e -> {
 			_autoLoginBox.setEnabled(_savePasswordBox.isSelected());
             if (_savePasswordBox.isSelected()) {
-                String user = SparkManager.getSessionManager().getUserBareAddress().toString();
+                EntityBareJid user = SparkManager.getSessionManager().getUserBareAddress();
                 String password = SparkManager.getSessionManager().getPassword();
-                try {
-                    preferences.setPasswordForUser(user,password);
-                } catch (Exception ex) {
-                    Log.error("Error storing encrypted password.", ex);
-                }
+                preferences.setPasswordForUser(user, password);
             }
             if (!_savePasswordBox.isSelected()) {
 				_autoLoginBox.setSelected(false);

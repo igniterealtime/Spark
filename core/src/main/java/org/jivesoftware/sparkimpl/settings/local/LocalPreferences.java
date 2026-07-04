@@ -121,10 +121,14 @@ public class LocalPreferences {
      * Sets the password for barejid<br>
      * both will be encrypted
      */
-    public void setPasswordForUser(String barejid, String password) throws Exception {
-        String user = "password" + Encryptor.encrypt(barejid);
-        String pw = Encryptor.encrypt(password);
-        setString(user, pw);
+    public void setPasswordForUser(EntityBareJid bareJid, String password) {
+        try {
+            String userPasswordProp = "password" + Encryptor.encrypt(bareJid.toString());
+            String pw = Encryptor.encrypt(password);
+            setString(userPasswordProp, pw);
+        } catch (Exception ex) {
+            Log.error("Error storing encrypted password for " + bareJid, ex);
+        }
     }
 
     /**

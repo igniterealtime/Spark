@@ -440,13 +440,9 @@ public class UriManager {
             // Persist information
             Localpart registeredUsername = Localpart.fromUnescaped(createAccountPanel.getUsernameWithoutEscape());
             DomainBareJid registeredDomain = JidCreate.domainBareFromOrNull(createAccountPanel.getServer());
-            BareJid bareJid = JidCreate.bareFrom(registeredUsername, registeredDomain);
+            EntityBareJid bareJid = JidCreate.entityBareFrom(registeredUsername, registeredDomain);
             localPref.setLastUsername(registeredUsername.toString());
-            try {
-                localPref.setPasswordForUser(bareJid.toString(), createAccountPanel.getPassword());
-            } catch (Exception e) {
-                Log.error("Error storing encrypted password.", e);
-            }
+            localPref.setPasswordForUser(bareJid, createAccountPanel.getPassword());
             localPref.setServer(registeredDomain.toString());
             SparkManager.getMainWindow().logout(false);
         }
