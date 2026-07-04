@@ -43,6 +43,10 @@ public class PreferenceManager {
 
     public PreferenceManager() {
         // Initialize base preferences
+        LocalPreference localPreferences = new LocalPreference();
+        addPreference(localPreferences);
+        getPreferenceData(LocalPreference.NAMESPACE);
+
         ChatPreference chatPreferences = new ChatPreference();
         addPreference(chatPreferences);
         getPreferenceData(ChatPreference.NAMESPACE);
@@ -54,10 +58,6 @@ public class PreferenceManager {
         PrivacyPreferences privacy = new PrivacyPreferences();
         addPreference(privacy);
         getPreferenceData(PrivacyPreferences.NAMESPACE);
-
-        LocalPreference localPreferences = new LocalPreference();
-        addPreference(localPreferences);
-        getPreferenceData(LocalPreference.NAMESPACE);
     }
 
     /**
