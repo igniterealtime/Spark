@@ -52,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
  * to the Workspace in Spark.
  */
-public final class MainWindow extends ChatFrame implements ActionListener {
+public final class MainWindow extends ChatFrame {
 	private final CopyOnWriteArrayList<MainWindowListener> listeners = new CopyOnWriteArrayList<>();
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -99,13 +99,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param icon  the icon used in the frame.
      */
     private MainWindow(String title, ImageIcon icon) {
-
-
         // Initialize and dock the menus
         buildMenu();
-
-
-
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
 
@@ -169,8 +164,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Adds a MainWindow listener to {@link MainWindow}. The
      * listener will be called when either the MainWindow has been minimized, maximized,
      * or is shutting down.
-     *
-     * @param listener the <code>MainWindowListener</code> to register
      */
     public void addMainWindowListener(MainWindowListener listener) {
         listeners.addIfAbsent(listener);
@@ -178,8 +171,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Removes the specified {@link MainWindowListener}.
-     *
-     * @param listener the <code>MainWindowListener</code> to remove.
      */
     public void removeMainWindowListener(MainWindowListener listener) {
         listeners.remove(listener);
@@ -201,18 +192,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             {
                 Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'shutdown' event.", e );
             }
-        }
-    }
-
-    /**
-     * Invokes the Preferences Dialog.
-     *
-     * @param e the ActionEvent
-     */
-    @Override
-	public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(preferenceMenuItem)) {
-            SparkManager.getPreferenceManager().showPreferences();
         }
     }
 
@@ -394,7 +373,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     }
 
     /**
-     * Setup the Main Toolbar with File, Tools and Help.
+     * Set up the Main Toolbar with File, Tools and Help.
      */
     private void buildMenu() {
         // setup file menu
@@ -411,20 +390,21 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         mainWindowBar.add(connectMenu);
         mainWindowBar.add(contactsMenu);
         mainWindowBar.add(actionsMenu);
-        //mainWindowBar.add(pluginsMenu);
         mainWindowBar.add(helpMenu);
 
         preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.PREFERENCES_IMAGE));
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
-        preferenceMenuItem.addActionListener(this);
+        preferenceMenuItem.addActionListener(e -> {
+            SparkManager.getPreferenceManager().showPreferences();
+        });
 
         // Show the "Preferences" menu item ONLY in Maintenance Mode or when DISABLE_PREFERENCES_MENU_ITEM = false and Client Control allows it.
         File myMaintFile = new File(Default.getString(Default.MAINTENANCE_FILE_PATH));
-
         final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory());
         final boolean prefsAllowed = (!Default.getBoolean(Default.DISABLE_PREFERENCES_MENU_ITEM) && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
-
-        if (maintMode || prefsAllowed) connectMenu.add(preferenceMenuItem);
+        if (maintMode || prefsAllowed) {
+            connectMenu.add(preferenceMenuItem);
+        }
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
@@ -566,31 +546,23 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
 	    rawPackets.addActionListener( e -> new RawPacketSender() );
-
 	    connectMenu.add(rawPackets,2);
 	}
-
     }
 
     /**
      * Returns the JMenuBar for the MainWindow. You would call this if you
      * wished to add or remove menu items to the main menubar. (File | Tools | Help)
-     *
-     * @return the Jive Talker Main Window MenuBar
      */
     public JMenuBar getMenu() {
         return mainWindowBar;
     }
 
     /**
-     * Returns the Menu in the JMenuBar by it's name. For example:<p>
+     * Returns the Menu in the JMenuBar by its name. For example:
      * <pre>
      * JMenu toolsMenu = getMenuByName("Tools");
      * </pre>
-     * </p>
-     *
-     * @param name the name of the Menu.
-     * @return the JMenu item with the requested name.
      */
     public JMenu getMenuByName(String name) {
         for (int i = 0; i < getMenu().getMenuCount(); i++) {
@@ -604,8 +576,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Returns true if the Spark window is in focus.
-     *
-     * @return true if the Spark window is in focus.
      */
     @Override
 	public boolean isInFocus() {
@@ -627,8 +597,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Return the top toolbar in the Main Window to allow for customization.
-     *
-     * @return the MainWindows top toolbar.
      */
     public JToolBar getTopToolBar() {
         return topToolbar;
@@ -666,7 +634,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             };
 
             updateThread.start();
-
         }
         catch (Exception e) {
             Log.warning("Error updating.", e);
@@ -765,7 +732,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     private void showErrorLog() {
         final File logDir = new File(Spark.getLogDirectory(), "errors.log");
-
         // Read file and show
         final String errorLogs = URLFileSystem.getContents(logDir);
 
@@ -823,8 +789,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Return true if the MainWindow is docked.
-     *
-     * @return true if the window is docked.
      */
     public boolean isDocked() {
         return pref.isDockingEnabled();
@@ -832,8 +796,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Returns the inner split pane.
-     *
-     * @return the split pane.
      */
     public JSplitPane getSplitPane() {
         // create the split pane only if required.
