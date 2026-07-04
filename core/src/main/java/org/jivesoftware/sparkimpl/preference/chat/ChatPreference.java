@@ -83,19 +83,6 @@ public class ChatPreference implements Preference {
         pref.setBuzzEnabled(panel.isBuzzEnabled());
         pref.setCloseUnreadMessageEnabled(panel.isCloseUnreadMessageEnabled());
         pref.setChatHistoryAscending(panel.isSortChatHistoryAscending());
-
-        // Do not commit if not changed.
-        if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
-            try {
-                AccountManager.getInstance( SparkManager.getConnection() ).changePassword(panel.getPassword());
-            }
-            catch (XMPPException | SmackException | InterruptedException passwordEx) {
-            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.unable.to.save.password"),
-                    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                Log.error("Unable to change password", passwordEx);
-            }
-        }
     }
 
     @Override
@@ -106,12 +93,6 @@ public class ChatPreference implements Preference {
     @Override
 	public boolean isDataValid() {
         boolean dataIsValid = true;
-        if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
-            if (!panel.getPassword().equals(panel.getConfirmationPassword())) {
-                errorMessage = Res.getString("message.passwords.no.match");
-                dataIsValid = false;
-            }
-        }
         return dataIsValid;
     }
 

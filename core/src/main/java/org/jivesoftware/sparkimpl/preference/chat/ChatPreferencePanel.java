@@ -53,7 +53,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private final JRadioButton format12s = new JRadioButton("12:00:00 PM", false);
     private final JRadioButton format24s = new JRadioButton("24:00:00", false);
     private final JCheckBox groupChatNotificationBox = new JCheckBox();
-    private final JPanel generalPanel = new JPanel();
     private final JPanel chatWindowPanel = new JPanel();
 
     // Password changing
@@ -102,8 +101,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         
         // Setup Mnemonics
         ResourceUtils.resButton(showTimeBox, Res.getString("checkbox.show.time.in.chat.window"));
-        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.change.password.to") + ":");
-        ResourceUtils.resLabel(confirmationPasswordLabel, confirmationPasswordField, Res.getString("label.confirm.password") + ":");
         ResourceUtils.resButton(groupChatNotificationBox, Res.getString("checkbox.show.notifications.in.conference"));
         ResourceUtils.resButton(hideChatHistory, Res.getString("checkbox.disable.chat.history"));
         ResourceUtils.resButton(hidePrevChatHistory, Res.getString("checkbox.disable.prev.chat.history"));
@@ -113,13 +110,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         ResourceUtils.resButton(buzzBox, Res.getString("checkbox.allow.buzz"));
         ResourceUtils.resButton(closeUnreadMessageBox,Res.getString("checkbox.close.unread.message"));
 
-        generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
         chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
 
-        if (!Default.getBoolean(Default.CHANGE_PASSWORD_DISABLED) && Enterprise.containsFeature(Enterprise.PASSWORD_CHANGE_FEATURE)) add(generalPanel);
         add(chatWindowPanel);
 
-        generalPanel.setLayout(new GridBagLayout());
         chatWindowPanel.setLayout(new GridBagLayout());
 
         // Chat Window Panel settings
@@ -148,12 +142,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-
-        generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        generalPanel.add(passwordField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
-        generalPanel.add(confirmationPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        generalPanel.add(confirmationPasswordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
-        
         showTimeBox.addActionListener( e -> {
             if(showTimeBox.isSelected())
             {
@@ -205,20 +193,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
        {
       	 return "h:mm:ss a"; 
        }
-    }
-
-    /**
-     * Returns the new password to use.
-     */
-    public String getPassword() {
-        return new String(passwordField.getPassword());
-    }
-
-    /**
-     * Returns the confirmation password used to compare to the first password.
-     */
-    public String getConfirmationPassword() {
-        return new String(confirmationPasswordField.getPassword());
     }
 
     public void setSortChatHistoryAscending(boolean on) {
