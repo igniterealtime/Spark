@@ -27,10 +27,12 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 /**
+ * IconTextField with Icon.
  * Creates a Firefox Search type box that allows for icons inside of a textfield. This
  * could be used to build out your own search objects.
  */
@@ -38,12 +40,7 @@ public class ChatAreaSendField extends JPanel {
 	private final ChatInputEditor textField;
     private final JButton button;
 
-    /**
-     * Creates a new IconTextField with Icon.
-     *
-     * @param text the text to use on the button.
-     */
-    public ChatAreaSendField(String text) {
+    public ChatAreaSendField() {
         setLayout(new GridBagLayout());
         setBackground((Color)UIManager.get("TextPane.background"));
         textField = new ChatInputEditor();
@@ -55,16 +52,16 @@ public class ChatAreaSendField extends JPanel {
             button.setContentAreaFilled(false);
         }
 
-        ResourceUtils.resButton(button, text);
+        ResourceUtils.resButton(button, Res.getString("button.send"));
 
         add(button, new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
 
-        button.setVisible(false);
-        
+        showSendButton(true);
+        enableSendButton(false);
+
         final JScrollPane pane = new JScrollPane(textField);
         pane.setBorder(null);
         add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
-        button.setEnabled(false);
     }
 
     public JButton getButton() {
@@ -79,11 +76,8 @@ public class ChatAreaSendField extends JPanel {
         button.setEnabled(enabled);
     }
 
-
     /**
      * Sets the text of the textfield.
-     *
-     * @param text the text.
      */
     public void setText(String text) {
         textField.setText(text);
@@ -91,8 +85,6 @@ public class ChatAreaSendField extends JPanel {
 
     /**
      * Returns the text inside of the textfield.
-     *
-     * @return the text inside of the textfield.
      */
     public String getText() {
         return textField.getText();

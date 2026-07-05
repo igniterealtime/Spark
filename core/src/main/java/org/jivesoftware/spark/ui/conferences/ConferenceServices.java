@@ -393,7 +393,7 @@ public class ConferenceServices implements InvitationListener {
                 showToaster(message1, title, groupChatRoom);
 
                 groupChatRoom.getSplitPane().setDividerSize(5);
-                groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
+                groupChatRoom.getVerticalSplitPane().setDividerLocation(0.6);
                 groupChatRoom.getSplitPane().setDividerLocation(0.6);
                 Localpart roomName = room.getRoom().getLocalpart();
                 groupChatRoom.setTabTitle(roomName);

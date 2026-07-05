@@ -24,7 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +60,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.util.JidUtil;
-import org.jxmpp.util.XmppStringUtils;
 
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
 
@@ -163,7 +161,7 @@ public class InvitationPane {
                     chatRoom.getEditorBar().setVisible(true);
                     chatRoom.getChatInputEditor().setEnabled(true);
                     chatRoom.getToolBar().setVisible(true);
-                    chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
+                    chatRoom.getVerticalSplitPane().setDividerLocation(0.8);
                     chatRoom.getSplitPane().setDividerLocation(0.8);
                     transcriptAlert.setVisible(false);
 

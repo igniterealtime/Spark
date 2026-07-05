@@ -542,7 +542,7 @@ public class Workpane {
                 // Create the Group Chat Room
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, chat.getRoom(), password);
                 groupChatRoom.getSplitPane().setDividerSize(5);
-                groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
+                groupChatRoom.getVerticalSplitPane().setDividerLocation(0.6);
                 groupChatRoom.getSplitPane().setDividerLocation(0.6);
 
                 groupChatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);

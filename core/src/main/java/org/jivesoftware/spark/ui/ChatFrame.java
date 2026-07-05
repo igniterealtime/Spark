@@ -153,7 +153,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 			public void componentResized(ComponentEvent e) {
                 try {
                     ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-                    chatRoom.getVerticalSlipPane().setDividerLocation(-1);
+                    chatRoom.getVerticalSplitPane().setDividerLocation(-1);
                 }
                 catch (ChatRoomNotFoundException e1) {
                     // Ignore, because I don't care if it's not a chat room.

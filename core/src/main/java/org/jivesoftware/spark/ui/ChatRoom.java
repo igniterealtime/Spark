@@ -159,7 +159,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
-        chatAreaButton = new ChatAreaSendField(Res.getString("button.send"));
+        chatAreaButton = new ChatAreaSendField();
+        chatAreaButton.setVisible(true);
+        chatAreaButton.setEnabled(true);
         textScroller = new JScrollPane(transcriptWindow);
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
@@ -458,7 +460,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         sendMessage();
         // Clear send field and disable send button
         getChatInputEditor().clear();
-        chatAreaButton.getButton().setEnabled(false);
+        chatAreaButton.enableSendButton(false);
     }
 
     /**
@@ -557,7 +559,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     protected void checkForText(DocumentEvent e) {
         final int length = e.getDocument().getLength();
-        chatAreaButton.getButton().setEnabled(length > 0);
+        chatAreaButton.enableSendButton(length > 0);
     }
 
     /**
@@ -606,7 +608,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             try {
                 document.insertString(getChatInputEditor().getCaretPosition(), "\n", null);
                 getChatInputEditor().requestFocusInWindow();
-                chatAreaButton.getButton().setEnabled(true);
+                chatAreaButton.enableSendButton(true);
             } catch (BadLocationException badLoc) {
                 Log.error("Error when checking for enter:", badLoc);
             }
@@ -1027,7 +1029,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Returns the VerticalSplitPane used in this ChatRoom.
      */
-    public JSplitPane getVerticalSlipPane() {
+    public JSplitPane getVerticalSplitPane() {
         return verticalSplit;
     }
 

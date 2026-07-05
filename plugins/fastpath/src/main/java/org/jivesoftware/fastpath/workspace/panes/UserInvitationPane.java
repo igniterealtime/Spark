@@ -25,7 +25,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -394,7 +393,7 @@ public class UserInvitationPane {
         chatRoom.getChatInputEditor().setEnabled(true);
         chatRoom.getToolBar().setVisible(true);
 
-        chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
+        chatRoom.getVerticalSplitPane().setDividerLocation(0.8);
         chatRoom.getSplitPane().setDividerLocation(0.6);
 
         try {
