@@ -8,12 +8,11 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class SparkMeetResource {
-    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/sparkmeet_i18n");
-
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/meet_i18n");
     private static final ClassLoader cl = SparkMeetResource.class.getClassLoader();
     static final ImageIcon PLUGIN_ICON = getImageIcon("images/pade.png");
 
-    public static String getString(String propertyName) {
+    static String getString(String propertyName) {
         try {
             return prb.getString(propertyName);
         }
@@ -23,7 +22,7 @@ public class SparkMeetResource {
         }
     }
 
-    public static String getString(String propertyName, Object... obj) {
+    static String getString(String propertyName, Object... obj) {
         String str = prb.getString(propertyName);
         if (str == null) {
             return null;
