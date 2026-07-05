@@ -80,7 +80,6 @@ public final class OIDTranslator {
 		OIDtoDescriptionMap.put("2.5.29.68", Res.getString("2.5.29.68"));
 		OIDtoDescriptionMap.put("2.5.29.69", Res.getString("2.5.29.69"));
 		
-		OIDtoDescriptionMap.put("2.16.840.1.113730.1.1", Res.getString("2.16.840.1.113730.1.1"));
 		OIDtoDescriptionMap.put("1.3.6.1.4.1.311.20.2", Res.getString("1.3.6.1.4.1.311.20.2"));
 		OIDtoDescriptionMap.put("1.3.6.1.4.1.311.21.1", Res.getString("1.3.6.1.4.1.311.21.1"));
 		OIDtoDescriptionMap.put("1.3.6.1.5.5.7.3.2", Res.getString("1.3.6.1.5.5.7.3.2"));
