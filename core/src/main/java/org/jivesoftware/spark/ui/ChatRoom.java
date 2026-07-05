@@ -61,6 +61,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.awt.GridBagConstraints.*;
+
 /**
  * The base implementation of all ChatRoom conversations. You would implement
  * this class to have most types of Chat.
@@ -176,7 +178,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         splitPane.setOneTouchExpandable(false);
         // Add Vertical Split Pane
         verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        add(verticalSplit, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(verticalSplit, new GridBagConstraints(0, 1, 1, 1, 1, 1, CENTER, BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         verticalSplit.setBorder(null);
         verticalSplit.setOneTouchExpandable(false);
@@ -227,12 +229,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         chatWindowPanel = new JPanel();
         chatWindowPanel.setLayout(new GridBagLayout());
-        chatWindowPanel.add(textScroller, new GridBagConstraints(0, 10, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        chatWindowPanel.add(textScroller, new GridBagConstraints(0, 10, 1, 1, 1, 1, WEST, BOTH, new Insets(0, 0, 0, 0), 0, 0));
         chatWindowPanel.setOpaque(false);
 
         // Layout Components
-        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.BOTH, getChatPanelInsets(), 0, 0));
+        Insets chatPanelInsets = new Insets(0, 5, 0, 5);
+        chatPanel.add(chatWindowPanel, new GridBagConstraints(0, 1, 1, 1, 1, 1, CENTER, BOTH, chatPanelInsets, 0, 0));
         // Add Chat Panel to Split Pane
         splitPane.setLeftComponent(chatPanel);
         // Add edit buttons to Chat Room
@@ -242,10 +244,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
         bottomPanel.setLayout(new GridBagLayout());
-        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1.0, 1.0, GridBagConstraints.WEST,
-                GridBagConstraints.BOTH, getChatAreaInsets(), 0, 35));
-        bottomPanel.add(editorWrapperBar, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0, GridBagConstraints.WEST,
-                GridBagConstraints.HORIZONTAL, getEditorWrapperInsets(), 0, 0));
+        Insets chatAreaInsets = new Insets(0, 5, 5, 5);
+        bottomPanel.add(chatAreaButton, new GridBagConstraints(0, 1, 5, 1, 1, 1, WEST, BOTH, chatAreaInsets, 0, 35));
+        Insets editorWrapperInsets = new Insets(0, 5, 0, 5);
+        bottomPanel.add(editorWrapperBar, new GridBagConstraints(0, 0, 5, 1, 0, 0, WEST, HORIZONTAL, editorWrapperInsets, 0, 0));
 
         // Set bottom panel border
         bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BOTTOM_PANEL_BORDER));
@@ -838,7 +840,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     protected void addToolbar() {
-        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1, 0, EAST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
     }
 
     /**
@@ -1096,22 +1098,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     protected JPanel getEditorBarLeft() {
         return editorBarLeft;
-    }
-
-    protected JScrollPane getTextScroller() {
-        return textScroller;
-    }
-
-    protected Insets getChatPanelInsets() {
-        return new Insets(0, 5, 0, 5);
-    }
-
-    protected Insets getChatAreaInsets() {
-        return new Insets(0, 5, 5, 5);
-    }
-
-    protected Insets getEditorWrapperInsets() {
-        return new Insets(0, 5, 0, 5);
     }
 
     public void addChatRoomComponent(JComponent component) {
