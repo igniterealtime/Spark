@@ -32,41 +32,31 @@ import com.apple.eawt.Application;
 public class AppleDock implements ActionListener {
 
     public AppleDock() {
-
-	PopupMenu menu = new PopupMenu();
-
-	PopupMenu statusmenu = new PopupMenu(Res.getString("menuitem.status"));
-
-	for (Presence p : PresenceManager.getPresences()) {
-	    MenuItem dd = new MenuItem(p.getStatus());
-	    dd.addActionListener(this);
-	    statusmenu.add(dd);
-	}
-
-	menu.add(statusmenu);
-
-	JFrame frame = SparkManager.getMainWindow();
-	frame.add(menu);
-
-	// set dock menu
-	Application app = Application.getApplication();
-	app.setDockMenu(menu);
-
+        PopupMenu menu = new PopupMenu();
+        PopupMenu statusMenu = new PopupMenu(Res.getString("menuitem.status"));
+        for (Presence p : PresenceManager.getPresences()) {
+            MenuItem dd = new MenuItem(p.getStatus());
+            dd.addActionListener(this);
+            statusMenu.add(dd);
+        }
+        menu.add(statusMenu);
+        JFrame frame = SparkManager.getMainWindow();
+        frame.add(menu);
+        // set dock menu
+        Application app = Application.getApplication();
+        app.setDockMenu(menu);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-	Presence presence = null;
-	for (Presence p : PresenceManager.getPresences()) {
-	    if (p.getStatus().equals(e.getActionCommand())) {
-		presence = p;
-		break;
-	    }
-	}
-
-	SparkManager.getSessionManager().changePresence(presence);
-
+        Presence presence = null;
+        for (Presence p : PresenceManager.getPresences()) {
+            if (p.getStatus().equals(e.getActionCommand())) {
+                presence = p;
+                break;
+            }
+        }
+        SparkManager.getSessionManager().changePresence(presence);
     }
 
 }

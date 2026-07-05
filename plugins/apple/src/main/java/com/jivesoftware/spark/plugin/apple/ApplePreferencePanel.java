@@ -27,60 +27,56 @@ import javax.swing.JPanel;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 public class ApplePreferencePanel extends JPanel {
-    private final JCheckBox _dockbadges;
-    private final JCheckBox _dockbouncing;
-    private final JCheckBox _repeatedbouncing;
+    private final JCheckBox _dockBadges;
+    private final JCheckBox _dockBouncing;
+    private final JCheckBox _repeatedBouncing;
 
     public ApplePreferencePanel() {
-	setLayout(new VerticalFlowLayout());
+        setLayout(new VerticalFlowLayout());
 
-	JPanel mainpanel = new JPanel(new GridBagLayout());
-	add(mainpanel);
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        add(mainPanel);
 
-	_dockbadges = new JCheckBox("Show Dock Badges");
-	_dockbouncing = new JCheckBox("Bouncing Dockicon");
-	_repeatedbouncing = new JCheckBox("Dockicon bounces repeatedly");
+        _dockBadges = new JCheckBox(AppleRes.getString("showDockBadges"));
+        _dockBouncing = new JCheckBox(AppleRes.getString("bouncingDockicon"));
+        _repeatedBouncing = new JCheckBox(AppleRes.getString("bouncingDockiconRepeatedly"));
 
-	ClassLoader cl = getClass().getClassLoader();
-	ImageIcon badge = new ImageIcon(cl.getResource("images/badge.png"));
-	ImageIcon bounce = new ImageIcon(cl.getResource("images/bounce.png"));
+        ImageIcon badge = AppleRes.getImageIcon("images/badge.png");
+        ImageIcon bounce = AppleRes.getImageIcon("images/bounce.png");
 
+        mainPanel.add(_dockBadges, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
+        mainPanel.add(_dockBouncing, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
+        mainPanel.add(_repeatedBouncing, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
 
-	mainpanel.add(_dockbadges, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
-	mainpanel.add(_dockbouncing, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
-	mainpanel.add(_repeatedbouncing, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
+        mainPanel.add(new JLabel(badge), new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
+        mainPanel.add(new JLabel(bounce), new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
 
-	mainpanel.add(new JLabel(badge), new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
-	mainpanel.add(new JLabel(bounce), new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 1, 1));
-
-
-	_dockbouncing.addActionListener(arg0 -> _repeatedbouncing.setEnabled(_dockbouncing.isSelected()));
-
+        _dockBouncing.addActionListener(arg0 -> _repeatedBouncing.setEnabled(_dockBouncing.isSelected()));
     }
 
-    public boolean getdockbadges() {
-	return _dockbadges.isSelected();
+    public boolean getDockBadges() {
+        return _dockBadges.isSelected();
     }
 
-    public void setdockbadges(boolean dockbadging) {
-	_dockbadges.setSelected(dockbadging);
+    public void setDockBadges(boolean dockBadging) {
+        _dockBadges.setSelected(dockBadging);
     }
 
-    public boolean getdockbounce() {
-	return _dockbouncing.isSelected();
+    public boolean getDockBounce() {
+        return _dockBouncing.isSelected();
     }
 
-    public void setdockbounce(boolean bouncing) {
-	_dockbouncing.setSelected(bouncing);
-	_repeatedbouncing.setEnabled(_dockbouncing.isSelected());
+    public void setDockBounce(boolean bouncing) {
+        _dockBouncing.setSelected(bouncing);
+        _repeatedBouncing.setEnabled(_dockBouncing.isSelected());
     }
 
-    public boolean getrepeatbouncing() {
-	return _repeatedbouncing.isSelected();
+    public boolean getRepeatBouncing() {
+        return _repeatedBouncing.isSelected();
     }
 
-    public void setrepeatbouncing(boolean repeat) {
-	_repeatedbouncing.setSelected(repeat);
+    public void setRepeatBouncing(boolean repeat) {
+        _repeatedBouncing.setSelected(repeat);
     }
 
 }

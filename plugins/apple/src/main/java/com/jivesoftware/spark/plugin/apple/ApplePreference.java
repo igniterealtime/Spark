@@ -40,10 +40,10 @@ public class ApplePreference implements Preference {
 
     @Override
     public void commit() {
-	_props.setBoolean(AppleProperties.DOCKBADGE, _prefpanel.getdockbadges());
-	_props.setBoolean(AppleProperties.DOCKBOUNCE, _prefpanel.getdockbounce());
-	_props.setBoolean(AppleProperties.REPEATDOCKBOUNCE, _prefpanel.getrepeatbouncing());
-	_props.save();
+        _props.setDockBadges(_prefpanel.getDockBadges());
+        _props.setDockBounce(_prefpanel.getDockBounce());
+        _props.setRepeatBouncing(_prefpanel.getRepeatBouncing());
+        _props.save();
     }
 
     @Override
@@ -54,9 +54,9 @@ public class ApplePreference implements Preference {
     @Override
     public JComponent getGUI() {
         _prefpanel = new ApplePreferencePanel();
-        _prefpanel.setdockbadges(_props.getDockBadges());
-        _prefpanel.setdockbounce(_props.getDockBounce());
-        _prefpanel.setrepeatbouncing(_props.getRepeatBounce());
+        _prefpanel.setDockBadges(_props.getDockBadges());
+        _prefpanel.setDockBounce(_props.getDockBounce());
+        _prefpanel.setRepeatBouncing(_props.getRepeatBouncing());
         return _prefpanel;
     }
 

@@ -19,7 +19,6 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,7 +35,6 @@ import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.status.StatusItem;
-import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -129,7 +127,7 @@ public class ApplePlugin implements Plugin, NativeHandler {
     @Override
     public void flashWindow(Window window) {
 	if (_props.getDockBounce())
-	    _applebounce.bounceDockIcon(_props.getRepeatBounce());
+	    _applebounce.bounceDockIcon(_props.getRepeatBouncing());
     }
 
     @Override

@@ -27,77 +27,70 @@ import org.jivesoftware.Spark;
 
 /**
  * Apple Plugin Properties
- * 
+ *
  * @author Wolf Posdorfer
- * 
  */
 public class AppleProperties {
     private final Properties props;
     private File configFile;
 
-    public static final String DOCKBOUNCE = "DOCKBOUNCE";
-    public static final String REPEATDOCKBOUNCE = "PERMANENTDOCKBOUNCE";
-    public static final String DOCKBADGE = "DOCKBADGE";
+    private static final String DOCKBOUNCE = "DOCKBOUNCE";
+    private static final String REPEATDOCKBOUNCE = "PERMANENTDOCKBOUNCE";
+    private static final String DOCKBADGE = "DOCKBADGE";
 
     public AppleProperties() {
-	this.props = new Properties();
-
-	try {
-	    props.load(new FileInputStream(getConfigFile()));
-	} catch (IOException e) {
-	    // Can't load ConfigFile
-	}
-
+        props = new Properties();
+        try {
+            props.load(new FileInputStream(getConfigFile()));
+        } catch (IOException e) {
+           Log.error(e);
+        }
     }
 
     private File getConfigFile() {
-	if (configFile == null)
-	    configFile = new File(Spark.getSparkUserHome(), "apple.properties");
-
-	return configFile;
+        if (configFile == null) {
+            configFile = new File(Spark.getSparkUserHome(), "apple.properties");
+        }
+        return configFile;
     }
 
     public void save() {
-	try {
-	    props.store(new FileOutputStream(getConfigFile()), "Storing Apple/Growl properties");
-	} catch (Exception e) {
-	    Log.error(e);
-	}
+        try {
+            props.store(new FileOutputStream(getConfigFile()), "Storing Apple/Growl properties");
+        } catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     public boolean getDockBadges() {
-	return getBoolean(DOCKBADGE, true);
+        return getBoolean(DOCKBADGE, true);
     }
 
     public boolean getDockBounce() {
-	return getBoolean(DOCKBOUNCE, true);
+        return getBoolean(DOCKBOUNCE, true);
     }
 
-    public boolean getRepeatBounce() {
-	return getBoolean(REPEATDOCKBOUNCE, false);
+    public boolean getRepeatBouncing() {
+        return getBoolean(REPEATDOCKBOUNCE, false);
     }
 
-    // ===============================================================================
-    // ===============================================================================
-    // ===============================================================================
-    public boolean getBoolean(String property, boolean defaultValue) {
-	return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
+    public void setDockBadges(boolean enabled) {
+        getBoolean(DOCKBADGE, enabled);
     }
 
-    public void setBoolean(String property, boolean value) {
-	props.setProperty(property, Boolean.toString(value));
+    public void setDockBounce(boolean enabled) {
+        setBoolean(DOCKBOUNCE, enabled);
     }
 
-    public int getInt(String property) {
-	return Integer.parseInt(props.getProperty(property, "0"));
+    public void setRepeatBouncing(boolean enabled) {
+        setBoolean(REPEATDOCKBOUNCE, enabled);
     }
 
-    public void setInt(String property, int integer) {
-	props.setProperty(property, "" + integer);
+    private boolean getBoolean(String property, boolean defaultValue) {
+        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
-    public String getProperty(String property) {
-	return props.getProperty(property);
+    private void setBoolean(String property, boolean value) {
+        props.setProperty(property, Boolean.toString(value));
     }
-
 }
