@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import org.jivesoftware.spark.util.log.Log;
 
 public class SpellcheckerResource {
-    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/spellchecker_i18n");
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/spelling_i18n");
 
     static ClassLoader cl = SpellcheckerResource.class.getClassLoader();
 
