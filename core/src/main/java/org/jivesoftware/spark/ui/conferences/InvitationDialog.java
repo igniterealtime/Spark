@@ -275,11 +275,11 @@ final class InvitationDialog extends JPanel {
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
+        dlg = p.createDialog(parent, Res.getString("title.invite.to.conference"));
         dlg.setModal(false);
 
         dlg.pack();
-        dlg.setSize(500, 450);
+        dlg.setSize(600, 450);
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
