@@ -17,6 +17,8 @@ package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+
+import org.jdesktop.swingx.JXDatePicker;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -122,7 +124,9 @@ public class ScratchPadPlugin implements Plugin {
 
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JTextField taskField = new JTextField();
-        final JTextField dueDateField = new JTextField();
+        final JXDatePicker dueDateField = new JXDatePicker();
+        dueDateField.getMonthView().setLowerBound(new Date());
+        dueDateField.setPreferredSize(new Dimension(75, 25));
 
         final JButton addButton = new JButton(Res.getString("add"));
         final JLabel addTaskLabel = new JLabel(Res.getString("label.add.task"));
@@ -131,10 +135,8 @@ public class ScratchPadPlugin implements Plugin {
         topPanel.add(addTaskLabel, new GridBagConstraints(0, 0, 1, 1, .9, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         topPanel.add(taskField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 0, 0));
 
-        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 0, 2), 50, 0));
+        topPanel.add(dueDateField, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 50, 0));
         topPanel.add(addButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 0, 2), 0, 0));
-
-        topPanel.add(new JLabel(Res.getString("label.timeformat", formatter.toPattern())), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         mainPanel.add(topPanel);
 
         // Add Selection
@@ -211,16 +213,10 @@ public class ScratchPadPlugin implements Plugin {
                 final Date creationDate = new Date();
                 task.setCreatedDate(creationDate.getTime());
                 // Set due date.
-                String dueDate = dueDateField.getText();
-                if (ModelUtil.hasLength(dueDate)) {
-                    try {
-                        Date date = formatter.parse(dueDate);
-                        task.setDueDate(date.getTime());
-                    }
-                    catch (ParseException e1) {
-                        // Nothing to do
-                    }
-                }
+            Date dueDate = dueDateField.getDate();
+            if (dueDate != null) {
+                task.setDueDate(dueDate.getTime());
+            }
 
                 taskField.setText("");
 
@@ -265,8 +261,7 @@ public class ScratchPadPlugin implements Plugin {
         }
 
         Instant tomorrow = ZonedDateTime.now().plusDays(1).toInstant();
-        SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
-        dueDateField.setText(formatter.format(Date.from(tomorrow)));
+        dueDateField.setDate(Date.from(tomorrow));
 
         final JScrollPane pane = new JScrollPane(mainPanel);
 

@@ -86,7 +86,7 @@ public class TaskNotification {
 						}
 
 					};
-					final JLabel taskLabel = new JLabel("Due   ");
+					final JLabel taskLabel = new JLabel(Res.getString("label.due") + "  ");
 					taskLabel.setFont(taskLabel.getFont().deriveFont(Font.BOLD));
 					titlePanel.add(taskLabel, BorderLayout.EAST);
 					mainPanel.add(titlePanel);
