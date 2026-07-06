@@ -1022,10 +1022,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Return the "Send" button.
+     * Enable or disable the "Send" button and message editor.
      */
-    public JButton getSendButton() {
-        return chatAreaButton.getButton();
+    public void setChatInputEnabled(boolean enabled) {
+        chatAreaButton.getChatInputArea().setEnabled(enabled);
+        chatAreaButton.getButton().setEnabled(enabled);
     }
 
     /**

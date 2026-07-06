@@ -677,18 +677,15 @@ public class ChatRoomImpl extends ChatRoom {
         if (usersPresence.isAvailable()) {
             presence = usersPresence;
         }
-
+        setChatInputEnabled(true);
         SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
-        getChatInputEditor().setEnabled(true);
-        getSendButton().setEnabled(true);
     }
 
     private void handleDisconnect() {
         presence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unavailable)
             .build();
-        getChatInputEditor().setEnabled(false);
-        getSendButton().setEnabled(false);
+        setChatInputEnabled(false);
         SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
     }
 

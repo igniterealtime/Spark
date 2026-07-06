@@ -617,7 +617,7 @@ public class GroupChatRoom extends ChatRoom {
             synchronized (currentUserList) {
                 if (!currentUserList.contains(from)) {
                     currentUserList.add(from);
-                    getChatInputEditor().setEnabled(true);
+                    setChatInputEnabled(true);
                     if (pref.isShowJoinLeaveMessagesEnabled()) {
                         getTranscriptWindow().insertNotificationMessage(
                             Res.getString("message.user.joined.room", nickname),
@@ -717,7 +717,7 @@ public class GroupChatRoom extends ChatRoom {
                     insertText(Res.getString("message.your.kicked", s));
                 }
 
-                getChatInputEditor().setEnabled(false);
+                setChatInputEnabled(false);
                 getSplitPane().setRightComponent(null);
                 leaveChatRoom();
             }
@@ -725,13 +725,13 @@ public class GroupChatRoom extends ChatRoom {
             @Override
             public void voiceGranted() {
                 insertText(Res.getString("message.your.voice.granted"));
-                getChatInputEditor().setEnabled(true);
+                setChatInputEnabled(true);
             }
 
             @Override
             public void voiceRevoked() {
                 insertText(Res.getString("message.your.voice.revoked"));
-                getChatInputEditor().setEnabled(false);
+                setChatInputEnabled(false);
             }
 
             @Override
@@ -945,8 +945,7 @@ public class GroupChatRoom extends ChatRoom {
      * Is called whenever Spark was unexpectedly disconnected.
      */
     private void handleDisconnect() {
-        getChatInputEditor().setEnabled(false);
-        getSendButton().setEnabled(false);
+        setChatInputEnabled(false);
         SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);
     }
 
