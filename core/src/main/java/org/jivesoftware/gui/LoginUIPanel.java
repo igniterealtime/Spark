@@ -18,6 +18,7 @@ package org.jivesoftware.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
@@ -351,12 +352,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         pnlLeft = new javax.swing.JPanel();
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 50), new java.awt.Dimension(250, 50), new java.awt.Dimension(32767, 50));
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 50), new java.awt.Dimension(230, 50), new java.awt.Dimension(32767, 50));
         lblLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         pnlCenter = new javax.swing.JPanel();
-        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(220, 20), new java.awt.Dimension(0, 32767));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(210, 20), new java.awt.Dimension(0, 32767));
         pnlInputs = new javax.swing.JPanel();
         tfUsername = new javax.swing.JTextField();
         tfDomain = new javax.swing.JTextField();
@@ -374,28 +375,28 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         setLayout(new java.awt.BorderLayout());
 
-        pnlLeft.setPreferredSize(new java.awt.Dimension(260, 0));
+        pnlLeft.setPreferredSize(new java.awt.Dimension(230, 0));
         pnlLeft.add(filler1);
 
         lblLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/spark-64x64.png"))); // NOI18N
-        lblLogo.setPreferredSize(new java.awt.Dimension(250, 80));
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/spark-64x64.png")));
+        lblLogo.setPreferredSize(new java.awt.Dimension(230, 80));
         lblLogo.setRequestFocusEnabled(false);
         pnlLeft.add(lblLogo);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 18));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Spark");
-        jLabel1.setPreferredSize(new java.awt.Dimension(250, 22));
+        jLabel1.setPreferredSize(new java.awt.Dimension(230, 22));
         pnlLeft.add(jLabel1);
 
         jLabel2.setText("Instant Messenger");
         pnlLeft.add(jLabel2);
 
         lblProgress.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblProgress.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ripple.gif"))); // NOI18N
+        lblProgress.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ripple.gif")));
         lblProgress.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        lblProgress.setPreferredSize(new java.awt.Dimension(250, 90));
+        lblProgress.setPreferredSize(new java.awt.Dimension(230, 90));
         lblProgress.setRequestFocusEnabled(false);
         lblProgress.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         pnlLeft.add(lblProgress);
@@ -404,16 +405,16 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         pnlCenter.setBackground(new java.awt.Color(255, 255, 255));
         pnlCenter.setMinimumSize(new java.awt.Dimension(0, 0));
-        pnlCenter.setPreferredSize(new java.awt.Dimension(250, 0));
+        pnlCenter.setPreferredSize(new java.awt.Dimension(230, 0));
         java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
         flowLayout1.setAlignOnBaseline(true);
         pnlCenter.setLayout(flowLayout1);
         pnlCenter.add(filler3);
 
         pnlInputs.setBackground(new java.awt.Color(255, 255, 255));
-        pnlInputs.setPreferredSize(new java.awt.Dimension(220, 110));
+        pnlInputs.setPreferredSize(new java.awt.Dimension(230, 110));
 
-        tfUsername.setPreferredSize(new java.awt.Dimension(200, 30));
+        tfUsername.setPreferredSize(new java.awt.Dimension(220, 30));
         tfUsername.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -422,10 +423,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         });
         pnlInputs.add(tfUsername);
 
-        tfDomain.setPreferredSize(new java.awt.Dimension(200, 30));
+        tfDomain.setPreferredSize(new java.awt.Dimension(220, 30));
         pnlInputs.add(tfDomain);
 
-        tfPassword.setPreferredSize(new java.awt.Dimension(200, 30));
+        tfPassword.setPreferredSize(new java.awt.Dimension(220, 30));
         pnlInputs.add(tfPassword);
 
         pnlCenter.add(pnlInputs);
@@ -435,37 +436,37 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         cbSavePassword.setBackground(new java.awt.Color(255, 255, 255));
         cbSavePassword.setText("Save Password");
-        cbSavePassword.setPreferredSize(new java.awt.Dimension(200, 20));
+        cbSavePassword.setPreferredSize(new java.awt.Dimension(220, 20));
         cbSavePassword.addActionListener(this::cbSavePasswordActionPerformed);
         pnlCheckboxes.add(cbSavePassword);
 
         cbAutoLogin.setBackground(new java.awt.Color(255, 255, 255));
         cbAutoLogin.setText("Auto login");
-        cbAutoLogin.setPreferredSize(new java.awt.Dimension(200, 20));
+        cbAutoLogin.setPreferredSize(new java.awt.Dimension(220, 20));
         cbAutoLogin.addActionListener(this::cbAutoLoginActionPerformed);
         pnlCheckboxes.add(cbAutoLogin);
 
         cbLoginInvisible.setBackground(new java.awt.Color(255, 255, 255));
         cbLoginInvisible.setText("Login as invisible");
-        cbLoginInvisible.setPreferredSize(new java.awt.Dimension(200, 20));
+        cbLoginInvisible.setPreferredSize(new java.awt.Dimension(220, 20));
         pnlCheckboxes.add(cbLoginInvisible);
 
         cbAnonymous.setBackground(new java.awt.Color(255, 255, 255));
         cbAnonymous.setText("Login anonymously");
-        cbAnonymous.setPreferredSize(new java.awt.Dimension(200, 20));
+        cbAnonymous.setPreferredSize(new java.awt.Dimension(220, 20));
         cbAnonymous.addActionListener(this::cbAnonymousActionPerformed);
         pnlCheckboxes.add(cbAnonymous);
 
         pnlCenter.add(pnlCheckboxes);
 
         pnlBtns.setBackground(new java.awt.Color(255, 255, 255));
-        pnlBtns.setPreferredSize(new java.awt.Dimension(220, 120));
+        pnlBtns.setPreferredSize(new java.awt.Dimension(240, 120));
 
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
         btnLogin.setEnabled(false);
-        btnLogin.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnLogin.setPreferredSize(new java.awt.Dimension(230, 30));
         btnLogin.addActionListener(this::btnLoginActionPerformed);
         pnlBtns.add(btnLogin);
 
@@ -474,7 +475,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         btnSignUp.setBorderPainted(false);
         btnSignUp.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnSignUp.setOpaque(false);
-        btnSignUp.setPreferredSize(new java.awt.Dimension(95, 28));
+        btnSignUp.setPreferredSize(new java.awt.Dimension(110, 28));
         btnSignUp.addActionListener(this::btnCreateAccountActionPerformed);
         pnlBtns.add(btnSignUp);
 
@@ -492,7 +493,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         btnReset.setBorderPainted(false);
         btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnReset.setOpaque(false);
-        btnReset.setPreferredSize(new java.awt.Dimension(210, 28));
+        btnReset.setPreferredSize(new java.awt.Dimension(230, 28));
         btnReset.addActionListener(this::btnResetActionPerformed);
         pnlBtns.add(btnReset);
 
