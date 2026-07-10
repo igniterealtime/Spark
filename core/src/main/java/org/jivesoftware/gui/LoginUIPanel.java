@@ -48,7 +48,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -1041,17 +1040,25 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         SmackConfiguration.setDefaultReplyTimeout(localPref.getTimeOut() * 1000);
 
-        AtomicBoolean savePasswordAfterSuccessfulLogin = new AtomicBoolean(false);
-        AtomicBoolean autoLogin = new AtomicBoolean(false);
+        // Persist information
+        String username = getUsername();
+        String serverName = getServerName();
+        EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
+        String password = getPassword();
+
+        localPref.setLastUsername(username);
+        // Check to see if the password should be saved or cleared from file.
+        localPref.setPasswordForUser(bareJid, cbSavePassword.isSelected() ? password : null);
+        localPref.setSavePassword(cbSavePassword.isSelected());
+        localPref.setAutoLogin(cbAutoLogin.isSelected());
+        localPref.setServer(serverName);
+        localPref.setLoginAsInvisible(cbLoginInvisible.isSelected());
+        localPref.setLoginAnonymously(cbAnonymous.isSelected());
+
         try {
             EventQueue.invokeAndWait(() -> {
                 setComponentsAvailable(false);
                 setProgressBarVisible(true);
-
-                localPref.setLoginAsInvisible(cbLoginInvisible.isSelected());
-                localPref.setLoginAnonymously(cbAnonymous.isSelected());
-                savePasswordAfterSuccessfulLogin.set(cbSavePassword.isSelected());
-                autoLogin.set(cbAutoLogin.isSelected());
             });
         } catch (InterruptedException | InvocationTargetException e) {
             Log.error("Exception while modifying UI components during login.", e);
@@ -1084,13 +1091,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 
                 localPref.setResource(resource);
                 Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
-                connection.login(getUsername(), getPassword(), resourcepart);
+                connection.login(username, password, resourcepart);
             }
             Log.debug("Logged in!");
 
             final SessionManager sessionManager = SparkManager.getSessionManager();
             sessionManager.setServerAddress(connection.getXMPPServiceDomain());
-            sessionManager.initializeSession(connection, getUsername(), getPassword());
+            sessionManager.initializeSession(connection, username, password);
             sessionManager.setJID(connection.getUser());
 
             final ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
@@ -1129,7 +1136,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 setEnabled(true);
                 setComponentsAvailable(true);
                 setProgressBarVisible(false);
-
                 // Show error dialog
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 loginDialog.setVisible(true);
@@ -1191,19 +1197,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             });
         }
 
-        // Persist information
-        localPref.setLastUsername(getUsername());
-        EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
-        // Check to see if the password should be saved or cleared from file.
-        if (savePasswordAfterSuccessfulLogin.get()) {
-            localPref.setPasswordForUser(bareJid, getPassword());
-        } else {
-            localPref.setPasswordForUser(bareJid, null);
-        }
-
-        localPref.setSavePassword(savePasswordAfterSuccessfulLogin.get());
-        localPref.setAutoLogin(autoLogin.get());
-        localPref.setServer(getServerName());
         afterLogin();
 
         EventQueue.invokeLater(()-> {
