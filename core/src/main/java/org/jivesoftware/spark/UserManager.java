@@ -15,14 +15,16 @@
  */
 package org.jivesoftware.spark;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MUCAffiliation;
 import org.jivesoftware.smackx.muc.MUCRole;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.component.JContactItemField;
-import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
@@ -32,6 +34,8 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -40,12 +44,12 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -64,12 +68,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import static com.install4j.runtime.util.DirectoryUtil.deleteDirectory;
 import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
@@ -469,6 +473,41 @@ public class UserManager {
         });
     }
 
+    public void changePassword(String newPassword) {
+        try {
+            AccountManager.getInstance(SparkManager.getConnection()).changePassword(newPassword);
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            if (pref.isSavePassword()) {
+                pref.setPasswordForUser(SparkManager.getSessionManager().getUserBareAddress(), newPassword);
+            }
+            JOptionPane.showMessageDialog(null, Res.getString("message.changePasswordSuccessful"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        } catch (Exception passwordEx) {
+            Log.error("Unable to change password", passwordEx);
+            String errorMessage = Res.getString("message.changePasswordFailed");
+            MessageDialog.showErrorDialog(errorMessage, passwordEx);
+        }
+    }
+
+    public void deleteAccount() {
+        if (JOptionPane.showConfirmDialog(null,
+            Res.getString("button.deleteAccount"),
+            Res.getString("message.deleteAccountConfirmation"),
+            JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            AccountManager.getInstance(SparkManager.getConnection()).deleteAccount();
+            JOptionPane.showMessageDialog(null, Res.getString("message.deleteAccountSuccessful"));
+            deleteDirectory(Spark.getUserProfileFolder());
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            pref.setPasswordForUser(SparkManager.getSessionManager().getUserBareAddress(), null);
+            SparkManager.getMainWindow().closeConnectionAndInvoke(null);
+        } catch (Exception ex) {
+            Log.error("Unable to delete account", ex);
+            String errorMessage = Res.getString("message.deleteAccountFailed");
+            MessageDialog.showErrorDialog(errorMessage, ex);
+        }
+    }
 }
 
 

@@ -21,7 +21,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -159,7 +161,20 @@ public class LocalPreferencePanel extends JPanel {
 
         inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 9, 2, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
         inputPanel.add(_useSingleTrayClick, new GridBagConstraints(0, 10, 2, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
-        inputPanel.add(new JLabel(), new GridBagConstraints(0, 11, 2, 1, 1, 1, NORTHWEST, BOTH, insets, 50, 0));
+
+        if (!Default.getBoolean(Default.CHANGE_PASSWORD_DISABLED) && Enterprise.containsFeature(Enterprise.PASSWORD_CHANGE_FEATURE)) {
+            var btnChangePassword = new JButton(Res.getString("button.changePassword"));
+            btnChangePassword.addActionListener(e -> {
+                ChangePasswordPanel changePasswordPanel = new ChangePasswordPanel();
+                changePasswordPanel.invokeDialog(new JFrame());
+            });
+            inputPanel.add(btnChangePassword, new GridBagConstraints(0, 11, 2, 1, 1, 0, NORTHWEST, BOTH, insets, 50, 0));
+            var btnDeleteAccount = new JButton(Res.getString("button.deleteAccount"));
+            btnDeleteAccount.addActionListener(e -> {
+                SparkManager.getUserManager().deleteAccount();
+            });
+            inputPanel.add(btnDeleteAccount, new GridBagConstraints(0, 12, 2, 1, 1, 1, NORTHWEST, BOTH, insets, 50, 0));
+        }
 
         add(inputPanel);
     }
