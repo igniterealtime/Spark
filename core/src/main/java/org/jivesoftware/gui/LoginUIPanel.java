@@ -1193,16 +1193,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         // Persist information
         localPref.setLastUsername(getUsername());
+        EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
         // Check to see if the password should be saved or cleared from file.
         if (savePasswordAfterSuccessfulLogin.get()) {
-            EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
             localPref.setPasswordForUser(bareJid, getPassword());
         } else {
-            try {
-                localPref.clearPasswordForAllUsers();
-            } catch (Exception e) {
-                Log.debug("Unable to clear saved password..." + e);
-            }
+            localPref.setPasswordForUser(bareJid, null);
         }
 
         localPref.setSavePassword(savePasswordAfterSuccessfulLogin.get());

@@ -124,6 +124,10 @@ public class LocalPreferences {
     public void setPasswordForUser(EntityBareJid bareJid, String password) {
         try {
             String userPasswordProp = "password" + Encryptor.encrypt(bareJid.toString());
+            if (password == null) {
+                props.remove(userPasswordProp);
+                return;
+            }
             String pw = Encryptor.encrypt(password);
             setString(userPasswordProp, pw);
         } catch (Exception ex) {
