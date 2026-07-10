@@ -19,6 +19,7 @@ package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
 import org.jivesoftware.spark.ui.themes.LookAndFeelManager;
@@ -105,7 +106,7 @@ public final class Spark {
             // Terminate if required directories cannot be created
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists() || !SECURITY_DIRECTORY.exists()) {
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
         } else {
@@ -414,5 +415,9 @@ public final class Spark {
             Locale userLocale = Locale.forLanguageTag(setLanguage.replace("_", "-"));
             Locale.setDefault(userLocale);
         }
+    }
+
+    public static File getUserProfileFolder() {
+        return new File(USER_DIRECTORY, SparkManager.getSessionManager().getUserBareAddress().toString());
     }
 }

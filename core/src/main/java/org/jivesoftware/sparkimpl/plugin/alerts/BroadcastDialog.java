@@ -77,8 +77,9 @@ public class BroadcastDialog extends JPanel {
     private final List<CheckNode> groupNodes = new ArrayList<>();
     private final CheckNode rosterNode;
     private final CheckTree checkTree;
+    private final File transcriptsFolder;
     private Integer OfflineGroup;
-    
+
     public BroadcastDialog() {
         setLayout(new GridBagLayout());
         rosterNode = new CheckNode(Res.getString("title.roster"));
@@ -173,6 +174,9 @@ public class BroadcastDialog extends JPanel {
                 }
             }
         }
+        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
+        //noinspection ResultOfMethodCallIgnored
+        transcriptsFolder.mkdir();
     }
 
     public void invokeDialog(ContactGroup group) {
@@ -372,11 +376,7 @@ public class BroadcastDialog extends JPanel {
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
         Date date = new Date();
         String fileName = "broadcast_history." + dateFormat.format(date) + ".txt";
-        String filePath = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts";
-        File fileDirectory = new File(filePath);
-        //noinspection ResultOfMethodCallIgnored
-        fileDirectory.mkdir();
-        File file = new File(filePath, fileName);
+        File file = new File(transcriptsFolder, fileName);
         if (!file.exists()) {
             //noinspection ResultOfMethodCallIgnored
             file.createNewFile();

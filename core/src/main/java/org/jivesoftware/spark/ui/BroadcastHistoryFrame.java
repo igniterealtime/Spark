@@ -9,20 +9,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 
 /**
  * @author ps
  */
 public class BroadcastHistoryFrame extends javax.swing.JFrame {
+    private final File transcriptsFolder;
 
     /**
      * Creates new form NewJFrame
@@ -33,11 +32,11 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         BroadcastHistoryArea.setLineWrap(true);
         BroadcastHistoryArea.setWrapStyleWord(true);
         initComponents();
+        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
     }
 
     public void readFromFile(String date) throws IOException {
-        String fileLocation = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts" + File.separator + "broadcast_history." + date + ".txt";
-        File myfile = new File(fileLocation);
+        File myfile = new File(transcriptsFolder, "broadcast_history." + date + ".txt");
         if (!myfile.exists()) {
             return;
         }
