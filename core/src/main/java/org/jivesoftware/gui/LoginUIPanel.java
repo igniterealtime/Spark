@@ -108,8 +108,8 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
 import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
-import org.jivesoftware.spark.util.*;
 
+import static java.awt.Color.WHITE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -118,6 +118,10 @@ import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.BOTH;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
+import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
@@ -147,7 +151,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
-    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
+    private final RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
     /**
      * Creates new form LoginWindow
@@ -386,7 +390,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         jLabel1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 18));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Spark");
         jLabel1.setPreferredSize(new java.awt.Dimension(230, 22));
         pnlLeft.add(jLabel1);
 
@@ -403,7 +406,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         add(pnlLeft, java.awt.BorderLayout.WEST);
 
-        pnlCenter.setBackground(new java.awt.Color(255, 255, 255));
+        pnlCenter.setBackground(WHITE);
         pnlCenter.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlCenter.setPreferredSize(new java.awt.Dimension(230, 0));
         java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
@@ -411,7 +414,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         pnlCenter.setLayout(flowLayout1);
         pnlCenter.add(filler3);
 
-        pnlInputs.setBackground(new java.awt.Color(255, 255, 255));
+        pnlInputs.setBackground(WHITE);
         pnlInputs.setPreferredSize(new java.awt.Dimension(230, 110));
 
         tfUsername.setPreferredSize(new java.awt.Dimension(220, 30));
@@ -431,47 +434,41 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         pnlCenter.add(pnlInputs);
 
-        pnlCheckboxes.setBackground(new java.awt.Color(255, 255, 255));
+        pnlCheckboxes.setBackground(WHITE);
         pnlCheckboxes.setLayout(new javax.swing.BoxLayout(pnlCheckboxes, javax.swing.BoxLayout.Y_AXIS));
 
-        cbSavePassword.setBackground(new java.awt.Color(255, 255, 255));
-        cbSavePassword.setText("Save Password");
+        cbSavePassword.setBackground(WHITE);
         cbSavePassword.setPreferredSize(new java.awt.Dimension(220, 20));
         cbSavePassword.addActionListener(this::cbSavePasswordActionPerformed);
         pnlCheckboxes.add(cbSavePassword);
 
-        cbAutoLogin.setBackground(new java.awt.Color(255, 255, 255));
-        cbAutoLogin.setText("Auto login");
+        cbAutoLogin.setBackground(WHITE);
         cbAutoLogin.setPreferredSize(new java.awt.Dimension(220, 20));
         cbAutoLogin.addActionListener(this::cbAutoLoginActionPerformed);
         pnlCheckboxes.add(cbAutoLogin);
 
-        cbLoginInvisible.setBackground(new java.awt.Color(255, 255, 255));
-        cbLoginInvisible.setText("Login as invisible");
+        cbLoginInvisible.setBackground(WHITE);
         cbLoginInvisible.setPreferredSize(new java.awt.Dimension(220, 20));
         pnlCheckboxes.add(cbLoginInvisible);
 
-        cbAnonymous.setBackground(new java.awt.Color(255, 255, 255));
-        cbAnonymous.setText("Login anonymously");
+        cbAnonymous.setBackground(WHITE);
         cbAnonymous.setPreferredSize(new java.awt.Dimension(220, 20));
         cbAnonymous.addActionListener(this::cbAnonymousActionPerformed);
         pnlCheckboxes.add(cbAnonymous);
 
         pnlCenter.add(pnlCheckboxes);
 
-        pnlBtns.setBackground(new java.awt.Color(255, 255, 255));
+        pnlBtns.setBackground(WHITE);
         pnlBtns.setPreferredSize(new java.awt.Dimension(240, 120));
 
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
-        btnLogin.setForeground(new java.awt.Color(255, 255, 255));
-        btnLogin.setText("Login");
+        btnLogin.setForeground(WHITE);
         btnLogin.setEnabled(false);
         btnLogin.setPreferredSize(new java.awt.Dimension(230, 30));
         btnLogin.addActionListener(this::btnLoginActionPerformed);
         pnlBtns.add(btnLogin);
 
-        btnSignUp.setBackground(new java.awt.Color(255, 255, 255));
-        btnSignUp.setText("Account");
+        btnSignUp.setBackground(WHITE);
         btnSignUp.setBorderPainted(false);
         btnSignUp.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnSignUp.setOpaque(false);
@@ -479,8 +476,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         btnSignUp.addActionListener(this::btnCreateAccountActionPerformed);
         pnlBtns.add(btnSignUp);
 
-        btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
-        btnAdvanced.setText("Advanced");
+        btnAdvanced.setBackground(WHITE);
         btnAdvanced.setBorderPainted(false);
         btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnAdvanced.setOpaque(false);
@@ -488,8 +484,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         btnAdvanced.addActionListener(this::btnAdvancedActionPerformed);
         pnlBtns.add(btnAdvanced);
 
-        btnReset.setBackground(new java.awt.Color(255, 255, 255));
-        btnReset.setText("Reset Password");
+        btnReset.setBackground(WHITE);
         btnReset.setBorderPainted(false);
         btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnReset.setOpaque(false);
@@ -609,7 +604,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             loginDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    quitLogin();
+                    // If the user quits, just shut down the application.
+                    System.exit(0);
                 }
             });
             if (!isBlank(getUsername())) {
@@ -694,7 +690,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             builder.performSaslAnonymousAuthentication();
         }
 
-//        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
+//        if(!isBlank(localPref.getTrustStorePath())) {
 //        	config.setTruststorePath(localPref.getTrustStorePath());
 //        	config.setTruststorePassword(localPref.getTrustStorePassword());
 //        }
@@ -710,13 +706,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         int pPort = localPref.getPort();
         String pUser = trimToNull(localPref.getProxyUsername());
         String pPass = trimToNull(localPref.getProxyPassword());
-        ProxyInfo proxyInfo = null;
         if (pHost != null && pPort != 0) {
-            proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
-        } else {
-            Log.error("No proxy info found but proxy type is enabled!");
+            ProxyInfo proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+            return proxyInfo;
         }
-        return proxyInfo;
+        Log.error("No proxy info found but proxy type is enabled!");
+        return null;
     }
 
     private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) {
@@ -809,18 +804,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         tfDomain.setText(trimToEmpty(xmppDomain));
     }
 
-    /**
-     * Return whether user wants to login as invisible or not.
-     *
-     * Should be called only from the Event Dispatcher Thread.
-     */
-    boolean isLoginAsInvisible() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
-        return cbLoginInvisible.isSelected();
-    }
 
     private JPopupMenu getPopup() {
         JPopupMenu popup = new JPopupMenu();
@@ -1025,7 +1008,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             }
 
             String userName = localPref.getLastUsername();
-            setUsername(ModelUtil.hasLength(userName) ? userName : princName);
+            setUsername(!isBlank(userName) ? userName : princName);
         } else {
             cbAutoLogin.setVisible(true);
             tfUsername.setVisible(true);
@@ -1071,13 +1054,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 autoLogin.set(cbAutoLogin.isSelected());
             });
         } catch (InterruptedException | InvocationTargetException e) {
-            throw new IllegalStateException("Exception while modifying UI components during login.", e);
+            Log.error("Exception while modifying UI components during login.", e);
+            return;
         }
 
         try {
             // TODO: SPARK-2140 - add support to Spark for stream management. Challenges expected around reconnection logic!
             XMPPTCPConnection.setUseStreamManagementDefault(false);
-
             AbstractXMPPConnection connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
             connection.setParsingExceptionCallback(new ExceptionLoggingCallback());
 
@@ -1149,8 +1132,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
                 // Show error dialog
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    loginDialog.setVisible(true);
-                if (loginDialog.isVisible()) {
+                loginDialog.setVisible(true);
                     if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
                         // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
                         // Prompt user if they'd like to add the failed chain to the trust store.
@@ -1206,7 +1188,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                             MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
                         }
                     }
-                }
             });
         }
 
@@ -1249,13 +1230,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 Log.error("Unknown callback requested: " + callback.getClass().getSimpleName());
             }
         }
-    }
-
-    /**
-     * If the user quits, just shut down the application.
-     */
-    private void quitLogin() {
-        System.exit(0);
     }
 
     /**
@@ -1320,7 +1294,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Updates System properties with Proxy configuration.
      */
     private void updateProxyConfig() {
-        if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
+        if (!isBlank(Default.getString(Default.PROXY_PORT)) && !isBlank(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
             String host = Default.getString(Default.PROXY_HOST);
             System.setProperty("socksProxyHost", host);
@@ -1338,7 +1312,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             if (protocol.equals("SOCKS")) {
                 System.setProperty("socksProxyHost", host);
                 System.setProperty("socksProxyPort", port);
-                if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
+                if (!isBlank(username) && !isBlank(password)) {
                     System.setProperty("java.net.socks.username", username);
                     System.setProperty("java.net.socks.password", password);
                 }
@@ -1347,7 +1321,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 System.setProperty("http.proxyPort", port);
                 System.setProperty("https.proxyHost", host);
                 System.setProperty("https.proxyPort", port);
-                if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
+                if (!isBlank(username) && !isBlank(password)) {
                     System.setProperty("http.proxyUser", username);
                     System.setProperty("http.proxyPassword", password);
                 }
