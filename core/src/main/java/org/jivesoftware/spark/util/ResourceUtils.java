@@ -55,7 +55,6 @@ public final class ResourceUtils {
      */
     public static void resLabel(JLabel label, Component labelFor, String labelText) {
         label.setText(stripMnemonic(labelText));
-
         if (Spark.isWindows()) {
             label.setDisplayedMnemonic(getMnemonicKeyCode(labelText));
         }
@@ -69,14 +68,13 @@ public final class ResourceUtils {
      * <p/>
      * This method sets the text and mnemonic.
      *
-     * @param button    The button on which to set the text and mnemonoic
+     * @param button    The button on which to set the text and mnemonic
      * @param labelText the text which contains the displayed text and mnemonic
      * @see AbstractButton#setText(String)
      * @see AbstractButton#setMnemonic(int)
      */
     public static void resButton(AbstractButton button, String labelText) {
         button.setText(stripMnemonic(labelText));
-
         if (Spark.isWindows()) {
             button.setMnemonic(getMnemonicKeyCode(labelText));
         }
@@ -96,31 +94,29 @@ public final class ResourceUtils {
      */
     public static void resButton(RolloverButton button, String labelText) {
         button.setText(stripMnemonic(labelText));
-
         if (Spark.isWindows()) {
             button.setMnemonic(getMnemonicKeyCode(labelText));
         }
     }
 
     public static String stripMnemonic(String label) {
-        String text;
         int index = label.indexOf("&");
-        if (index != -1) {
-            text = label.substring(0, index);
-            if (label.length() > index) {
-                text = text + label.substring(index + 1);
-                return text;
-            }
+        if (index == -1) {
+            return label;
         }
-        return label;
+        if (label.length() - 1 > index) {
+            return label.substring(0, index) + label.substring(index + 1);
+        } else {
+            return label.substring(0, index);
+        }
     }
 
-    public static int getMnemonicKeyCode(String mnemonic) {
+    private static int getMnemonicKeyCode(String mnemonic) {
         int mindex = mnemonic.indexOf("&");
-        if (mindex > -1) {
-            return mnemonic.toUpperCase().charAt(mindex + 1);
+        if (mindex == -1) {
+            return 0;
         }
-        return 0;
+        return Character.toUpperCase(mnemonic.charAt(mindex + 1));
     }
 
     private ResourceUtils() {

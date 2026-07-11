@@ -27,6 +27,8 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.sparkimpl.plugin.emoticons.Emoticon;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
+import static org.jivesoftware.spark.util.ResourceUtils.stripMnemonic;
+
 public class ButtonFactory {
 
     private static final ButtonFactory instance = new ButtonFactory();
@@ -89,18 +91,13 @@ public class ButtonFactory {
 
     public RolloverButton createRegisterButton() {
         RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PEOPLE_IMAGE));
-        register.setToolTipText(Res.getString("button.register").replace("&", ""));
+        register.setToolTipText(stripMnemonic(Res.getString("button.register")));
         return register;
     }
 
     public RolloverButton createAlwaysOnTop(boolean isAlwaysOnTopActive) {
         RolloverButton alwaysOnTopItem = new RolloverButton();
-        if (isAlwaysOnTopActive) {
-            alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_ACTIVE));
-        } else {
-            alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_DEACTIVE));
-        }
-
+        alwaysOnTopItem.setIcon(SparkRes.getImageIcon(isAlwaysOnTopActive ? SparkRes.Icon.FRAME_ALWAYS_ON_TOP_ACTIVE : SparkRes.Icon.FRAME_ALWAYS_ON_TOP_DEACTIVE));
         alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
         return alwaysOnTopItem;
 
