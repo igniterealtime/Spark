@@ -593,9 +593,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         EventQueue.invokeLater(() -> {
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
             loginDialog.setContentPane(this);
-            loginDialog.setResizable(false);
             loginDialog.pack();
-            loginDialog.setSize(550, 390);
+            loginDialog.setSize(550, 400);
             // Center dialog on screen
             GraphicUtils.centerWindowOnScreen(loginDialog);
 
