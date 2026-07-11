@@ -17,7 +17,6 @@
 package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
@@ -49,13 +48,15 @@ public class SettingsManager {
     /**
      * Returns the LocalPreferences for this user.
      */
-    public synchronized static LocalPreferences getLocalPreferences() {
+    public static LocalPreferences getLocalPreferences() {
         if (localPreferences != null) {
             return localPreferences;
         }
-        // Do Initial Load from FileSystem.
-        localPreferences = load();
-        return localPreferences;
+        synchronized (SettingsManager.class) {
+            // Do Initial Load from FileSystem.
+            localPreferences = load();
+            return localPreferences;
+        }
     }
 
     /**
