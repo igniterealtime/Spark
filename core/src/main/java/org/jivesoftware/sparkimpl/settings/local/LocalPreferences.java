@@ -123,6 +123,11 @@ public class LocalPreferences {
             props.remove(userPasswordProp);
             return;
         }
+        // Don't save empty password, this can be a bug
+        if (password.isEmpty()) {
+            Log.error("The password for " + bareJid + " is empty");
+            return;
+        }
         String pw = Encryptor.encrypt(password);
         setString(userPasswordProp, pw);
     }
@@ -1226,5 +1231,21 @@ public class LocalPreferences {
 
     public int getMaxCurrentHistorySize() {
         return getInt("currentHistoryMaxSize", 20);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder propsText = new StringBuilder();
+        for (var entry : props.entrySet()) {
+            String name = entry.getKey().toString();
+            String val = entry.getValue().toString();
+            if (name.startsWith("password") && !name.equals("passwordSaved")) {
+                if (!isBlank(val)) {
+                    val = "HIDDEN";
+                }
+            }
+            propsText.append(name).append("=").append(val).append('\n');
+        }
+        return propsText.toString();
     }
 }

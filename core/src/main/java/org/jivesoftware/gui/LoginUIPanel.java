@@ -1043,6 +1043,14 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         // Persist information
         String username = getUsername();
         String serverName = getServerName();
+        //FIXME sometimes when the auto login enabled the
+        if (isBlank(username) || isBlank(serverName)) {
+            Log.error("No Username or Server");
+            loginDialog.setVisible(true);
+            String errorMessage = "No Username or Server. Available props are " + localPref;
+            MessageDialog.showErrorDialog(loginDialog, errorMessage, null);
+            return;
+        }
         EntityBareJid bareJid = JidCreate.entityBareFromOrNull(getBareJid());
         String password = getPassword();
 
