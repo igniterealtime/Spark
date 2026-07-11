@@ -16,61 +16,73 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import org.jivesoftware.MainWindow;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * Password changing dialog
+ */
 public class ChangePasswordPanel extends JPanel {
-    // Password changing
-    private final JPasswordField passwordField = new JPasswordField();
-    private final JPasswordField confirmationPasswordField = new JPasswordField();
+    private final JLabel oldPasswordLabel = new JLabel();
+    private final JPasswordField oldPasswordField = new JPasswordField();
     private final JLabel passwordLabel = new JLabel();
+    private final JPasswordField passwordField = new JPasswordField();
     private final JLabel confirmationPasswordLabel = new JLabel();
+    private final JPasswordField confirmationPasswordField = new JPasswordField();
     private final JButton btnChangePassword = new JButton(Res.getString("button.changePassword"));
-    private JDialog dialog;
+    private static JDialog dialog;
 
     public ChangePasswordPanel() {
         setLayout(new GridBagLayout());
         // Setup Resources
+        ResourceUtils.resLabel(oldPasswordLabel, oldPasswordField, Res.getString("changePassword.oldPassword") + ":");
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.change.password.to") + ":");
         ResourceUtils.resLabel(confirmationPasswordLabel, confirmationPasswordField, Res.getString("label.confirm.password") + ":");
         ResourceUtils.resButton(btnChangePassword, Res.getString("button.changePassword"));
 
         Insets insets = new Insets(5, 5, 5, 5);
-        add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, NORTHWEST, NONE, insets, 0, 0));
-        add(passwordField, new GridBagConstraints(1, 1, 1, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
-        add(confirmationPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0, 0, NORTHWEST, NONE, insets, 0, 0));
-        add(confirmationPasswordField, new GridBagConstraints(1, 2, 1, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
+        add(oldPasswordLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, NORTHWEST, NONE, insets, 0, 0));
+        add(oldPasswordField, new GridBagConstraints(1, 1, 1, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
+        add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0, 0, NORTHWEST, NONE, insets, 0, 0));
+        add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
+        add(confirmationPasswordLabel, new GridBagConstraints(0, 3, 1, 1, 0, 0, NORTHWEST, NONE, insets, 0, 0));
+        add(confirmationPasswordField, new GridBagConstraints(1, 3, 1, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
 
-        add(btnChangePassword, new GridBagConstraints(0, 3, 4, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
+        add(btnChangePassword, new GridBagConstraints(0, 4, 2, 1, 1, 0, NORTHWEST, NONE, insets, 100, 0));
 
         btnChangePassword.addActionListener(this::btnChangePasswordClick);
     }
 
     private void btnChangePasswordClick(ActionEvent event) {
+        String oldPassword = getOldPassword();
         String newPassword = getPassword();
         String confirmationPassword = getConfirmationPassword();
-        if (isBlank(newPassword) || isBlank(confirmationPassword)) {
+        if (isBlank(oldPassword) || isBlank(newPassword) || isBlank(confirmationPassword)) {
             return;
         }
+        if (SparkManager.getUserManager().changePassword(oldPassword, newPassword, confirmationPassword)) {
+            dialog.dispose();
+        }
+    }
 
-        if (!newPassword.equals(confirmationPassword)) {
-            MessageDialog.showErrorDialog(Res.getString("message.passwords.no.match"), null);
-            return;
-        }
-        SparkManager.getUserManager().changePassword(newPassword);
-        dialog.dispose();
+    public String getOldPassword() {
+        return new String(oldPasswordField.getPassword()).trim();
     }
 
     /**
@@ -87,18 +99,20 @@ public class ChangePasswordPanel extends JPanel {
         return new String(confirmationPasswordField.getPassword()).trim();
     }
 
-    public void invokeDialog(JFrame parent) {
+    public static void invokeDialog() {
         if (dialog != null) {
             dialog.dispose();
         }
-        dialog = new JDialog(parent, Res.getString("button.changePassword"), false);
-        dialog.add(this);
+
+        dialog = new JDialog(SparkManager.getMainWindow(), Res.getString("button.changePassword"), false);
+        ChangePasswordPanel changePasswordPanel = new ChangePasswordPanel();
+        dialog.add(changePasswordPanel);
         dialog.pack();
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        GraphicUtils.centerWindowOnComponent(dialog, parent);
+        GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
 
-        passwordField.requestFocus();
+        changePasswordPanel.passwordField.requestFocus();
     }
 }

@@ -74,6 +74,7 @@ import java.util.Map;
 import java.util.TimerTask;
 
 import static com.install4j.runtime.util.DirectoryUtil.deleteDirectory;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
@@ -473,23 +474,39 @@ public class UserManager {
         });
     }
 
-    public void changePassword(String newPassword) {
+    public boolean changePassword(String oldPassword, String newPassword, String confirmationPassword) {
+            EntityBareJid myBareJid = SparkManager.getSessionManager().getUserBareAddress();
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            // TODO Smack should implement old_password https://xmpp.org/extensions/xep-0077.html#registrar-formtypes-changepassword
+            // check old password manually (if it was stored)
+            String currentPasswordOfUser = pref.getPasswordForUser(myBareJid.toString());
+            if (!isBlank(currentPasswordOfUser)) {
+                if (!currentPasswordOfUser.equals(oldPassword)) {
+                    MessageDialog.showErrorDialog(SparkManager.getMainWindow(), Res.getString("changePassword.oldPasswordIsIncorrect"), null);
+                    return false;
+                }
+            }
+            if (!newPassword.equals(confirmationPassword)) {
+                MessageDialog.showErrorDialog(SparkManager.getMainWindow(), Res.getString("message.passwords.no.match"), null);
+                return false;
+            }
         try {
             AccountManager.getInstance(SparkManager.getConnection()).changePassword(newPassword);
-            LocalPreferences pref = SettingsManager.getLocalPreferences();
             if (pref.isSavePassword()) {
-                pref.setPasswordForUser(SparkManager.getSessionManager().getUserBareAddress(), newPassword);
+                pref.setPasswordForUser(myBareJid, newPassword);
             }
-            JOptionPane.showMessageDialog(null, Res.getString("message.changePasswordSuccessful"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.changePasswordSuccessful"));
+            return true;
         } catch (Exception passwordEx) {
             Log.error("Unable to change password", passwordEx);
             String errorMessage = Res.getString("message.changePasswordFailed");
-            MessageDialog.showErrorDialog(errorMessage, passwordEx);
+            MessageDialog.showErrorDialog(SparkManager.getMainWindow(), errorMessage, passwordEx);
+            return false;
         }
     }
 
     public void deleteAccount() {
-        if (JOptionPane.showConfirmDialog(null,
+        if (JOptionPane.showConfirmDialog(SparkManager.getMainWindow(),
             Res.getString("button.deleteAccount"),
             Res.getString("message.deleteAccountConfirmation"),
             JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
@@ -497,7 +514,7 @@ public class UserManager {
         }
         try {
             AccountManager.getInstance(SparkManager.getConnection()).deleteAccount();
-            JOptionPane.showMessageDialog(null, Res.getString("message.deleteAccountSuccessful"));
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.deleteAccountSuccessful"));
             deleteDirectory(Spark.getUserProfileFolder());
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             pref.setPasswordForUser(SparkManager.getSessionManager().getUserBareAddress(), null);
@@ -505,7 +522,7 @@ public class UserManager {
         } catch (Exception ex) {
             Log.error("Unable to delete account", ex);
             String errorMessage = Res.getString("message.deleteAccountFailed");
-            MessageDialog.showErrorDialog(errorMessage, ex);
+            MessageDialog.showErrorDialog(SparkManager.getMainWindow(), errorMessage, ex);
         }
     }
 }

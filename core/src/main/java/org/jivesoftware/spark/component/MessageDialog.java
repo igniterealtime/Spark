@@ -355,6 +355,7 @@ public final class MessageDialog
      */
     public static String getStackTrace( Throwable aThrowable )
     {
+        if ( aThrowable == null ) return "";
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter( result );
         aThrowable.printStackTrace( printWriter );

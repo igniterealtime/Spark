@@ -165,8 +165,7 @@ public class LocalPreferencePanel extends JPanel {
         if (!Default.getBoolean(Default.CHANGE_PASSWORD_DISABLED) && Enterprise.containsFeature(Enterprise.PASSWORD_CHANGE_FEATURE)) {
             var btnChangePassword = new JButton(Res.getString("button.changePassword"));
             btnChangePassword.addActionListener(e -> {
-                ChangePasswordPanel changePasswordPanel = new ChangePasswordPanel();
-                changePasswordPanel.invokeDialog(new JFrame());
+                ChangePasswordPanel.invokeDialog();
             });
             inputPanel.add(btnChangePassword, new GridBagConstraints(0, 11, 2, 1, 1, 0, NORTHWEST, BOTH, insets, 50, 0));
             var btnDeleteAccount = new JButton(Res.getString("button.deleteAccount"));
