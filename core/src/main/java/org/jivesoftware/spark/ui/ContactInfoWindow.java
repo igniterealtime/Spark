@@ -162,9 +162,7 @@ public class ContactInfoWindow extends JPanel {
         int x = (int)mainWindowLocation.getX() + mainWindow.getWidth();
         int y = (int) listLocation.getY() + (int) point.getY();
         setWindowLocation(x, y);
-        if (!window.isVisible()) {
-            window.setVisible(true);
-        }
+        window.setVisible(true);
     }
 
     public void setWindowLocation(int x, int y) {
@@ -188,6 +186,10 @@ public class ContactInfoWindow extends JPanel {
     }
 
     public void customizeUI() {
+        // When the window was closed the contactItem is cleared
+        if (contactItem == null) {
+            return;
+        }
         nicknameLabel.setText(contactItem.getDisplayName());
 
         boolean isOnLeave = contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable;
@@ -242,7 +244,7 @@ public class ContactInfoWindow extends JPanel {
     }
 
     private void retrieveIdleTime(boolean isOnLeave) {
-        //FIXME sometimes the contactItem is null
+        // When the window was closed the contactItem is cleared
         if (contactItem == null) {
             return;
         }
@@ -288,9 +290,6 @@ public class ContactInfoWindow extends JPanel {
 
     public void setContactItem(ContactItem contactItem) {
         this.contactItem = contactItem;
-        if (contactItem == null) {
-            return;
-        }
         customizeUI();
     }
 
@@ -299,8 +298,8 @@ public class ContactInfoWindow extends JPanel {
     }
 
     public void dispose() {
-        window.setVisible(false);
         contactItem = null;
+        window.setVisible(false);
         window.dispose();
     }
 

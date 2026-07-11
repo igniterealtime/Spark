@@ -333,10 +333,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         for (Component comp : comps) {
             if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
-                ContactGroup group = (ContactGroup) panel.getComponent(0);
-                if (group == contactGroup) {
-                    listPanel.remove(panel);
-                    break;
+                if (panel.getComponentCount() > 0) {
+                    ContactGroup group = (ContactGroup) panel.getComponent(0);
+                    if (group == contactGroup) {
+                        listPanel.remove(panel);
+                        break;
+                    }
                 }
             }
         }
@@ -841,7 +843,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             public void mouseEntered(MouseEvent mouseEvent) {
                 canShowPopup = true;
                 timerTask = new DisplayWindowTask(mouseEvent);
-                TaskEngine.getInstance().schedule(timerTask, 500, 1000);
+                TaskEngine.getInstance().schedule(timerTask, 750, 1000);
             }
 
             @Override
@@ -918,17 +920,18 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * Displays the <code>ContactInfoWindow</code>.
      */
     private void displayWindow(MouseEvent e) {
-        if (preferences.areVCardsVisible()) {
-            final ContactGroup parent = this;
-            final SwingWorker worker = new SwingWorker() {
-                @Override
-                public Object construct() {
-                    UIComponentRegistry.getContactInfoWindow().display(parent, e);
-                    return null;
-                }
-            };
-            worker.start();
+        if (!preferences.areVCardsVisible()) {
+            return;
         }
+        ContactGroup parent = this;
+        SwingWorker worker = new SwingWorker() {
+            @Override
+            public Object construct() {
+                UIComponentRegistry.getContactInfoWindow().display(parent, e);
+                return null;
+            }
+        };
+        worker.start();
     }
 
     private boolean needToChangePopup(MouseEvent e) {
