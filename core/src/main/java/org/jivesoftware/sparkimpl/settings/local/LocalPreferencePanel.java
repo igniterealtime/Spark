@@ -23,10 +23,11 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -46,10 +47,10 @@ import static java.awt.GridBagConstraints.NORTHWEST;
  * UI for editing Local Preferences.
  */
 public class LocalPreferencePanel extends JPanel {
-    private final JTextField _portField = new JTextField();
-    private final JTextField _timeOutField = new JTextField();
-    private final JTextField _reconnectDelayField = new JTextField();
-    private final JTextField _idleField = new JTextField();
+    private final JSpinner _portField = new JSpinner(new SpinnerNumberModel(5222, 9, 65535, 1));
+    private final JSpinner _timeOutField = new JSpinner(new SpinnerNumberModel(60, 5, Integer.MAX_VALUE, 5));
+    private final JSpinner _reconnectDelayField = new JSpinner(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
+    private final JSpinner _idleField = new JSpinner(new SpinnerNumberModel(10, 1, Integer.MAX_VALUE, 1));
     private final JTextField _idleStatusText = new JTextField();
 
     private final JCheckBox _autoLoginBox = new JCheckBox();
@@ -181,31 +182,31 @@ public class LocalPreferencePanel extends JPanel {
     /**
      * Return the XMPP Port to communicate on.
      */
-    public String getPort() {
-        return _portField.getText();
+    public int getPort() {
+        return (int) _portField.getValue();
     }
 
     public void setPort(int port) {
-        _portField.setText(Integer.toString(port));
+        _portField.setValue(port);
     }
 
     /**
      * Return the XMPP Timeout variable.
      */
-    public String getTimeout() {
-        return _timeOutField.getText();
+    public int getTimeout() {
+        return (int) _timeOutField.getValue();
     }
 
     public void setTimeOut(int timeOut) {
-        _timeOutField.setText(Integer.toString(timeOut));
+        _timeOutField.setValue(timeOut);
     }
 
-    public String getReconnectDelay() {
-        return _reconnectDelayField.getText();
+    public int getReconnectDelay() {
+        return (int) _reconnectDelayField.getValue();
     }
 
     public void setReconnectDelay(int reconnectDelay) {
-        _reconnectDelayField.setText(Integer.toString(reconnectDelay));
+        _reconnectDelayField.setValue(reconnectDelay);
     }
 
     /**
@@ -242,15 +243,14 @@ public class LocalPreferencePanel extends JPanel {
     }
 
     public void setIdleTime(int time) {
-        String idleTime = Integer.toString(time);
-        _idleField.setText(idleTime);
+        _idleField.setValue(time);
     }
 
     /**
      * Return the time to IDLE in minutes.
      */
-    public String getIdleTime() {
-        return _idleField.getText();
+    public int getIdleTime() {
+        return (int) _idleField.getValue();
     }
 
     public void setStartInSystemTray(boolean startInTray) {

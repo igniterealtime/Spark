@@ -65,12 +65,12 @@ public class LocalPreference implements Preference {
             preferences.setPasswordForUser(myBareJid, null);
         }
         preferences.setAutoLogin(panel.getAutoLogin());
-        preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
-        preferences.setReconnectDelay(Integer.parseInt(panel.getReconnectDelay()));
-        preferences.setXmppPort(Integer.parseInt(panel.getPort()));
+        preferences.setTimeOut(panel.getTimeout());
+        preferences.setReconnectDelay(panel.getReconnectDelay());
+        preferences.setXmppPort(panel.getPort());
         preferences.setSavePassword(panel.isSavePassword());
         preferences.setIdleOn(panel.isIdleOn());
-        preferences.setIdleTime(Integer.parseInt(panel.getIdleTime()));
+        preferences.setIdleTime(panel.getIdleTime());
         preferences.setStartedHidden(panel.isStartInSystemTray());
         preferences.setStartOnStartup(panel.isStartOnStartup());
         preferences.setIdleMessage(panel.getIdleMessage());
@@ -84,25 +84,6 @@ public class LocalPreference implements Preference {
 
     @Override
 	public boolean isDataValid() {
-        preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
-        preferences.setXmppPort(Integer.parseInt(panel.getPort()));
-
-        try {
-            Integer.parseInt(panel.getTimeout());
-            Integer.parseInt(panel.getPort());
-            Integer.parseInt(panel.getIdleTime());
-        }
-        catch (Exception ex) {
-            errorMessage = Res.getString("message.specify.valid.time.error");
-            return false;
-        }
-
-        int timeOut = Integer.parseInt(panel.getTimeout());
-        if (timeOut < 5) {
-            errorMessage = Res.getString("message.timeout.error");
-            return false;
-        }
-
         return true;
     }
 
