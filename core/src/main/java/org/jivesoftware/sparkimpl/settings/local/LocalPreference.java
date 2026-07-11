@@ -18,7 +18,9 @@ package org.jivesoftware.sparkimpl.settings.local;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
+import org.jxmpp.jid.EntityBareJid;
 
 import javax.swing.*;
 
@@ -57,6 +59,11 @@ public class LocalPreference implements Preference {
 
     @Override
 	public void commit() {
+        // SPARK-1600: Remove a password the "Save password" is unchecked
+        if (!panel.isSavePassword()) {
+            EntityBareJid myBareJid = SparkManager.getSessionManager().getUserBareAddress();
+            preferences.setPasswordForUser(myBareJid, null);
+        }
         preferences.setAutoLogin(panel.getAutoLogin());
         preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
         preferences.setReconnectDelay(Integer.parseInt(panel.getReconnectDelay()));
