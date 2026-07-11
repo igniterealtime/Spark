@@ -27,12 +27,12 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public BroadcastHistoryFrame() {
+        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
         BroadcastHistoryArea = new javax.swing.JTextArea();
         BroadcastHistoryArea.setEditable(false);
         BroadcastHistoryArea.setLineWrap(true);
         BroadcastHistoryArea.setWrapStyleWord(true);
         initComponents();
-        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
     }
 
     public void readFromFile(String date) throws IOException {
@@ -152,7 +152,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     java.awt.EventQueue.invokeLater(() -> {
        BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
        frame.setVisible(true);
-       frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+       frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     });
 }
 
