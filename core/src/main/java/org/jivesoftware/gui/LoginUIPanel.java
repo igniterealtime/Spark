@@ -273,10 +273,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         // Load previous login and username
         setUsername(localPref.getLastUsername());
         setServerName(localPref.getServer());
+        cbSavePassword.setSelected(localPref.isSavePassword());
         if (localPref.isSavePassword()) {
             String encryptedPassword = localPref.getPasswordForUser(getBareJid());
             setPassword(encryptedPassword);
-            cbSavePassword.setSelected(true);
         }
         // If autologin then sign in with the last time credentials
         if (validateDialog() && cbAutoLogin.isSelected()) {
@@ -817,10 +817,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             menu.addActionListener(e -> {
                 setUsername(username);
                 setServerName(host);
-                try {
-                    String passwordForUser = localPref.getPasswordForUser(getBareJid());
-                    setPassword(passwordForUser);
-                } catch (Exception ignored) {
+                String passwordForUser = localPref.getPasswordForUser(getBareJid());
+                setPassword(passwordForUser);
+                // if the account had a password stored, then we should save it again
+                if (!isBlank(passwordForUser)) {
+                    cbSavePassword.setSelected(true);
                 }
                 validateDialog();
             });

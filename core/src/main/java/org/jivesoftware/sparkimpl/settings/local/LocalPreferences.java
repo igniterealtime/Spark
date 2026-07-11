@@ -270,7 +270,7 @@ public class LocalPreferences {
      * Return true if the password should be encoded and persisted.
      */
     public boolean isSavePassword() {
-        return getBoolean("passwordSaved", false);
+        return getBoolean("passwordSaved", true);
     }
 
     public void setSavePassword(boolean savePassword) {

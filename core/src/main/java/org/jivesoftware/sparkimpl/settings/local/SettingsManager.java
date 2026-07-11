@@ -286,7 +286,8 @@ public class SettingsManager {
             "showOfflineUsers", "true",
             "contactListIconSize", "32",
             "contactListFontSize", "14",
-            "chatRoomFontSize", "16"
+            "chatRoomFontSize", "16",
+            "passwordSaved", "true"
         );
         return List.of(v1, v2);
     }
