@@ -66,6 +66,7 @@
 <!--        <module>plugins/phone</module>-->
 <!--        <module>plugins/jingle</module>-->
         <module>plugins/meet</module>
+        <module>plugins/omemo</module>
         <module>plugins/otr</module>
         <module>plugins/reversi</module>
         <module>plugins/roar</module>

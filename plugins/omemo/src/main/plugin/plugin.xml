@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>AVHIRAL</author>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
+    <os>Windows,Linux,Mac</os>
+    <class>org.jivesoftware.spark.plugin.omemo.AvhOmemoPlugin</class>
+</plugin>
