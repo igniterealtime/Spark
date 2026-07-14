@@ -529,7 +529,7 @@ public class RosterDialog implements ActionListener {
 
         if (isSubscribed) {
             try {
-                roster.createItemAndRequestSubscription(jid, nickname, new String[]{group});
+                roster.preApproveAndCreateEntry(jid, nickname, new String[]{group});
             }
             catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Unable to add new entry " + jid, e);
