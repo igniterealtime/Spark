@@ -37,26 +37,26 @@ public class Encryptor {
     // We should use a system keychain or a master password, see https://igniterealtime.atlassian.net/browse/SPARK-1601
     // In Base 64: ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae
     private static final byte[] secretKey = new byte[]{-70, 7, -23, 87, 87, 76, 11, -104, -14, 38, -38, -80, 84, 7, -45, -92, 121, 49, -88, -99, 62, 19, 70, -98};
-    private static Cipher ecipher;
-    private static Cipher dcipher;
+    private static final ThreadLocal<Cipher> ecipher = ThreadLocal.withInitial(() -> createCipher(Cipher.ENCRYPT_MODE));
+    private static final ThreadLocal<Cipher> dcipher = ThreadLocal.withInitial(() -> createCipher(Cipher.DECRYPT_MODE));
 
-    static {
+    private static Cipher createCipher(int mode) {
         try {
             SecretKey key = new SecretKeySpec(secretKey, "DESede");
-            ecipher = Cipher.getInstance("DESede");
-            dcipher = Cipher.getInstance("DESede");
-            ecipher.init(Cipher.ENCRYPT_MODE, key);
-            dcipher.init(Cipher.DECRYPT_MODE, key);
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(mode, key);
+            return cipher;
         }
         catch (Exception e) {
             Log.error(e);
+            return null;
         }
     }
 
     public static String encrypt(String string) {
         try {
             byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
-            byte[] enc = ecipher.doFinal(utf8);
+            byte[] enc = ecipher.get().doFinal(utf8);
             return Base64.getEncoder().encodeToString(enc);
         }
         catch (Exception ignored) {
@@ -76,11 +76,7 @@ public class Encryptor {
 
     public static String decryptOrThrow(String string) throws BadPaddingException, IllegalBlockSizeException {
         byte[] dec = Base64.getDecoder().decode(string);
-
-        // Decrypt
-        byte[] utf8 = dcipher.doFinal(dec);
-
-        // Decode using utf-8
+        byte[] utf8 = dcipher.get().doFinal(dec);
         return new String(utf8, StandardCharsets.UTF_8);
     }
 }
