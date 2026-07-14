@@ -66,7 +66,7 @@ public class LocalPreferences {
         setInt("xmppPort", xmppPort);
     }
 
-    public void setGroupChatPassword(String roomName, String password) throws Exception {
+    public void setGroupChatPassword(String roomName, String password) {
         String pw = Encryptor.encrypt(password);
         setString(roomName, pw);
     }
@@ -109,12 +109,8 @@ public class LocalPreferences {
      * returns the password for an encrypted jid
      */
     public String getPasswordForUser(String barejid) {
-        try {
-            String pw = "password" + Encryptor.encrypt(barejid);
-            return Encryptor.decrypt(getString(pw));
-        } catch (Exception e) {
-            return null;
-        }
+        String pw = "password" + Encryptor.encrypt(barejid);
+        return Encryptor.decrypt(getString(pw));
     }
 
     /**
@@ -122,17 +118,13 @@ public class LocalPreferences {
      * both will be encrypted
      */
     public void setPasswordForUser(EntityBareJid bareJid, String password) {
-        try {
-            String userPasswordProp = "password" + Encryptor.encrypt(bareJid.toString());
-            if (password == null) {
-                props.remove(userPasswordProp);
-                return;
-            }
-            String pw = Encryptor.encrypt(password);
-            setString(userPasswordProp, pw);
-        } catch (Exception ex) {
-            Log.error("Error storing encrypted password for " + bareJid, ex);
+        String userPasswordProp = "password" + Encryptor.encrypt(bareJid.toString());
+        if (password == null) {
+            props.remove(userPasswordProp);
+            return;
         }
+        String pw = Encryptor.encrypt(password);
+        setString(userPasswordProp, pw);
     }
 
     /**

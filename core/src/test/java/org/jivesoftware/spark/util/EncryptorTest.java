@@ -10,12 +10,7 @@ public class EncryptorTest {
     @Test
     public void encryptAndDecryptString() {
         final String testString = "How are you today? This is test string!";
-        String encodedString;
-        try {
-            encodedString = decrypt(encrypt(testString));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        String encodedString = decrypt(encrypt(testString));
         assertEquals(testString,encodedString);
     }
 

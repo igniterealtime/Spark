@@ -32,7 +32,9 @@ import java.util.Base64;
  * @author Derek DeMoro
  */
 public class Encryptor {
-
+    // The passwords aren't really encrypted because the key is always the same.
+    // It's easy to decrypt them. This encryption is just to hide the password from inexperienced user.
+    // We should use a system keychain or a master password, see https://igniterealtime.atlassian.net/browse/SPARK-1601
     // In Base 64: ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae
     private static final byte[] secretKey = new byte[]{-70, 7, -23, 87, 87, 76, 11, -104, -14, 38, -38, -80, 84, 7, -45, -92, 121, 49, -88, -99, 62, 19, 70, -98};
     private static Cipher ecipher;
@@ -51,12 +53,15 @@ public class Encryptor {
         }
     }
 
-    public static String encrypt(String string) throws Exception {
-        byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
-
-        // Encrypt
-        byte[] enc = ecipher.doFinal(utf8);
-        return Base64.getEncoder().encodeToString(enc);
+    public static String encrypt(String string) {
+        try {
+            byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
+            byte[] enc = ecipher.doFinal(utf8);
+            return Base64.getEncoder().encodeToString(enc);
+        }
+        catch (Exception ignored) {
+            return null;
+        }
     }
 
     public static String decrypt(String string) {
