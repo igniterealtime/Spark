@@ -88,6 +88,7 @@ public class ThemePreference implements Preference {
         pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
         pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
         pref.setGrayingOutEnabled(grayingOutEnabled);
+        pref.setDockingEnabled(panel.getThemePanel().isDockingEnabled());
         pref.setReconnectPanelType(panel.getThemePanel().getReconnectPanelType());
 
         try {

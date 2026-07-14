@@ -67,6 +67,7 @@ public class ThemePanel extends JPanel {
     private final JButton _lookandfeelpreview;
     private final JCheckBox _useTabsForTransports;
     private final JCheckBox _useTabsForConference;
+    private final JCheckBox useSingleWindowDocking = new JCheckBox();
 
     private final JComboBox<String> _showReconnectBox;
 
@@ -226,6 +227,7 @@ public class ThemePanel extends JPanel {
         ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
         _useTabsForTransports.setText(Res.getString("checkbox.transport.tab.setting"));
         _useTabsForConference.setText(Res.getString("checkbox.conference.tab.setting"));
+        useSingleWindowDocking.setText(Res.getString("checkbox.singleWindowDocking"));
 
         // Build UI
         buildUI();
@@ -267,10 +269,11 @@ public class ThemePanel extends JPanel {
         add(disableGrayingIdleContacts, new GridBagConstraints(0, 11, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(useSingleWindowDocking, new GridBagConstraints(0, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnect.info"));
-        add(reconnectionlabel, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-        add(_showReconnectBox, new GridBagConstraints(1, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(reconnectionlabel, new GridBagConstraints(0, 15, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+        add(_showReconnectBox, new GridBagConstraints(1, 15, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         // Activate live one.
         _useTabsForTransports.setSelected(pref.isShowTransportTab());
@@ -281,6 +284,8 @@ public class ThemePanel extends JPanel {
 
         _useTabsForConference.setSelected(pref.isShowConferenceTab());
         _useTabsForConference.addActionListener(e -> SettingsManager.getLocalPreferences().setShowConferenceTab(_useTabsForConference.isSelected()));
+
+        useSingleWindowDocking.setSelected(pref.isDockingEnabled());
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null) {
@@ -473,6 +478,11 @@ public class ThemePanel extends JPanel {
 
     public boolean areVCardsVisible() {
         return showVCards.isSelected();
+    }
+
+
+    public boolean isDockingEnabled() {
+        return useSingleWindowDocking.isSelected();
     }
 
     /**
