@@ -18,14 +18,12 @@ package org.jivesoftware.spellchecker;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.jivesoftware.spark.preference.Preference;
 
-/**
- * Class used to acquire the Preferences set for this plugin by the User
- */
+import static org.jivesoftware.spellchecker.SpellcheckerRes.ICON_SPELLING;
+
 public class SpellcheckerPreference implements Preference {
     public static String NAMESPACE = "spellchecking";
     private SpellcheckerPreferenceDialog dialog;
@@ -33,10 +31,9 @@ public class SpellcheckerPreference implements Preference {
     private final ArrayList<String> languages;
 
     /**
-     * Intializes the SpellcheckerPreference
-     * 
-     * @param languages
-     *            , an {@link ArrayList} of {@link String} containing the supported languages
+     * Initializes the SpellcheckerPreference
+     *
+     * @param languages an {@link ArrayList} of {@link String} containing the supported languages
      */
     public SpellcheckerPreference(final ArrayList<String> languages) {
         this.languages = languages;
@@ -44,33 +41,32 @@ public class SpellcheckerPreference implements Preference {
 
     /**
      * Returns the Preferences
-     * 
+     *
      * @return {@link SpellcheckerPreference}
      */
     public SpellcheckerPreferences getPreferences() {
-	return preferences;
+        return preferences;
     }
 
     @Override
     public void commit() {
-	preferences.setAutoSpellCheckerEnabled(dialog
-		.isAutoSpellCheckingEnabled());
-	preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
-	preferences.setSpellLanguage(dialog.getSelectedLanguage());
-	preferences.setIgnoreUppercase(dialog.getIgnoreUppercase());
-	preferences.setLanguageSelectionInChatRoom(dialog.getEnableLanuageSelection());
-	SpellcheckManager.getInstance().loadDictionary(dialog.getSelectedLanguage());
-	preferences.save();
+        preferences.setAutoSpellCheckerEnabled(dialog.isAutoSpellCheckingEnabled());
+        preferences.setSpellCheckerEnabled(dialog.isSpellCheckingEnabled());
+        preferences.setSpellLanguage(dialog.getSelectedLanguage());
+        preferences.setIgnoreUppercase(dialog.getIgnoreUppercase());
+        preferences.setLanguageSelectionInChatRoom(dialog.getEnableLanguageSelection());
+        SpellcheckManager.getInstance().loadDictionary(dialog.getSelectedLanguage());
+        preferences.save();
     }
 
     @Override
     public Object getData() {
-	return preferences;
+        return preferences;
     }
 
     @Override
     public String getErrorMessage() {
-	return null;
+        return null;
     }
 
     @Override
@@ -79,40 +75,39 @@ public class SpellcheckerPreference implements Preference {
         dialog.setAutoSpellCheckingEnabled(preferences.isAutoSpellCheckerEnabled());
         dialog.setSelectedLanguage(preferences.getSpellLanguage());
         dialog.setSpellCheckingEnabled(preferences.isSpellCheckerEnabled());
-        dialog.setEnableLanuageSelection(preferences.getLanguageSelectionInChatRoom());
+        dialog.setEnableLanguageSelection(preferences.getLanguageSelectionInChatRoom());
         dialog.setIgnoreUppercase(preferences.getIgnoreUppercase());
-	    return dialog;
+        return dialog;
     }
 
     @Override
     public Icon getIcon() {
-	ClassLoader cl = getClass().getClassLoader();
-	return new ImageIcon(cl.getResource("text_ok.png"));
+        return ICON_SPELLING;
     }
 
     @Override
     public String getListName() {
-	return SpellcheckerResource.getString("title.spellchecker");
+        return SpellcheckerRes.getString("title.spellchecker");
     }
 
     @Override
     public String getNamespace() {
-	return NAMESPACE;
+        return NAMESPACE;
     }
 
     @Override
     public String getTitle() {
-	return SpellcheckerResource.getString("title.spellchecker");
+        return SpellcheckerRes.getString("title.spellchecker");
     }
 
     @Override
     public String getTooltip() {
-	return SpellcheckerResource.getString("title.spellchecker");
+        return SpellcheckerRes.getString("title.spellchecker");
     }
 
     @Override
     public boolean isDataValid() {
-	return true;
+        return true;
     }
 
     @Override

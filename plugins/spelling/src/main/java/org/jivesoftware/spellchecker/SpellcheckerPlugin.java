@@ -15,8 +15,6 @@
  */
 package org.jivesoftware.spellchecker;
 
-import org.jivesoftware.spark.util.log.Log;
-
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
@@ -25,36 +23,29 @@ import org.jivesoftware.spark.plugin.Plugin;
  */
 public class SpellcheckerPlugin implements Plugin {
     private SpellcheckChatRoomListener listener;
-    private SpellcheckerPreference preference;
 
     @Override
     public boolean canShutDown() {
-	return true;
+        return true;
     }
 
     @Override
     public void initialize() {
-
-	try {
-	    preference = SpellcheckManager.getInstance()
-		    .getSpellcheckerPreference();
-	    SparkManager.getPreferenceManager().addPreference(preference);
-
-	    listener = new SpellcheckChatRoomListener();
-	    SparkManager.getChatManager().addChatRoomListener(listener);
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-    }
+        SpellcheckerPreference preference = SpellcheckManager.getInstance().getSpellcheckerPreference();
+        SparkManager.getPreferenceManager().addPreference(preference);
+        listener = new SpellcheckChatRoomListener();
+        SparkManager.getChatManager().addChatRoomListener(listener);
+ }
 
     @Override
     public void shutdown() {
-
+        SpellcheckerPreference preference = SpellcheckManager.getInstance().getSpellcheckerPreference();
+        SparkManager.getPreferenceManager().removePreference(preference);
+        SparkManager.getChatManager().removeChatRoomListener(listener);
     }
 
     @Override
     public void uninstall() {
-	SparkManager.getChatManager().removeChatRoomListener(listener);
     }
 
 }

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -28,86 +29,83 @@ import org.jivesoftware.Spark;
 
 public class SpellcheckerPreferences {
     private final Properties props;
-    private File configFile;
 
     public SpellcheckerPreferences() {
-	this.props = new Properties();
+        this.props = new Properties();
+        load();
+    }
 
-	try {
-	    props.load(new FileInputStream(getConfigFile()));
-	} catch (IOException e) {
-	    // Can't load ConfigFile
-	}
-
+    private void load() {
+        File settingsFile = getConfigFile();
+        if  (!settingsFile.exists()) {
+            return;
+        }
+        try {
+            props.load(Files.newInputStream(settingsFile.toPath()));
+        } catch (IOException e) {
+            Log.error("Unable load Spellchecker preferences", e);
+        }
     }
 
     public File getConfigFile() {
-	if (configFile == null)
-	    configFile = new File(Spark.getSparkUserHome(),
-		    "spellchecking.properties");
-
-	return configFile;
+        return new File(Spark.getSparkUserHome(), "spellchecking.properties");
     }
 
     public void save() {
-	try {
-	    props.store(new FileOutputStream(getConfigFile()), "");
-	} catch (Exception e) {
-	    Log.error(e);
-	}
+        try {
+            props.store(new FileOutputStream(getConfigFile()), "");
+        } catch (Exception e) {
+            Log.error("Unable save Spellchecker preferences", e);
+        }
     }
 
     public void setSpellLanguage(String name) {
-	props.setProperty("selectedSpellLanguage", name);
+        props.setProperty("selectedSpellLanguage", name);
     }
 
     public String getSpellLanguage() {
-	return props.getProperty("selectedSpellLanguage", Locale.getDefault()
-		.getLanguage());
+        return props.getProperty("selectedSpellLanguage", Locale.getDefault().getLanguage());
     }
 
     public void setSpellCheckerEnabled(boolean enabled) {
-	setBoolean("spellCheckerEnabled", enabled);
+        setBoolean("spellCheckerEnabled", enabled);
     }
 
     public boolean isSpellCheckerEnabled() {
-	return getBoolean("spellCheckerEnabled", false);
+        return getBoolean("spellCheckerEnabled", false);
     }
 
     public void setAutoSpellCheckerEnabled(boolean enabled) {
-	setBoolean("autoSpellCheckerEnabled", enabled);
+        setBoolean("autoSpellCheckerEnabled", enabled);
     }
 
     public boolean isAutoSpellCheckerEnabled() {
-	return getBoolean("autoSpellCheckerEnabled", false);
-    }
-    
-    public boolean getLanguageSelectionInChatRoom()
-    {
-       return getBoolean("showLanguageSelectionInChatRoom", false);
+        return getBoolean("autoSpellCheckerEnabled", false);
     }
 
-    public void setLanguageSelectionInChatRoom(boolean value)
-    {
-       setBoolean("showLanguageSelectionInChatRoom", value);
+    public boolean getLanguageSelectionInChatRoom() {
+        return getBoolean("showLanguageSelectionInChatRoom", false);
     }
-    
+
+    public void setLanguageSelectionInChatRoom(boolean value) {
+        setBoolean("showLanguageSelectionInChatRoom", value);
+    }
+
     private boolean getBoolean(String property, boolean defaultValue) {
-	return Boolean.parseBoolean(props.getProperty(property,
-		Boolean.toString(defaultValue)));
+        String propertyVal = props.getProperty(property);
+        return propertyVal != null ? Boolean.parseBoolean(propertyVal) : defaultValue;
     }
 
     private void setBoolean(String property, boolean value) {
-	props.setProperty(property, Boolean.toString(value));
+        props.setProperty(property, Boolean.toString(value));
     }
-    
+
     public void setIgnoreUppercase(boolean enabled) {
-	setBoolean("ignoreUppercase", enabled);
+        setBoolean("ignoreUppercase", enabled);
     }
-    
+
     public boolean getIgnoreUppercase() {
-	return getBoolean("ignoreUppercase", false);
+        return getBoolean("ignoreUppercase", false);
     }
-    
-    
+
 }

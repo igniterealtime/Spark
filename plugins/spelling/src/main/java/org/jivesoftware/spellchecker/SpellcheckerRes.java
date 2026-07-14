@@ -21,12 +21,15 @@ import java.util.ResourceBundle;
 
 import org.jivesoftware.spark.util.log.Log;
 
-public class SpellcheckerResource {
+import javax.swing.ImageIcon;
+
+public class SpellcheckerRes {
     private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/spelling_i18n");
+    private static ClassLoader cl = SpellcheckerRes.class.getClassLoader();
 
-    static ClassLoader cl = SpellcheckerResource.class.getClassLoader();
+    static ImageIcon ICON_SPELLING = new ImageIcon(cl.getResource("text_ok.png"));
 
-    public static String getString(String propertyName) {
+    static String getString(String propertyName) {
         try {
             return prb.getString(propertyName);
         }
@@ -36,7 +39,7 @@ public class SpellcheckerResource {
         }
     }
 
-    public static String getString(String propertyName, Object... obj) {
+    static String getString(String propertyName, Object... obj) {
         String str = prb.getString(propertyName);
         if (str == null) {
             return null;

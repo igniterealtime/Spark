@@ -21,8 +21,10 @@ import java.io.InputStream;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.dts.spell.SpellChecker;
@@ -38,92 +40,77 @@ public class SpellcheckManager {
     private SpellcheckerPreference preferences;
 
     public static SpellcheckManager getInstance() {
-	if (instance == null) {
-	    instance = new SpellcheckManager();
-	}
-
-	return instance;
+        if (instance == null) {
+            instance = new SpellcheckManager();
+        }
+        return instance;
     }
 
     private SpellcheckManager() {
-
-	loadSupportedLanguages();
-
-	try {
-	    preferences = new SpellcheckerPreference(languages);
-
-	    String language = SparkManager.getMainWindow().getLocale()
-		    .getLanguage();
-	    if (preferences.getPreferences().getSpellLanguage() != null) {
-		language = preferences.getPreferences().getSpellLanguage();
-	    }
-
-	    checker = new SpellChecker(getDictionary(language));
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-
+        loadSupportedLanguages();
+        try {
+            preferences = new SpellcheckerPreference(languages);
+            String spellLanguage = preferences.getPreferences().getSpellLanguage();
+            String language = spellLanguage == null ? SparkManager.getMainWindow().getLocale().getLanguage() : spellLanguage;
+            checker = new SpellChecker(getDictionary(language));
+        } catch (Exception e) {
+            Log.error(e);
+        }
     }
 
     public void loadDictionary(String language) {
-	checker.setDictionary(getDictionary(language));
+        checker.setDictionary(getDictionary(language));
     }
 
     public SpellDictionary getDictionary(String language) {
-	SpellDictionary dict = null;
-	try {
-	    InputStream dictionary = getClass().getClassLoader()
-		    .getResourceAsStream("dictionary/" + language + ".zip");
-
-	    if (dictionary == null)
-		Log.error("Dictionary not found");
-
-	    File personalDictionary = new File(SparkManager.getUserDirectory(),
-		    "personalDictionary.dict");
-	    dict = new OpenOfficeSpellDictionary(dictionary, personalDictionary);
-	} catch (IOException e) {
-	    Log.error(e);
-	}
-	return dict;
+        try {
+            InputStream dictionary = getClass().getClassLoader().getResourceAsStream("dictionary/" + language + ".zip");
+            if (dictionary == null) {
+                Log.error("Dictionary not found");
+            }
+            File personalDictionary = new File(SparkManager.getUserDirectory(), "personalDictionary.dict");
+            SpellDictionary dict = new OpenOfficeSpellDictionary(dictionary, personalDictionary);
+            return dict;
+        } catch (IOException e) {
+            Log.error(e);
+            return null;
+        }
     }
 
     public SpellcheckerPreference getSpellcheckerPreference() {
-	return preferences;
+        return preferences;
     }
 
-    public ArrayList<String> getSupportedLanguages() {
-	return languages;
+    public List<String> getSupportedLanguages() {
+        return languages;
     }
 
     public SpellChecker getSpellChecker() {
-	return checker;
+        return checker;
     }
 
     private void loadSupportedLanguages() {
+        languages = new ArrayList<>();
+        try {
+            String qualifiedClassName = getClass().getName();
+            Class<?> qc = Class.forName(qualifiedClassName);
+            CodeSource source = qc.getProtectionDomain().getCodeSource();
 
-	languages = new ArrayList<String>();
-	try {
-	    String qualifiedClassName = getClass().getName();
-	    Class<?> qc = Class.forName(qualifiedClassName);
-	    CodeSource source = qc.getProtectionDomain().getCodeSource();
-
-	    File jarFile = new File(source.getLocation().getFile());
-	    if (jarFile.exists() && jarFile.isFile()) {
-		ZipFile zipFile = new JarFile(jarFile);
-		for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
-		    JarEntry entry = (JarEntry) e.nextElement();
-
-		    if (entry.getName().startsWith("dictionary/")
-			    && entry.getName().endsWith(".zip")) {
-			String languageFile = entry.getName().substring(11);
-			String lang = languageFile.substring(0,
-				languageFile.lastIndexOf(".zip"));
-			languages.add(lang);
-		    }
-		}
-	    }
-	} catch (Exception e) {
-	    Log.error(e);
-	}
+            File jarFile = new File(source.getLocation().getFile());
+            if (jarFile.exists() && jarFile.isFile()) {
+                try (ZipFile zipFile = new JarFile(jarFile)) {
+                    for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
+                        JarEntry entry = (JarEntry) e.nextElement();
+                        if (entry.getName().startsWith("dictionary/") && entry.getName().endsWith(".zip")) {
+                            String languageFile = entry.getName().substring(11);
+                            String lang = languageFile.substring(0, languageFile.lastIndexOf(".zip"));
+                            languages.add(lang);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.error(e);
+        }
     }
 }
