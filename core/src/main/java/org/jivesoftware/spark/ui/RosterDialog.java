@@ -394,8 +394,6 @@ public class RosterDialog implements ActionListener {
 
     /**
      * Returns the trimmed version of the JID.
-     *
-     * @return the trimmed version.
      */
     private String getJID() {
         return jidField.getText().trim();
@@ -410,12 +408,11 @@ public class RosterDialog implements ActionListener {
 
             @Override
 			public void finished() {
-                if (get() == null) {
+                if (!(Boolean)get()) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dialog, Res.getString("label.unable.to.add.contact"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
-
         };
 
         rosterEntryThread.start();
@@ -426,8 +423,6 @@ public class RosterDialog implements ActionListener {
      *
      * @param byname the Search name, at least 5 chars long
      * @param event  the MouseEvent which triggered it
-     * @throws XMPPException
-     * @throws InterruptedException
      */
     public void searchForContact(String byname, MouseEvent event)
             throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException, InterruptedException
@@ -510,55 +505,39 @@ public class RosterDialog implements ActionListener {
 
     /**
      * Adds a new entry to the users Roster.
+     * The contact is added asynchronously, the roaster will be updated accordingly.
+     * If the account doesn't exist on a server we'll not see an error.
      *
      * @param jid      the jid.
      * @param nickname the nickname.
      * @param group    the contact group.
-     * @return the new RosterEntry.
+     * @return true if the new contact added or updated RosterEntry.
      */
-    public RosterEntry addEntry(BareJid jid, String nickname, String group) {
-        String[] groups = {group};
-
+    public boolean addEntry(BareJid jid, String nickname, String group) {
         Roster roster = SparkManager.getRoster();
         RosterEntry userEntry = roster.getEntry(jid);
-
-        boolean isSubscribed = true;
-        if (userEntry != null) {
-            isSubscribed = userEntry.getGroups().isEmpty();
-        }
-
-        if (isSubscribed) {
+        boolean isNewContact = userEntry == null || userEntry.getGroups().isEmpty();
+        if (isNewContact) {
             try {
                 roster.preApproveAndCreateEntry(jid, nickname, new String[]{group});
+                return true;
             }
             catch (XMPPException | SmackException | InterruptedException e) {
-                Log.error("Unable to add new entry " + jid, e);
+                Log.error("Unable to add contact to contact list " + jid, e);
+                return false;
             }
-            return roster.getEntry(jid);
         }
-
-
+        // Already known contact, ensure that it has the specified nickname and added to the group
         try {
-            RosterGroup rosterGroup = roster.getGroup(group);
-            if (rosterGroup == null) {
-                rosterGroup = roster.createGroup(group);
-            }
-
-            if (userEntry == null) {
-                roster.createItemAndRequestSubscription(jid, nickname, groups);
-                userEntry = roster.getEntry(jid);
-            }
-            else {
-                userEntry.setName(nickname);
-                rosterGroup.addEntry(userEntry);
-            }
-
-            userEntry = roster.getEntry(jid);
+            userEntry.setName(nickname);
+            RosterGroup rosterGroup = roster.createGroup(group);
+            rosterGroup.addEntry(userEntry);
+            return true;
         }
         catch (XMPPException | SmackException | InterruptedException ex) {
-            Log.error(ex);
+            Log.error("Unable to update contact nickname and group" + jid, ex);
+            return false;
         }
-        return userEntry;
     }
 
     public List<AccountItem> getAccounts() {
