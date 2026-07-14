@@ -79,7 +79,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
-import static org.jivesoftware.smack.packet.StanzaError.Condition.item_not_found;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
 
 /**
@@ -390,20 +389,24 @@ public class VCardManager {
             return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {
-            StanzaError.Condition condition = resource_constraint;
-            if (e instanceof XMPPErrorException) {
-                condition = ((XMPPErrorException) e).getStanzaError().getCondition();
-                if (condition != item_not_found) {
-                    Log.warning("Unable to reload vCard for " + jid, e);
-                }
-            }
-
+            StanzaError.Condition condition = e instanceof XMPPErrorException ? ((XMPPErrorException) e).getStanzaError().getCondition() : resource_constraint;
             StanzaError stanzaError = StanzaError.getBuilder(condition).build();
             VCard vcard = new VCard();
             vcard.setError(stanzaError);
-        	vcard.setJabberId(jid.toString());
-            delayedContacts.add(jid);
-        	return vcard;
+            vcard.setJabberId(jid.toString());
+            switch (condition) {
+                case remote_server_not_found:
+                    Log.warning("Unable to reload vCard for " + jid + ": Such a server doesn't exists:" + e);
+                    break;
+                case item_not_found:
+                    Log.warning("Unable to reload vCard for " + jid + ": Such a contact doesn't exists on the server:" + e);
+                    break;
+                default:
+                    Log.warning("Unable to reload vCard for " + jid, e);
+                    delayedContacts.add(jid);
+                    break;
+            }
+            return vcard;
         }
     }
     
