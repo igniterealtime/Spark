@@ -519,7 +519,7 @@ public class RosterDialog implements ActionListener {
         boolean isNewContact = userEntry == null || userEntry.getGroups().isEmpty();
         if (isNewContact) {
             try {
-                roster.preApproveAndCreateEntry(jid, nickname, new String[]{group});
+                addContactToRoster(jid, nickname, new String[]{group}, roster);
                 return true;
             }
             catch (XMPPException | SmackException | InterruptedException e) {
@@ -537,6 +537,17 @@ public class RosterDialog implements ActionListener {
         catch (XMPPException | SmackException | InterruptedException ex) {
             Log.error("Unable to update contact nickname and group" + jid, ex);
             return false;
+        }
+    }
+
+    private void addContactToRoster(BareJid contactJid, String displayName, String[] parentNames, Roster roster) throws SmackException, XMPPException.XMPPErrorException, InterruptedException {
+        if (roster.isSubscriptionPreApprovalSupported()) {
+            try {
+                roster.preApproveAndCreateEntry(contactJid, displayName, parentNames);
+            } catch (SmackException.FeatureNotSupportedException ignored) {
+            }
+        } else {
+            roster.createItemAndRequestSubscription(contactJid, displayName, parentNames);
         }
     }
 
