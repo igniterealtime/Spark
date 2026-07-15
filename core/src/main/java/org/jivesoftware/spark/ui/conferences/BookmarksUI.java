@@ -387,7 +387,6 @@ public class BookmarksUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 final String conferenceService = serviceField.getText();
                 if (hasService(conferenceService)) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(null, Res.getString("message.service.already.exists"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     serviceField.setText("");
                 } else {
@@ -432,7 +431,6 @@ public class BookmarksUI extends JPanel {
                                     }
                                 }
                             } else {
-                                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.conference.service.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                             }
                             serviceField.setText("");

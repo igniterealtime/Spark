@@ -120,9 +120,6 @@ public class CallManager implements InterlocutorListener {
 
                 if (component instanceof PhonePanel) {
                     final InterlocutorUI ic = phonePanel.getActiveCall();
-                    UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-                    UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-                    UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                     if (ic.getCallState().equals(Call.CONNECTED)) {
                         // Prompt to close this window
                         int ok = JOptionPane.showConfirmDialog(component, PhoneRes.getIString("phone.closeconfirm"), PhoneRes.getIString("phone.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);

@@ -163,7 +163,6 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         String username = getScreenName();
         String password = getPassword();
         String nickname = getNickname();
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         if (transport.requiresUsername() && !ModelUtil.hasLength(username)) {
             JOptionPane.showMessageDialog(this, Res.getString("message.gateway.username.error"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
             return;

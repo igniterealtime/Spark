@@ -231,7 +231,6 @@ public class WorkgroupManager {
             if (field.isRequired() && field.getValues().isEmpty()) {
                 String variable = field.getFieldName();
                 String elementName = workgroupForm.getField(variable).getLabel();
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(parent, variable + " is required to complete the form.", "Incomplete Form", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -359,7 +358,6 @@ public class WorkgroupManager {
                     invites.remove(workgroup.getWorkgroupJID());
                 }
                 else {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to contact a member of the workgroup. Please try back later.", "No Answer", JOptionPane.INFORMATION_MESSAGE);
                 }
             }

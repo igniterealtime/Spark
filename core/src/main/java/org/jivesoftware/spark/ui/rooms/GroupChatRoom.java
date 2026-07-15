@@ -590,7 +590,6 @@ public class GroupChatRoom extends ChatRoom {
             status = mucUser.getStatus();
             final Destroy destroy = mucUser.getDestroy();
             if (destroy != null) {
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(this,
                     (destroy.getReason() != null ? Res.getString("message.room.destroyed", destroy.getReason()) : Res.getString("message.room.destroyed.no.reason")),
                     Res.getString("title.room.destroyed"),

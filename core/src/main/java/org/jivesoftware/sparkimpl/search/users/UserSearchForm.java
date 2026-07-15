@@ -136,7 +136,6 @@ public class UserSearchForm extends JPanel {
                     @Override
 					public void finished() {
                         if (newForm == null) {
-                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
                         }
                         else {

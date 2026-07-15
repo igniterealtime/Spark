@@ -189,10 +189,6 @@ public class OTRSession {
 
             @Override
             public void sessionStatusChanged(SessionID sessionID) {
-                UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-                UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-                UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
-
                 if (_mySession.getSessionStatus() == SessionStatus.ENCRYPTED) {
                     _conPanel.successfullyCon();
                     OtrKeyManager keyManager = OTRManager.getInstance().getKeyManager();

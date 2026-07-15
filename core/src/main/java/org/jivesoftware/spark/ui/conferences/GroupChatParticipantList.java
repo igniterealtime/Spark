@@ -1070,14 +1070,12 @@ public class GroupChatParticipantList extends JPanel {
                     switch (xmppError.getStanzaError().getCondition()) {
                         case not_acceptable:
                             // handle deny changing nick.
-                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(groupChatRoom,
                                 Res.getString("message.nickname.not.acceptable"),
                                 Res.getString("title.change.nickname"),
                                 JOptionPane.ERROR_MESSAGE);
                             return;
                         case conflict:
-                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(groupChatRoom,
                                 Res.getString("message.nickname.in.use"),
                                 Res.getString("title.change.nickname"),

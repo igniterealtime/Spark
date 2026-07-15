@@ -206,7 +206,6 @@ public class Notes extends JPanel {
     }
 
     public void showError(String error) {
-    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, error, FpRes.getString("title.notes"), JOptionPane.ERROR_MESSAGE);
     }
 

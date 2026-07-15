@@ -284,7 +284,6 @@ public class SparkTransferManager {
             public void finished() {
                 bufferedImage = (BufferedImage) get();
                 if (bufferedImage == null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(null, Res.getString("title.error"), "Unable to process screenshot.", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -391,7 +390,6 @@ public class SparkTransferManager {
             String maxsizeString = TransferUtils.getAppropriateByteWithSuffix(maxSize);
             String yoursizeString = TransferUtils.getAppropriateByteWithSuffix(file.length());
             String output = Res.getString("message.file.transfer.file.too.big.error", maxsizeString, yoursizeString);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(null, output, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return null;
         }

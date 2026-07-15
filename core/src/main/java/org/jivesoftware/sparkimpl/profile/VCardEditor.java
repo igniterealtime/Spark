@@ -347,7 +347,6 @@ public class VCardEditor {
             SparkManager.getVCardManager().notifyVCardListeners();
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
                 Res.getString("message.vcard.not.supported"),
                 Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

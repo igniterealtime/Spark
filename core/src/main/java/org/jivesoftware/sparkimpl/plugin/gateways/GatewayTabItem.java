@@ -184,9 +184,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	_registerButton.addActionListener( e -> {
     // If transport is registered we should show the
     // "delete information" gui
-        UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-        UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-        UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
     if (TransportUtils.isRegistered(_transport)) {
         int confirm = JOptionPane.showConfirmDialog(SparkManager
             .getMainWindow(), Res.getString(

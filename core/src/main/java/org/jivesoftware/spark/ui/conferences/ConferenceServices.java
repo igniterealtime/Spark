@@ -337,7 +337,6 @@ public class ConferenceServices implements InvitationListener {
                                 Res.getString("message.please.join.in.conference"), jids);
                         }
                     } catch (SmackException | InterruptedException ex) {
-                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                         JOptionPane.showMessageDialog(chatRoom, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     }
                 }

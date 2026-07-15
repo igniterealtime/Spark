@@ -136,7 +136,6 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         }
         catch ( UnknownHostException e )
         {
-            UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
             JOptionPane.showMessageDialog( optionsDialog,
                             Res.getString( "message.unable.to.use.hostname.as.resource" ),
                             Res.getString( "title.error" ),
@@ -182,7 +181,6 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         String resource = resourceField.getText();
 
         boolean valid = true;
-        UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
 
         try
         {

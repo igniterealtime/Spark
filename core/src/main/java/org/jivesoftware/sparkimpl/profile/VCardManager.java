@@ -209,7 +209,6 @@ public class VCardManager {
             try {
                 bareJid = JidCreate.entityBareFrom(jidToView);
             } catch (XmppStringprepException ex){
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -237,7 +236,6 @@ public class VCardManager {
 			public void finished() {
                 if (vcard == null) {
                     // Show vcard not found
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, Res.getString("message.unable.to.load.profile", jid), Res.getString("title.profile.not.found"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }

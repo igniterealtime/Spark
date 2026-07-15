@@ -67,7 +67,6 @@ public class UserSearchService implements Searchable {
     }
 
     private void processQuery(String query) {
-    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         if (searchServices == null || searchServices.isEmpty()) {
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return;

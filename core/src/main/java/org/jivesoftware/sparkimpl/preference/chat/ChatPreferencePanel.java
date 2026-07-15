@@ -271,9 +271,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     @Override
 	public void actionPerformed(ActionEvent actionEvent) {
         if (hideChatHistory.isSelected()) {
-        	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-        	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-        	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
             int ok = JOptionPane.showConfirmDialog(this, Res.getString("message.delete.all.history"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
                 hidePrevChatHistory.setEnabled(false);

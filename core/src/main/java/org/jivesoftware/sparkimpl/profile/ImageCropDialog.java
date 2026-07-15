@@ -20,7 +20,6 @@ public class ImageCropDialog {
             return null;
         }
         if (originalImage == null) {
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(parent, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return null;
         }

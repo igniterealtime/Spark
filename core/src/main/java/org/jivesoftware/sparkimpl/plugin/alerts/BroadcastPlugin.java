@@ -119,9 +119,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 selectedUser = contactItem.getJid().toString();
             }
 
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
-
             String jid = (String) JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
             if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(XmppStringUtils.parseDomain(jid))) {
                 if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {

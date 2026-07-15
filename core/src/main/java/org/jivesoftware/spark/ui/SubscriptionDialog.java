@@ -297,7 +297,6 @@ public class SubscriptionDialog {
             dialog.setVisible(false);
             return true;
         }
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(dialog, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
         return false;
     }

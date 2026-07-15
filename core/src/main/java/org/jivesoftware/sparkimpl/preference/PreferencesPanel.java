@@ -148,7 +148,6 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                         currentPreference.commit();
                     }
                     else {
-                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                         JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
                                 Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         list.removeListSelectionListener(this);
@@ -160,7 +159,6 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 {
                     // This is observed with some plugins, that require classes not (no longer) provided by Spark.
                     Log.error( "An error occurred while trying to commit settings for preference: " + currentPreference.getListName(), t );
-                    UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
                     JOptionPane.showMessageDialog( this, "Unable to save all settings for " + currentPreference.getListName() + ":\n" + t.getMessage(),
                                                    Res.getString( "title.error" ), JOptionPane.ERROR_MESSAGE );
                     list.removeListSelectionListener( this );
@@ -180,7 +178,6 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
                 return true;
             }
             else {
-            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
                         Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 return false;

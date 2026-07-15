@@ -76,10 +76,6 @@ public class LanguagePlugin implements Plugin {
             public void actionPerformed(ActionEvent e) {
                 final LocalPreferences preferences = SettingsManager.getLocalPreferences();
                 preferences.setLanguage(locale.toString());
-
-                UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-                UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-
                 int ok = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.restart.required"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION);
                 if (ok == JOptionPane.YES_OPTION) {
                     SparkManager.getMainWindow().closeConnectionAndInvoke("Language Change");

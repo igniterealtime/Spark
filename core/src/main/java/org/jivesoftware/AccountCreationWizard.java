@@ -333,7 +333,6 @@ public class AccountCreationWizard extends JPanel {
         }
 
         if (errors) {
-        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -392,7 +391,6 @@ public class AccountCreationWizard extends JPanel {
                     case "no_connection":
                         if (ui.isShowing()) {
                             createAccountButton.setEnabled(true);
-                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", server)
                                 + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                             createAccountButton.setEnabled(true);
@@ -443,7 +441,6 @@ public class AccountCreationWizard extends JPanel {
                 message += " " + condition;
             }
         }
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
         createAccountButton.setEnabled(true);
     }
@@ -453,7 +450,6 @@ public class AccountCreationWizard extends JPanel {
      */
     private void accountCreationSuccessful() {
         registered = true;
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, Res.getString("message.account.created"), Res.getString("title.account.created"), JOptionPane.INFORMATION_MESSAGE);
         dialog.dispose();
     }

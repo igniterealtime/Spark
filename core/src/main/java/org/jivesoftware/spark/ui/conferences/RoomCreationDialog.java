@@ -238,7 +238,6 @@ public class RoomCreationDialog extends JPanel {
     }
 
     private void showError(String errorMessage) {
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
     }
 

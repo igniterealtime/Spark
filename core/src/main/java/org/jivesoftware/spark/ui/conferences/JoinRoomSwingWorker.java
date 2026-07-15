@@ -223,7 +223,6 @@ public class JoinRoomSwingWorker extends SwingWorker
     @Override
     public void finished()
     {
-        UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
         if (!errors.isEmpty())
         {
             String error = errors.get( 0 );

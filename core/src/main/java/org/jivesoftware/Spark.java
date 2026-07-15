@@ -105,7 +105,6 @@ public final class Spark {
             System.out.println("Warning: no working directory set. This might cause updated data to be missed. Please set a system property 'appdir' to the location where Spark is installed to correct this.");
             // Terminate if required directories cannot be created
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists() || !SECURITY_DIRECTORY.exists()) {
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(null, "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
@@ -415,6 +414,12 @@ public final class Spark {
             Locale userLocale = Locale.forLanguageTag(setLanguage.replace("_", "-"));
             Locale.setDefault(userLocale);
         }
+        // The Java has built-in GUI dialogs that are not localized fully
+        // See https://github.com/openjdk/jdk/tree/master/src/java.desktop/share/classes/com/sun/swing/internal/plaf/basic/resources.
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+        UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+        UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
     }
 
     public static File getUserProfileFolder() {

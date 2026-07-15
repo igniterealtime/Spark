@@ -188,8 +188,6 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
     public boolean validate_settings()
     {
         boolean valid = true;
-        UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
-
         if ( useSSOBox.isSelected() )
         {
             if ( methodManualRadio.isSelected() )

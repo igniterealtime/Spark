@@ -326,7 +326,6 @@ public class BroadcastDialog extends JPanel {
     private boolean sendBroadcasts(JDialog dlg) throws SmackException.NotConnectedException
     {
         Set<BareJid> jids = new HashSet<>();
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         for (CheckNode node : nodes) {
             if (node.isSelected()) {
                 String jid = (String)node.getAssociatedObject();

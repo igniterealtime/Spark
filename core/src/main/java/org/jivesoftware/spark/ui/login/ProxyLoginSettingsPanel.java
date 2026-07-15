@@ -184,9 +184,6 @@ class ProxyLoginSettingsPanel extends JPanel
     public boolean validate_settings()
     {
         boolean valid = true;
-
-        UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
-
         if ( useProxyBox.isSelected() )
         {
             try

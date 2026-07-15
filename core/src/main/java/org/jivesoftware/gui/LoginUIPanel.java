@@ -1138,7 +1138,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 setComponentsAvailable(true);
                 setProgressBarVisible(false);
                 // Show error dialog
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 loginDialog.setVisible(true);
                     if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
                         // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.

@@ -394,7 +394,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 }
                 // If there was an error, show it to a user
                 if (errorMsg != null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(conferences,
                         Res.getString("message.conference.info.error") + "\n" + errorMsg,
                         Res.getString("title.error"),
@@ -411,7 +410,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private void bookmarkRoom(DomainBareJid serviceName) {
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         RoomInfo roomInfo = selectedRoomInfo();
         if (roomInfo == null) {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
@@ -438,7 +436,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private void joinSelectedRoom() {
         RoomInfo roomInfo = selectedRoomInfo();
         if (roomInfo == null) {
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(dlg,
                 Res.getString("message.select.room.to.join"),
                 Res.getString("title.group.chat"),
@@ -568,7 +565,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private void enterRoom() {
         RoomInfo roomInfo = selectedRoomInfo();
         if (roomInfo == null) {
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(dlg,
                 Res.getString("message.select.room.to.enter"),
                 Res.getString("title.group.chat"),
@@ -628,7 +624,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             addRoomToTable(roomInfo);
         } catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Error creating new room.", e1);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(this,
                 Res.getString("message.room.creation.error"),
                 Res.getString("title.error"),

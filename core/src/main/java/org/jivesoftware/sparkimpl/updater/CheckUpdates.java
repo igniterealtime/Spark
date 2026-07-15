@@ -250,7 +250,6 @@ public class CheckUpdates {
                         cancel = true;
                         UPDATING = false;
                         if (!downloadComplete) {
-                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -356,9 +355,7 @@ public class CheckUpdates {
             final SparkVersion serverVersion = newBuildAvailable();
             if (serverVersion == null) {
                 UPDATING = false;
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 if (explicit) {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.no.updates"), Res.getString("title.no.updates"), JOptionPane.INFORMATION_MESSAGE);
                 }
                 return;

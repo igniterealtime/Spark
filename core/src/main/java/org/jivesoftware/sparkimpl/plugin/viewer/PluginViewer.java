@@ -192,10 +192,6 @@ public class PluginViewer extends JPanel implements Plugin
 
     private boolean uninstall( final PublicPlugin plugin )
     {
-        UIManager.put( "OptionPane.yesButtonText", Res.getString( "yes" ) );
-        UIManager.put( "OptionPane.noButtonText", Res.getString( "no" ) );
-        UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
-
         int ok = JOptionPane.showConfirmDialog( installedPanel, Res.getString( "message.prompt.plugin.uninstall", plugin.getName() ), Res.getString( "title.confirmation" ), JOptionPane.YES_NO_OPTION );
         if ( ok == JOptionPane.YES_OPTION )
         {
@@ -323,7 +319,6 @@ public class PluginViewer extends JPanel implements Plugin
                     availablePanel.validate();
                     availablePanel.repaint();
 
-                    UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
                     JOptionPane.showMessageDialog( availablePanel, Res.getString( "message.plugins.not.available" ), Res.getString( "title.error" ), JOptionPane.ERROR_MESSAGE );
                     return;
                 }

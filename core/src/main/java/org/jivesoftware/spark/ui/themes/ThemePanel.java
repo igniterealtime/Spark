@@ -127,9 +127,6 @@ public class ThemePanel extends JPanel {
 
                 @Override
                 public void finished() {
-                    UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-                    UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-
                     // substance is a PITA! If the current laf is substance, and the new laf is not, we need to
                     // refresh all components, but since substance is very stubborn, we must restart.
                     final String currentName = UIManager.getLookAndFeel().getName().toLowerCase();
@@ -409,7 +406,6 @@ public class ThemePanel extends JPanel {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
                 String name = emoticonManager.installPack(pack);
                 if (name == null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(this, "Not a valid emoticon pack.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }

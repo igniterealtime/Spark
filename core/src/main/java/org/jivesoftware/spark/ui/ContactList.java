@@ -1218,9 +1218,6 @@ public class ContactList extends JPanel implements
         popup.add(collapse);
 
         delete.addActionListener(e1 -> {
-            UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-            UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-            UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
             int ok = JOptionPane.showConfirmDialog(group, Res.getString("message.delete.confirmation", group.getGroupName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
                 String groupName = group.getGroupName();
@@ -1393,10 +1390,8 @@ public class ContactList extends JPanel implements
                     LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(jid);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e1) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.unable.to.retrieve.last.activity", item.getJid()), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -1511,7 +1506,6 @@ public class ContactList extends JPanel implements
                 Log.warning("Unable to send broadcast to " + message.getTo(), e);
             }
         }
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", recepientNames), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
     }
 

@@ -451,7 +451,6 @@ public final class MainWindow extends ChatFrame {
                     return;
                 }
                 if (!logFile.exists()) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
@@ -722,7 +721,6 @@ public final class MainWindow extends ChatFrame {
      * Displays the About Box for Spark.
      */
     private static void showAboutBox() {
-    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), SparkManager.getMainWindow().getAboutBoxPane(),
             Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE));
     }
