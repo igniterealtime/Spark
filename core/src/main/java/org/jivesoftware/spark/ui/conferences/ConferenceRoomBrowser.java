@@ -235,11 +235,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private RoomInfo selectedRoomInfo() {
-        final int selectedRow = roomsTable.getSelectedRow();
-        if (selectedRow == -1) {
+        final int viewRow = roomsTable.getSelectedRow();
+        if (viewRow == -1) {
             return null;
         }
-        Localpart roomNamePart = Localpart.formUnescapedOrNull(roomsTable.getValueAt(selectedRow, 2).toString());
+        final int modelRow = sorter.convertRowIndexToModel(viewRow);
+        Localpart roomNamePart = Localpart.formUnescapedOrNull(roomsTable.getModel().getValueAt(modelRow, 2).toString());
         EntityBareJid roomJID = JidCreate.entityBareFrom(roomNamePart, serviceName);
         RoomInfo roomInfo = roomInfos.get(roomJID);
         return roomInfo;
@@ -426,9 +427,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         boolean isBookmarked = isBookmarked(roomInfo.getRoom());
         String roomName = roomInfo.getName() != null ? roomInfo.getName() : roomInfo.getRoom().getLocalpart().toString();
         conferences.addOrRemoveNode(serviceName, isBookmarked, roomName, roomInfo.getRoom());
-        int selectedRow = roomsTable.getSelectedRow();
+        int viewRow = roomsTable.getSelectedRow();
+        int modelRow = sorter.convertRowIndexToModel(viewRow);
         ImageIcon bookmarkIcon = isBookmarked ? SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON);
-        roomsTable.getTableModel().setValueAt(new JLabel(bookmarkIcon), selectedRow, 0);
+        roomsTable.getTableModel().setValueAt(new JLabel(bookmarkIcon), modelRow, 0);
         addBookmarkUI(!isBookmarked);
     }
 
@@ -723,8 +725,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
      * @param addBookmark true if the button should display itself as bookmarkable :)
      */
     private void addBookmarkUI(boolean addBookmark) {
-        if (!addBookmark) {
-            addRoomButton.setText(Res.getString("button.remove.bookmark"));
+        if (addBookmark) {
+            ResourceUtils.resButton(addRoomButton, Res.getString("button.remove.bookmark"));
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DELETE_BOOKMARK_ICON));
         } else {
             ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
