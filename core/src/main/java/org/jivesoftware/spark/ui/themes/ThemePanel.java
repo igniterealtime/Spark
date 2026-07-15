@@ -30,78 +30,101 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.io.File;
 import java.util.Objects;
+
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.WEST;
+import static org.jivesoftware.spark.util.GraphicUtils.addItemIfNotExists;
+import static org.jivesoftware.spark.util.ResourceUtils.resButton;
+import static org.jivesoftware.spark.util.ResourceUtils.resLabel;
 
 /**
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
  */
 public class ThemePanel extends JPanel {
-    private final JComboBox<String> messageStyleBox;
-    private final JComboBox<String> emoticonBox;
-    private final JButton addEmoticonButton;
+    private final JComboBox<String> messageStyleBox = new JComboBox<>();
+    private final JComboBox<String> emoticonBox = new JComboBox<>();
+    private final JButton addEmoticonButton = new JButton();
 
-    private final JTextField contactListFontField;
-    private final JLabel contactListFontLabel;
+    private final JSpinner contactListFontField = new JSpinner(new SpinnerNumberModel(14, 9, 36, 1));
+    private final JLabel contactListFontLabel = new JLabel();
 
-    private final JTextField chatRoomFontField;
-    private final JLabel chatRoomFontLabel;
+    private final JSpinner chatRoomFontField = new JSpinner(new SpinnerNumberModel(16, 9, 36, 1));
+    private final JLabel chatRoomFontLabel = new JLabel();
 
-    private final JTextField maxCurrentHistorySizeField;
-    private final JLabel maxCurrentHistorySizeLabel;
+    private final JSpinner maxCurrentHistorySizeField = new JSpinner(new SpinnerNumberModel(20, 0, 100, 10));
+    private final JLabel maxCurrentHistorySizeLabel = new JLabel();
 
-    private final JCheckBox emoticonCheckBox;
+    private final JCheckBox emoticonCheckBox = new JCheckBox();
+    private final JButton addThemeButton = new JButton();
+    private final JLabel messageStyleLabel = new JLabel();
     private JFileChooser fc;
 
-    private final JCheckBox showAvatarsBox;
-    private final JCheckBox showVCards;
-    private final JLabel avatarSizeLabel;
+    private final JCheckBox showAvatarsBox = new JCheckBox();
+    private final JCheckBox showVCards = new JCheckBox();
+    private final JLabel avatarSizeLabel = new JLabel();
     private final JComboBox<String> avatarSizeField;
 
-    private final JCheckBox disableGrayingIdleContacts;
+    private final JCheckBox disableGrayingIdleContacts = new JCheckBox();
 
-    private final JLabel _lookandfeelLabel;
-    private final JComboBox<String> _lookandfeel;
-    private final JButton _lookandfeelpreview;
-    private final JCheckBox _useTabsForTransports;
-    private final JCheckBox _useTabsForConference;
+    private final JLabel _lookAndFeelLabel = new JLabel();
+    private final JComboBox<String> _lookAndFeel;
+    private final JButton _lookAndFeelPreview = new JButton();
+    private final JCheckBox _useTabsForTransports = new JCheckBox();
+    private final JCheckBox _useTabsForConference = new JCheckBox();
     private final JCheckBox useSingleWindowDocking = new JCheckBox();
 
     private final JComboBox<String> _showReconnectBox;
 
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-    private final JScrollPane emoticonscrollpane;
+    private final JScrollPane emoticonScrollPane;
 
-    private JPanel emoticonspanel;
+    private JPanel emoticonsPanel;
 
     public ThemePanel() {
         setLayout(new GridBagLayout());
-
-        _lookandfeel = new JComboBox<>(LookAndFeelManager.getLookAndFeelNames());
-
+        _lookAndFeel = new JComboBox<>(LookAndFeelManager.getLookAndFeelNames());
         if (Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)) {
-            _lookandfeel.setEnabled(false);
+            _lookAndFeel.setEnabled(false);
         }
-        _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
-        _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
+        resLabel(_lookAndFeelLabel, _lookAndFeelPreview, Res.getString("lookandfeel.select"));
+        resButton(_lookAndFeelPreview, Res.getString("lookandfeel.change.now"));
 
-        _lookandfeel.addActionListener(e
-                -> {
-            final boolean requiresRestart = LookAndFeelManager.requiresRestart((String) _lookandfeel.getSelectedItem());
-            if (requiresRestart) {
-                _lookandfeelpreview.setEnabled(false);
-                _lookandfeelpreview.setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
-            } else {
-                _lookandfeelpreview.setEnabled(true);
-                _lookandfeelpreview.setToolTipText(Res.getString("lookandfeel.tooltip.restart.no"));
-            }
-            _lookandfeelpreview.revalidate();
+        _lookAndFeel.addActionListener(e -> {
+            final boolean requiresRestart = LookAndFeelManager.requiresRestart(getSelectedLookAndFeelName());
+            _lookAndFeelPreview.setEnabled(!requiresRestart);
+            _lookAndFeelPreview.setToolTipText(requiresRestart ? Res.getString("lookandfeel.tooltip.restart.yes") : Res.getString("lookandfeel.tooltip.restart.no"));
+            _lookAndFeelPreview.revalidate();
         });
 
-        _lookandfeelpreview.addActionListener(e -> {
+        _lookAndFeelPreview.addActionListener(e -> {
             SwingWorker worker = new SwingWorker() {
                 @Override
                 public Object construct() {
@@ -109,7 +132,7 @@ public class ThemePanel extends JPanel {
                 }
 
                 private void setNewLaF() {
-                    final String selectedName = (String) _lookandfeel.getSelectedItem();
+                    String selectedName = getSelectedLookAndFeelName();
                     try {
                         final String className = LookAndFeelManager.getClassName(selectedName);
                         UIManager.setLookAndFeel(className);
@@ -130,7 +153,7 @@ public class ThemePanel extends JPanel {
                     // substance is a PITA! If the current laf is substance, and the new laf is not, we need to
                     // refresh all components, but since substance is very stubborn, we must restart.
                     final String currentName = UIManager.getLookAndFeel().getName().toLowerCase();
-                    final String selectedName = ((String) _lookandfeel.getSelectedItem());
+                    final String selectedName = getSelectedLookAndFeelName();
                     final String selectedClass = LookAndFeelManager.getClassName(selectedName);
                     if (currentName.contains("substance") && !selectedName.toLowerCase().contains("substance")) {
                         final int selectedOption = JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(),
@@ -139,7 +162,7 @@ public class ThemePanel extends JPanel {
                                 JOptionPane.YES_NO_OPTION);
                         if (selectedOption == JOptionPane.YES_OPTION) {
                             setNewLaF();
-                            SettingsManager.getLocalPreferences().setLookAndFeel(selectedClass);
+                            pref.setLookAndFeel(selectedClass);
                             SparkManager.getMainWindow().logout(false);
                         }
                     } else {
@@ -150,46 +173,23 @@ public class ThemePanel extends JPanel {
                         }
                         JFrame.setDefaultLookAndFeelDecorated(true);
                         JDialog.setDefaultLookAndFeelDecorated(true);
-                        SettingsManager.getLocalPreferences().setLookAndFeel(selectedClass);
+                        pref.setLookAndFeel(selectedClass);
                     }
                 }
             };
             worker.start();
         });
 
-        _useTabsForTransports = new JCheckBox("");
-        _useTabsForConference = new JCheckBox("");
+        emoticonsPanel = new EmoticonPanel(10);
+        emoticonScrollPane = new JScrollPane(emoticonsPanel);
+        emoticonScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        emoticonScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        JLabel messageStyleLabel = new JLabel();
-        messageStyleBox = new JComboBox<>();
+        TranscriptWindow emoticonPreviewTranscript = new TranscriptWindow();
+        emoticonPreviewTranscript.setForceEmoticons(true);
 
-        emoticonspanel = new EmoticonPanel(10);
-        emoticonscrollpane = new JScrollPane(emoticonspanel);
-        emoticonscrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        emoticonBox = new JComboBox<>();
-        emoticonCheckBox = new JCheckBox();
-
-        JButton addThemeButton = new JButton();
-        addEmoticonButton = new JButton();
-
-        TranscriptWindow emoticonpreviewtranscript = new TranscriptWindow();
-        emoticonpreviewtranscript.setForceEmoticons(true);
-
-        showAvatarsBox = new JCheckBox();
-        avatarSizeLabel = new JLabel();
         String[] sizeChoices = {"16", "24", "32", "48", "96", "120"};
         avatarSizeField = new JComboBox<>(sizeChoices);
-
-        contactListFontField = new JTextField();
-        contactListFontLabel = new JLabel();
-
-        chatRoomFontField = new JTextField();
-        chatRoomFontLabel = new JLabel();
-
-        maxCurrentHistorySizeField = new JTextField();
-        maxCurrentHistorySizeLabel = new JLabel();
 
         String[] r = {
             Res.getString("checkbox.reconnect.panel.big"),
@@ -204,24 +204,22 @@ public class ThemePanel extends JPanel {
             }
         });
 
-        showVCards = new JCheckBox();
-
-        disableGrayingIdleContacts = new JCheckBox(Res.getString("checkbox.graying.out"));
+        resButton(disableGrayingIdleContacts, Res.getString("checkbox.graying.out"));
 
         // Set ResourceUtils
-        ResourceUtils.resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
+        resLabel(messageStyleLabel, messageStyleBox, Res.getString("label.message.style") + ":");
 //        ResourceUtils.resLabel(emoticonsLabel, emoticonBox, Res.getString("label.emoticons") + ":");
-        ResourceUtils.resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
+        resButton(emoticonCheckBox, Res.getString("checkbox.enable.emoticons"));
 
-        ResourceUtils.resButton(addThemeButton, Res.getString("button.add"));
-        ResourceUtils.resButton(addEmoticonButton, Res.getString("button.add"));
+        resButton(addThemeButton, Res.getString("button.add"));
+        resButton(addEmoticonButton, Res.getString("button.add"));
 
-        ResourceUtils.resLabel(contactListFontLabel, contactListFontField, Res.getString("label.contactlist.fontsize"));
-        ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
-        ResourceUtils.resLabel(maxCurrentHistorySizeLabel, maxCurrentHistorySizeField, Res.getString("label.chatroom.maxcurrenthistorysize"));
-        ResourceUtils.resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
-        ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
-        ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
+        resLabel(contactListFontLabel, contactListFontField, Res.getString("label.contactlist.fontsize"));
+        resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
+        resLabel(maxCurrentHistorySizeLabel, maxCurrentHistorySizeField, Res.getString("label.chatroom.maxcurrenthistorysize"));
+        resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
+        resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
+        resButton(showVCards, Res.getString("title.appearance.showVCards"));
         _useTabsForTransports.setText(Res.getString("checkbox.transport.tab.setting"));
         _useTabsForConference.setText(Res.getString("checkbox.conference.tab.setting"));
         useSingleWindowDocking.setText(Res.getString("checkbox.singleWindowDocking"));
@@ -231,7 +229,7 @@ public class ThemePanel extends JPanel {
     }
 
     public String getSelectedLookAndFeelName() {
-        return (String) this._lookandfeel.getSelectedItem();
+        return (String) this._lookAndFeel.getSelectedItem();
     }
 
     public String getSelectedLookAndFeelClassName() {
@@ -243,45 +241,39 @@ public class ThemePanel extends JPanel {
      */
     private void buildUI() {
         // Add Viewer
-//        add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-        add(emoticonscrollpane, new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        Insets insets = new Insets(5, 5, 5, 5);
+//        add(new JScrollPane(transcript), new GridBagConstraints(0, 0, 3, 1, 0, 0, CENTER, BOTH, insets, 0, 0));
+        add(emoticonScrollPane, new GridBagConstraints(0, 1, 3, 1, 1, 1, CENTER, BOTH, insets, 0, 0));
 
-        add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(emoticonCheckBox, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(emoticonBox, new GridBagConstraints(1, 2, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(emoticonCheckBox, new GridBagConstraints(0, 2, 3, 1, 0, 0, WEST, NONE, insets, 0, 0));
 
-        add( _lookandfeelLabel, new GridBagConstraints( 0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
-        add( _lookandfeel, new GridBagConstraints( 1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
-        add( _lookandfeelpreview, new GridBagConstraints( 2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
-        add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(maxCurrentHistorySizeLabel, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(maxCurrentHistorySizeField, new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(showAvatarsBox, new GridBagConstraints(0, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(avatarSizeLabel, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(avatarSizeField, new GridBagConstraints(1, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(showVCards, new GridBagConstraints(0, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(disableGrayingIdleContacts, new GridBagConstraints(0, 11, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_lookAndFeelLabel, new GridBagConstraints(0, 4, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(_lookAndFeel, new GridBagConstraints(1, 4, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 50, 0));
+        add(_lookAndFeelPreview, new GridBagConstraints(2, 4, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(maxCurrentHistorySizeLabel, new GridBagConstraints(0, 7, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(maxCurrentHistorySizeField, new GridBagConstraints(1, 7, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(showAvatarsBox, new GridBagConstraints(0, 8, 2, 1, 1, 0, WEST, NONE, insets, 0, 0));
+        add(avatarSizeLabel, new GridBagConstraints(0, 9, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        add(avatarSizeField, new GridBagConstraints(1, 9, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(showVCards, new GridBagConstraints(0, 10, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(disableGrayingIdleContacts, new GridBagConstraints(0, 11, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
         add(useSingleWindowDocking, new GridBagConstraints(0, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-        JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnect.info"));
-        add(reconnectionlabel, new GridBagConstraints(0, 15, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-        add(_showReconnectBox, new GridBagConstraints(1, 15, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        JLabel reconnectionLabel = new JLabel(Res.getString("checkbox.reconnect.info"));
+        add(reconnectionLabel, new GridBagConstraints(0, 15, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
+        add(_showReconnectBox, new GridBagConstraints(1, 15, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
 
         // Activate live one.
         _useTabsForTransports.setSelected(pref.isShowTransportTab());
-        _useTabsForTransports.addActionListener(e -> SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected()));
         _useTabsForConference.setSelected(pref.isShowConferenceTab());
-        _useTabsForConference.addActionListener(e -> SettingsManager.getLocalPreferences().setShowConferenceTab(
-                _useTabsForConference.isSelected()));
-
-        _useTabsForConference.setSelected(pref.isShowConferenceTab());
-        _useTabsForConference.addActionListener(e -> SettingsManager.getLocalPreferences().setShowConferenceTab(_useTabsForConference.isSelected()));
-
         useSingleWindowDocking.setSelected(pref.isDockingEnabled());
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
@@ -294,20 +286,20 @@ public class ThemePanel extends JPanel {
         final String activePack = pref.getEmoticonPack();
         emoticonBox.setSelectedItem(activePack);
         emoticonBox.addActionListener(e -> {
-            emoticonManager.addEmoticonPack((String) emoticonBox.getSelectedItem());
-            emoticonManager.setActivePack((String) emoticonBox.getSelectedItem());
+            String packName = getSelectedEmoticonPack();
+            emoticonManager.addEmoticonPack(packName);
+            emoticonManager.setActivePack(packName);
             showSelectedEmoticon();
         });
 
-        addEmoticonButton.addActionListener(e -> addEmoticonPack());
+        addEmoticonButton.addActionListener(e -> installEmoticonPack());
 
         showSelectedEmoticon();
-
-        emoticonCheckBox.setSelected(pref.areEmoticonsEnabled());
+        setEmoticonsEnabled(pref.areEmoticonsEnabled());
 
         final String className = pref.getLookAndFeel();
         final String name = LookAndFeelManager.getName(className);
-        _lookandfeel.setSelectedItem(name);
+        _lookAndFeel.setSelectedItem(name);
 
         showVCards.setSelected(pref.areVCardsVisible());
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
@@ -317,20 +309,13 @@ public class ThemePanel extends JPanel {
         avatarSizeField.setSelectedItem(contactListIconSizeItem);
         // if there wasn't such size then add and select it
         if (!Objects.equals(avatarSizeField.getSelectedItem(), contactListIconSizeItem)) {
-            avatarSizeField.addItem(contactListIconSizeItem);
+            addItemIfNotExists(avatarSizeField, contactListIconSizeItem);
             avatarSizeField.setSelectedItem(contactListIconSizeItem);
         }
 
-        try {
-            int chatRoomFontSize = pref.getChatRoomFontSize();
-            int contactListFontSize = pref.getContactListFontSize();
-            int maxCurrentHistorySize = pref.getMaxCurrentHistorySize();
-            chatRoomFontField.setText(Integer.toString(chatRoomFontSize));
-            contactListFontField.setText(Integer.toString(contactListFontSize));
-            maxCurrentHistorySizeField.setText(Integer.toString(maxCurrentHistorySize));
-        } catch (Exception e) {
-            Log.error(e);
-        }
+        chatRoomFontField.setValue(pref.getChatRoomFontSize());
+        contactListFontField.setValue(pref.getContactListFontSize());
+        maxCurrentHistorySizeField.setValue(pref.getMaxCurrentHistorySize());
     }
 
     /**
@@ -338,26 +323,25 @@ public class ThemePanel extends JPanel {
      */
     protected void showSelectedEmoticon() {
         EmoticonManager emoticonManager = EmoticonManager.getInstance();
-
         int i = emoticonManager.getActiveEmoticonSet().size();
         if (i == 0) {
-            emoticonspanel = new EmoticonPanel(1);
+            emoticonsPanel = new EmoticonPanel(1);
             JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
-            emoticonspanel.add(label);
+            emoticonsPanel.add(label);
         } else if (i < 25) {
-            emoticonspanel = new EmoticonPanel(i);
+            emoticonsPanel = new EmoticonPanel(i);
         } else {
-            emoticonspanel = new EmoticonPanel(10);
+            emoticonsPanel = new EmoticonPanel(10);
         }
         for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
             ImageIcon ico = new ImageIcon(emoticonManager.getEmoticonURL(emoticon));
             JLabel label = new JLabel(ico);
-            emoticonspanel.add(label);
+            emoticonsPanel.add(label);
         }
 
-        int rows = Math.min(((EmoticonPanel) emoticonspanel).getNumRows() * 45, 300);
-        emoticonscrollpane.setPreferredSize(new Dimension(300, rows));
-        emoticonscrollpane.setViewportView(emoticonspanel);
+        int rows = Math.min(((EmoticonPanel) emoticonsPanel).getNumRows() * 45, 300);
+        emoticonScrollPane.setPreferredSize(new Dimension(300, rows));
+        emoticonScrollPane.setViewportView(emoticonsPanel);
         this.revalidate();
     }
 
@@ -390,7 +374,7 @@ public class ThemePanel extends JPanel {
     /**
      * Adds a new Emoticon pack to Spark.
      */
-    private void addEmoticonPack() {
+    private void installEmoticonPack() {
         if (fc == null) {
             fc = new JFileChooser();
             if (Spark.isWindows()) {
@@ -406,20 +390,11 @@ public class ThemePanel extends JPanel {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
                 String name = emoticonManager.installPack(pack);
                 if (name == null) {
-                    JOptionPane.showMessageDialog(this, "Not a valid emoticon pack.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, Res.getString("emoticons.notValidPack"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                // If the name does not exists, add it to the message box.
-                for (int i = 0; i < emoticonBox.getItemCount(); i++) {
-                    String n = emoticonBox.getItemAt(i);
-                    if (name.equals(n)) {
-                        return;
-                    }
-                }
-
-                emoticonBox.addItem(name);
-
+                // If the name does not exist, add it to the message box.
+                addItemIfNotExists(emoticonBox, name);
                 // Set Selected
                 emoticonBox.setSelectedItem(name);
             } catch (Exception e) {
@@ -448,16 +423,16 @@ public class ThemePanel extends JPanel {
         }
     }
 
-    public String getChatRoomFontSize() {
-        return chatRoomFontField.getText();
+    public int getChatRoomFontSize() {
+        return (int) chatRoomFontField.getValue();
     }
 
-    public String getContactListFontSize() {
-        return contactListFontField.getText();
+    public int getContactListFontSize() {
+        return (int) contactListFontField.getValue();
     }
 
-    public String getMaxCurrentHistorySize() {
-        return maxCurrentHistorySizeField.getText();
+    public int getMaxCurrentHistorySize() {
+        return (int) maxCurrentHistorySizeField.getValue();
     }
 
     public int getContactListIconSize() {
@@ -476,6 +451,13 @@ public class ThemePanel extends JPanel {
         return showVCards.isSelected();
     }
 
+    public boolean isShowTransportTab() {
+        return _useTabsForTransports.isSelected();
+    }
+
+    public boolean isShowConferenceTab() {
+        return _useTabsForConference.isSelected();
+    }
 
     public boolean isDockingEnabled() {
         return useSingleWindowDocking.isSelected();
@@ -493,33 +475,5 @@ public class ThemePanel extends JPanel {
      */
     public void setShowReconnectPanel(int reconnect) {
         _showReconnectBox.setSelectedIndex(reconnect);
-    }
-
-    protected JLabel getLookandfeelLabel() {
-        return _lookandfeelLabel;
-    }
-
-    protected JComboBox<String> getLookandfeel() {
-        return _lookandfeel;
-    }
-
-    protected JButton getLookandfeelpreview() {
-        return _lookandfeelpreview;
-    }
-
-    protected JCheckBox getUseTabsForConference() {
-        return _useTabsForConference;
-    }
-
-    protected JCheckBox getShowAvatarsBox() {
-        return showAvatarsBox;
-    }
-
-    protected JLabel getAvatarSizeLabel() {
-        return avatarSizeLabel;
-    }
-
-    protected JComboBox<String> getAvatarSizeField() {
-        return avatarSizeField;
     }
 }

@@ -839,4 +839,19 @@ public final class GraphicUtils {
         return localDate.toString();
     }
 
+    /**
+     * Add the given item to the combo box only if it does not already exist.
+     */
+    public static void addItemIfNotExists(final JComboBox<String> combo, final String item) {
+        if (item == null) {
+            return;
+        }
+        for (int i = 0; i < combo.getItemCount(); i++) {
+            final String existing = combo.getItemAt(i);
+            if (item.equals(existing)) {
+                return;
+            }
+        }
+        combo.addItem(item);
+    }
 }

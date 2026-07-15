@@ -88,21 +88,14 @@ public class ThemePreference implements Preference {
         pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
         pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
         pref.setGrayingOutEnabled(grayingOutEnabled);
+        pref.setShowTransportTab(panel.getThemePanel().isShowTransportTab());
+        pref.setShowConferenceTab(panel.getThemePanel().isShowConferenceTab());
         pref.setDockingEnabled(panel.getThemePanel().isDockingEnabled());
         pref.setReconnectPanelType(panel.getThemePanel().getReconnectPanelType());
 
-        try {
-            String chatRoomFontSize = panel.getThemePanel().getChatRoomFontSize();
-            String contactListFontSize = panel.getThemePanel().getContactListFontSize();
-            String maxCurrentHistorySize = panel.getThemePanel().getMaxCurrentHistorySize();
-
-            pref.setChatRoomFontSize(Integer.parseInt(chatRoomFontSize));
-            pref.setContactListFontSize(Integer.parseInt(contactListFontSize));
-            pref.setMaxCurrentHistorySize(Integer.parseInt(maxCurrentHistorySize));
-        }
-        catch (NumberFormatException e) {
-            Log.error(e);
-        }
+        pref.setChatRoomFontSize(panel.getThemePanel().getChatRoomFontSize());
+        pref.setContactListFontSize(panel.getThemePanel().getContactListFontSize());
+        pref.setMaxCurrentHistorySize(panel.getThemePanel().getMaxCurrentHistorySize());
         ColorSettingManager.saveColorSettings();
     }
 }
