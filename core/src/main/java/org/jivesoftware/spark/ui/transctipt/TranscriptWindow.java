@@ -31,13 +31,12 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatArea;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.history.HistoryWindow;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.util.XmppStringUtils;
+import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -234,18 +233,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         // Verify the timestamp of this message. Determine if it is a 'live' message, or one that was sent earlier.
         final DelayInformation inf = message.getExtension(DelayInformation.class);
-        final ZonedDateTime sentDate;
-        final boolean isDelayed;
-        if ( inf != null )
-        {
-            sentDate = inf.getStamp().toInstant().atZone(ZoneId.systemDefault());
-            isDelayed = true;
-        }
-        else
-        {
-            sentDate = ZonedDateTime.now();
-            isDelayed = false;
-        }
+        boolean isDelayed = inf != null;
+        ZonedDateTime sentDate = isDelayed ? inf.getStamp().toInstant().atZone(ZoneId.systemDefault()) : ZonedDateTime.now();
 
         String body;
         ExplicitMessageEncryptionElement eme = message.getExtension(ExplicitMessageEncryptionElement.class);
@@ -406,7 +395,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     public void saveTranscript( String fileName, List<Message> transcript, String headerData )
     {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
-
         try
         {
             File defaultSaveFile = new File(Spark.getSparkUserHome(), fileName);
@@ -427,36 +415,14 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 }
 
                 buf.append( "<table width=600>" );
+                Resourcepart ownNickname = pref.getNickname();
                 for (Message message : transcript) {
-                    String from = null;
-                    if (message.getFrom() != null) {
-                        from = message.getFrom().toString();
-                    }
-                    if ( from == null )
-                    {
-                        from = pref.getNickname().toString();
-                    }
-
-                    if ( Message.Type.groupchat == message.getType() )
-                    {
-                        if ( ModelUtil.hasLength( XmppStringUtils.parseResource( from ) ) )
-                        {
-                            from = XmppStringUtils.parseResource( from );
-                        }
-                    }
-
+                    String from = getMessageFrom(message, ownNickname);
                     final String body = message.getBody();
-
                     final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
                     Date insertionDate = extension != null ? (Date) extension.getProperty("insertionDate") : null;
-
-                    String value = "";
-                    if ( insertionDate != null )
-                    {
-                        value = "(" + MSG_DATE_FORMATTER.format( insertionDate ) + ") ";
-                    }
+                    String value = insertionDate != null ? "(" + MSG_DATE_FORMATTER.format(insertionDate) + ") " : "";
                     buf.append( "<tr><td nowrap><font size=2>" ).append( value ).append( "<strong>" ).append( from ).append( ":</strong>&nbsp;" ).append( body ).append( "</font></td></tr>" );
-
                 }
                 buf.append( "</table></body></html>" );
                 final BufferedWriter writer = new BufferedWriter( new FileWriter( selFile ) );
@@ -471,6 +437,19 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             Log.error( "Unable to save chat transcript.", ex );
             JOptionPane.showMessageDialog( SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE );
         }
+    }
+
+    private static String getMessageFrom(Message message, Resourcepart ownNickname) {
+        if (message.getFrom() != null) {
+            if (Message.Type.groupchat == message.getType()) {
+                Resourcepart fromResource = message.getFrom().getResourceOrNull();
+                if (fromResource != null) {
+                    return fromResource.toString();
+                }
+            }
+            return message.getFrom().asUnescapedString();
+        }
+        return ownNickname.toString();
     }
 
     public void cleanup()
