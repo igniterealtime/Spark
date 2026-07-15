@@ -36,7 +36,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * The Preference UI used to handle changing of Chat Preferences.
  */
-public class ChatPreferencePanel extends JPanel implements ActionListener {
+public class ChatPreferencePanel extends JPanel {
 	private final JCheckBox showTimeBox = new JCheckBox();
     private final ButtonGroup timeFormat = new ButtonGroup();
     private final JRadioButton format12 = new JRadioButton("12:00 PM", false);
@@ -54,9 +54,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private final JCheckBox closeUnreadMessageBox = new JCheckBox();
     private final JCheckBox tabsScrollBox = new JCheckBox();
 
-    /**
-     * Constructor invokes UI setup.
-     */
     public ChatPreferencePanel() {
         // Build the UI
         createUI();
@@ -127,29 +124,16 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
-        showTimeBox.addActionListener( e -> {
-            if(showTimeBox.isSelected())
-            {
-                format12.setEnabled(true);
-                format24.setEnabled(true);
-                format12s.setEnabled(true);
-              format24s.setEnabled(true);
-            }
-            else
-            {
-                format12.setEnabled(false);
-                format24.setEnabled(false);
-                format12s.setEnabled(false);
-                format24s.setEnabled(false);
-            }
-        } );
-        
-        hideChatHistory.addActionListener(this);
+        showTimeBox.addActionListener(e -> {
+            format12.setEnabled(showTimeBox.isSelected());
+            format24.setEnabled(showTimeBox.isSelected());
+            format12s.setEnabled(showTimeBox.isSelected());
+            format24s.setEnabled(showTimeBox.isSelected());
+        });
+
+        hideChatHistory.addActionListener(e -> this.hideChatHistoryEnabled());
     }
 
-    /**
-     * Set to true to have the ChatWindow show the timestamp of each message.
-     */
     public void setShowTime(boolean showTime) {
         showTimeBox.setSelected(showTime);
     }
@@ -203,7 +187,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     public boolean isChatHistoryHidden() {
         return hideChatHistory.isSelected();
     }
-    
+
     public void setPrevChatHistoryHidden(boolean hide) {
         hidePrevChatHistory.setSelected(hide);
     }
@@ -216,31 +200,35 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatTimeoutField.setValue(time);
     }
 
-    public void setTabsOnTop(boolean top){
+    public void setTabsOnTop(boolean top) {
         tabsOnTopBox.setSelected(top);
     }
 
-    public boolean isTabsOnTop(){
+    public boolean isTabsOnTop() {
         return tabsOnTopBox.isSelected();
     }
-    public void setTabsScrollBox(boolean top){ tabsScrollBox.setSelected(top); }
-    public boolean isTabScroll(){
+
+    public void setTabsScrollBox(boolean top) {
+        tabsScrollBox.setSelected(top);
+    }
+
+    public boolean isTabScroll() {
         return tabsScrollBox.isSelected();
     }
 
-    public void setBuzzEnabled(boolean allowBuzz){
+    public void setBuzzEnabled(boolean allowBuzz) {
         buzzBox.setSelected(allowBuzz);
     }
 
-    public boolean isBuzzEnabled(){
+    public boolean isBuzzEnabled() {
         return buzzBox.isSelected();
     }
 
-    public void setCloseUnreadMessageEnabled(boolean askBeforeClosing){
+    public void setCloseUnreadMessageEnabled(boolean askBeforeClosing) {
         closeUnreadMessageBox.setSelected(askBeforeClosing);
     }
 
-    public boolean isCloseUnreadMessageEnabled(){
+    public boolean isCloseUnreadMessageEnabled() {
         return closeUnreadMessageBox.isSelected();
     }
 
@@ -248,8 +236,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         return (int) chatTimeoutField.getValue();
     }
 
-    @Override
-	public void actionPerformed(ActionEvent actionEvent) {
+    public void hideChatHistoryEnabled() {
         if (hideChatHistory.isSelected()) {
             int ok = JOptionPane.showConfirmDialog(this, Res.getString("message.delete.all.history"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
@@ -261,8 +248,8 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
                     transcriptFile.delete();
                 }
             }
-    } else {
-            hidePrevChatHistory.setEnabled(true);            
+        } else {
+            hidePrevChatHistory.setEnabled(true);
         }
     }
 }
