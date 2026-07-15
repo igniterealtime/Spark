@@ -22,16 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -54,17 +45,11 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private final JRadioButton format24s = new JRadioButton("24:00:00", false);
     private final JCheckBox groupChatNotificationBox = new JCheckBox();
     private final JPanel chatWindowPanel = new JPanel();
-
-    // Password changing
-    private final JPasswordField passwordField = new JPasswordField();
-    private final JPasswordField confirmationPasswordField = new JPasswordField();
-    private final JLabel passwordLabel = new JLabel();
-    private final JLabel confirmationPasswordLabel = new JLabel();
     private final JCheckBox hideChatHistory = new JCheckBox();
     private final JCheckBox sortChatHistoryAscending = new JCheckBox();
     private final JCheckBox hidePrevChatHistory = new JCheckBox();
     private final JCheckBox tabsOnTopBox = new JCheckBox();
-    private final JTextField chatTimeoutField = new JTextField();
+    private final JSpinner chatTimeoutField = new JSpinner(new SpinnerNumberModel(15, 1, 24*60, 1));
     private final JCheckBox buzzBox = new JCheckBox();
     private final JCheckBox closeUnreadMessageBox = new JCheckBox();
     private final JCheckBox tabsScrollBox = new JCheckBox();
@@ -228,7 +213,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     }
 
     public void setChatTimeoutTime(int time) {
-        chatTimeoutField.setText(Integer.toString(time));
+        chatTimeoutField.setValue(time);
     }
 
     public void setTabsOnTop(boolean top){
@@ -260,12 +245,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     }
 
     public int getChatTimeoutTime() {
-        try {
-            return Integer.parseInt(chatTimeoutField.getText());
-        }
-        catch (NumberFormatException e) {
-            return 15;
-        }
+        return (int) chatTimeoutField.getValue();
     }
 
     @Override
