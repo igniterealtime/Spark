@@ -42,12 +42,16 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_PUBLICLYSEARCHABLEROOM;
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMNAME;
 
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
@@ -240,18 +244,20 @@ public class ConferenceUtils {
         }
     }
 
-	public static boolean confirmToRevealVisibility() {
-		Presence currentPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-		
-		if (!PresenceManager.isInvisible(currentPresence))
-			return true;
+    private static boolean revealVisibilityConfirmed;
 
-		int reply = JOptionPane.showConfirmDialog(null,
-				Res.getString("dialog.confirm.to.reveal.visibility.msg"),
-				Res.getString("dialog.confirm.to.reveal.visibility.title"),
-				JOptionPane.YES_NO_OPTION);
-		return reply == JOptionPane.YES_OPTION;
-	}
+    public static synchronized boolean confirmToRevealVisibility() {
+        Presence currentPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
+        if (revealVisibilityConfirmed || !PresenceManager.isInvisible(currentPresence)) {
+            return true;
+        }
+        int reply = showConfirmDialog(null,
+            Res.getString("dialog.confirm.to.reveal.visibility.msg"),
+            Res.getString("dialog.confirm.to.reveal.visibility.title"),
+            YES_NO_OPTION);
+        revealVisibilityConfirmed = reply == YES_OPTION;
+        return revealVisibilityConfirmed;
+    }
 	    
     /**
 	 * If the current present is 'invisible' then this method change it to

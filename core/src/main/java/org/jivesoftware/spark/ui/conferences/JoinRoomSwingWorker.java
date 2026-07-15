@@ -34,8 +34,9 @@ import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.jivesoftware.spark.ui.conferences.ConferenceUtils.confirmToRevealVisibility;
 
 /**
  * An executable that makes the user join a room.
@@ -135,13 +136,7 @@ public class JoinRoomSwingWorker extends SwingWorker
                         return null;
                     }
                 }
-                AtomicBoolean wontJoin = new AtomicBoolean(false);
-                EventQueue.invokeLater(() -> {
-                    if (!ConferenceUtils.confirmToRevealVisibility()) {
-                        wontJoin.set(true);
-                    }
-                });
-                if (wontJoin.get()) {
+                if (!confirmToRevealVisibility()) {
                     return null;
                 }
             }
