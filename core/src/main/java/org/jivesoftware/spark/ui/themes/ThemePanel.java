@@ -99,14 +99,12 @@ public class ThemePanel extends JPanel {
     private final JCheckBox _useTabsForTransports = new JCheckBox();
     private final JCheckBox _useTabsForConference = new JCheckBox();
     private final JCheckBox useSingleWindowDocking = new JCheckBox();
-
     private final JComboBox<String> _showReconnectBox;
 
-    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
-
     private final JScrollPane emoticonScrollPane;
-
     private JPanel emoticonsPanel;
+
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public ThemePanel() {
         setLayout(new GridBagLayout());
@@ -223,6 +221,7 @@ public class ThemePanel extends JPanel {
         _useTabsForTransports.setText(Res.getString("checkbox.transport.tab.setting"));
         _useTabsForConference.setText(Res.getString("checkbox.conference.tab.setting"));
         useSingleWindowDocking.setText(Res.getString("checkbox.singleWindowDocking"));
+        hideInTaskbar.setText(Res.getString("checkbox.hideInTaskbar"));
 
         // Build UI
         buildUI();
@@ -265,7 +264,7 @@ public class ThemePanel extends JPanel {
         add(disableGrayingIdleContacts, new GridBagConstraints(0, 11, 2, 1, 1, 0, WEST, NONE, insets, 50, 0));
         add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
         add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
-        add(useSingleWindowDocking, new GridBagConstraints(0, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(useSingleWindowDocking, new GridBagConstraints(0, 14, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
 
         JLabel reconnectionLabel = new JLabel(Res.getString("checkbox.reconnect.info"));
         add(reconnectionLabel, new GridBagConstraints(0, 15, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
@@ -470,9 +469,6 @@ public class ThemePanel extends JPanel {
         return _showReconnectBox.getSelectedIndex();
     }
 
-    /**
-     * set 0,1,2
-     */
     public void setShowReconnectPanel(int reconnect) {
         _showReconnectBox.setSelectedIndex(reconnect);
     }

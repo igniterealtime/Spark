@@ -19,13 +19,7 @@ import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.iqregister.AccountManager;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -99,27 +93,17 @@ public class ChatPreference implements Preference {
     @Override
 	public JComponent getGUI() {
         panel = new ChatPreferencePanel();
-        LocalPreferences localPreferences;
-        localPreferences = SettingsManager.getLocalPreferences();
-        boolean showTime = localPreferences.isTimeDisplayedInChat();
-        boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
-        boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
-        boolean prevChatHistoryHidden = !localPreferences.isPrevChatHistoryEnabled();
-        boolean tabsOnTop = localPreferences.isTabTopPosition();
-        boolean buzzAllowed = localPreferences.isBuzzEnabled();
-        boolean closeUnreadMessage = localPreferences.isCloseUnreadMessage();
-        boolean isChatHistoryAscending = localPreferences.isChatHistoryAscending();
-        boolean tabsScroll = localPreferences.isTabsScroll();
-        panel.setShowTime(showTime);
-        panel.setGroupChatNotificationsOn(notificationsOn);
-        panel.setChatHistoryHidden(chatHistoryHidden);
-        panel.setPrevChatHistoryHidden(prevChatHistoryHidden);
-        panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
-        panel.setTabsOnTop(tabsOnTop);
-        panel.setTabsScrollBox(tabsScroll);
-        panel.setBuzzEnabled(buzzAllowed);
-        panel.setCloseUnreadMessageEnabled(closeUnreadMessage);
-        panel.setSortChatHistoryAscending(isChatHistoryAscending);
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        panel.setShowTime(pref.isTimeDisplayedInChat());
+        panel.setGroupChatNotificationsOn(pref.isChatRoomNotificationsOn());
+        panel.setChatHistoryHidden(!pref.isChatHistoryEnabled());
+        panel.setPrevChatHistoryHidden(!pref.isPrevChatHistoryEnabled());
+        panel.setChatTimeoutTime(pref.getChatLengthDefaultTimeout());
+        panel.setTabsOnTop(pref.isTabOnTop());
+        panel.setTabsScrollBox(pref.isTabsScroll());
+        panel.setBuzzEnabled(pref.isBuzzEnabled());
+        panel.setCloseUnreadMessageEnabled(pref.isCloseUnreadMessage());
+        panel.setSortChatHistoryAscending(pref.isChatHistoryAscending());
         return panel;
     }
 

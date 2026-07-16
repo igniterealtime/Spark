@@ -653,7 +653,7 @@ public class LocalPreferences {
         setBoolean("tabsOnTop", onTop);
     }
 
-    public boolean isTabTopPosition() {
+    public boolean isTabOnTop() {
         return getBoolean("tabsOnTop", true);
     }
 

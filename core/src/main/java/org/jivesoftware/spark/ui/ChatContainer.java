@@ -71,7 +71,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     public ChatContainer() {
         // Assign location
-        super(SettingsManager.getLocalPreferences().isTabTopPosition() ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
+        super(SettingsManager.getLocalPreferences().isTabOnTop() ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
         // Set minimum size
         setMinimumSize(new Dimension(400, 200));
         // Don't allow tabs to shrink and allow scrolling.
