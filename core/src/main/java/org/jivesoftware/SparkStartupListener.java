@@ -35,8 +35,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
                 SparkManager.getUriManager().handleURIMapping(uri, true);
             }
 		} else {
-            SparkManager.getMainWindow().setVisible(true);
-            SparkManager.getMainWindow().toFront();
+            SparkManager.getMainWindow().bringFrameIntoFocus();
         }
 	}
 }

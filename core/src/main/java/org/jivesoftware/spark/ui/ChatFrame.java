@@ -177,9 +177,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
      * Brings the ChatFrame into focus on the desktop.
      */
     public void bringFrameIntoFocus() {
-        if (!isVisible()) {
-            setVisible(true);
-        }
+        setVisible(true);
         if (getState() == Frame.ICONIFIED) {
             setState(Frame.NORMAL);
         }

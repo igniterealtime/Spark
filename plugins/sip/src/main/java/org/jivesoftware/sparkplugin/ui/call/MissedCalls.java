@@ -214,8 +214,7 @@ public class MissedCalls implements ActionListener {
 
     private void placeCall(MissedCall missedCall) {
         SoftPhoneManager.getInstance().getDefaultGuiManager().dial(missedCall.getNumber());
-        SparkManager.getMainWindow().setVisible(true);
-        SparkManager.getMainWindow().toFront();
+        SparkManager.getMainWindow().bringFrameIntoFocus();
     }
 
     public void actionPerformed(ActionEvent e) {

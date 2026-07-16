@@ -137,8 +137,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         openMenu.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                SparkManager.getMainWindow().setVisible(true);
-                SparkManager.getMainWindow().toFront();
+                SparkManager.getMainWindow().bringFrameIntoFocus();
             }
 
         });
@@ -375,14 +374,11 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
                     && (SparkManager.getMainWindow().getState() == java.awt.Frame.NORMAL)) {
                     SparkManager.getMainWindow().setVisible(false);
                 } else {
-                    SparkManager.getMainWindow().setVisible(true);
                     SparkManager.getMainWindow().setState(java.awt.Frame.NORMAL);
-                    SparkManager.getMainWindow().toFront();
+                    SparkManager.getMainWindow().bringFrameIntoFocus();
                 }
-
             } else if (event.getButton() == MouseEvent.BUTTON1) {
-                SparkManager.getMainWindow().toFront();
-                // SparkManager.getMainWindow().requestFocus();
+                SparkManager.getMainWindow().bringFrameIntoFocus();
             } else if (event.getButton() == MouseEvent.BUTTON3) {
                 if (popupMenu.isVisible()) {
                     popupMenu.setVisible(false);

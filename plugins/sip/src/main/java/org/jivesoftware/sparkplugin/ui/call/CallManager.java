@@ -163,7 +163,7 @@ public class CallManager implements InterlocutorListener {
 	   			 toasterManager.setHidable(false);
 	   			 incomingCall.getAcceptButton().addActionListener(new ActionListener() {
 	   				 public void actionPerformed(ActionEvent e) {
-	   					 SparkManager.getMainWindow().toFront();
+	   					 SparkManager.getMainWindow().bringFrameIntoFocus();
 	   					 closeToaster(ic);
 	   					 SoftPhoneManager.getInstance().getDefaultGuiManager().answer();
 	   					 
