@@ -38,12 +38,11 @@ import static org.jivesoftware.spark.util.GraphicUtils.centerWindowOnScreen;
 public class ChatFrame extends JFrame implements WindowFocusListener {
     private long inactiveTime;
     private boolean focused;
-    private final JCheckBox alwaysOnTopItem;
+    private final JCheckBox alwaysOnTopItem = new JCheckBox();
     private final CopyOnWriteArrayList<ChatFrameToFrontListener> _windowToFrontListeners = new CopyOnWriteArrayList<>();
 
     public ChatFrame() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        alwaysOnTopItem = new JCheckBox();
         alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         alwaysOnTopItem.addActionListener(actionEvent -> {
