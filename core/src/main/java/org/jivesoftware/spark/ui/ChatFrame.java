@@ -42,9 +42,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private final CopyOnWriteArrayList<ChatFrameToFrontListener> _windowToFrontListeners = new CopyOnWriteArrayList<>();
 
     public ChatFrame() {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
         alwaysOnTopItem.addActionListener(actionEvent -> {
             pref.setChatWindowAlwaysOnTop(alwaysOnTopItem.isSelected());
             setAlwaysOnTop(alwaysOnTopItem.isSelected());
