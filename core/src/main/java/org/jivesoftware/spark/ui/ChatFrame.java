@@ -54,6 +54,10 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
             alwaysOnTopItem.setSelected(true);
             setAlwaysOnTop(true);
         }
+        if (pref.isHideInTaskbar()) {
+            // Hide from taskbar
+            setType(Window.Type.UTILITY);
+        }
         setIconImage(SparkManager.getApplicationImage().getImage());
 
         getContentPane().setLayout(new BorderLayout());

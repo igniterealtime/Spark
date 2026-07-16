@@ -287,7 +287,8 @@ public class SettingsManager {
             "contactListIconSize", "32",
             "contactListFontSize", "14",
             "chatRoomFontSize", "16",
-            "passwordSaved", "true"
+            "passwordSaved", "true",
+            "hideInTaskbar", "false" // new option
         );
         return List.of(v1, v2);
     }

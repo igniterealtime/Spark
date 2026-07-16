@@ -21,7 +21,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
-import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.WindowsFileSystemView;
 import org.jivesoftware.spark.util.log.Log;
@@ -92,13 +91,13 @@ public class ThemePanel extends JPanel {
     private final JComboBox<String> avatarSizeField;
 
     private final JCheckBox disableGrayingIdleContacts = new JCheckBox();
-
     private final JLabel _lookAndFeelLabel = new JLabel();
     private final JComboBox<String> _lookAndFeel;
     private final JButton _lookAndFeelPreview = new JButton();
     private final JCheckBox _useTabsForTransports = new JCheckBox();
     private final JCheckBox _useTabsForConference = new JCheckBox();
     private final JCheckBox useSingleWindowDocking = new JCheckBox();
+    private final JCheckBox hideInTaskbar = new JCheckBox();
     private final JComboBox<String> _showReconnectBox;
 
     private final JScrollPane emoticonScrollPane;
@@ -265,15 +264,17 @@ public class ThemePanel extends JPanel {
         add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
         add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
         add(useSingleWindowDocking, new GridBagConstraints(0, 14, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(hideInTaskbar, new GridBagConstraints(0, 15, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
 
         JLabel reconnectionLabel = new JLabel(Res.getString("checkbox.reconnect.info"));
-        add(reconnectionLabel, new GridBagConstraints(0, 15, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
-        add(_showReconnectBox, new GridBagConstraints(1, 15, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
+        add(reconnectionLabel, new GridBagConstraints(0, 16, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, insets, 50, 0));
+        add(_showReconnectBox, new GridBagConstraints(1, 16, 3, 1, 1, 0, WEST, NONE, insets, 50, 0));
 
         // Activate live one.
         _useTabsForTransports.setSelected(pref.isShowTransportTab());
         _useTabsForConference.setSelected(pref.isShowConferenceTab());
         useSingleWindowDocking.setSelected(pref.isDockingEnabled());
+        hideInTaskbar.setSelected(pref.isHideInTaskbar());
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null) {
@@ -460,6 +461,10 @@ public class ThemePanel extends JPanel {
 
     public boolean isDockingEnabled() {
         return useSingleWindowDocking.isSelected();
+    }
+
+    public boolean getHideInTaskbar() {
+        return hideInTaskbar.isSelected();
     }
 
     /**

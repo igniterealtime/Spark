@@ -18,7 +18,6 @@ package org.jivesoftware.spark.ui.themes;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -91,6 +90,7 @@ public class ThemePreference implements Preference {
         pref.setShowTransportTab(panel.getThemePanel().isShowTransportTab());
         pref.setShowConferenceTab(panel.getThemePanel().isShowConferenceTab());
         pref.setDockingEnabled(panel.getThemePanel().isDockingEnabled());
+        pref.setHideInTaskbar(panel.getThemePanel().getHideInTaskbar());
         pref.setReconnectPanelType(panel.getThemePanel().getReconnectPanelType());
 
         pref.setChatRoomFontSize(panel.getThemePanel().getChatRoomFontSize());

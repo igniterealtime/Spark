@@ -641,6 +641,14 @@ public class LocalPreferences {
         return getBoolean("dockingEnabled", false);
     }
 
+    public boolean isHideInTaskbar() {
+        return getBoolean("hideInTaskbar", false);
+    }
+
+    public void setHideInTaskbar(boolean hideInTaskbar) {
+        setBoolean("hideInTaskbar", hideInTaskbar);
+    }
+
     public void setAutoCloseChatRoomsEnabled(boolean autoCloseChatRoomsEnabled) {
         setBoolean("autoCloseChatRoomsEnabled", autoCloseChatRoomsEnabled);
     }
