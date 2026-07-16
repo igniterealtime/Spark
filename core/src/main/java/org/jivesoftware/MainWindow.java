@@ -802,4 +802,11 @@ public final class MainWindow extends ChatFrame {
         }
         return this.splitPane;
     }
+
+    @Override
+    public void bringFrameIntoFocus() {
+        super.bringFrameIntoFocus();
+        // When the isHideInTaskbar is enabled, we also need to bring the chat frame to the front.
+        SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
+    }
 }
