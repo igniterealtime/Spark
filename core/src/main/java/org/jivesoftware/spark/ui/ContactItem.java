@@ -47,9 +47,9 @@ import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.util.XmppStringUtils;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -348,10 +348,15 @@ public class ContactItem extends JPanel {
         // Handle vCard update packet.
         if (extension != null) {
             String hash = extension.getPhotoHash();
-            if (hash != null) {
+            // if hash was changed. Note: old Tigase sends "null"
+            if (hash != null && !hash.equals(this.hash) && !hash.equals("null")) {
+                if (this.hash != null) {
+                    //TODO delete old avatar
+                }
                 this.hash = hash;
                 if (!hashExists(hash)) {
-                    updateAvatar();
+                    // Persists the avatar locally based on the new hash.
+                    SparkManager.getVCardManager().reloadVCard(getJid().asEntityBareJidIfPossible());
                     updateAvatarInSideIcon();
                 }
             }
@@ -392,17 +397,6 @@ public class ContactItem extends JPanel {
 
     public int getFontSize() {
         return fontSize;
-    }
-
-    /**
-     * Persists the avatar locally based on the new hash.
-     */
-    private void updateAvatar() {
-        EntityBareJid jid = getJid().asEntityBareJidIfPossible();
-        if (jid == null) {
-            return;
-        }
-        SparkManager.getVCardManager().addToQueue(jid);
     }
 
     @Override
