@@ -31,12 +31,9 @@ import java.io.IOException;
  * XEP-0153: vCard-Based Avatars
  */
 public class VCardUpdateExtension implements ExtensionElement {
-
-    public static final String ELEMENT_NAME = "x";
-
+    public static final String ELEMENT = "x";
     public static final String NAMESPACE = "vcard-temp:x:update";
-
-    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     private String photoHash;
 
@@ -50,7 +47,7 @@ public class VCardUpdateExtension implements ExtensionElement {
 
     @Override
 	public String getElementName() {
-        return ELEMENT_NAME;
+        return ELEMENT;
     }
 
     @Override

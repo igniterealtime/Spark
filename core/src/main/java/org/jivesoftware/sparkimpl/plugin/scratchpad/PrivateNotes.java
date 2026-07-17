@@ -25,6 +25,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.JxmppContext;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
@@ -33,6 +34,7 @@ import java.io.IOException;
 public class PrivateNotes implements PrivateData {
     public static final String ELEMENT = "scratchpad";
     public static final String NAMESPACE = "scratchpad:notes";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     private String notes;
 

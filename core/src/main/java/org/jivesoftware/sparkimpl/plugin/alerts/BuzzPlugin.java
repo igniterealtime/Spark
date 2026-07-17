@@ -58,7 +58,7 @@ public class BuzzPlugin implements Plugin {
         SparkManager.addFeature(AttentionExtension.NAMESPACE);
         SparkManager.getConnection().addAsyncStanzaListener(
             stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
-            new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
+            new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.QNAME))
         );
 
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {

@@ -30,6 +30,8 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.JxmppContext;
 
+import javax.xml.namespace.QName;
+
 /**
  * Tasks for a TO-DO list
  * @author Derek DeMoro
@@ -37,6 +39,8 @@ import org.jxmpp.JxmppContext;
 public class Tasks implements PrivateData {
     public static final String ELEMENT = "scratchpad";
     public static final String NAMESPACE = "scratchpad:tasks";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
+
     private List<Task> tasks = new ArrayList<>();
     private boolean showAll;
 

@@ -40,11 +40,11 @@ public class SipAccountPacket extends IQ {
     private Type type = Type.registration;
 
     public SipAccountPacket() {
-        super( ELEMENT_NAME, NAMESPACE );
+        super( ELEMENT, NAMESPACE );
     }
 
     public SipAccountPacket(Type type) {
-        super( ELEMENT_NAME, NAMESPACE );
+        super( ELEMENT, NAMESPACE );
         this.type = type;
     }
 
@@ -60,7 +60,8 @@ public class SipAccountPacket extends IQ {
     /**
      * Element name of the packet extension.
      */
-    public static final String ELEMENT_NAME = "phone";
+    public static final String ELEMENT = "phone";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     /**
      * Namespace of the packet extension.
@@ -71,12 +72,12 @@ public class SipAccountPacket extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
     {
         buf.rightAngleBracket();
-        buf.append("<").append(ELEMENT_NAME).append(" xmlns='").append(
+        buf.append("<").append(ELEMENT).append(" xmlns='").append(
                 NAMESPACE).append("'>");
         buf.append("<").append(this.type.name()).append(">");
         buf.append(content);
         buf.append("</").append(this.type.name()).append(">");
-        buf.append("</").append(ELEMENT_NAME).append(">");
+        buf.append("</").append(ELEMENT).append(">");
         return buf;    }
 
     /**
@@ -143,7 +144,7 @@ public class SipAccountPacket extends IQ {
                 }
 
                 else if (eventType == XmlPullParser.END_TAG) {
-                    if (parser.getName().equals(ELEMENT_NAME)) {
+                    if (parser.getName().equals(ELEMENT)) {
                         done = true;
                     }
                 }

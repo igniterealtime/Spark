@@ -47,28 +47,29 @@ public class LogPacket extends IQ {
     /**
      * Element name of the packet extension.
      */
-    public static final String ELEMENT_NAME = "log";
+    public static final String ELEMENT = "log";
 
     /**
      * Namespace of the packet extension.
      */
     public static final String NAMESPACE = "http://www.jivesoftware.com/protocol/log";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     //TODO REMOVE
     @SuppressWarnings("unused")
     private XmlPullParser parser = null;
 
     public LogPacket() {
-        super( ELEMENT_NAME, NAMESPACE );
+        super( ELEMENT, NAMESPACE );
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
     {
         buf.rightAngleBracket();
-        buf.append("<" + ELEMENT_NAME + " xmlns='" + NAMESPACE + "'>");
+        buf.append("<" + ELEMENT + " xmlns='" + NAMESPACE + "'>");
         buf.append(this.getExtensionsXML());
-        buf.append("</" + ELEMENT_NAME + ">");
+        buf.append("</" + ELEMENT + ">");
         return buf;
     }
 
@@ -104,7 +105,7 @@ public class LogPacket extends IQ {
                     }
                 }
                 else if (eventType == XmlPullParser.END_TAG) {
-                    if (parser.getName().equals(ELEMENT_NAME)) {
+                    if (parser.getName().equals(ELEMENT)) {
                         done = true;
                     }
                 }

@@ -24,6 +24,7 @@ import org.jxmpp.JxmppContext;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +35,11 @@ import java.util.Map;
  * @author Derek DeMoro
  */
 public class GatewayPrivateData implements PrivateData {
-
-    private final Map<DomainBareJid, String> loginSettingsMap = new HashMap<>();
-
     public static final String ELEMENT = "gateway-settings";
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
+
+    private final Map<DomainBareJid, String> loginSettingsMap = new HashMap<>();
 
     public void addService(DomainBareJid serviceName, boolean autoLogin) {
         loginSettingsMap.put(serviceName, Boolean.toString(autoLogin));

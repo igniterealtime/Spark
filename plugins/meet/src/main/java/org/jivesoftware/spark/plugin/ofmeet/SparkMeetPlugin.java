@@ -77,7 +77,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     @Override
     public void initialize()
     {
-        ProviderManager.addIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE, new QueryRequest.Provider());
+        ProviderManager.addIQProvider(QueryRequest.ELEMENT, QueryRequest.NAMESPACE, new QueryRequest.Provider());
         getElectronPath();
 
         String server = SparkManager.getSessionManager().getServerAddress().toString();
@@ -152,7 +152,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         try
         {
             SparkManager.getChatManager().removeChatRoomListener(this);
-            ProviderManager.removeIQProvider(QueryRequest.ELEMENT_NAME, QueryRequest.NAMESPACE);
+            ProviderManager.removeIQProvider(QueryRequest.ELEMENT, QueryRequest.NAMESPACE);
 
             if (electronThread != null) electronThread.destory();
             electronThread = null;

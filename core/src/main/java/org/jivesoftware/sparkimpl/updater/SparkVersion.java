@@ -25,6 +25,7 @@ import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jxmpp.JxmppContext;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.time.Instant;
 
@@ -80,15 +81,17 @@ public class SparkVersion extends IQ {
     /**
      * Element name of the packet extension.
      */
-    public static final String ELEMENT_NAME = "query";
+    public static final String ELEMENT = "query";
 
     /**
      * Namespace of the packet extension.
      */
     public static final String NAMESPACE = "jabber:iq:spark";
 
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
+
     public SparkVersion() {
-        super( ELEMENT_NAME, NAMESPACE);
+        super(ELEMENT, NAMESPACE);
     }
 
     @Override
@@ -144,7 +147,7 @@ public class SparkVersion extends IQ {
                     }
                 }
                 else if (eventType == XmlPullParser.Event.END_ELEMENT) {
-                    if (parser.getName().equals(ELEMENT_NAME)) {
+                    if (parser.getName().equals(ELEMENT)) {
                         done = true;
                     }
                 }

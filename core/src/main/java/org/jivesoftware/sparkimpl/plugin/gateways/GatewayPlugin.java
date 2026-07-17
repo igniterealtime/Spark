@@ -70,7 +70,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
     @Override
 	public void initialize() {
-        ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
+        ProviderManager.addIQProvider(Gateway.ELEMENT, Gateway.NAMESPACE, new Gateway.Provider());
         PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
 	useTab = localPref.isShowTransportTab();

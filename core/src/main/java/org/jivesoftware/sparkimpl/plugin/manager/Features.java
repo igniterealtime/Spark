@@ -44,19 +44,19 @@ public class Features implements ExtensionElement {
     /**
      * Element name of the packet extension.
      */
-    public static final String ELEMENT_NAME = "event";
+    public static final String ELEMENT = "event";
 
     /**
      * Namespace of the packet extension.
      */
     public static final String NAMESPACE = "http://jabber.org/protocol/disco#info";
 
-    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
 
     @Override
 	public String getElementName() {
-        return ELEMENT_NAME;
+        return ELEMENT;
     }
 
     @Override

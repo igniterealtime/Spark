@@ -23,6 +23,7 @@ import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jxmpp.JxmppContext;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
@@ -32,7 +33,8 @@ import java.io.IOException;
 public class QueryRequest extends IQ
 {
     public static final String NAMESPACE = "urn:xmpp:http:online-meetings:0";
-    public static final String ELEMENT_NAME = "query";
+    public static final String ELEMENT = "query";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
 	/** Meeting system type e.g. "jitsi" */
     private String type;
@@ -40,12 +42,12 @@ public class QueryRequest extends IQ
 
     public QueryRequest()
     {
-        super(ELEMENT_NAME, NAMESPACE);
+        super(ELEMENT, NAMESPACE);
     }
 
     public QueryRequest(String type)
     {
-        super(ELEMENT_NAME, NAMESPACE);
+        super(ELEMENT, NAMESPACE);
         this.type = type;
     }
 

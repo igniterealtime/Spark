@@ -78,7 +78,7 @@ public class CheckUpdates {
 
     public CheckUpdates() {
         // Set the Jabber IQ Provider for Jabber:iq:spark
-        ProviderManager.addIQProvider(SparkVersion.ELEMENT_NAME, SparkVersion.NAMESPACE, new SparkVersion.Provider());
+        ProviderManager.addIQProvider(SparkVersion.ELEMENT, SparkVersion.NAMESPACE, new SparkVersion.Provider());
         // For simplicity, use an alias for the root xml tag
         xstream.allowTypes(new Class[] {
             SparkVersion.class,

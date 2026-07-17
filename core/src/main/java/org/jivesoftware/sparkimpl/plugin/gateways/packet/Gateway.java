@@ -20,13 +20,13 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.IqProvider;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.spark.SparkManager;
 import org.jxmpp.JxmppContext;
 import org.jxmpp.jid.DomainBareJid;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
@@ -39,7 +39,7 @@ public class Gateway extends IQ {
 
     protected Gateway()
     {
-        super( ELEMENT_NAME, NAMESPACE );
+        super(ELEMENT, NAMESPACE );
     }
 
 
@@ -62,12 +62,14 @@ public class Gateway extends IQ {
     /**
      * Element name of the packet extension.
      */
-    public static final String ELEMENT_NAME = "query";
+    public static final String ELEMENT = "query";
 
     /**
      * Namespace of the packet extension.
      */
     public static final String NAMESPACE = "jabber:iq:gateway";
+
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
@@ -106,7 +108,7 @@ public class Gateway extends IQ {
                 }
 
                 else if (eventType == XmlPullParser.Event.END_ELEMENT) {
-                    if (parser.getName().equals(ELEMENT_NAME)) {
+                    if (parser.getName().equals(ELEMENT)) {
                         done = true;
                     }
                 }

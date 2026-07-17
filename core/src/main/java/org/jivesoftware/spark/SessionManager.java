@@ -16,7 +16,11 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -35,7 +39,6 @@ import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -79,7 +82,7 @@ public final class SessionManager implements ConnectionListener {
      * @param password   the agent's password.
      */
     public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
-        ProviderManager.addExtensionProvider(Features.ELEMENT_NAME, Features.NAMESPACE, new Features.Provider());
+        ProviderManager.addExtensionProvider(Features.ELEMENT, Features.NAMESPACE, new Features.Provider());
         this.connection = connection;
         this.username = username;
         this.password = password;

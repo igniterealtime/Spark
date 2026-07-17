@@ -19,14 +19,16 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.xml.namespace.QName;
 import java.util.Map;
 
 public class UserSettings {
     public static final String NAMESPACE = "jive:user:settings";
-    public static final String ELEMENT_NAME = "personal_settings";
+    public static final String ELEMENT = "personal_settings";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
+
     private SettingsData settingsData;
     private static UserSettings singleton;
     private static final Object LOCK = new Object();

@@ -1008,16 +1008,12 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
     private void setupRemotePreferences(XMPPConnection con) {
 
         try {
-            ProviderManager.addIQProvider(SipAccountPacket.ELEMENT_NAME, SipAccountPacket.NAMESPACE, new SipAccountPacket.Provider());
-
-            ProviderManager.addIQProvider(LogPacket.ELEMENT_NAME, LogPacket.NAMESPACE, new LogPacket.Provider());
+            ProviderManager.addIQProvider(SipAccountPacket.ELEMENT, SipAccountPacket.NAMESPACE, new SipAccountPacket.Provider());
+            ProviderManager.addIQProvider(LogPacket.ELEMENT, LogPacket.NAMESPACE, new LogPacket.Provider());
 
             SipAccountPacket sp = SipAccountPacket.getSipSettings(con);
-
             if (sp != null) {
-
                 SipAccount sipAccount = sp.getSipAccount();
-
                 if (sipAccount != null) {
                     this.saccount = sipAccount;
                     preference = new SipPreference();

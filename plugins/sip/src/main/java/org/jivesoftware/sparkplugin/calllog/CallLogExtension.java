@@ -30,13 +30,12 @@ import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
  */
 
 public class CallLogExtension extends DefaultExtensionElement {
-
-    final static String ELEMENT_NAME = "callLog";
-
-    final static String NAMESPACE = SipAccountPacket.NAMESPACE + "/log";
+    public static final String ELEMENT = "callLog";
+    public static final String NAMESPACE = SipAccountPacket.NAMESPACE + "/log";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT);
 
     public CallLogExtension() {
-        super(ELEMENT_NAME, NAMESPACE);
+        super(ELEMENT, NAMESPACE);
     }
 
 }

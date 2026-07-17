@@ -52,7 +52,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -99,7 +98,7 @@ public class VCardManager {
 
     public VCardManager() {
         // Register providers
-        ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
+        ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
         // Initialize vCard.
         personalVCard = new VCard();
         initializeUI();
