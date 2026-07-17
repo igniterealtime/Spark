@@ -1410,8 +1410,8 @@ public class ContactList extends JPanel implements
                 BareJid jid = item.getJid();
                 Presence response = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.subscribe)
+                    .to(jid)
                     .build();
-                response.setTo(jid);
                 try {
                     SparkManager.getConnection().sendStanza(response);
                 } catch (SmackException.NotConnectedException | InterruptedException e1) {
@@ -1585,8 +1585,8 @@ public class ContactList extends JPanel implements
                         } catch (XMPPException | SmackException e) {
                             Presence unsub = StanzaBuilder.buildPresence()
                                 .ofType(Presence.Type.unsubscribed)
+                                .to(presence.getFrom())
                                 .build();
-                            unsub.setTo(presence.getFrom());
                             try {
                                 SparkManager.getConnection().sendStanza(unsub);
                             } catch (SmackException.NotConnectedException e1) {

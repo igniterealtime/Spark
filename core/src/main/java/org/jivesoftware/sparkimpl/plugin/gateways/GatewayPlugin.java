@@ -294,9 +294,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         .setStatus(presence.getStatus())
                         .setPriority(presence.getPriority())
                         .setMode(presence.getMode())
+                        .to(transport.getXMPPServiceDomain())
                         .build();
-
-                    p.setTo(transport.getXMPPServiceDomain());
                     try
                     {
                         SparkManager.getConnection().sendStanza(p);

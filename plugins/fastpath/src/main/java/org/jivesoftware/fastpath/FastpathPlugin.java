@@ -304,9 +304,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     .setStatus(actualPresence.getStatus())
                     .setPriority(actualPresence.getPriority())
                     .setMode(actualPresence.getMode())
+                    .to(workgroup)
                     .build();
-                toWorkgroupPresence.setTo(workgroup);
-
                 try {
                     con.sendStanza(toWorkgroupPresence);
                     wgroup = new Workgroup(workgroup, con);

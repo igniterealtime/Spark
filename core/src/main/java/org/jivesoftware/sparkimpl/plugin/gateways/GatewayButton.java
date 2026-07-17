@@ -82,8 +82,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
                         .setStatus(oldPresence.getStatus())
                         .setPriority(oldPresence.getPriority())
                         .setMode(oldPresence.getMode())
+                        .to(transport.getXMPPServiceDomain())
                         .build();
-                    presence.setTo(transport.getXMPPServiceDomain());
                     try
                     {
                         SparkManager.getConnection().sendStanza(presence);
@@ -110,9 +110,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
         signOutMenu.addActionListener( actionEvent -> {
             final Presence offlinePresence = StanzaBuilder.buildPresence()
                 .ofType(Presence.Type.unavailable)
+                .to(transport.getXMPPServiceDomain())
                 .build();
-            offlinePresence.setTo(transport.getXMPPServiceDomain());
-
             try
             {
                 SparkManager.getConnection().sendStanza(offlinePresence);
@@ -128,8 +127,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
         signInMenu.addActionListener( actionEvent -> {
             final Presence onlinePresence = StanzaBuilder.buildPresence()
                 .ofType(Presence.Type.available)
+                .to(transport.getXMPPServiceDomain())
                 .build();
-            onlinePresence.setTo(transport.getXMPPServiceDomain());
             try
             {
                 SparkManager.getConnection().sendStanza(onlinePresence);

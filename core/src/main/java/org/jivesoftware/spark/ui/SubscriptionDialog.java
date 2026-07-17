@@ -145,9 +145,8 @@ public class SubscriptionDialog {
         if (entry != null && entry.getType() == RosterPacket.ItemType.to) {
             Presence response = StanzaBuilder.buildPresence()
                 .ofType(Presence.Type.subscribed)
+                .to(jid)
                 .build();
-            response.setTo(jid);
-
             SparkManager.getConnection().sendStanza(response);
             return;
         }
@@ -175,8 +174,8 @@ public class SubscriptionDialog {
             if (!rosterBox.isSelected()) {
                 Presence response = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.subscribed)
+                    .to(jid)
                     .build();
-                response.setTo(jid);
                 try
                 {
                     SparkManager.getConnection().sendStanza(response);
@@ -193,8 +192,8 @@ public class SubscriptionDialog {
             if (addEntry) {
                 Presence response = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.subscribed)
+                    .to(jid)
                     .build();
-                response.setTo(jid);
                 try
                 {
                     SparkManager.getConnection().sendStanza(response);
@@ -261,8 +260,8 @@ public class SubscriptionDialog {
     {
         Presence response = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unsubscribe)
+            .to(jid)
             .build();
-        response.setTo(jid);
         try
         {
             SparkManager.getConnection().sendStanza(response);

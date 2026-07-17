@@ -33,8 +33,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     {
         Presence pack = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unavailable)
+            .to(jid)
             .build();
-        pack.setTo(jid);
         try {
             SparkManager.getConnection().sendStanza(pack);
         } catch (InterruptedException e) {
@@ -56,8 +56,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
             .setStatus(presence.getStatus())
             .setPriority(1)
             .setMode(presence.getMode())
+            .to(jid)
             .build();
-        pack.setTo(jid);
         try {
             SparkManager.getConnection().sendStanza(pack);
         } catch (InterruptedException e) {

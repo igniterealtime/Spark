@@ -338,8 +338,8 @@ public class ReversiPanel extends JPanel {
                 move.setPosition(block.getIndex());
                 Message message = StanzaBuilder.buildMessage()
                     .addExtension(move)
+                    .to(opponentJID)
                     .build();
-                message.setTo(opponentJID);
                 try {
                     connection.sendStanza(message);
                 } catch (SmackException.NotConnectedException | InterruptedException e1) {

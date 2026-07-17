@@ -108,8 +108,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
                 .setStatus(oldPresence.getStatus())
                 .setPriority(oldPresence.getPriority())
                 .setMode(oldPresence.getMode())
+                .to(transport.getXMPPServiceDomain())
                 .build();
-        presence.setTo(transport.getXMPPServiceDomain());
             try
             {
                 SparkManager.getConnection().sendStanza(presence);
@@ -131,8 +131,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     if (signedIn) {
         final Presence offlinePresence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unavailable)
+            .to(_transport.getXMPPServiceDomain())
             .build();
-        offlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {
             SparkManager.getConnection().sendStanza(offlinePresence);
@@ -146,8 +146,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     } else {
         final Presence onlinePresence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.available)
+            .to(_transport.getXMPPServiceDomain())
             .build();
-        onlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {
             SparkManager.getConnection().sendStanza(onlinePresence);

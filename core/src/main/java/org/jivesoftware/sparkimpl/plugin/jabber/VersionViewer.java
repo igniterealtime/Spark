@@ -94,8 +94,8 @@ public class VersionViewer {
         // Load Version
         final Version versionRequest = Version.builder(connection)
             .ofType(IQ.Type.get)
+            .to(jid)
             .build();
-        versionRequest.setTo(jid);
 
         CardLayout cardLayout = (CardLayout) cards.getLayout();
         connection.sendIqRequestAsync(versionRequest)
@@ -117,8 +117,8 @@ public class VersionViewer {
         // Time
         final Time time = Time.builder(connection)
             .ofType(IQ.Type.get)
+            .to(jid)
             .build();
-        time.setTo(jid);
 
         connection.sendIqRequestAsync(time)
             .onSuccess(iq -> {
