@@ -89,9 +89,6 @@ public class VCardEditor {
         buildUI(vCard);
 
         ImageIcon icon = VCardManager.getAvatarIcon(vCard);
-        if (icon == null) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24);
-        }
 
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.edit.profile"),

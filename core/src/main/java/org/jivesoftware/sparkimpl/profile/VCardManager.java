@@ -27,9 +27,11 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.StanzaError;
+import org.jivesoftware.smack.parsing.SmackParsingException;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
@@ -89,7 +91,6 @@ public class VCardManager {
     private VCard personalVCard;
     private final Map<EntityBareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
     private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
-    private boolean vcardLoaded;
     private final VCardEditor editor;
     private final File vcardStorageDirectory = SparkManager.getVCardsDir();
     private final LinkedBlockingQueue<EntityBareJid> queue = new LinkedBlockingQueue<>();
@@ -99,8 +100,6 @@ public class VCardManager {
     public VCardManager() {
         // Register providers
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
-        // Initialize vCard.
-        personalVCard = new VCard();
         initializeUI();
         editor = new VCardEditor();
         // Start Listener
@@ -178,13 +177,7 @@ public class VCardManager {
             SwingWorker vcardLoaderWorker = new SwingWorker() {
                 @Override
 				public Object construct() {
-                    try {
-                        final org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection());
-                        personalVCard = smackVCardManager.loadVCard();
-                    }
-                    catch (XMPPException | SmackException | InterruptedException e) {
-                        Log.error("Error loading vcard information.", e);
-                    }
+                    reloadPersonalVCard();
                     return true;
                 }
 
@@ -249,9 +242,8 @@ public class VCardManager {
      * Returns the VCard for this Spark user. This information will be cached after loading.
      */
     public VCard getVCard() {
-        if (!vcardLoaded) {
+        if (personalVCard == null) {
         	reloadPersonalVCard();
-            vcardLoaded = true;
         }
         return personalVCard;
     }
@@ -264,6 +256,7 @@ public class VCardManager {
             personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
 		}
 		catch (Exception e) {
+            Log.error("Error loading my vCard information.", e);
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
 			personalVCard.setError(errorBuilder.build());
 			Log.error(e);
@@ -283,17 +276,14 @@ public class VCardManager {
             ImageIcon icon = new ImageIcon(bytes);
             return GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.SMALL, Sizes.Avatar.SMALL);
         }
-        return null;
+        ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24);
+        return icon;
     }
 
 	/**
 	 * Returns the VCard. Will first look in VCard cache. You will receive a
 	 * dummy vcard, if there is no vCard for specified jid in cache. Same as
 	 * getVCard(jid, true)
-	 * 
-	 * @param jid
-	 *            the users jid.
-	 * @return the VCard.
 	 */
     public VCard getVCard(BareJid jid) {
         EntityBareJid entityBareJid = jid.asEntityBareJidIfPossible();
@@ -329,6 +319,18 @@ public class VCardManager {
             addToQueue(jid);
             // Create temp vcard.
             return emptyVcard(jid);
+        }
+        addVCard(jid, vcard);
+        // Check to see if the file is older 60 minutes. If so, reload.
+        final String timestamp = vcard.getField("timestamp");
+        if (timestamp != null) {
+            final Duration duration = Duration.between(Instant.ofEpochMilli(Long.parseLong(timestamp)), Instant.now());
+            if (duration.toMinutes() >= 60) {
+                addToQueue(jid);
+            }
+        } else {
+            // No timestamp? That's suspicious, let'd reload
+            addToQueue(jid);
         }
         return vcard;
     }
@@ -387,9 +389,8 @@ public class VCardManager {
         catch (XMPPException | SmackException | InterruptedException e) {
             StanzaError.Condition condition = e instanceof XMPPErrorException ? ((XMPPErrorException) e).getStanzaError().getCondition() : resource_constraint;
             StanzaError stanzaError = StanzaError.getBuilder(condition).build();
-            VCard vcard = new VCard();
+            VCard vcard = emptyVcard(jid);
             vcard.setError(stanzaError);
-            vcard.setJabberId(jid.toString());
             switch (condition) {
                 case remote_server_not_found:
                     Log.warning("Unable to reload vCard for " + jid + ": Such a server doesn't exists");
@@ -398,7 +399,7 @@ public class VCardManager {
                     Log.warning("Unable to reload vCard for " + jid + ": Such a contact doesn't exists on the server");
                     break;
                 default:
-                    Log.warning("Unable to reload vCard for " + jid, e);
+                    Log.warning("Unable to reload vCard for " + jid + ": " + e);
                     delayedContacts.add(jid);
                     break;
             }
@@ -417,6 +418,7 @@ public class VCardManager {
         	return; 
         vcard.setJabberId(jid.toString());
         VCard currentVcard = vcards.get(jid);
+        // if the new vCard has an error then keep old
         if (currentVcard != null && currentVcard.getError() == null && vcard.getError()!= null)
         {
         	return;
@@ -541,10 +543,8 @@ public class VCardManager {
         if (jid == null || vcard == null) {
         	return;
         }
-        String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
         byte[] bytes = vcard.getAvatar();
         if (bytes != null && bytes.length > 0) {
-            vcard.setAvatar(bytes);
             try {
                 String hash = vcard.getAvatarHash();
                 final File avatarFile = new File(SparkManager.getContactsDir(), hash);
@@ -568,11 +568,11 @@ public class VCardManager {
 
         // Set timestamp
         vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
-        final String xml = vcard.toXML().toString();
+        String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
         File vcardFile = new File(vcardStorageDirectory, fileName);
         // write xml to file
         try {
-            Files.write(vcardFile.toPath(), xml.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(vcardFile.toPath(), vcard.toXML());
         }
         catch (IOException e) {
             Log.error(e);
@@ -612,28 +612,16 @@ public class VCardManager {
             }
             VCardProvider provider = new VCardProvider();
             vcard = provider.parse( parser, null );
-        }
-        catch (Exception e) {
-            Log.warning("Unable to load vCard for " + jid, e);
+            return vcard;
+        } catch (IOException e) {
+            Log.error("Unable to load vCard for " + jid, e);
+            return null;
+        } catch (XmlPullParserException | SmackParsingException e) {
+            Log.error("Unable to load vCard for " + jid + ": unparsable", e);
             //noinspection ResultOfMethodCallIgnored
             vcardFile.delete();
             return null;
         }
-
-        addVCard(jid, vcard);
-
-        // Check to see if the file is older 60 minutes. If so, reload.
-        final String timestamp = vcard.getField( "timestamp" );
-        if ( timestamp != null )
-        {
-            final Duration duration = Duration.between( Instant.ofEpochMilli( Long.parseLong( timestamp ) ), Instant.now() );
-            if ( duration.toMinutes() >= 60 )
-            {
-                addToQueue( jid );
-            }
-        }
-
-        return vcard;
     }
 
     public void addVCardListener(VCardListener listener) {
