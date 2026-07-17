@@ -16,8 +16,10 @@
 package org.jivesoftware.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -62,15 +64,21 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -108,7 +116,11 @@ import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
 import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 
+import static java.awt.BorderLayout.*;
 import static java.awt.Color.WHITE;
+import static javax.swing.SwingConstants.BOTTOM;
+import static javax.swing.SwingConstants.CENTER;
+import static javax.swing.SwingConstants.LEADING;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -146,7 +158,7 @@ import org.minidns.dnsname.DnsName;
  * The LoginDialog is used only for login in registered users into the XMPP server.
  * @author KeepToo
  */
-public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, FocusListener, CallbackHandler {
+public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, CallbackHandler {
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
@@ -354,69 +366,69 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        pnlLeft = new javax.swing.JPanel();
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 50), new java.awt.Dimension(230, 50), new java.awt.Dimension(32767, 50));
-        lblLogo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        pnlCenter = new javax.swing.JPanel();
-        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(210, 20), new java.awt.Dimension(0, 32767));
-        pnlInputs = new javax.swing.JPanel();
-        tfUsername = new javax.swing.JTextField();
-        tfDomain = new javax.swing.JTextField();
-        tfPassword = new javax.swing.JPasswordField();
-        pnlCheckboxes = new javax.swing.JPanel();
-        cbSavePassword = new javax.swing.JCheckBox();
-        cbAutoLogin = new javax.swing.JCheckBox();
-        cbLoginInvisible = new javax.swing.JCheckBox();
-        cbAnonymous = new javax.swing.JCheckBox();
-        pnlBtns = new javax.swing.JPanel();
-        btnLogin = new javax.swing.JButton();
-        btnSignUp = new javax.swing.JButton();
-        btnAdvanced = new javax.swing.JButton();
-        btnReset = new javax.swing.JButton();
+        pnlLeft = new JPanel();
+        filler1 = new Box.Filler(new Dimension(0, 50), new Dimension(230, 50), new Dimension(32767, 50));
+        lblLogo = new JLabel();
+        jLabel1 = new JLabel();
+        jLabel2 = new JLabel();
+        pnlCenter = new JPanel();
+        filler3 = new Box.Filler(new Dimension(0, 0), new Dimension(210, 20), new Dimension(0, 32767));
+        pnlInputs = new JPanel();
+        tfUsername = new JTextField();
+        tfDomain = new JTextField();
+        tfPassword = new JPasswordField();
+        pnlCheckboxes = new JPanel();
+        cbSavePassword = new JCheckBox();
+        cbAutoLogin = new JCheckBox();
+        cbLoginInvisible = new JCheckBox();
+        cbAnonymous = new JCheckBox();
+        pnlBtns = new JPanel();
+        btnLogin = new JButton();
+        btnSignUp = new JButton();
+        btnAdvanced = new JButton();
+        btnReset = new JButton();
 
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new BorderLayout());
 
-        pnlLeft.setPreferredSize(new java.awt.Dimension(230, 0));
+        pnlLeft.setPreferredSize(new Dimension(230, 0));
         pnlLeft.add(filler1);
 
-        lblLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/spark-64x64.png")));
-        lblLogo.setPreferredSize(new java.awt.Dimension(230, 80));
+        lblLogo.setHorizontalAlignment(CENTER);
+        lblLogo.setIcon(new ImageIcon(getClass().getResource("/images/spark-64x64.png")));
+        lblLogo.setPreferredSize(new Dimension(230, 80));
         lblLogo.setRequestFocusEnabled(false);
         pnlLeft.add(lblLogo);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 18));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setPreferredSize(new java.awt.Dimension(230, 22));
+        jLabel1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        jLabel1.setHorizontalAlignment(CENTER);
+        jLabel1.setPreferredSize(new Dimension(230, 22));
         pnlLeft.add(jLabel1);
 
         jLabel2.setText("Instant Messenger");
         pnlLeft.add(jLabel2);
 
-        lblProgress.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblProgress.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ripple.gif")));
-        lblProgress.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        lblProgress.setPreferredSize(new java.awt.Dimension(230, 90));
+        lblProgress.setHorizontalAlignment(CENTER);
+        lblProgress.setIcon(new ImageIcon(getClass().getResource("/images/ripple.gif")));
+        lblProgress.setHorizontalTextPosition(CENTER);
+        lblProgress.setPreferredSize(new Dimension(230, 90));
         lblProgress.setRequestFocusEnabled(false);
-        lblProgress.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        lblProgress.setVerticalTextPosition(BOTTOM);
         pnlLeft.add(lblProgress);
 
-        add(pnlLeft, java.awt.BorderLayout.WEST);
+        add(pnlLeft, WEST);
 
         pnlCenter.setBackground(WHITE);
-        pnlCenter.setMinimumSize(new java.awt.Dimension(0, 0));
-        pnlCenter.setPreferredSize(new java.awt.Dimension(230, 0));
-        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
+        pnlCenter.setMinimumSize(new Dimension(0, 0));
+        pnlCenter.setPreferredSize(new Dimension(230, 0));
+        FlowLayout flowLayout1 = new FlowLayout();
         flowLayout1.setAlignOnBaseline(true);
         pnlCenter.setLayout(flowLayout1);
         pnlCenter.add(filler3);
 
         pnlInputs.setBackground(WHITE);
-        pnlInputs.setPreferredSize(new java.awt.Dimension(230, 110));
+        pnlInputs.setPreferredSize(new Dimension(230, 110));
 
-        tfUsername.setPreferredSize(new java.awt.Dimension(220, 30));
+        tfUsername.setPreferredSize(new Dimension(220, 30));
         tfUsername.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -425,75 +437,75 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         });
         pnlInputs.add(tfUsername);
 
-        tfDomain.setPreferredSize(new java.awt.Dimension(220, 30));
+        tfDomain.setPreferredSize(new Dimension(220, 30));
         pnlInputs.add(tfDomain);
 
-        tfPassword.setPreferredSize(new java.awt.Dimension(220, 30));
+        tfPassword.setPreferredSize(new Dimension(220, 30));
         pnlInputs.add(tfPassword);
 
         pnlCenter.add(pnlInputs);
 
         pnlCheckboxes.setBackground(WHITE);
-        pnlCheckboxes.setLayout(new javax.swing.BoxLayout(pnlCheckboxes, javax.swing.BoxLayout.Y_AXIS));
+        pnlCheckboxes.setLayout(new BoxLayout(pnlCheckboxes, BoxLayout.Y_AXIS));
 
         cbSavePassword.setBackground(WHITE);
-        cbSavePassword.setPreferredSize(new java.awt.Dimension(220, 20));
+        cbSavePassword.setPreferredSize(new Dimension(220, 20));
         cbSavePassword.addActionListener(this::cbSavePasswordActionPerformed);
         pnlCheckboxes.add(cbSavePassword);
 
         cbAutoLogin.setBackground(WHITE);
-        cbAutoLogin.setPreferredSize(new java.awt.Dimension(220, 20));
+        cbAutoLogin.setPreferredSize(new Dimension(220, 20));
         cbAutoLogin.addActionListener(this::cbAutoLoginActionPerformed);
         pnlCheckboxes.add(cbAutoLogin);
 
         cbLoginInvisible.setBackground(WHITE);
-        cbLoginInvisible.setPreferredSize(new java.awt.Dimension(220, 20));
+        cbLoginInvisible.setPreferredSize(new Dimension(220, 20));
         pnlCheckboxes.add(cbLoginInvisible);
 
         cbAnonymous.setBackground(WHITE);
-        cbAnonymous.setPreferredSize(new java.awt.Dimension(220, 20));
+        cbAnonymous.setPreferredSize(new Dimension(220, 20));
         cbAnonymous.addActionListener(this::cbAnonymousActionPerformed);
         pnlCheckboxes.add(cbAnonymous);
 
         pnlCenter.add(pnlCheckboxes);
 
         pnlBtns.setBackground(WHITE);
-        pnlBtns.setPreferredSize(new java.awt.Dimension(240, 120));
+        pnlBtns.setPreferredSize(new Dimension(240, 120));
 
-        btnLogin.setBackground(new java.awt.Color(241, 100, 34));
+        btnLogin.setBackground(new Color(241, 100, 34));
         btnLogin.setForeground(WHITE);
         btnLogin.setEnabled(false);
-        btnLogin.setPreferredSize(new java.awt.Dimension(230, 30));
+        btnLogin.setPreferredSize(new Dimension(230, 30));
         btnLogin.addActionListener(this::btnLoginActionPerformed);
         pnlBtns.add(btnLogin);
 
         btnSignUp.setBackground(WHITE);
         btnSignUp.setBorderPainted(false);
-        btnSignUp.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnSignUp.setHorizontalTextPosition(LEADING);
         btnSignUp.setOpaque(false);
-        btnSignUp.setPreferredSize(new java.awt.Dimension(110, 28));
+        btnSignUp.setPreferredSize(new Dimension(110, 28));
         btnSignUp.addActionListener(this::btnCreateAccountActionPerformed);
         pnlBtns.add(btnSignUp);
 
         btnAdvanced.setBackground(WHITE);
         btnAdvanced.setBorderPainted(false);
-        btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnAdvanced.setHorizontalTextPosition(LEADING);
         btnAdvanced.setOpaque(false);
-        btnAdvanced.setPreferredSize(new java.awt.Dimension(110, 28));
+        btnAdvanced.setPreferredSize(new Dimension(110, 28));
         btnAdvanced.addActionListener(this::btnAdvancedActionPerformed);
         pnlBtns.add(btnAdvanced);
 
         btnReset.setBackground(WHITE);
         btnReset.setBorderPainted(false);
-        btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnReset.setHorizontalTextPosition(LEADING);
         btnReset.setOpaque(false);
-        btnReset.setPreferredSize(new java.awt.Dimension(230, 28));
+        btnReset.setPreferredSize(new Dimension(230, 28));
         btnReset.addActionListener(this::btnResetActionPerformed);
         pnlBtns.add(btnReset);
 
         pnlCenter.add(pnlBtns);
 
-        add(pnlCenter, java.awt.BorderLayout.CENTER);
+        add(pnlCenter, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
@@ -557,28 +569,28 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdvanced;
-    private javax.swing.JButton btnSignUp;
-    private javax.swing.JButton btnLogin;
-    private javax.swing.JButton btnReset;
-    private javax.swing.JCheckBox cbAnonymous;
-    private javax.swing.JCheckBox cbAutoLogin;
-    private javax.swing.JCheckBox cbLoginInvisible;
-    private javax.swing.JCheckBox cbSavePassword;
-    private javax.swing.Box.Filler filler1;
-    private javax.swing.Box.Filler filler3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel lblLogo;
-    public final javax.swing.JLabel lblProgress = new javax.swing.JLabel();
-    private javax.swing.JPanel pnlBtns;
-    private javax.swing.JPanel pnlCenter;
-    private javax.swing.JPanel pnlCheckboxes;
-    private javax.swing.JPanel pnlInputs;
-    private javax.swing.JPanel pnlLeft;
-    private javax.swing.JTextField tfDomain;
-    private javax.swing.JPasswordField tfPassword;
-    private javax.swing.JTextField tfUsername;
+    private JButton btnAdvanced;
+    private JButton btnSignUp;
+    private JButton btnLogin;
+    private JButton btnReset;
+    private JCheckBox cbAnonymous;
+    private JCheckBox cbAutoLogin;
+    private JCheckBox cbLoginInvisible;
+    private JCheckBox cbSavePassword;
+    private Box.Filler filler1;
+    private Box.Filler filler3;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel lblLogo;
+    public final JLabel lblProgress = new JLabel();
+    private JPanel pnlBtns;
+    private JPanel pnlCenter;
+    private JPanel pnlCheckboxes;
+    private JPanel pnlInputs;
+    private JPanel pnlLeft;
+    private JTextField tfDomain;
+    private JPasswordField tfPassword;
+    private JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 
     /**
