@@ -373,16 +373,15 @@ public class VCardManager {
     public VCard reloadVCard(EntityBareJid jid) {
         try {
             VCard vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard(jid);
-            vcard.setJabberId(jid.toString());
-            if (vcard.getNickName() != null && !vcard.getNickName().isEmpty())
-            {
-            	// update nickname.
-            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-            	item.setNickname(vcard.getNickName());
-            	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
-            }
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
+            ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+            if (!isBlank(vcard.getNickName()))
+            {
+                // update nickname.
+                item.setNickname(vcard.getNickName());
+                // TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
+            }
             return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {
@@ -393,10 +392,10 @@ public class VCardManager {
             vcard.setJabberId(jid.toString());
             switch (condition) {
                 case remote_server_not_found:
-                    Log.warning("Unable to reload vCard for " + jid + ": Such a server doesn't exists:" + e);
+                    Log.warning("Unable to reload vCard for " + jid + ": Such a server doesn't exists");
                     break;
                 case item_not_found:
-                    Log.warning("Unable to reload vCard for " + jid + ": Such a contact doesn't exists on the server:" + e);
+                    Log.warning("Unable to reload vCard for " + jid + ": Such a contact doesn't exists on the server");
                     break;
                 default:
                     Log.warning("Unable to reload vCard for " + jid, e);
@@ -449,18 +448,11 @@ public class VCardManager {
         ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         URL avatarURL = null;
         if (item != null) {
-            try {
-                avatarURL = item.getAvatarURL();
-            }
-            catch (MalformedURLException e) {
-                Log.error(e);
-            }
+            avatarURL = item.getAvatarURL();
         }
-
         if (avatarURL == null) {
             return SparkRes.getURL(SparkRes.DUMMY_CONTACT_IMAGE);
         }
-
         return avatarURL;
     }
 
@@ -558,19 +550,14 @@ public class VCardManager {
                 final File avatarFile = new File(SparkManager.getContactsDir(), hash);
                 ImageIcon icon = new ImageIcon(bytes);
                 icon = VCardManager.scale(icon);
-                if (icon != null && icon.getIconWidth() != -1) {
+                if (icon.getIconWidth() != -1) {
                     BufferedImage image = GraphicUtils.convert(icon.getImage());
-                    if (image == null) {
-                        Log.warning("Unable to write out avatar for " + jid);
-                    }
-                    else {
-						if (writingQueue.contains(jid)) {
-							writeAvatarSync(image, avatarFile);
-						} else {
-							writingQueue.add(jid);
-							ImageIO.write(image, "PNG", avatarFile);
-							writingQueue.remove(jid);
-						}
+                    if (writingQueue.contains(jid)) {
+                        writeAvatarSync(image, avatarFile);
+                    } else {
+                        writingQueue.add(jid);
+                        ImageIO.write(image, "PNG", avatarFile);
+                        writingQueue.remove(jid);
                     }
                 }
             }

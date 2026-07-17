@@ -374,13 +374,16 @@ public class ContactItem extends JPanel {
      * Returns the url of the avatar belonging to this contact.
      *
      * @return the url of the avatar.
-     * @throws MalformedURLException thrown if the address is invalid.
      */
-    public URL getAvatarURL() throws MalformedURLException {
+    public URL getAvatarURL()  {
         if (ModelUtil.hasLength(hash)) {
             final File imageFile = new File(contactsDir, hash);
             if (imageFile.exists()) {
-                return imageFile.toURI().toURL();
+                try {
+                    return imageFile.toURI().toURL();
+                } catch (MalformedURLException ignored) {
+                    // never happens
+                }
             }
         }
 
@@ -472,12 +475,7 @@ public class ContactItem extends JPanel {
                 setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setAvailable(false);
-                if (ModelUtil.hasLength(status)) {
-                    setStatusText(status);
-                }
-                else {
-                    setStatusText("");
-                }
+                setStatusText(!isBlank(status) ? status : "");
             }
 
             sideIcon.setIcon(null);
@@ -486,12 +484,7 @@ public class ContactItem extends JPanel {
         }
 
         Icon sIcon = PresenceManager.getIconFromPresence(presence);
-        if (sIcon != null) {
-            setIcon(sIcon);
-        }
-        else {
-            setIcon(statusIcon);
-        }
+        setIcon(sIcon != null ? sIcon : statusIcon);
         if (status != null) {
             setStatus(status);
         }
@@ -541,20 +534,12 @@ public class ContactItem extends JPanel {
      */
     public void setStatusText(String status) {
         setStatus(status);
-
-        if (ModelUtil.hasLength(status)) {
-            getDescriptionLabel().setText(" - " + status);
-        }
-        else {
-            getDescriptionLabel().setText("");
-        }
+        getDescriptionLabel().setText(!isBlank(status) ? " - " + status : "");
     }
 
     /**
      * The icon should only be used to display avatars in contact list. if you want to add an icon
      * to indicated that this contact is a transport e.g you should use setSpecialIcon()
-     *
-     * @param icon the icon to use.
      */
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
@@ -564,8 +549,6 @@ public class ContactItem extends JPanel {
     /**
      * The icon to use to show extra information about this contact. An example would be to
      * represent that this user is from a 3rd party transport.
-     *
-     * @param icon the icon to use.
      */
     public void setSpecialIcon(Icon icon)
     {
@@ -594,16 +577,16 @@ public class ContactItem extends JPanel {
      * Update avatar icon.
      */
 	public void updateAvatarInSideIcon() {
+        if (!avatarsShowing) {
+            setSideIcon(null);
+            return;
+        }
 		try {
 			final URL url = getAvatarURL();
 			if (url != null) {
-				if (!avatarsShowing) {
-					setSideIcon(null);
-				} else {
 					ImageIcon icon = new ImageIcon(url);
 					icon = GraphicUtils.scale(icon, iconSize, iconSize);
 					setSideIcon(icon);
-				}
 			}
 		} catch (Exception e) {
 			Log.warning("Unable to update avatar in side icon", e);
