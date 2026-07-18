@@ -538,9 +538,8 @@ public class StatusBar extends JPanel implements VCardListener {
             int length = status.length();
             String visualStatus = status;
             if (length > 30) {
-                visualStatus = status.substring(0, 27) + "...";
+                visualStatus = status.substring(0, 29) + "…";
             }
-
             statusLabel.setText(visualStatus);
             statusLabel.setToolTipText(status);
         }
