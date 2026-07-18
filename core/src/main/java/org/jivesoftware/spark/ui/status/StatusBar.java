@@ -66,7 +66,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel implements VCardListener {
-
     private final List<StatusItem> statusList = new ArrayList<>();
 
     private final JLabel imageLabel = new JLabel();
@@ -83,12 +82,7 @@ public class StatusBar extends JPanel implements VCardListener {
     private static final Color COLOR_STATUS_BACKGROUND = new Color(207, 207, 207);
 
     public StatusBar() {
-        this(true);
-    }
-
-    public StatusBar(boolean doLayout) {
         commandPanel = UIComponentRegistry.createCommandPanel();
-        if (doLayout) {
             setLayout(new GridBagLayout());
             backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
             ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
@@ -106,7 +100,6 @@ public class StatusBar extends JPanel implements VCardListener {
             nicknameLabel.setToolTipText(SparkManager.getConnection().getUser().toString());
             nicknameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
             setStatus(Res.getString("status.online"));
-        }
 
         buildStatusItemList();
 
@@ -148,7 +141,6 @@ public class StatusBar extends JPanel implements VCardListener {
 
         TaskEngine.getInstance().schedule(task, 3000);
         changePresenceRunnable = this::updatePresence;
-
     }
 
     public void setAvatar(Icon icon) {
@@ -180,8 +172,6 @@ public class StatusBar extends JPanel implements VCardListener {
 
     /**
      * Sets the current status text in the Status Manager.
-     *
-     * @param status the status to set.
      */
     public void setStatus(String status) {
         statusPanel.setStatus(status);
@@ -233,17 +223,7 @@ public class StatusBar extends JPanel implements VCardListener {
             statusAction.putValue(Action.NAME, statusItem.getText());
             statusAction.putValue(Action.SMALL_ICON, statusItem.getIcon());
 
-            // Has Children
-            boolean hasChildren = false;
-            for (CustomStatusItem cItem : custom) {
-                String type = cItem.getType();
-                if (type.equals(statusItem.getText())) {
-                    hasChildren = true;
-                    break;
-                }
-            }
-
-            if (!hasChildren) {
+            if (!hasChildren(statusItem, custom)) {
                 // Add as Menu Item
                 popup.add(statusAction);
             } else {
@@ -311,13 +291,8 @@ public class StatusBar extends JPanel implements VCardListener {
             for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
                 JMenuItem it = new JMenuItem(plist.getListName());
                 privMenu.add(it);
-                if (plist.isActive()) {
-                    it.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING));
-                } else {
-                    it.setIcon(null);
-                }
-                final SparkPrivacyList finalList = plist;
-                it.addActionListener(e1 -> PrivacyManager.getInstance().setListAsActive(finalList.getListName()));
+                it.setIcon(plist.isActive() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING) : null);
+                it.addActionListener(e1 -> PrivacyManager.getInstance().setListAsActive(plist.getListName()));
             }
 
             if (pmanager.hasActiveList()) {
@@ -351,8 +326,16 @@ public class StatusBar extends JPanel implements VCardListener {
         final JPanel panel = getStatusPanel();
         popup.show(panel, 0, panel.getHeight());
         lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_UP_ARROW_IMAGE));
+    }
 
-
+    private static boolean hasChildren(StatusItem statusItem, List<CustomStatusItem> custom) {
+        for (CustomStatusItem cItem : custom) {
+            String type = cItem.getType();
+            if (type.equals(statusItem.getText())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected JPanel getStatusPanel() {
@@ -373,7 +356,6 @@ public class StatusBar extends JPanel implements VCardListener {
             return;
         }
         currentPresence = presence;
-
         SwingUtilities.invokeLater(changePresenceRunnable);
     }
 
@@ -386,12 +368,10 @@ public class StatusBar extends JPanel implements VCardListener {
             StatusItem item = new StatusItem(presence, icon);
             statusList.add(item);
         }
-
         final Presence availablePresence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.available)
             .build();
         final Icon availableIcon = PresenceManager.getIconFromPresence(availablePresence);
-
         // Set default presence icon (Available)
         statusPanel.setIcon(availableIcon);
     }
@@ -436,7 +416,6 @@ public class StatusBar extends JPanel implements VCardListener {
             VCard vcard = SparkManager.getVCardManager().getVCard();
             updateVCardInformation(vcard);
         };
-
         TaskEngine.getInstance().submit(loadVCard);
     }
 
@@ -485,16 +464,6 @@ public class StatusBar extends JPanel implements VCardListener {
                 imageLabel.repaint();
             }
         });
-
-    }
-
-    /**
-     * Return the nickname Component used to display the users profile name.
-     *
-     * @return the label.
-     */
-    public JLabel getNicknameLabel() {
-        return nicknameLabel;
     }
 
     public void setStatusPanelEnabled(Boolean enabled) {
@@ -502,15 +471,11 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     private class StatusPanel extends JPanel {
-        private final JLabel iconLabel;
-        private final JLabel statusLabel;
+        //setOpaque(false);
+        private final JLabel iconLabel = new JLabel();
+        private final JLabel statusLabel = new JLabel();
 
         public StatusPanel() {
-            super();
-            //setOpaque(false);
-            iconLabel = new JLabel();
-            statusLabel = new JLabel();
-
             setLayout(new GridBagLayout());
             // Remove padding from icon label
             iconLabel.setIconTextGap(0);
@@ -525,7 +490,6 @@ public class StatusBar extends JPanel implements VCardListener {
             }
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
-            //setOpaque(false);
             setBackground(Color.white);
 
             final Border border = BorderFactory.createEmptyBorder(2, 2, 2, 2);
@@ -564,8 +528,7 @@ public class StatusBar extends JPanel implements VCardListener {
                         if (!isEnabled()) {
                             return;
                         }
-                      setBackground(new Color(221,221,221));
-                        //setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+                      setBackground(new Color(221,221,221)); // Color.lightGray
                     }
                 });
             }
@@ -605,10 +568,6 @@ public class StatusBar extends JPanel implements VCardListener {
     @Override
     public void vcardChanged(VCard vcard) {
         updateVCardInformation(vcard);
-    }
-
-    protected Runnable getChangePresenceRunnable() {
-        return changePresenceRunnable;
     }
 
     protected Presence getCurrentPresence() {
