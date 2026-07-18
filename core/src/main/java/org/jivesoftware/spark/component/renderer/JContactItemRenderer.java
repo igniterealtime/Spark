@@ -56,8 +56,8 @@ public class JContactItemRenderer extends ContactItem implements ListCellRendere
 		getNicknameLabel().setForeground(renderItem.getNicknameLabel().getForeground());
 		getDescriptionLabel().setFont(renderItem.getDescriptionLabel().getFont());
 		getDescriptionLabel().setText(renderItem.getDescriptionLabel().getText());
-		getSpecialImageLabel().setIcon(renderItem.getSpecialImageLabel().getIcon());
-		getSideIcon().setIcon(renderItem.getSideIcon().getIcon());
+		setSpecialIcon(renderItem.getSpecialIcon());
+		setSideIcon(renderItem.getSideIcon());
 		return this;
 	}
 }

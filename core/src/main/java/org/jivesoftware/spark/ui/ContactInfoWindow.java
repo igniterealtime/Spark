@@ -84,14 +84,13 @@ public class ContactInfoWindow extends JPanel {
     private static final Object LOCK = new Object();
 
     public static ContactInfoWindow getInstance() {
-        synchronized (LOCK) {
-            if (null == singleton) {
-                ContactInfoWindow controller = new ContactInfoWindow();
-                singleton = controller;
-                return controller;
-            }
+        if (singleton != null) {
+            return singleton;
         }
-        return singleton;
+        synchronized (LOCK) {
+            singleton = new ContactInfoWindow();
+            return singleton;
+        }
     }
 
     private ContactInfoWindow() {
@@ -140,7 +139,7 @@ public class ContactInfoWindow extends JPanel {
         });
     }
 
-    public void display(ContactGroup group, MouseEvent e) {
+    public synchronized void display(ContactGroup group, MouseEvent e) {
         int loc = group.getList().locationToIndex(e.getPoint());
         ContactItem item = group.getList().getModel().getElementAt(loc);
         if (item == null || item.getJid() == null || item.getJid().equals(TESTING_JID)) {
@@ -149,11 +148,9 @@ public class ContactInfoWindow extends JPanel {
         if (getContactItem() != null && getContactItem() == item) {
             return;
         }
-        iconLabel.setIcon(item.getIcon());
         Point point = group.getList().indexToLocation(loc);
-        window.setFocusableWindowState(false);
-        setContactItem(item);
-        window.pack();
+        contactItem = item;
+        customizeUI();
 
         MainWindow mainWindow = SparkManager.getMainWindow();
         Point mainWindowLocation = mainWindow.getLocationOnScreen();
@@ -162,6 +159,8 @@ public class ContactInfoWindow extends JPanel {
         int x = (int)mainWindowLocation.getX() + mainWindow.getWidth();
         int y = (int) listLocation.getY() + (int) point.getY();
         setWindowLocation(x, y);
+        window.setFocusableWindowState(false);
+        window.pack();
         window.setVisible(true);
     }
 
@@ -190,6 +189,7 @@ public class ContactInfoWindow extends JPanel {
         if (contactItem == null) {
             return;
         }
+        iconLabel.setIcon(contactItem.getIcon());
         nicknameLabel.setText(contactItem.getDisplayName());
 
         boolean isOnLeave = contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable;
@@ -264,7 +264,7 @@ public class ContactInfoWindow extends JPanel {
                 // ignore
                 return;
             }
-            Log.warning("Unable to get Last Activity from: " + contactItem, e);
+            Log.warning("Unable to get Last Activity from: " + contactItem + ": " + e);
         } catch (Exception e) {
             Log.warning("Unable to get Last Activity from: " + contactItem, e);
         }
@@ -286,11 +286,6 @@ public class ContactInfoWindow extends JPanel {
             idleText = Res.getString("message.idle.for", time);
         }
         return idleText;
-    }
-
-    public void setContactItem(ContactItem contactItem) {
-        this.contactItem = contactItem;
-        customizeUI();
     }
 
     public ContactItem getContactItem() {

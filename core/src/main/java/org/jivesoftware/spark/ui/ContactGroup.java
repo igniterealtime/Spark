@@ -788,18 +788,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return size;
     }
 
-    /**
-     * Sets the name of group.
-     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 
     /**
      * Returns the "pretty" title of the ContactGroup.
-     *
-     * @param title the title.
-     * @return the new title.
      */
     public String getGroupTitle(String title) {
         int lastIndex = title.lastIndexOf("::");
@@ -812,9 +806,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     /**
      * Returns true if the group is nested.
-     *
-     * @param groupName the name of the group.
-     * @return true if the group is nested.
      */
     public boolean isSubGroup(String groupName) {
         return groupName.contains("::");
@@ -935,10 +926,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private boolean needToChangePopup(MouseEvent e) {
-        ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
+        ContactInfoWindow contactInfoWindow = UIComponentRegistry.getContactInfoWindow();
         int loc = getList().locationToIndex(e.getPoint());
         ContactItem item = getList().getModel().getElementAt(loc);
-        return (item == null || contact == null || contact.getContactItem() == null) || !contact.getContactItem().getJid().equals(item.getJid());
+        ContactItem currentlyShownItem = contactInfoWindow.getContactItem();
+        return (item == null || currentlyShownItem == null) || !currentlyShownItem.getJid().equals(item.getJid());
     }
 
     protected DefaultListModel<ContactItem> getModel() {

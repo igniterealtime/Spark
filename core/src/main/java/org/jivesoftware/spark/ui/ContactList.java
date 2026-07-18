@@ -63,7 +63,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -403,7 +402,7 @@ public class ContactList extends JPanel implements
                         changeContactItem.setPresence(presence);
                         changeContactItem.updateAvatarInSideIcon();
                         changeContactItem.showUserComingOnline();
-                        changeContactItem.setSpecialIcon(offlineItem.getSpecialImageLabel().getIcon());
+                        changeContactItem.setSpecialIcon(offlineItem.getSpecialIcon());
                         //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
@@ -428,7 +427,7 @@ public class ContactList extends JPanel implements
                             changeContact.setAvailable(true);
                             changeContact.updateAvatarInSideIcon();
                             changeContact.showUserComingOnline();
-                            changeContact.setSpecialIcon(offlineItem.getSpecialImageLabel().getIcon());
+                            changeContact.setSpecialIcon(offlineItem.getSpecialIcon());
                             changeContact.updatePresenceIcon(changeContact.getPresence());
                             toggleGroupVisibility(staticContactGroup.getGroupName(), true);
                             staticContactGroup.fireContactGroupUpdated();

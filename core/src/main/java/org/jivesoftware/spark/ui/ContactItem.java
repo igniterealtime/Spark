@@ -56,14 +56,13 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * Represent a single contact within the <code>ContactList</code>.
  */
 public class ContactItem extends JPanel {
-
     public final static Comparator<ContactItem> CONTACT_ITEM_COMPARATOR = Comparator.comparing(ContactItem::getDisplayName, String.CASE_INSENSITIVE_ORDER);
 
-	private final JLabel imageLabel;
-    private final JLabel displayNameLabel;
-    private final JLabel descriptionLabel;
-    private final JLabel specialImageLabel;
-    private final JLabel sideIcon;
+	private final JLabel imageLabel = new JLabel();
+    private final JLabel displayNameLabel = new JLabel();
+    private final JLabel descriptionLabel = new JLabel();
+    private final JLabel specialImageLabel = new JLabel();
+    private final JLabel sideIcon = new JLabel();
 
     private String nickname;
     private String alias;
@@ -81,10 +80,6 @@ public class ContactItem extends JPanel {
 
     private static final Color COLOR_USER_ONLINE_NICKNAME = new Color(255, 128, 0);
 
-	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
-		this(alias, nickname, fullyQualifiedJID, true);
-    }
-
     /**
      * Creates a new instance of a contact.
      *
@@ -92,7 +87,10 @@ public class ContactItem extends JPanel {
      * @param nickname          the nickname of the contact.
      * @param jid               the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
      */
-    public ContactItem(String alias, String nickname, BareJid jid, boolean initUi) {
+	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
+        this.alias = trimToEmpty(alias);
+        this.nickname = trimToEmpty(nickname);
+        this.jid = fullyQualifiedJID;
         setLayout(new GridBagLayout());
 
         // Set Default Font
@@ -106,16 +104,6 @@ public class ContactItem extends JPanel {
             .ofType(Presence.Type.unavailable)
             .build();
 
-        this.alias = trimToEmpty(alias);
-        this.nickname = trimToEmpty(nickname);
-        this.jid = jid;
-
-        if (initUi) {
-            displayNameLabel = new JLabel();
-            descriptionLabel = new JLabel();
-            imageLabel = new JLabel();
-            specialImageLabel = new JLabel();
-            sideIcon = new JLabel();
             if (avatarsShowing) {
                 sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
                 sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
@@ -140,14 +128,6 @@ public class ContactItem extends JPanel {
             add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
             setDisplayName();
-        }
-        else {
-            imageLabel = null;
-            displayNameLabel = null;
-            descriptionLabel = null;
-            specialImageLabel = null;
-            sideIcon = null;
-        }
     }
 
 	/**
@@ -177,42 +157,26 @@ public class ContactItem extends JPanel {
 	}
 
     /**
-	 * Returns the nickname of the contact. Note that for typical user-interface
+	 * Returns the nickname of the contact from vCard. Note that for typical user-interface
 	 * related tasks, you probably should use {@link #getDisplayName()} instead.
-	 *
-	 * @return the contact nickname.
 	 */
 	public String getNickname() {
 		return nickname;
 	}
 
-    /**
-     * Sets the nickname of the contact.
-     *
-     * @param nickname the contact nickname.
-     */
     public void setNickname(String nickname) {
         this.nickname = trimToEmpty(nickname);
-        if (alias.isEmpty()) {
-            setDisplayName();
-        }
+        setDisplayName();
     }
 
     /**
 	 * Returns the alias of the contact. Note that for typical user-interface
 	 * related tasks, you probably should use {@link #getDisplayName()} instead.
-	 *
-	 * @return the contact alias.
 	 */
 	public String getAlias() {
 		return alias;
 	}
 
-    /**
-     * Sets the alias of the contact.
-     *
-     * @param alias the contact alias.
-     */
     public void setAlias(String alias) {
         this.alias = trimToEmpty(alias);
         setDisplayName();
@@ -227,7 +191,6 @@ public class ContactItem extends JPanel {
     	final String displayName = getDisplayName();
 
         int nickLength = displayName.length();
-
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
         int windowWidth = settings.getMainWindowBounds() != null ? settings.getMainWindowBounds().width : 50;
 
@@ -239,9 +202,7 @@ public class ContactItem extends JPanel {
     }
 
     /**
-     * Return the XMPP address, aka. JID< of this contact item.
-     *
-     * @return the XMPP address of this item.
+     * Return the XMPP address, aka. JID of this contact item.
      */
     public BareJid getJid() {
         return jid;
@@ -249,18 +210,11 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the icon showing the contacts current state or presence.
-     *
-     * @return the icon.
      */
     public Icon getIcon() {
         return icon;
     }
 
-    /**
-     * Sets the current icon to use.
-     *
-     * @param icon the current icon to use.
-     */
     public void setIcon(Icon icon) {
         this.icon = icon;
         imageLabel.setIcon(icon);
@@ -268,36 +222,22 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the contacts current status based on their presence.
-     *
-     * @return the contacts current status.
      */
     public String getStatus() {
         return status;
     }
 
-    /**
-     * Sets the contacts current status.
-     *
-     * @param status the contacts current status.
-     */
     public void setStatus(String status) {
         this.status = status;
     }
 
     /**
      * Returns the name of the <code>ContactGroup</code> that this contact belongs to.
-     *
-     * @return the name of the <code>ContactGroup</code>.
      */
     public String getGroupName() {
         return groupName;
     }
 
-    /**
-     * Sets the name of the <code>ContactGrouop</code> that this contact belongs to.
-     *
-     * @param groupName the name of the ContactGroup.
-     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -312,8 +252,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the <code>JLabel</code> showing the users nickname.
-     *
-     * @return the nickname label.
      */
     public JLabel getNicknameLabel() {
         return displayNameLabel;
@@ -321,8 +259,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the <code>JLabel</code> representing the description.
-     *
-     * @return the description label.
      */
     public JLabel getDescriptionLabel() {
         return descriptionLabel;
@@ -330,8 +266,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the current presence of the contact.
-     *
-     * @return the users current presence.
      */
     public Presence getPresence() {
         return presence;
@@ -339,8 +273,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Sets the current presence on this contact item.
-     *
-     * @param presence the presence.
      */
     public void setPresence(Presence presence) {
         this.presence = presence;
@@ -366,9 +298,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Checks to see if the hash already exists.
-     *
-     * @param hash the hash.
-     * @return true if the hash exists, otherwise false.
      */
     private boolean hashExists(String hash) {
         final File imageFile = new File(contactsDir, hash);
@@ -377,8 +306,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Returns the url of the avatar belonging to this contact.
-     *
-     * @return the url of the avatar.
      */
     public URL getAvatarURL()  {
         if (ModelUtil.hasLength(hash)) {
@@ -407,8 +334,6 @@ public class ContactItem extends JPanel {
 
     /**
      * Updates the icon of the user based on their presence.
-     *
-     * @param presence the users presence.
      */
     public void updatePresenceIcon(Presence presence) {
         ChatManager chatManager = SparkManager.getChatManager();
@@ -523,18 +448,20 @@ public class ContactItem extends JPanel {
 
     /**
      * Sets the status label text based on the users status.
-     *
-     * @param status the users status.
      */
     public void setStatusText(String status) {
         setStatus(status);
-        getDescriptionLabel().setText(!isBlank(status) ? " - " + status : "");
+        descriptionLabel.setText(!isBlank(status) ? " - " + status : "");
     }
 
     /**
      * The icon should only be used to display avatars in contact list. if you want to add an icon
      * to indicated that this contact is a transport e.g you should use setSpecialIcon()
      */
+    public Icon getSideIcon() {
+        return sideIcon.getIcon();
+    }
+
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
     }
@@ -544,6 +471,10 @@ public class ContactItem extends JPanel {
      * The icon to use to show extra information about this contact. An example would be to
      * represent that this user is from a 3rd party transport.
      */
+    public Icon getSpecialIcon() {
+        return specialImageLabel.getIcon();
+    }
+
     public void setSpecialIcon(Icon icon)
     {
         specialImageLabel.setIcon(icon);
@@ -587,15 +518,4 @@ public class ContactItem extends JPanel {
 		}
 	}
 
-    protected JLabel getDisplayNameLabel() {
-        return displayNameLabel;
-    }
-
-    public JLabel getSpecialImageLabel() {
-        return specialImageLabel;
-    }
-
-	public JLabel getSideIcon() {
-		return sideIcon;
-	}
 }
