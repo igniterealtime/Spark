@@ -411,8 +411,8 @@ public class SparkTransferManager {
             list.add(file);
             waitMap.put(bareJid, list);
 
-            ContactItem contactItem = contactList.getContactItemByJID(jid);
-            String chatName = contactItem != null ? contactItem.getDisplayName() : jid.asUnescapedString();
+            ContactItem contactItem = contactList.getContactItemByJID(bareJid);
+            String chatName = contactItem != null ? contactItem.getDisplayName() : bareJid.asUnescapedString();
             ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, chatName, chatName);
             chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.offline.autosend", file.getName()), ERROR_COLOR);
             return null;
@@ -423,7 +423,7 @@ public class SparkTransferManager {
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
 
         ContactItem contactItem = contactList.getContactItemByJID(bareJid);
-        String chatName = contactItem != null ? contactItem.getDisplayName() : bareJid.toString();
+        String chatName = contactItem != null ? contactItem.getDisplayName() : bareJid.asUnescapedString();
         ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, chatName, chatName);
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
         SendFileTransfer sendingUI = new SendFileTransfer(chatRoom);

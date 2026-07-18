@@ -378,12 +378,7 @@ public class VCardManager {
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
             ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-            if (!isBlank(vcard.getNickName()))
-            {
-                // update nickname.
-                item.setNickname(vcard.getNickName());
-                // TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
-            }
+            item.setNickname(vcard.getNickName());
             return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {

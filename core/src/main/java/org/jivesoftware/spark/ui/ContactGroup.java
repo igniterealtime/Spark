@@ -390,8 +390,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactItem or null.
      */
     public ContactItem getContactItemByDisplayName(CharSequence displayName) {
+        if (displayName == null) {
+            return null;
+        }
         for (ContactItem item : new ArrayList<>(contactItems)) {
-            if (item.getDisplayName().equals(displayName.toString())) {
+            if (displayName.equals(item.getDisplayName())) {
                 return item;
             }
         }
