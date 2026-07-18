@@ -264,7 +264,7 @@ public class NonRosterPanel extends PhonePanel {
                 TransferManager ui = new TransferManager();
                 final String number = ui.getNumber(SparkManager.getChatManager().getChatContainer().getChatFrame());
                 if (ModelUtil.hasLength(number)) {
-                    setStatus(PhoneRes.getIString("phone.transferring")+"...", blueColor);
+                    setStatus(PhoneRes.getIString("phone.transferring")+"…", blueColor);
                     historyPanel.transferring();
                     SwingWorker transferringThread = new SwingWorker() {
                         public Object construct() {

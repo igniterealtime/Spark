@@ -157,7 +157,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
         } else if (session instanceof JingleSession) {
             showAlert(false);
             if (session.getSessionState() instanceof JingleSessionStatePending) {
-                titleLabel.setText("Calling user. Please wait...");
+                titleLabel.setText("Calling user. Please wait…");
                 cancelButton.setVisible(true);
             }
         }

@@ -158,7 +158,7 @@ public class PreviousConversationPanel extends JPanel {
     }
 
     public void transferring() {
-        statusLabel.setText("Transferring...");
+        statusLabel.setText("Transferring…");
         statusLabel.setVisible(true);
     }
 

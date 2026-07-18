@@ -66,7 +66,7 @@ public class IncomingCallUI extends JPanel {
         topLabel.setIcon(PhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        topLabel.setText(PhoneRes.getIString("phone.incomingcallfrom")+"...");
+        topLabel.setText(PhoneRes.getIString("phone.incomingcallfrom")+"…");
         topLabel.setForeground(Color.gray);
 
 

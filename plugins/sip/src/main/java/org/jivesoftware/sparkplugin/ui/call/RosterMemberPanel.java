@@ -259,7 +259,7 @@ public class RosterMemberPanel extends PhonePanel {
                 TransferManager ui = new TransferManager();
                 final String number = ui.getNumber(SparkManager.getChatManager().getChatContainer().getChatFrame());
                 if (ModelUtil.hasLength(number)) {
-                    setStatus("Transferring...", blueColor);
+                    setStatus("Transferring…", blueColor);
                     historyPanel.transferring();
                     SwingWorker transferringThread = new SwingWorker() {
                         public Object construct() {

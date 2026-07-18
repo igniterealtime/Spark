@@ -64,7 +64,7 @@ public class OutgoingCallUI extends JPanel {
         topLabel.setIcon(PhoneRes.getImageIcon("INCOMING_CALL_IMAGE"));
         topLabel.setHorizontalTextPosition(JLabel.RIGHT);
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        topLabel.setText(PhoneRes.getIString("phone.outgoingcall")+"...");
+        topLabel.setText(PhoneRes.getIString("phone.outgoingcall")+"…");
         topLabel.setForeground(Color.gray);
 
         final String phoneNumber = ic.getCall().getNumber();
