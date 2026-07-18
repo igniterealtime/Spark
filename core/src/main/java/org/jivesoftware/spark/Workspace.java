@@ -139,10 +139,10 @@ public class Workspace extends JPanel implements StanzaListener {
 	                    // Leave the ChatRoom
 	                    container.leaveChatRoom(chatRoom);
 	                }
-	                conferences.shutdown();
-	                gatewayPlugin.shutdown();
-	                bookmarkPlugin.shutdown();
-	                broadcastPlugin.shutdown();
+                    if (conferences != null) conferences.shutdown();
+                    if (gatewayPlugin != null) gatewayPlugin.shutdown();
+                    if (bookmarkPlugin != null) bookmarkPlugin.shutdown();
+                    if (broadcastPlugin != null) broadcastPlugin.shutdown();
 	            }
 	        }
         );
