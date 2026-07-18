@@ -26,7 +26,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -41,14 +45,12 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
-import org.jxmpp.util.XmppStringUtils;
 
+import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -72,25 +74,17 @@ public class ContactItem extends JPanel {
     private String groupName;
     private boolean available;
     private Presence presence;
-    private String hash = "";
-    private final File contactsDir = SparkManager.getContactsDir();
+    private String hash;
     private final int fontSize;
     private final int iconSize;
     private final boolean avatarsShowing;
 
     private static final Color COLOR_USER_ONLINE_NICKNAME = new Color(255, 128, 0);
 
-    /**
-     * Creates a new instance of a contact.
-     *
-     * @param alias             the alias of the contact
-     * @param nickname          the nickname of the contact.
-     * @param jid               the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
-     */
-	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
+	public ContactItem(String alias, String nickname, BareJid jid) {
         this.alias = trimToEmpty(alias);
         this.nickname = trimToEmpty(nickname);
-        this.jid = fullyQualifiedJID;
+        this.jid = requireNonNull(jid);
         setLayout(new GridBagLayout());
 
         // Set Default Font
@@ -112,7 +106,6 @@ public class ContactItem extends JPanel {
 
             displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
             displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
-            //displayNameLabel.setText(nickname);
 
             descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
             descriptionLabel.setForeground((Color) UIManager.get("ContactItemDescription.foreground"));
@@ -127,33 +120,17 @@ public class ContactItem extends JPanel {
             add(specialImageLabel, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
             add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
-            setDisplayName();
+        updateDisplayName();
     }
 
 	/**
-	 * Returns the name that should be displayed to represent the the contact.
+	 * Returns the name that should be displayed to represent the contact.
 	 * If an alias has been set, this alias will be returned. If no alias has
 	 * been set, the nickname will be returned. If that hasn't been set either,
 	 * the JID will be returned.
-	 *
-	 * @return a name suitable to be displayed
 	 */
     public String getDisplayName() {
-        String displayName = null;
-        if (!alias.isEmpty()) {
-            return alias;
-        }
-        if (!nickname.isEmpty()) {
-            return nickname;
-        }
-        BareJid bareJid = getJid();
-        if (bareJid != null) {
-            displayName = bareJid.toString();
-        }
-        if (displayName != null) {
-            return displayName;
-        }
-        return ""; // weird, but happens.
+        return displayNameLabel.getText();
 	}
 
     /**
@@ -166,7 +143,7 @@ public class ContactItem extends JPanel {
 
     public void setNickname(String nickname) {
         this.nickname = trimToEmpty(nickname);
-        setDisplayName();
+        updateDisplayName();
     }
 
     /**
@@ -179,7 +156,7 @@ public class ContactItem extends JPanel {
 
     public void setAlias(String alias) {
         this.alias = trimToEmpty(alias);
-        setDisplayName();
+        updateDisplayName();
     }
 
     /**
@@ -187,18 +164,19 @@ public class ContactItem extends JPanel {
 	 * alias first. If that's not set, the nickname will be used instead. If
 	 * that's not set either, the JID of the user will be used.
 	 */
-    protected void setDisplayName() {
-    	final String displayName = getDisplayName();
+    protected void updateDisplayName() {
+        String displayName = calcDisplayName();
+        displayNameLabel.setText(displayName);
+    }
 
-        int nickLength = displayName.length();
-        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        int windowWidth = settings.getMainWindowBounds() != null ? settings.getMainWindowBounds().width : 50;
-
-        if (nickLength > windowWidth) { // FIXME comparing pixel-width with character count - that can't be good.
-            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName).substring(0, windowWidth) + "...");
-        } else {
-            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName));
+    private String calcDisplayName() {
+        if (!alias.isBlank()) {
+            return alias;
         }
+        if (!nickname.isBlank()) {
+            return nickname;
+        }
+        return getJid().asUnescapedString();
     }
 
     /**
@@ -258,13 +236,6 @@ public class ContactItem extends JPanel {
     }
 
     /**
-     * Returns the <code>JLabel</code> representing the description.
-     */
-    public JLabel getDescriptionLabel() {
-        return descriptionLabel;
-    }
-
-    /**
      * Returns the current presence of the contact.
      */
     public Presence getPresence() {
@@ -300,7 +271,7 @@ public class ContactItem extends JPanel {
      * Checks to see if the hash already exists.
      */
     private boolean hashExists(String hash) {
-        final File imageFile = new File(contactsDir, hash);
+        final File imageFile = new File(SparkManager.getContactsDir(), hash);
         return imageFile.exists();
     }
 
@@ -309,7 +280,7 @@ public class ContactItem extends JPanel {
      */
     public URL getAvatarURL()  {
         if (ModelUtil.hasLength(hash)) {
-            final File imageFile = new File(contactsDir, hash);
+            File imageFile = new File(SparkManager.getContactsDir(), hash);
             if (imageFile.exists()) {
                 try {
                     return imageFile.toURI().toURL();
@@ -458,14 +429,9 @@ public class ContactItem extends JPanel {
      * The icon should only be used to display avatars in contact list. if you want to add an icon
      * to indicated that this contact is a transport e.g you should use setSpecialIcon()
      */
-    public Icon getSideIcon() {
-        return sideIcon.getIcon();
-    }
-
     public void setSideIcon(Icon icon) {
         sideIcon.setIcon(icon);
     }
-
 
     /**
      * The icon to use to show extra information about this contact. An example would be to
