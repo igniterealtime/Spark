@@ -17,8 +17,6 @@ package org.jivesoftware.spark.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -45,6 +43,8 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.parts.Resourcepart;
 
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 
 /**
@@ -269,10 +269,17 @@ public final class UIComponentRegistry {
      */
     public static ContactItem createContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
         // null breaks instantiation by reflection
-        nickname = nickname != null ? nickname : "";
-        fullyQualifiedJID = fullyQualifiedJID != null ? fullyQualifiedJID : TESTING_JID;
-        alias = alias != null ? alias : "";
+        nickname = trimToEmpty(nickname);
+        alias = trimToEmpty(alias);
+        requireNonNull(fullyQualifiedJID);
         return instantiate(contactItemClass, alias, nickname, fullyQualifiedJID);
+    }
+
+    /**
+     * Creates a new contact group item object.
+     */
+    public static ContactItem createContactGroupItem(String alias) {
+        return instantiate(contactItemClass, alias, "", TESTING_JID);
     }
 
     /**
@@ -427,7 +434,6 @@ public final class UIComponentRegistry {
      */
     private static <T> T instantiate(Class<? extends T> currentClass, Object... args) {
         T instance = null;
-        Instant start = Instant.now();
         Class<?>[] classes = new Class<?>[args.length];
         try {
             for (int i = 0; i < args.length; i++) {
@@ -435,10 +441,10 @@ public final class UIComponentRegistry {
             }
             final Constructor<? extends T> ctor = ConstructorUtils.getMatchingAccessibleConstructor(currentClass, classes);
             instance = ctor.newInstance(args);
-            Log.debug("Instantiated " + currentClass.getName() + " with args: " + Arrays.toString(args) + " in " + Duration.between(start, Instant.now()));
+            Log.debug("Instantiated " + currentClass.getName() + " " + Arrays.toString(args));
         } catch (final Exception e) {
             // not pretty but we're catching several exceptions we can do little about
-            Log.error("Error calling constructor for " + currentClass.getName() + " with arguments " + Arrays.toString(classes), e);
+            Log.error("Error calling constructor for " + currentClass.getName() + " " + Arrays.toString(classes), e);
         }
         return instance;
     }

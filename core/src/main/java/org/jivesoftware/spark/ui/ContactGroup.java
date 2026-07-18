@@ -57,8 +57,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final JPanel listPanel;
 
     // Used to display no contacts in list.
-    private final ContactItem noContacts = UIComponentRegistry.createContactItem(
-        Res.getString("group.empty"), null, null);
+    private final ContactItem noContacts = UIComponentRegistry.createContactGroupItem(Res.getString("group.empty"));
     private final ListMotionListener motionListener = new ListMotionListener();
     private boolean canShowPopup;
     private boolean mouseDragged = false;

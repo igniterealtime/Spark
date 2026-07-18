@@ -186,7 +186,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item) {
-        ContactItem newContact = UIComponentRegistry.createContactItem(Res.getString("group.empty"), null, null);
+        ContactItem newContact = UIComponentRegistry.createContactGroupItem(Res.getString("group.empty"));
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());

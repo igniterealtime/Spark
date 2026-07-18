@@ -74,8 +74,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -395,15 +393,13 @@ public class ContactList extends JPanel implements
                     // If we are reconnecting, we have to check if we are on the
                     // dispatch thread
                     if (EventQueue.isDispatchThread()) {
-                        ContactItem changeContactItem;
-                        changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
+                        ContactItem changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                         contactGroup.addContactItem(changeContactItem);
                         changeContactItem.setAvailable(true);
                         changeContactItem.setPresence(presence);
                         changeContactItem.updateAvatarInSideIcon();
                         changeContactItem.showUserComingOnline();
                         changeContactItem.setSpecialIcon(offlineItem.getSpecialIcon());
-                        //contactItem.updatePresenceIcon(contactItem.getPresence());
                         toggleGroupVisibility(contactGroup.getGroupName(), true);
                         //contactGroup.fireContactGroupUpdated();
 
@@ -472,9 +468,7 @@ public class ContactList extends JPanel implements
         // Add All Groups to List
         Log.debug("... adding all groups to list");
         for (RosterGroup group : roster.getGroups()) {
-            Instant start = Instant.now();
             addContactGroup(group.getName());
-            Log.debug("... adding group " + group.getName() + " took " + Duration.between(start, Instant.now()));
         }
         Log.debug("... iterating over all groups");
         for (RosterGroup group : roster.getGroups()) {
@@ -967,19 +961,16 @@ public class ContactList extends JPanel implements
      * @return the ContactGroup. If no ContactGroup is found, null is returned.
      */
     public ContactGroup getContactGroup(String groupName) {
-        ContactGroup cGroup = null;
         for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
             if (contactGroup.getGroupName().equals(groupName)) {
-                cGroup = contactGroup;
-                break;
-            } else {
-                cGroup = getSubContactGroup(contactGroup, groupName);
-                if (cGroup != null) {
-                    break;
-                }
+                return contactGroup;
+            }
+            var cGroup = getSubContactGroup(contactGroup, groupName);
+            if (cGroup != null) {
+                return cGroup;
             }
         }
-        return cGroup;
+        return null;
     }
 
     /**
@@ -1011,19 +1002,18 @@ public class ContactList extends JPanel implements
      * @return the nested ContactGroup. If not found, null will be returned.
      */
     private ContactGroup getSubContactGroup(ContactGroup group, String groupName) {
-        ContactGroup grp = null;
         for (ContactGroup contactGroup : group.getContactGroups()) {
             if (contactGroup.getGroupName().equals(groupName)) {
-                grp = contactGroup;
-                break;
-            } else if (!contactGroup.getContactGroups().isEmpty()) {
-                grp = getSubContactGroup(contactGroup, groupName);
+                return contactGroup;
+            }
+            if (!contactGroup.getContactGroups().isEmpty()) {
+                var grp = getSubContactGroup(contactGroup, groupName);
                 if (grp != null) {
-                    break;
+                    return grp;
                 }
             }
         }
-        return grp;
+        return null;
     }
 
     /**
@@ -1078,7 +1068,6 @@ public class ContactList extends JPanel implements
 
         String oldAlias = activeItem.getAlias();
         String newAlias = JOptionPane.showInputDialog(this, Res.getString("label.rename.to") + ":", oldAlias);
-
         // if the user pressed 'cancel', the output will be null.
         // if the user removed alias, the output will be an empty String.
         if (newAlias != null) {
@@ -1738,14 +1727,11 @@ public class ContactList extends JPanel implements
             }
 
             if (group == offlineGroup) {
+                group.setVisible(show);
+                showOfflineGroupMenu.setEnabled(show);
                 if (show) {
-                    group.setVisible(true);
-                    showOfflineGroupMenu.setEnabled(true);
                     showOfflineGroupMenu.setSelected(localPreferences.isOfflineGroupVisible());
                     showOfflineGroup(showOfflineGroupMenu.isSelected());
-                } else {
-                    group.setVisible(false);
-                    showOfflineGroupMenu.setEnabled(false);
                 }
             }
         }
@@ -2114,29 +2100,23 @@ public class ContactList extends JPanel implements
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
                 if (i == 0) {
-                    _reconnectPanel.setReconnectText(Res
-                        .getString("message.reconnect.attempting"));
+                    _reconnectPanel.setReconnectText(Res.getString("message.reconnect.attempting"));
                 } else {
-                    _reconnectPanel.setReconnectText(Res.getString(
-                        "message.reconnect.wait", i));
+                    _reconnectPanel.setReconnectText(Res.getString("message.reconnect.wait", i));
                 }
                 break;
             case 1:
                 if (i == 0) {
-                    _reconnectpanelsmall.setReconnectText(Res
-                        .getString("message.reconnect.attempting"));
+                    _reconnectpanelsmall.setReconnectText(Res.getString("message.reconnect.attempting"));
                 } else {
-                    _reconnectpanelsmall.setReconnectText(Res.getString(
-                        "message.reconnect.wait", i));
+                    _reconnectpanelsmall.setReconnectText(Res.getString("message.reconnect.wait", i));
                 }
                 break;
             case 2:
                 if (i == 0) {
-                    _reconnectpanelicon.setReconnectText(Res
-                        .getString("message.reconnect.attempting"));
+                    _reconnectpanelicon.setReconnectText(Res.getString("message.reconnect.attempting"));
                 } else {
-                    _reconnectpanelicon.setReconnectText(Res.getString(
-                        "message.reconnect.wait", i));
+                    _reconnectpanelicon.setReconnectText(Res.getString("message.reconnect.wait", i));
                 }
                 break;
         }
@@ -2146,24 +2126,19 @@ public class ContactList extends JPanel implements
     public void reconnectionFailed(Exception exception) {
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
-                _reconnectPanel.setReconnectText(Res
-                    .getString("message.reconnect.failed"));
+                _reconnectPanel.setReconnectText(Res.getString("message.reconnect.failed"));
                 break;
             case 1:
-                _reconnectpanelsmall.setReconnectText(Res
-                    .getString("message.reconnect.failed"));
+                _reconnectpanelsmall.setReconnectText(Res.getString("message.reconnect.failed"));
                 break;
             case 2:
-                _reconnectpanelicon.setReconnectText(Res
-                    .getString("message.reconnect.failed"));
+                _reconnectpanelicon.setReconnectText(Res.getString("message.reconnect.failed"));
                 break;
         }
     }
 
     /**
      * Moves a <code>ContactItem</code> to an offline state.
-     *
-     * @param contactItem the ContactItem.
      */
     private void moveToOffline(ContactItem contactItem) {
         offlineGroup.addContactItem(contactItem);
