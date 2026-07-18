@@ -484,8 +484,8 @@ public class CheckUpdates {
             SparkVersion response = connection.sendIqRequestAndWaitForResponse(request);
             return response;
         } catch (XMPPException.XMPPErrorException e) {
-            if (e.getStanzaError().getCondition() == StanzaError.Condition.service_unavailable) {
-                // no new version available
+            if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
+                Log.debug("no new version available");
                 return null;
             }
             Log.warning("Unable the check for new build.", e);
