@@ -75,6 +75,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.from;
+import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.none;
+
 public class ContactList extends JPanel implements
     ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
@@ -94,7 +98,7 @@ public class ContactList extends JPanel implements
     private ContactGroup activeGroup;
     private final ContactGroup unfiledGroup;
     private final ContactGroup offlineGroup;
-    private List<String> sharedGroups = new ArrayList<>();
+    private List<String> sharedGroups = List.of();
 
     // Create Menus
     private final JMenuItem addContactMenu;
@@ -269,7 +273,7 @@ public class ContactList extends JPanel implements
         final Roster roster = SparkManager.getRoster();
         final BareJid bareJID = presence.getFrom().asBareJid();
         RosterEntry entry = roster.getEntry(bareJID);
-        boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+        boolean isPending = entry != null && (entry.getType() == none || entry.getType() == from)
             && entry.isSubscriptionPending();
         // If online, check to see if they are in the offline group.
         // If so, remove from an offline group and add to all groups they belong to.
@@ -455,15 +459,15 @@ public class ContactList extends JPanel implements
     private void buildContactList() {
         Log.debug("Building contact list");
         final Roster roster = SparkManager.getRoster();
-        roster.addRosterListener(this);
         // Add All Groups to List
         Log.debug("... adding all groups to list");
-        for (RosterGroup group : roster.getGroups()) {
+        Collection<RosterGroup> rosterGroups = roster.getGroups();
+        for (RosterGroup group : rosterGroups) {
             addContactGroup(group.getName());
         }
         Log.debug("... iterating over all groups");
-        for (RosterGroup group : roster.getGroups()) {
-            if (group.getName() == null || Objects.equals(group.getName(), "")) {
+        for (RosterGroup group : rosterGroups) {
+            if (isBlank(group.getName())) {
                 for (RosterEntry entry : group.getEntries()) {
                     ContactItem buildContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                     moveToOffline(buildContactItem);
@@ -495,7 +499,7 @@ public class ContactList extends JPanel implements
                         .ofType(Presence.Type.unavailable)
                         .build();
                     contactItem.setPresence(p);
-                    if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+                    if ((entry.getType() == none || entry.getType() == from)
                         && entry.isSubscriptionPending()) {
                         // Add to a contact group.
                         contactGroup.addContactItem(contactItem);
@@ -528,6 +532,7 @@ public class ContactList extends JPanel implements
                 Log.error("moveToOffline", e);
             }
         }
+        roster.addRosterListener(this);
         Log.debug("Done with contact list");
     }
 
@@ -561,14 +566,14 @@ public class ContactList extends JPanel implements
      */
     private void addUser(RosterEntry entry) {
         ContactItem newContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
-        if (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from) {
+        if (entry.getType() == none || entry.getType() == from) {
             // Ignore, since the new user is pending to be added.
             for (RosterGroup group : entry.getGroups()) {
                 ContactGroup contactGroup = getContactGroup(group.getName());
                 if (contactGroup == null) {
                     contactGroup = addContactGroup(group.getName());
                 }
-                boolean isPending = entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from
+                boolean isPending = entry.getType() == none || entry.getType() == from
                     && entry.isSubscriptionPending();
                 if (isPending) {
                     contactGroup.setVisible(true);
@@ -659,7 +664,7 @@ public class ContactList extends JPanel implements
                                 } catch (Exception e) {
                                     Log.error(e);
                                 }
-                                if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+                                if (entry != null && (entry.getType() == none || entry.getType() == from)
                                     && entry.isSubscriptionPending()) {
                                     contactGroup.setVisible(true);
                                 }
@@ -678,7 +683,7 @@ public class ContactList extends JPanel implements
                     if (unfiledItem == null) {
                         ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
                         if (offlineItem != null) {
-                            if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
+                            if ((rosterEntry.getType() == none || rosterEntry.getType() == from)
                                 && rosterEntry.isSubscriptionPending()) {
                                 // Remove from offlineItem and add to unfiledItem.
                                 offlineGroup.removeContactItem(offlineItem);
@@ -1389,7 +1394,7 @@ public class ContactList extends JPanel implements
 
         Roster roster = SparkManager.getRoster();
         RosterEntry entry = roster.getEntry(item.getJid());
-        if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
+        if (entry != null && entry.getType() == from) {
             popup.add(subscribeAction);
         } else if (entry != null && entry.getType() != RosterPacket.ItemType.both && entry.isSubscriptionPending()) {
             popup.add(subscribeAction);
@@ -1483,26 +1488,26 @@ public class ContactList extends JPanel implements
         addContactListToWorkspace();
         // Hide the top toolbar
         SparkManager.getMainWindow().getTopToolBar().setVisible(false);
-        final Runnable sharedGroupLoader = () -> {
-            // Retrieve shared group list.
-            try {
-                sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
-                if (sharedGroups == null) {
-                    sharedGroups = new ArrayList<>();
-                }
-            } catch (XMPPErrorException e) {
-                StanzaError stanzaError = e.getStanzaError();
-                if (stanzaError.getCondition() == Condition.service_unavailable) {
-                    // Server does not support shared groups.
-                    return;
-                }
-                Log.error("Unable to contact shared group info.", e);
-            } catch (SmackException | InterruptedException e) {
-                Log.error("Unable to contact shared group info.", e);
-            }
-        };
+        retrieveSharedGroupList();
         SwingUtilities.invokeLater(this::loadContactList);
-        TaskEngine.getInstance().submit(sharedGroupLoader);
+    }
+
+    private void retrieveSharedGroupList() {
+        try {
+            sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
+            if (sharedGroups == null) {
+                sharedGroups = List.of();
+            }
+        } catch (XMPPErrorException e) {
+            StanzaError stanzaError = e.getStanzaError();
+            if (stanzaError.getCondition() == Condition.service_unavailable) {
+                Log.debug("Server does not support shared groups.");
+                return;
+            }
+            Log.error("Unable to contact shared group info.", e);
+        } catch (SmackException | InterruptedException e) {
+            Log.error("Unable to contact shared group info.", e);
+        }
     }
 
     private void loadContactList() {
