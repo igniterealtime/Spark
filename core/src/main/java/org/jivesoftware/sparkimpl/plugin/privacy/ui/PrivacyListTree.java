@@ -19,8 +19,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -170,14 +170,12 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         if (_tree.getSelectionPaths().length > 1) {
             remUser = new JMenuItem(Res.getString("privacy.menu.add.rem.items", _tree.getSelectionPaths().length));
         } else {
-            remUser = new JMenuItem(Res.getString("privacy.menu.remove") + node.getPrivacyItem().getValue());
+            remUser = new JMenuItem(Res.getString("privacy.menu.remove") + " " + node.getPrivacyItem().getValue());
         }
         remUser.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         menu.add(remUser);
         remUser.addActionListener( e -> {
-
             for (TreePath path : _tree.getSelectionPaths()) {
-
                 PrivacyTreeNode node1 = (PrivacyTreeNode) path.getLastPathComponent();
                 // Getting privacy List where we want to remove
                 PrivacyTreeNode parent1 = (PrivacyTreeNode) path.getPathComponent(1);
@@ -188,7 +186,6 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
                 list.save();
                 _model.removeNodeFromParent( node1 );
             }
-
         } );
     }
 
@@ -240,46 +237,42 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
     private void addMenuForListNodes(JPopupMenu menu, final PrivacyTreeNode node) {
         JMenuItem addList = new JMenuItem(Res.getString("privacy.menu.add.list"));
         addList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
-        JMenuItem rem = new JMenuItem(Res.getString("privacy.menu.remove.list"));
-        JMenuItem act = new JMenuItem(Res.getString("privacy.menu.activate.list"));
-        act.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING));
-        JMenuItem def = new JMenuItem(Res.getString("privacy.menu.default.list"));
-        def.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_CHECK));
-        act.addActionListener( e -> node.setListAsActive() );
-
-        def.addActionListener( e -> node.setListAsDefault() );
-
         addList.addActionListener( e -> {
-
             String s = JOptionPane.showInputDialog(_comp, Res.getString("privacy.dialog.add.list"), Res.getString("privacy.menu.add.list"), JOptionPane.PLAIN_MESSAGE);
             if ((s != null) && (!s.isEmpty())) {
                 _pManager.createPrivacyList(s);
                 addListNode(new PrivacyTreeNode(_pManager.getPrivacyList(s)), _top);
             }
-
         } );
 
+        JMenuItem rem = new JMenuItem(Res.getString("privacy.menu.remove.list"));
+        rem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         rem.addActionListener( e -> {
             int n = JOptionPane.showOptionDialog(_comp, Res.getString("privacy.dialog.rem.list", node.getPrivacyList().getListName()), Res.getString("privacy.menu.remove.list"), JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE, null, // do
-                    // //
-                    // Icon
-                    null, // the titles of buttons
-                    null); // default button title
-
+                JOptionPane.WARNING_MESSAGE, null, // do
+                // //
+                // Icon
+                null, // the titles of buttons
+                null); // default button title
             if (n == JOptionPane.YES_OPTION) {
                 _pManager.removePrivacyList(node.getPrivacyList().getListName());
                 _model.removeNodeFromParent(node);
             }
         } );
-        rem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
+
+        JMenuItem act = new JMenuItem(Res.getString("privacy.menu.activate.list"));
+        act.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING));
+        act.addActionListener( e -> node.setListAsActive() );
+
+        JMenuItem def = new JMenuItem(Res.getString("privacy.menu.default.list"));
+        def.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_CHECK));
+        def.addActionListener( e -> node.setListAsDefault() );
 
         menu.add(addList);
         if (!node.equals(_top)) {
             menu.add(rem);
             menu.add(act);
             menu.add(def);
-
         }
     }
 
@@ -303,9 +296,9 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         _model.insertNodeInto(groups, node, 0);
 
         for (PrivacyItem pI : plist.getPrivacyItems()) {
-            if (pI.getType().equals(PrivacyItem.Type.jid)) {
+            if (pI.getType() == PrivacyItem.Type.jid) {
                 _model.insertNodeInto(new PrivacyTreeNode(pI), contacts, 0);
-            } else if (pI.getType().equals(PrivacyItem.Type.group)) {
+            } else if (pI.getType() == PrivacyItem.Type.group) {
                 _model.insertNodeInto(new PrivacyTreeNode(pI), groups, 0);
             }
         }
@@ -318,7 +311,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         for (SparkPrivacyList list : _pManager.getPrivacyLists()) {
             addListNode(new PrivacyTreeNode(list), _top);
         }
-        _tree.addMouseListener(new MouseListener() {
+        _tree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
@@ -356,24 +349,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
                     menu.show(_tree, e.getX(), e.getY());
                 }
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
         });
-
     }
 
     @Override

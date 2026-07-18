@@ -47,20 +47,16 @@ import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
-
-import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
  * @author Bergunde Holger
  */
 public class PrivacyAddDialogUI extends JPanel {
     private final JCheckBox _showOffCheckbox = new JCheckBox();
-    private final DefaultListModel<ContactItem> model = new DefaultListModel<>();
-    private final JList<ContactItem> rosterList = new JList<>( model );
+    private final DefaultListModel<String> model = new DefaultListModel<>();
+    private final JList<String> rosterList = new JList<>( model );
     private boolean _showGroups = false;
-    private final List<ContactItem> _userList = new ArrayList<>();
     private JCheckBox _blockPIn;
     private JCheckBox _blockPOout;
     private JCheckBox _blockMsg;
@@ -110,35 +106,20 @@ public class PrivacyAddDialogUI extends JPanel {
     }
 
     private void createList() {
-        _userList.clear();
+        model.clear();
         final Roster roster = SparkManager.getRoster();
         if (_showGroups) {
             for (RosterGroup group : roster.getGroups()) {
                 _showOffCheckbox.setVisible(false);
-//                ContactItem item = new ContactItem(group.getName(), null, group.getName());
-                ContactItem item = new ContactItem(group.getName(), null, null);
-                _userList.add(item);
+                model.addElement(group.getName());
             }
         } else {
             for (RosterEntry entry : roster.getEntries()) {
                 Presence presence = PresenceManager.getPresence(entry.getJid());
-
-                if (presence.isAvailable()) {
-                    ContactItem item = new ContactItem(entry.getName(), null, entry.getJid());
-                    item.setPresence(presence);
-                    _userList.add(item);
-                } else if (_showOffCheckbox.isSelected()) {
-                    ContactItem item = new ContactItem(entry.getName(), null, entry.getJid());
-                    item.setPresence(presence);
-                    _userList.add(item);
+                if (_showOffCheckbox.isSelected() || presence.isAvailable()) {
+                    model.addElement(entry.getJid().toString());
                 }
             }
-        }
-
-        _userList.sort(CONTACT_ITEM_COMPARATOR);
-        model.clear();
-        for (ContactItem item : _userList) {
-            model.addElement(item);
         }
     }
 
@@ -191,10 +172,10 @@ public class PrivacyAddDialogUI extends JPanel {
         dlg.requestFocus();
 
         List<PrivacyItem> selectedContacts = new ArrayList<>();
-        for (ContactItem item : rosterList.getSelectedValuesList()) {
+        for (String item : rosterList.getSelectedValuesList()) {
             try {
                 PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
-                PrivacyItem pitem = new PrivacyItem(type, item.getJid().toString(), false, 999);
+                PrivacyItem pitem = new PrivacyItem(type, item, false, 999);
                 pitem.setFilterIQ(_blockIQ.isSelected());
                 pitem.setFilterMessage(_blockMsg.isSelected());
                 pitem.setFilterPresenceIn(_blockPIn.isSelected());
