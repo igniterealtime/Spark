@@ -27,7 +27,7 @@ public class SpellcheckerRes {
     private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/spelling_i18n");
     private static ClassLoader cl = SpellcheckerRes.class.getClassLoader();
 
-    static ImageIcon ICON_SPELLING = new ImageIcon(cl.getResource("text_ok.png"));
+    static ImageIcon ICON_SPELLING = new ImageIcon(cl.getResource("spellcheck.png"));
 
     static String getString(String propertyName) {
         try {
