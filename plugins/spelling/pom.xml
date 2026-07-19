@@ -13,7 +13,7 @@
     <version>0.9</version>
 
     <name>Spellchecker Plugin</name>
-    <description>Provides spellchecker functionality.</description>
+    <description>Orthography Spellchecker with Hunspell dictionaries.</description>
 
     <contributors>
         <contributor>
