@@ -82,6 +82,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ContactList extends JPanel implements
     ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
+    /**
+     * Nested group delimiter (XEP-0083)
+     */
     private static final String GROUP_DELIMITER = "::";
     private final JPanel mainPanel = new JPanel();
     private final JScrollPane contactListScrollPane;

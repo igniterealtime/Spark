@@ -45,6 +45,10 @@ import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
  * Container representing a RosterGroup within the Contact List.
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
+    /**
+     * Nested group delimiter (XEP-0083)
+     */
+    private static final String GROUP_DELIMITER = "::";
     private final List<ContactItem> contactItems = new ArrayList<>();
     private final List<ContactGroup> contactGroups = new ArrayList<>();
     private final CopyOnWriteArrayList<ContactGroupListener> listeners = new CopyOnWriteArrayList<>();
@@ -664,7 +668,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private void updateTitle() {
         if (isOfflineGroup()) {
-            setTitle(Res.getString("group.offline"));
             return;
         }
 
@@ -789,7 +792,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * Returns the "pretty" title of the ContactGroup.
      */
     public String getGroupTitle() {
-        int lastIndex = groupName.lastIndexOf("::");
+        int lastIndex = groupName.lastIndexOf(GROUP_DELIMITER);
         if (lastIndex != -1) {
             return groupName.substring(lastIndex + 2);
         }
@@ -797,17 +800,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
-     * Returns true if the group is nested.
-     */
-    public boolean isSubGroup(String groupName) {
-        return groupName.contains("::");
-    }
-
-    /**
      * Returns true if this group is nested.
      */
     public boolean isSubGroup() {
-        return isSubGroup(getGroupName());
+        return getGroupName().contains(GROUP_DELIMITER);
     }
 
     /**
