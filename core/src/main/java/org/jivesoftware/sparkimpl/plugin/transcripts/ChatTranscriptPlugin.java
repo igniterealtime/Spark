@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -63,21 +62,12 @@ import org.jxmpp.jid.*;
  * @author Derek DeMoro
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
-
-    private final SimpleDateFormat notificationDateFormatter;
-    private final SimpleDateFormat messageDateFormatter;
     private final HashMap<EntityJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
-    private HistoryTranscript transcript = null;
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
-        String dateFormat = ((SimpleDateFormat) SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
-        notificationDateFormatter = new SimpleDateFormat(dateFormat);
-        String timeFormat = "HH:mm:ss";
-        messageDateFormatter = new SimpleDateFormat(timeFormat);
-
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
         final Action viewHistoryAction = new AbstractAction() {
@@ -88,8 +78,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 if (jid == null) {
                     return;
                 }
-                transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
-                transcript.showHistory(jid);
+                showHistory(jid);
             }
         };
 
@@ -109,12 +98,13 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {
-                if (object instanceof ContactItem) {
-                    if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
-                        popup.add(viewHistoryAction);
-                    }
-                    popup.add(showStatusMessageAction);
+                if (!(object instanceof ContactItem)) {
+                    return;
                 }
+                if (isChatHistoryEnabled()) {
+                    popup.add(viewHistoryAction);
+                }
+                popup.add(showStatusMessageAction);
             }
 
             @Override
@@ -152,7 +142,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     @Override
     public void chatRoomOpened(final ChatRoom room) {
-        if (!pref.isChatHistoryEnabled()) {
+        if (!isChatHistoryEnabled()) {
             return;
         }
         final EntityBareJid jid = room.getBareJid();
@@ -172,7 +162,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     }
 
     public void persistChatRoom(final ChatRoom room) {
-        if (!pref.isChatHistoryEnabled()) {
+        if (!isChatHistoryEnabled()) {
             return;
         }
         EntityJid jid = room.getJid();
@@ -231,44 +221,44 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         Frame.setVisible(true);
     }
 
-    private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
+    private boolean isChatHistoryEnabled() {
+        return pref.isChatHistoryEnabled() && !Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE);
+    }
+
+    private static void showHistory(EntityJid jid) {
+        String dateFormat = ((SimpleDateFormat) SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
+        SimpleDateFormat notificationDateFormatter = new SimpleDateFormat(dateFormat);
+        SimpleDateFormat messageDateFormatter = new SimpleDateFormat("HH:mm:ss");
+        HistoryTranscript transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
+        transcript.showHistory(jid);
+    }
+
+    private class ChatRoomDecorator implements ChatRoomClosingListener {
         private ChatRoom chatRoom;
         private ChatRoomButton chatHistoryButton;
 
         public ChatRoomDecorator(ChatRoom chatRoom) {
             this.chatRoom = chatRoom;
             chatRoom.addClosingListener(this);
-
             // Add History Button
-            if (!pref.isChatHistoryEnabled()) {
-                return;
-            }
-            chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
-
-            if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+            if (isChatHistoryEnabled()) {
+                chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
                 chatRoom.addChatRoomButton(chatHistoryButton);
+                chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
+                chatHistoryButton.addActionListener(e -> {
+                    EntityJid jid = chatRoom.getJid();
+                    showHistory(jid);
+                });
             }
-
-            chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
-            chatHistoryButton.addActionListener(this);
         }
-
 
         @Override
         public void closing() {
-            if (pref.isChatHistoryEnabled()) {
-                chatHistoryButton.removeActionListener(this);
-            }
             chatRoom.removeClosingListener(this);
             chatRoom = null;
             chatHistoryButton = null;
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
-            transcript.showHistory(chatRoom.getJid());
-        }
     }
 
 }

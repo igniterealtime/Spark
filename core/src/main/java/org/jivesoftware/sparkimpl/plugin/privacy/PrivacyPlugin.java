@@ -37,8 +37,8 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 /**
  * Privacy lists.
  * 
- * This plugin built using specification: XEP-0016: Privacy Lists
- * {@see http://xmpp.org/extensions/xep-0016.html}
+ * This plugin built using specification:
+ * <a href="https://xmpp.org/extensions/xep-0016.html">XEP-0016: Privacy Lists</a>
  * 
  * @author Zolotarev Konstantin, Bergunde Holger
  */
@@ -50,7 +50,6 @@ public class PrivacyPlugin implements Plugin {
 			@Override
 			public void run() {
 				PrivacyManager.getInstance(); // Initiating PrivacyLists
-	
 		        TimerTask thread = new TimerTask() {
 					@Override
 					public void run() {
@@ -61,13 +60,10 @@ public class PrivacyPlugin implements Plugin {
 			}
 		};
 		TaskEngine.getInstance().schedule(pManagerInstance, 1000);
-		 
-
     }
 
     @Override
     public void shutdown() {
-        // @todo remove Privacy List
     }
 
     @Override
@@ -77,61 +73,53 @@ public class PrivacyPlugin implements Plugin {
 
     @Override
     public void uninstall() {
-
     }
 
-    // /**
-    // * Adding block menu item to contact popup menu
-    // */
+    /**
+    * Adding block menu item to contact popup menu
+    */
     protected void addMenuItemToContactItems() {
-        if (PrivacyManager.getInstance().isPrivacyActive()) {
-            SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
-                @Override
-                public void poppingUp(Object object, JPopupMenu popup) {
-
-                    if (object instanceof ContactItem) {
-                        final PrivacyManager pManager = PrivacyManager.getInstance();
-
-                        if (pManager.hasActiveList()) {
-                            final SparkPrivacyList activeList = pManager.getActiveList();
-
-                            final ContactItem item = (ContactItem) object;
-                            JMenuItem blockMenu;
-
-                            if (activeList.isBlockedItem(item.getJid().toString())) {
-                                blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.Icon.UNBLOCK_CONTACT_16x16));
-                                blockMenu.addActionListener( ae -> {
-                                    if (item != null) {
-                                        activeList.removeItem( item.getJid().toString());
-                                        activeList.save();
-                                    }
-                                } );
-                            } else {
-                                blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.Icon.BLOCK_CONTACT_16x16));
-                                blockMenu.addActionListener( ae -> {
-                                    if (item != null) {
-                                        PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJid().toString(), false, activeList.getNewItemOrder());
-                                        pItem.setFilterMessage(true);
-                                        pItem.setFilterPresenceOut(true);
-
-                                        activeList.addItem(pItem);
-                                        activeList.save();
-                                    }
-                                } );
-                            }
-
-                            popup.add(blockMenu);
-                        }
-                    }
-                }
-
-                @Override
-                public boolean handleDefaultAction(MouseEvent e) {
-                    return false;
-                }
-            });
+        if (!PrivacyManager.getInstance().isPrivacyActive()) {
+            return;
         }
+        SparkManager.getContactList().addContextMenuListener(new ContextMenuListener() {
+            @Override
+            public void poppingUp(Object object, JPopupMenu popup) {
+                if (!(object instanceof ContactItem)) {
+                    return;
+                }
+                ContactItem item = (ContactItem) object;
+                PrivacyManager pManager = PrivacyManager.getInstance();
+                if (pManager.hasActiveList()) {
+                    SparkPrivacyList activeList = pManager.getActiveList();
 
+                    JMenuItem blockMenu;
+                    if (activeList.isBlockedItem(item.getJid().toString())) {
+                        blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.Icon.UNBLOCK_CONTACT_16x16));
+                        blockMenu.addActionListener( ae -> {
+                            activeList.removeItem(item.getJid().toString());
+                            activeList.save();
+                        } );
+                    } else {
+                        blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.Icon.BLOCK_CONTACT_16x16));
+                        blockMenu.addActionListener( ae -> {
+                            PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJid().toString(), false, activeList.getNewItemOrder());
+                            pItem.setFilterMessage(true);
+                            pItem.setFilterPresenceOut(true);
+
+                            activeList.addItem(pItem);
+                            activeList.save();
+                        } );
+                    }
+                    popup.add(blockMenu);
+                }
+            }
+
+            @Override
+            public boolean handleDefaultAction(MouseEvent e) {
+                return false;
+            }
+        });
     }
 
 }
