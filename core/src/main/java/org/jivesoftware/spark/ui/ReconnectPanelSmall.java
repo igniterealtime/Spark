@@ -38,7 +38,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	    Res.getString("message.reconnect.attempting"));
 
     public ReconnectPanelSmall(String groupName) {
-	super(groupName);
+	super(groupName, false, false, false);
 	this.add(_reconnectionlabel);
 	this.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
     _reconnectionlabel.addMouseListener(new MouseAdapter() {

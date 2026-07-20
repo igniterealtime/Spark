@@ -85,6 +85,9 @@ public class ContactList extends JPanel implements
     private static final String GROUP_DELIMITER = "::";
     private final JPanel mainPanel = new JPanel();
     private final JScrollPane contactListScrollPane;
+    /**
+     * Sorted list of groups
+      */
     private final List<ContactGroup> groupList = new ArrayList<>();
     private final RolloverButton addingGroupButton;
 
@@ -125,8 +128,8 @@ public class ContactList extends JPanel implements
     public static KeyEvent activeKeyEvent;
 
     public ContactList() {
-        offlineGroup = UIComponentRegistry.createContactGroup(Res.getString("group.offline"));
-        unfiledGroup = getUnfiledGroup();
+        offlineGroup = UIComponentRegistry.createContactGroup(Res.getString("group.offline"), false, true, false);
+        unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"), false, false, true);
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -178,8 +181,8 @@ public class ContactList extends JPanel implements
             // File does not exist.
         }
         // Add ActionListener(s) to menus
-        addContactGroup(unfiledGroup);
-        addContactGroup(offlineGroup);
+        addPseudoContactGroup(unfiledGroup);
+        addPseudoContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
         // Add KeyMappings
@@ -306,7 +309,7 @@ public class ContactList extends JPanel implements
      * @param bareJID  the bare jid of the user.
      */
     private void updateContactItemsPresence(Presence presence, RosterEntry entry, BareJid bareJID) {
-        for (ContactGroup group : new ArrayList<>(groupList)) {
+        for (ContactGroup group : getContactGroups()) {
             ContactItem item = group.getContactItemByJID(bareJID);
             if (item == null) {
                 continue;
@@ -327,7 +330,7 @@ public class ContactList extends JPanel implements
      * @param bareJID  the bareJID of the user.
      */
     private void moveToOfflineGroup(final Presence presence, final BareJid bareJID) {
-        for (ContactGroup group : new ArrayList<>(groupList)) {
+        for (ContactGroup group : getContactGroups()) {
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
                 // Only run through if the user's presence was online before.
@@ -438,17 +441,18 @@ public class ContactList extends JPanel implements
                 // dispatch thread
                 if (EventQueue.isDispatchThread()) {
                     contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
-                    ContactGroup unfiledGrp = getUnfiledGroup();
+                    ContactGroup unfiledGrp = unfiledGroup;
                     unfiledGrp.addContactItem(contactItem);
                     contactItem.setPresence(presence);
                     contactItem.setAvailable(true);
+                    // Only show the "Unfiled" group if it is not empty
                     unfiledGrp.setVisible(true);
                     unfiledGrp.fireContactGroupUpdated();
                 } else {
                     final Presence staticItemPresence = presence;
                     EventQueue.invokeLater(() -> {
                         contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
-                        ContactGroup unfiledGrp = getUnfiledGroup();
+                        ContactGroup unfiledGrp = unfiledGroup;
                         contactItem.setPresence(staticItemPresence);
                         contactItem.setAvailable(true);
                         unfiledGrp.addContactItem(contactItem);
@@ -480,7 +484,7 @@ public class ContactList extends JPanel implements
             } else {
                 ContactGroup contactGroup = getContactGroup(group.getName());
                 if (contactGroup == null) {
-                    contactGroup = getUnfiledGroup();
+                    contactGroup = unfiledGroup;
                 }
                 for (RosterEntry entry : group.getEntries()) {
                     contactItem = null;
@@ -546,7 +550,7 @@ public class ContactList extends JPanel implements
                 updateUserPresence(PresenceManager.getPresence(item.getJid()));
             }
         }
-        Collection<ContactGroup> subGroups = group != null ? group.getContactGroups() : new ArrayList<>(groupList);
+        Collection<ContactGroup> subGroups = group != null ? group.getContactGroups() : getContactGroups();
         for (ContactGroup subGroup : subGroups) {
             updateContactList(subGroup);
         }
@@ -682,7 +686,7 @@ public class ContactList extends JPanel implements
                     if (!isUnfiled) {
                         return;
                     }
-                    ContactGroup unfiledGrp = getUnfiledGroup();
+                    ContactGroup unfiledGrp = unfiledGroup;
                     ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid.asBareJid());
                     if (unfiledItem == null) {
                         ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
@@ -693,6 +697,7 @@ public class ContactList extends JPanel implements
                                 offlineGroup.removeContactItem(offlineItem);
                                 unfiledGrp.addContactItem(offlineItem);
                                 unfiledGrp.fireContactGroupUpdated();
+                                // Only show the "Unfiled" group if it is not empty
                                 unfiledGrp.setVisible(true);
                             }
                         }
@@ -714,9 +719,9 @@ public class ContactList extends JPanel implements
                 userGroupSet.add(g.getName());
             }
             boolean unfiled = userGroupSet.isEmpty();
-            for (ContactGroup group : new ArrayList<>(groupList)) {
+            for (ContactGroup group : getContactGroups()) {
                 ContactItem itemFound = group.getContactItemByJID(jid.asBareJid());
-                if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
+                if (itemFound != null && !unfiled && !group.isUnfiledGroup() && !group.isOfflineGroup()) {
                     if (!userGroupSet.contains(group.getGroupName())) {
                         if (group.getContactItems().isEmpty()) {
                             removeContactGroup(group);
@@ -790,7 +795,7 @@ public class ContactList extends JPanel implements
      * @param icon the icon to use.
      */
     public void setIconFor(Jid jid, Icon icon) {
-        for (ContactGroup group : new ArrayList<>(groupList)) {
+        for (ContactGroup group : getContactGroups()) {
             ContactItem item = group.getContactItemByJID(jid.asBareJid());
             if (item != null) {
                 item.setIcon(icon);
@@ -805,7 +810,7 @@ public class ContactList extends JPanel implements
      * @param jid the users jid.
      */
     public void useDefaults(Jid jid) {
-        for (ContactGroup group : new ArrayList<>(groupList)) {
+        for (ContactGroup group : getContactGroups()) {
             ContactItem item = group.getContactItemByJID(jid.asBareJid());
             if (item != null) {
                 item.updatePresenceIcon(item.getPresence());
@@ -831,11 +836,11 @@ public class ContactList extends JPanel implements
     }
 
     /**
-     * Adds a new ContactGroup to the ContactList.
+     * Adds a new pseudo ContactGroup (unfiled, offline) to the ContactList.
      */
-    private void addContactGroup(ContactGroup group) {
+    private void addPseudoContactGroup(ContactGroup group) {
         groupList.add(group);
-        groupList.sort(GROUP_COMPARATOR);
+//        groupList.sort(GROUP_COMPARATOR);
         try {
             mainPanel.add(group, groupList.indexOf(group));
         } catch (Exception e) {
@@ -861,32 +866,26 @@ public class ContactList extends JPanel implements
         StringTokenizer tkn = new StringTokenizer(groupName, GROUP_DELIMITER);
         ContactGroup rootGroup = null;
         ContactGroup lastGroup = null;
-        StringBuilder buf = new StringBuilder();
+        StringBuilder nestedGroupName = new StringBuilder();
         boolean groupAdded = false;
         while (tkn.hasMoreTokens()) {
             String group = tkn.nextToken();
-            buf.append(group);
+            nestedGroupName.append(group);
+            String realGroupName = nestedGroupName.toString();
             if (tkn.hasMoreTokens()) {
-                buf.append(GROUP_DELIMITER);
+                nestedGroupName.append(GROUP_DELIMITER);
             }
-            String name = buf.toString();
-            if (name.endsWith(GROUP_DELIMITER)) {
-                name = name.substring(0, name.length() - GROUP_DELIMITER.length());
-            }
-            ContactGroup newContactGroup = getContactGroup(name);
+            ContactGroup newContactGroup = getContactGroup(realGroupName);
             if (newContactGroup == null) {
-                newContactGroup = UIComponentRegistry.createContactGroup(group);
-                String realGroupName = buf.toString();
-                if (realGroupName.endsWith(GROUP_DELIMITER)) {
-                    realGroupName = realGroupName.substring(0, realGroupName.length() - GROUP_DELIMITER.length());
-                }
-                newContactGroup.setGroupName(realGroupName);
+                boolean isSharedGroup = sharedGroups.contains(group);
+                newContactGroup = UIComponentRegistry.createContactGroup(realGroupName, isSharedGroup, false, false);
             } else {
-                if (newContactGroup != offlineGroup && newContactGroup != getUnfiledGroup()) {
+                if (newContactGroup != offlineGroup && newContactGroup != unfiledGroup) {
                     rootGroup = newContactGroup;
                     continue;
                 }
             }
+
             if (lastGroup != null) {
                 lastGroup.addContactGroup(newContactGroup);
                 groupList.add(newContactGroup);
@@ -898,10 +897,6 @@ public class ContactList extends JPanel implements
             }
             lastGroup = newContactGroup;
             newContactGroup.addContactGroupListener(this);
-            if (sharedGroups != null) {
-                boolean isSharedGroup = sharedGroups.contains(newContactGroup.getGroupName());
-                newContactGroup.setSharedGroup(isSharedGroup);
-            }
             fireContactGroupAdded(newContactGroup);
             // Check state
             String prop = props.getProperty(newContactGroup.getGroupName());
@@ -961,7 +956,7 @@ public class ContactList extends JPanel implements
      * @return the ContactGroup. If no ContactGroup is found, null is returned.
      */
     public ContactGroup getContactGroup(String groupName) {
-        for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
+        for (ContactGroup contactGroup : getContactGroups()) {
             if (contactGroup.getGroupName().equals(groupName)) {
                 return contactGroup;
             }
@@ -1085,7 +1080,7 @@ public class ContactList extends JPanel implements
             try {
                 entry.setName(newAlias);
                 BareJid user = address.asBareJid();
-                for (ContactGroup cg : new ArrayList<>(groupList)) {
+                for (ContactGroup cg : getContactGroups()) {
                     ContactItem ci = cg.getContactItemByJID(user);
                     if (ci != null) {
                         ci.setAlias(newAlias);
@@ -1171,7 +1166,7 @@ public class ContactList extends JPanel implements
     @Override
     public void contactGroupPopup(MouseEvent e, final ContactGroup group) {
         // Do nothing with an offline group
-        if (group == offlineGroup || group == getUnfiledGroup()) {
+        if (group == offlineGroup || group == unfiledGroup) {
             return;
         }
         final JPopupMenu popup = new JPopupMenu();
@@ -1310,7 +1305,7 @@ public class ContactList extends JPanel implements
             Log.error("Unable to get contact group for " + groupName);
         }
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
-        if (contactGroup != null && !contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
+        if (contactGroup != null && !contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != unfiledGroup) {
             Roster roster = SparkManager.getRoster();
             RosterEntry entry = roster.getEntry(item.getJid());
             if (entry != null) {
@@ -1336,7 +1331,7 @@ public class ContactList extends JPanel implements
 
         // Check if a user is in a shared group.
         boolean isInSharedGroup = false;
-        for (ContactGroup cGroup : new ArrayList<>(groupList)) {
+        for (ContactGroup cGroup : getContactGroups()) {
             if (cGroup.isSharedGroup()) {
                 ContactItem it = cGroup.getContactItemByJID(item.getJid());
                 if (it != null) {
@@ -1456,7 +1451,7 @@ public class ContactList extends JPanel implements
             return;
         }
         final ContactGroup owner = getContactGroup(selectedItem.getGroupName());
-        for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
+        for (ContactGroup contactGroup : getContactGroups()) {
             if (owner != contactGroup) {
                 contactGroup.clearSelection();
             }
@@ -1511,6 +1506,9 @@ public class ContactList extends JPanel implements
             // Retrieve shared group list.
             try {
                 sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
+                if (sharedGroups == null) {
+                    sharedGroups = new ArrayList<>();
+                }
             } catch (XMPPErrorException e) {
                 StanzaError stanzaError = e.getStanzaError();
                 if (stanzaError.getCondition() == Condition.service_unavailable) {
@@ -1766,10 +1764,19 @@ public class ContactList extends JPanel implements
      */
     public static final Comparator<ContactGroup> GROUP_COMPARATOR = (group1, group2) -> {
         // Make sure that an offline group is always on the bottom.
+        if (group1.isOfflineGroup()) {
+            return 1;
+        }
         if (group2.isOfflineGroup()) {
             return -1;
         }
-        return group1.getGroupName().trim().compareToIgnoreCase(group2.getGroupName().trim());
+        if (group1.isUnfiledGroup()) {
+            return 1;
+        }
+        if (group2.isUnfiledGroup()) {
+            return -1;
+        }
+        return group1.getGroupName().compareToIgnoreCase(group2.getGroupName());
     };
 
     public JPanel getMainPanel() {
@@ -1777,9 +1784,8 @@ public class ContactList extends JPanel implements
     }
 
     public List<ContactGroup> getContactGroups() {
-        final List<ContactGroup> gList = new ArrayList<>(groupList);
-        gList.sort(GROUP_COMPARATOR);
-        return gList;
+        // return copy to avoid concurrent issues
+        return new ArrayList<>(groupList);
     }
 
     private void subscriptionRequest(final BareJid jid) throws SmackException.NotConnectedException, InterruptedException {
@@ -1837,7 +1843,7 @@ public class ContactList extends JPanel implements
     private void checkGroup(final ContactGroup group) {
         try {
             EventQueue.invokeLater(() -> {
-                if (!group.hasAvailableContacts() && group != offlineGroup && group != getUnfiledGroup() && !showHideMenu.isSelected()) {
+                if (!group.hasAvailableContacts() && group != offlineGroup && group != unfiledGroup && !showHideMenu.isSelected()) {
                     group.setVisible(false);
                 }
             });
@@ -1953,7 +1959,7 @@ public class ContactList extends JPanel implements
         }
         // save collapsed groups
         props.clear();
-        for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
+        for (ContactGroup contactGroup : getContactGroups()) {
             if (contactGroup.isCollapsed()) {
                 props.put(contactGroup.getGroupName(), "true");
             }
@@ -2090,7 +2096,7 @@ public class ContactList extends JPanel implements
 
     private void removeAllUsers() {
         // Behind the scenes, move everyone to the offline group.
-        for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
+        for (ContactGroup contactGroup : getContactGroups()) {
             contactGroup.removeAllContacts();
         }
     }
@@ -2157,37 +2163,16 @@ public class ContactList extends JPanel implements
             }
         }
         if (!isFiled) {
-            getUnfiledGroup().addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJid(), contactItem.getStatus());
+            unfiledGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJid(), contactItem.getStatus());
         }
 
         if (!localPreferences.isOfflineUsersShown()) {
-            for (ContactGroup group : new ArrayList<>(groupList)) {
+            for (ContactGroup group : getContactGroups()) {
                 if (group != offlineGroup) {
                     group.toggleOfflineVisibility(false);
                 }
             }
         }
-    }
-
-    private ContactGroup getUnfiledGroup() {
-        if (unfiledGroup == null) {
-            // Add Unfiled Group
-            if (EventQueue.isDispatchThread()) {
-                unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
-                // Only show the "Unfiled" group if it is not empty
-                if (unfiledGroup.hasAvailableContacts()) addContactGroup(unfiledGroup);
-            } else {
-                try {
-                    EventQueue.invokeAndWait(() -> {
-                        unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
-                        addContactGroup(unfiledGroup);
-                    });
-                } catch (Exception ex) {
-                    Log.error("checkGroup error: ", ex);
-                }
-            }
-        }
-        return unfiledGroup;
     }
 
     public void showAddContact(String contact) {

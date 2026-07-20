@@ -305,8 +305,8 @@ public final class UIComponentRegistry {
      *
      * @return A new instance of the class currently registered as contact group.
      */
-    public static ContactGroup createContactGroup(String name) {
-        return instantiate(contactGroupClass, name);
+    public static ContactGroup createContactGroup(String name, boolean sharedGroup, boolean offlineGroup, boolean unfiledGroup) {
+        return instantiate(contactGroupClass, name, sharedGroup, offlineGroup, unfiledGroup);
     }
 
     /**

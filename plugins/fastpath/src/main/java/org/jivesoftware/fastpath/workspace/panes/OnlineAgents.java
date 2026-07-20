@@ -79,7 +79,7 @@ public final class OnlineAgents extends JPanel {
         final Localpart name = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
         final String title = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial(name);
 
-        contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title));
+        contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title), false, false, false);
         contactGroup.getContainerPanel().add( topToolbar, BorderLayout.NORTH);
         contactGroup.setIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
         contactGroup.setBackground(Color.white);

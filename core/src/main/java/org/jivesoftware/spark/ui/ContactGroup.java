@@ -50,10 +50,12 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final CopyOnWriteArrayList<ContactGroupListener> listeners = new CopyOnWriteArrayList<>();
     private final List<ContactItem> offlineContacts = new ArrayList<>();
 
-    private String groupName;
+    private final String groupName;
+    private final boolean sharedGroup;
+    private final boolean offlineGroup;
+    private final boolean unfiledGroup;
     private final DefaultListModel<ContactItem> model;
     private final JList<? extends ContactItem> contactItemList;
-    private boolean sharedGroup;
     private final JPanel listPanel;
 
     // Used to display no contacts in list.
@@ -70,16 +72,21 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @param groupName the name of the new ContactGroup.
      */
-    public ContactGroup(String groupName) {
+    public ContactGroup(String groupName, boolean sharedGroup, boolean offlineGroup, boolean unfiledGroup) {
+        this.groupName = groupName;
+        this.sharedGroup = sharedGroup;
+        this.offlineGroup = offlineGroup;
+        this.unfiledGroup = unfiledGroup;
         // Initialize Model and UI
         model = new DefaultListModel<>();
         contactItemList = new JList<>(model);
 
-        setTitle(getGroupTitle(groupName));
+        setTitle(getGroupTitle());
+        if (sharedGroup) {
+            setToolTipText(Res.getString("message.is.shared.group", getGroupName()));
+        }
         // Use JPanel Renderer
         contactItemList.setCellRenderer(new JPanelRenderer());
-
-        this.groupName = groupName;
 
         listPanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         listPanel.add(contactItemList, listPanel);
@@ -274,7 +281,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (model.contains(noContacts)) {
             model.remove(0);
         }
-        if (Res.getString("group.offline").equals(groupName)) {
+        if (isOfflineGroup()) {
             setOfflineGroupNameFont(item);
         }
         item.setGroupName(getGroupName());
@@ -656,7 +663,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void updateTitle() {
-        if (Res.getString("group.offline").equals(groupName)) {
+        if (isOfflineGroup()) {
             setTitle(Res.getString("group.offline"));
             return;
         }
@@ -668,7 +675,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         }
 
-        setTitle(getGroupTitle(groupName) + " (" + count + " " + Res.getString("online") + ")");
+        setTitle(getGroupTitle() + " (" + count + " " + Res.getString("online") + ")");
         if (model.getSize() == 0) {
             model.addElement(noContacts);
         }
@@ -723,27 +730,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
-     * Returns true if this ContactGroup is the Offline Group.
-     */
-    public boolean isOfflineGroup() {
-        return Res.getString("group.offline").equals(getGroupName());
-    }
-
-    /**
-     * Returns true if this ContactGroup is the Unfiled Group.
-     */
-    public boolean isUnfiledGroup() {
-        //TODO: Don't identify the unfiled group by name, because the user
-        //could have a custom group of that name.
-        return Res.getString("unfiled").equals(getGroupName());
-    }
-
-    @Override
-    public String toString() {
-        return getGroupName();
-    }
-
-    /**
      * Returns true if ContactGroup is a Shared Group.
      */
     public boolean isSharedGroup() {
@@ -751,13 +737,22 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     /**
-     * Set to true if this ContactGroup is a shared Group.
+     * Returns true if this ContactGroup is the Offline Group.
      */
-    protected void setSharedGroup(boolean sharedGroup) {
-        this.sharedGroup = sharedGroup;
-        if (sharedGroup) {
-            setToolTipText(Res.getString("message.is.shared.group", getGroupName()));
-        }
+    public boolean isOfflineGroup() {
+        return offlineGroup;
+    }
+
+    /**
+     * Returns true if this ContactGroup is the Unfiled Group.
+     */
+    public boolean isUnfiledGroup() {
+        return unfiledGroup;
+    }
+
+    @Override
+    public String toString() {
+        return getGroupName();
     }
 
     /**
@@ -790,20 +785,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return size;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
     /**
      * Returns the "pretty" title of the ContactGroup.
      */
-    public String getGroupTitle(String title) {
-        int lastIndex = title.lastIndexOf("::");
+    public String getGroupTitle() {
+        int lastIndex = groupName.lastIndexOf("::");
         if (lastIndex != -1) {
-            title = title.substring(lastIndex + 2);
+            return groupName.substring(lastIndex + 2);
         }
-
-        return title;
+        return groupName;
     }
 
     /**

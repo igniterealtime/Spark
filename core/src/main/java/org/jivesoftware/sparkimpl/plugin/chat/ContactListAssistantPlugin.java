@@ -70,8 +70,6 @@ public class ContactListAssistantPlugin implements Plugin {
                 List<ContactItem> contactItems = contactList.getSelectedUsers();
                 if (!contactItems.isEmpty()) {
                     final List<ContactGroup> contactGroups = contactList.getContactGroups();
-                    contactGroups.sort(ContactList.GROUP_COMPARATOR);
-
                     for (final ContactGroup group : contactGroups) {
                         if (group.isUnfiledGroup() || group.isOfflineGroup()) {
                             continue;
