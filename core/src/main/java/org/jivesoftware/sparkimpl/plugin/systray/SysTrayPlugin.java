@@ -309,7 +309,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     @Override
     public void stateChanged(Chat chat, ChatState state, Message message) {
         presence = Workspace.getInstance().getStatusBar().getPresence();
-        if (ChatState.composing.equals(state)) {
+        if (ChatState.composing == state) {
             changeSysTrayIcon();
         } else {
             if (!newMessage) {
@@ -319,16 +319,22 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     }
 
     private void setIconByPresence(Presence presence, ImageIcon newTrayIcon) {
-        if (presence.getMode() == Presence.Mode.available) {
-            trayIcon.setImage(newTrayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.away) {
-            trayIcon.setImage(awayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.xa) {
-            trayIcon.setImage(xawayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.dnd) {
-            trayIcon.setImage(dndIcon.getImage());
-        } else {
-            trayIcon.setImage(newTrayIcon.getImage());
+        switch (presence.getMode()) {
+            case available:
+                trayIcon.setImage(newTrayIcon.getImage());
+                break;
+            case away:
+                trayIcon.setImage(awayIcon.getImage());
+                break;
+            case xa:
+                trayIcon.setImage(xawayIcon.getImage());
+                break;
+            case dnd:
+                trayIcon.setImage(dndIcon.getImage());
+                break;
+            default:
+                trayIcon.setImage(newTrayIcon.getImage());
+                break;
         }
     }
 
@@ -338,7 +344,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         }
     }
 
-    private class TrayMouseListener implements MouseListener {
+    private class TrayMouseListener extends MouseAdapter {
 
         @Override
         public void mouseClicked(MouseEvent event) {
@@ -382,16 +388,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         }
 
         @Override
-        public void mouseEntered(MouseEvent event) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent event) {
-
-        }
-
-        @Override
         public void mousePressed(MouseEvent event) {
             // on Mac I would want the window to show when I left-click the Icon
             if (Spark.isMac() && event.getButton() != MouseEvent.BUTTON3) {
@@ -403,12 +399,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
                 SparkManager.getMainWindow().requestFocus();
             }
         }
-
-        @Override
-        public void mouseReleased(MouseEvent event) {
-
-        }
-
     }
 
     private class TrayConnectionListener implements ConnectionListener {
