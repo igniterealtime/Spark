@@ -17,8 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 
@@ -34,14 +34,13 @@ public class BroadcastHistoryFrame extends JFrame {
     private JLabel searchDate;
     private JToggleButton searchButton;
 
-    private final File transcriptsFolder;
 
     public BroadcastHistoryFrame() {
-        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
         initComponents();
     }
 
     public void readFromFile(String date) throws IOException {
+        File transcriptsFolder = SparkManager.getTranscriptDir();
         File myfile = new File(transcriptsFolder, "broadcast_history." + date + ".txt");
         if (!myfile.exists()) {
             return;

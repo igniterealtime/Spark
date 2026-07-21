@@ -77,7 +77,6 @@ public class BroadcastDialog extends JPanel {
     private final List<CheckNode> groupNodes = new ArrayList<>();
     private final CheckNode rosterNode;
     private final CheckTree checkTree;
-    private final File transcriptsFolder;
     private Integer OfflineGroup;
 
     public BroadcastDialog() {
@@ -174,9 +173,6 @@ public class BroadcastDialog extends JPanel {
                 }
             }
         }
-        transcriptsFolder = new File(Spark.getUserProfileFolder(), "transcripts");
-        //noinspection ResultOfMethodCallIgnored
-        transcriptsFolder.mkdir();
     }
 
     public void invokeDialog(ContactGroup group) {
@@ -375,6 +371,7 @@ public class BroadcastDialog extends JPanel {
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
         Date date = new Date();
         String fileName = "broadcast_history." + dateFormat.format(date) + ".txt";
+        File transcriptsFolder = SparkManager.getTranscriptDir();
         File file = new File(transcriptsFolder, fileName);
         if (!file.exists()) {
             //noinspection ResultOfMethodCallIgnored

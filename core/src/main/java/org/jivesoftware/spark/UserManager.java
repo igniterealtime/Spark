@@ -515,7 +515,7 @@ public class UserManager {
         try {
             AccountManager.getInstance(SparkManager.getConnection()).deleteAccount();
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.deleteAccountSuccessful"));
-            deleteDirectory(Spark.getUserProfileFolder());
+            deleteDirectory(SparkManager.getUserDirectory());
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             pref.setPasswordForUser(SparkManager.getSessionManager().getUserBareAddress(), null);
             SparkManager.getMainWindow().closeConnectionAndInvoke(null);

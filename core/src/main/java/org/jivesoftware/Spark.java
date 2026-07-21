@@ -421,8 +421,4 @@ public final class Spark {
         UIManager.put("OptionPane.noButtonText", Res.getString("no"));
         UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
     }
-
-    public static File getUserProfileFolder() {
-        return new File(USER_DIRECTORY, SparkManager.getSessionManager().getUserBareAddress().toString());
-    }
 }
