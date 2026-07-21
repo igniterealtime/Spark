@@ -1,6 +1,8 @@
 package org.jivesoftware.spark.ui.history;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
+import org.jxmpp.jid.EntityJid;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -12,7 +14,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -44,8 +45,6 @@ public class HistoryWindow extends JFrame {
 	private static final Point LOCATION = new Point(400, 150);
 	private static final MessageFormat TITLE_FORMAT = new MessageFormat("{0}");
 	private static final MessageFormat LABEL_FORMAT = new MessageFormat("{0}");
-	private static final MessageFormat HISTORY_FILE_FORMAT = new MessageFormat(
-			"transcripts/{0}.xml");
 	private static final Font LABEL_FONT = new Font("Droid Sans",
 			Font.PLAIN, 14);
 	private static final Font TEXT_FONT = new Font("Droid Sans", Font.PLAIN, 13);
@@ -64,7 +63,7 @@ public class HistoryWindow extends JFrame {
 	private XMLHistoryFile historyFile;
 	private TreeModel historyOriginalModel;
 
-	public HistoryWindow(InputStream is, String roomName) {
+	private HistoryWindow(InputStream is, String roomName) {
 		setPreferredSize(SIZE);
 		setLocation(LOCATION);
 		setResizable(true);
@@ -74,11 +73,9 @@ public class HistoryWindow extends JFrame {
 		initComponents();
 	}
 
-	public HistoryWindow(File file, String roomName)
+	public HistoryWindow(EntityJid roomName)
 			throws FileNotFoundException {
-		this(new FileInputStream(new File(file,
-				HISTORY_FILE_FORMAT.format(new String[] { roomName }))),
-				roomName);
+		this(new FileInputStream(ChatTranscripts.getTranscriptFile(roomName)), roomName.asUnescapedString());
 	}
 
 	public void showWindow() {

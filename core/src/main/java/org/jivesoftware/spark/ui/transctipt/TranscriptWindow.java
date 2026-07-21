@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -532,25 +533,18 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         // History window
         if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
-            if(room != null && room.getChatType() == Message.Type.chat){
-                ChatRoom finalRoom = room;
-                popup.add(new AbstractAction( Res.getString( "action.viewlog" ) )
-                {
-                    @Override
-                    public void actionPerformed( ActionEvent e )
-                    {
-                        try
-                        {
-                            HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), finalRoom.getJid().toString() );
-                            hw.showWindow();
-                        }
-                        catch ( Exception ex )
-                        {
-                            Log.error( "An exception occurred while trying to open history window for room " + finalRoom, ex );
-                        }
+            EntityJid roomJid = room.getJid();
+            popup.add(new AbstractAction(Res.getString("action.viewlog")) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        HistoryWindow hw = new HistoryWindow(roomJid);
+                        hw.showWindow();
+                    } catch (Exception ex) {
+                        Log.error("An exception occurred while trying to open history window for room " + roomJid, ex);
                     }
-                } );
-            }
+                }
+            });
         }
     }
 
