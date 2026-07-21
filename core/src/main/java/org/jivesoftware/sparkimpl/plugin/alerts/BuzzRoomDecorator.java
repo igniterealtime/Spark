@@ -16,14 +16,12 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
@@ -40,42 +38,35 @@ import org.jxmpp.jid.Jid;
 import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
 
 /**
- * Adds a simple buzz operation button the each newly created ChatRoom.
+ * Adds a simple buzz operation button for a created ChatRoom.
  *
  * @author Derek DeMoro
  */
-public class BuzzRoomDecorator implements ActionListener {
-
+public class BuzzRoomDecorator {
     private final ChatRoom chatRoom;
     private final JButton buzzButton;
 
-
     public BuzzRoomDecorator(ChatRoom chatRoom) {
-	this.chatRoom = chatRoom;
-
-	buzzButton = UIComponentRegistry.getButtonFactory().createBuzzButton();
-	buzzButton.setToolTipText(Res
-		.getString("message.buzz.alert.notification"));
-	buzzButton.addActionListener(this);
-
-	final JLabel dividerLabel = UIComponentRegistry.getButtonFactory().createDivider();
-	if (dividerLabel != null) {
-	    chatRoom.addEditorComponent(dividerLabel);
-	}
-	chatRoom.addEditorComponent(buzzButton);
+        this.chatRoom = chatRoom;
+        buzzButton = addBuzzButton();
     }
 
-    public void addBuzzButton(BuzzRoomDecorator buzzer)
-    {
-        final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.DIVIDER_IMAGE));
-    	chatRoom.addEditorComponent(dividerLabel);
-    	chatRoom.addEditorComponent(buzzer.buzzButton);
+    private JButton addBuzzButton() {
+        JButton buzzButton = UIComponentRegistry.getButtonFactory().createBuzzButton();
+        buzzButton.setToolTipText(Res.getString("message.buzz.alert.notification"));
+        buzzButton.addActionListener(this::buzzButtonClicked);
+        buzzButton.setEnabled(false);
+
+        JLabel dividerLabel = UIComponentRegistry.getButtonFactory().createDivider();
+        if (dividerLabel != null) {
+            chatRoom.addEditorComponent(dividerLabel);
+        }
+        chatRoom.addEditorComponent(buzzButton);
+        return buzzButton;
     }
 
-    @Override
-	public void actionPerformed(ActionEvent e) {
+    public void buzzButtonClicked(ActionEvent e) {
         Jid jid = ((ChatRoomImpl) chatRoom).getParticipantJID();
-
         XMPPConnection connection = SparkManager.getConnection();
         Message message = connection.getStanzaFactory()
             .buildMessageStanza()
@@ -83,26 +74,24 @@ public class BuzzRoomDecorator implements ActionListener {
             .to(jid)
             .addExtension(new AttentionExtension())
             .build();
-
-        try
-        {
+        try {
             connection.sendStanza(message);
+            chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), NOTIFICATION_COLOR);
+            buzzButton.setEnabled(false);
+            // Enable the button after 30 seconds to prevent abuse.
+            final TimerTask enableTask = new SwingTimerTask() {
+                @Override
+                public void doRun() {
+                    buzzButton.setEnabled(true);
+                }
+            };
+            TaskEngine.getInstance().schedule(enableTask, 30_000);
+        } catch (SmackException.NotConnectedException | InterruptedException e1) {
+            Log.warning("Unable to send stanza to " + jid, e1);
         }
-        catch ( SmackException.NotConnectedException | InterruptedException e1 )
-        {
-            Log.warning( "Unable to send stanza to " + jid, e1 );
-        }
+    }
 
-        chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), NOTIFICATION_COLOR);
-        buzzButton.setEnabled(false);
-
-        // Enable the button after 30 seconds to prevent abuse.
-        final TimerTask enableTask = new SwingTimerTask() {
-            @Override
-			public void doRun() {
-                buzzButton.setEnabled(true);
-            }
-        };
-        TaskEngine.getInstance().schedule(enableTask, 30_000);
+    public void setBuzzButtonEnabled(boolean enabled) {
+        buzzButton.setEnabled(enabled);
     }
 }

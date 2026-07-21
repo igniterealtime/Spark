@@ -19,24 +19,26 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-import org.jivesoftware.spark.Event;
-import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.SoundManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatFrame;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 
-import java.util.TimerTask;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -55,6 +57,7 @@ public class BuzzPlugin implements Plugin {
     @Override
     public void initialize() {
         // Add Attention to a discovered items list.
+        // We always announce it, but if the buzz is disabled, we'll not play a sound.
         SparkManager.addFeature(AttentionExtension.NAMESPACE);
         SparkManager.getConnection().addAsyncStanzaListener(
             stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
@@ -74,12 +77,21 @@ public class BuzzPlugin implements Plugin {
             return;
         }
         SwingUtilities.invokeLater(() -> {
-            boolean hasAttentionSupport = clientOfContactSupportsAttentions(room);
-            if (!hasAttentionSupport) {
-                return;
-            }
             // Add the button to the toolbar
-            new BuzzRoomDecorator(room);
+            BuzzRoomDecorator buzzRoomDecorator = new BuzzRoomDecorator(room);
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                public Object construct() {
+                    return clientOfContactSupportsAttentions(room);
+                }
+
+                @Override
+                public void finished() {
+                    boolean hasAttentionSupport = (boolean) get();
+                    buzzRoomDecorator.setBuzzButtonEnabled(hasAttentionSupport);
+                }
+            };
+            worker.start();
         });
     }
 
@@ -87,27 +99,30 @@ public class BuzzPlugin implements Plugin {
      * Determine via service discovery if the contact's client supports attentions
      */
     private static boolean clientOfContactSupportsAttentions(ChatRoom room) {
-        EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(room.getBareJid());
-        boolean hasAttentionSupport = true;
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        try {
-            DiscoverInfo discoverInfo = discoManager.discoverInfo(fullJID);
-            hasAttentionSupport = discoverInfo.containsFeature(AttentionExtension.NAMESPACE);
-        } catch (Exception e) {
-            Log.warning(e.getMessage());
+        List<Presence> allPresences = SparkManager.getRoster().getAllPresences(room.getBareJid());
+        for (Presence presence : allPresences) {
+            EntityFullJid fullJID = presence.getFrom().asEntityFullJidIfPossible();
+            if (fullJID == null) {
+                continue;
+            }
+            try {
+                DiscoverInfo discoverInfo = discoManager.discoverInfo(fullJID);
+                boolean hasAttentionSupport = discoverInfo.containsFeature(AttentionExtension.NAMESPACE);
+                if (hasAttentionSupport) {
+                    return true;
+                }
+            } catch (Exception e) {
+                Log.warning(e.getMessage());
+            }
         }
-        return hasAttentionSupport;
+        return false;
     }
 
     private void shakeWindow(Message message) {
         EntityBareJid bareJID = message.getFrom().asEntityBareJidOrThrow();
-        String nickname;
         ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
-        if (contact != null) {
-            nickname = contact.getDisplayName();
-        } else {
-            nickname = bareJID.getLocalpart().asUnescapedString();
-        }
+        String nickname = contact != null ? contact.getDisplayName() : bareJID.getLocalpart().asUnescapedString();
 
         ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
         ChatRoom room;
@@ -115,8 +130,7 @@ public class BuzzPlugin implements Plugin {
             room = chatContainer.getChatRoom(bareJID);
         } catch (ChatRoomNotFoundException e) {
             // Create the room if it does not exist.
-            room = SparkManager.getChatManager().createChatRoom(bareJID,
-                nickname, nickname);
+            room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
         }
 
         ChatFrame chatFrame = chatContainer.getChatFrame();
@@ -128,7 +142,6 @@ public class BuzzPlugin implements Plugin {
             }
         }
 
-        // Insert offline message
         room.getTranscriptWindow().insertNotificationMessage(
             Res.getString("message.buzz.message", nickname),
             NOTIFICATION_COLOR);
