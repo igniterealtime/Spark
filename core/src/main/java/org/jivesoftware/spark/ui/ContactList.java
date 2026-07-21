@@ -16,7 +16,6 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.MainWindow;
-import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -71,9 +70,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -96,7 +92,9 @@ public class ContactList extends JPanel implements
 
     private ContactItem activeItem;
     private ContactGroup activeGroup;
-    private ContactGroup unfiledGroup;
+    private final ContactGroup unfiledGroup;
+    private final ContactGroup offlineGroup;
+    private List<String> sharedGroups = new ArrayList<>();
 
     // Create Menus
     private final JMenuItem addContactMenu;
@@ -105,20 +103,15 @@ public class ContactList extends JPanel implements
     private final JMenuItem chatMenu;
     private final JMenuItem renameMenu;
 
-    private final ContactGroup offlineGroup;
     private final JCheckBoxMenuItem showHideMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineUsersMenu = new JCheckBoxMenuItem();
-
-    private List<String> sharedGroups = new ArrayList<>();
 
     private final CopyOnWriteArrayList<ContextMenuListener> contextListeners = new CopyOnWriteArrayList<>();
 
     private final CopyOnWriteArrayList<FileDropListener> dndListeners = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<ContactListListener> contactListListeners = new CopyOnWriteArrayList<>();
-    private final Properties props;
-    private final File propertiesFile;
-
+    private final ContactListGroupsState groupsState = new ContactListGroupsState();
     private final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
     private ContactItem contactItem;
 
@@ -174,15 +167,6 @@ public class ContactList extends JPanel implements
         workspace.getCardPanel().add(RETRY_PANEL, _reconnectPanel);
 
         add(contactListScrollPane, BorderLayout.CENTER);
-        // Load Properties file
-        props = new Properties();
-        // Save to a properties file.
-        propertiesFile = new File(Spark.getSparkUserHome(), "/groups.properties");
-        try {
-            props.load(new FileInputStream(propertiesFile));
-        } catch (IOException e) {
-            // File does not exist.
-        }
         // Add ActionListener(s) to menus
         addPseudoContactGroup(unfiledGroup);
         addPseudoContactGroup(offlineGroup);
@@ -851,12 +835,7 @@ public class ContactList extends JPanel implements
         }
         group.addContactGroupListener(this);
         fireContactGroupAdded(group);
-        // Check state
-        String prop = props.getProperty(group.getGroupName());
-        if (prop != null) {
-            boolean isCollapsed = Boolean.parseBoolean(prop);
-            group.setCollapsed(isCollapsed);
-        }
+        group.setCollapsed(groupsState.isGroupCollapsed(group));
     }
 
     /**
@@ -902,9 +881,8 @@ public class ContactList extends JPanel implements
             newContactGroup.addContactGroupListener(this);
             fireContactGroupAdded(newContactGroup);
             // Check state
-            String prop = props.getProperty(newContactGroup.getGroupName());
-            if (prop != null) {
-                boolean isCollapsed = Boolean.parseBoolean(prop);
+            boolean isCollapsed = groupsState.isGroupCollapsed(newContactGroup);
+            if (isCollapsed) {
                 newContactGroup.setCollapsed(isCollapsed);
             }
             groupAdded = true;
@@ -1957,21 +1935,10 @@ public class ContactList extends JPanel implements
     }
 
     public void saveState() {
-        if (props == null) {
-            return;
-        }
-        // save collapsed groups
-        props.clear();
         for (ContactGroup contactGroup : getContactGroups()) {
-            if (contactGroup.isCollapsed()) {
-                props.put(contactGroup.getGroupName(), "true");
-            }
+            groupsState.setGroupCollapsed(contactGroup, contactGroup.isCollapsed());
         }
-        try {
-            props.store(new FileOutputStream(propertiesFile), null);
-        } catch (IOException e) {
-            Log.error("Unable to save group properties.", e);
-        }
+        groupsState.saveState();
     }
 
     @Override
