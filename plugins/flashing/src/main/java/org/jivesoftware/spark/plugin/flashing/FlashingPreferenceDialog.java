@@ -29,15 +29,13 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 public class FlashingPreferenceDialog extends JPanel {
-	private final JCheckBox flashingEnabled;
-	private final JComboBox<String> flashingType;
-	
-	public FlashingPreferenceDialog() {
-		JPanel flashingPanel = new JPanel();
-		flashingEnabled = new JCheckBox();
-		flashingType = new JComboBox<>();
-		JLabel lTyps = new JLabel();
-		flashingPanel.setLayout(new GridBagLayout());
+	private final JCheckBox flashingEnabled = new JCheckBox();
+	private final JComboBox<String> flashingType = new JComboBox<>();
+    private final JPanel flashingPanel = new JPanel();
+    private final JLabel lTyps = new JLabel();
+
+    public FlashingPreferenceDialog() {
+        flashingPanel.setLayout(new GridBagLayout());
 		
 		flashingEnabled.addActionListener( e -> updateUI(flashingEnabled.isSelected()) );
 		
