@@ -8,5 +8,4 @@
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
     <class>org.jivesoftware.spark.plugin.otr.OTRPlugin</class>
-    <os>Windows,Linux,Mac</os>
 </plugin>

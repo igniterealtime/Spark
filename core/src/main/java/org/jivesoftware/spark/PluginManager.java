@@ -65,6 +65,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.sparkimpl.plugin.InternalPlugins.getInternalPlugins;
 
@@ -143,10 +144,11 @@ public class PluginManager implements MainWindowListener
     }
 
     /**
-     * Deletes Plugins in pathToSearch that have a different md5-hash than its correspondant in install\spark\plugins\
+     * Deletes Plugins in pathToSearch that have a different md5-hash than its correspondent in install\spark\plugins\
      */
     private void deleteOldPlugins( File pathToSearch )
     {
+        Log.debug("Deleting old plugins in " + pathToSearch.getAbsolutePath());
         File installPath = Spark.getPluginDirectory();
         File[] files = installPath.listFiles();
         List<File> installerFiles = files == null ? List.of() : Arrays.asList(files);
@@ -176,7 +178,7 @@ public class PluginManager implements MainWindowListener
                         final String newFile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
                         if ( !oldFile.equals( newFile ) )
                         {
-                            Log.debug( "deleting: " + file.getAbsolutePath() + "," + jarFile.getAbsolutePath() );
+                            Log.warning( "deleting: " + file.getAbsolutePath() + "," + jarFile.getAbsolutePath() );
                             uninstall( file );
                             jarFile.delete();
                         }
@@ -195,6 +197,7 @@ public class PluginManager implements MainWindowListener
      */
     private void deletePluginIfNotExistInInstallFolder(File pathToSearch)
     {
+        Log.warning("Deleting plugins in " + pathToSearch.getAbsolutePath() + " which doesn't exist in " + PLUGINS_DIRECTORY.getAbsolutePath());
         final File[] files = PLUGINS_DIRECTORY.listFiles();
         Set<String> installerFiles;
         if ( files == null )
@@ -492,6 +495,7 @@ public class PluginManager implements MainWindowListener
 
     private void updateClasspath()
     {
+        Log.debug("updating classpath: " + PLUGINS_DIRECTORY);
         try
         {
             classLoader = new PluginClassLoader( getParentClassLoader(), PLUGINS_DIRECTORY );
@@ -506,6 +510,7 @@ public class PluginManager implements MainWindowListener
 
     private void loadPluginResources( String resourceName, ResourceType type )
     {
+        Log.debug("Loading plugin resources from " + resourceName);
         try
         {
             PropertyResourceBundle prbPlugin = (PropertyResourceBundle) ResourceBundle.getBundle( resourceName, Locale.getDefault(), classLoader );
@@ -839,6 +844,7 @@ public class PluginManager implements MainWindowListener
      */
     private void unzipPlugin( File file, File dir )
     {
+        Log.warning("Unzipping plugin from " + file.getAbsolutePath() + " to " + dir.getAbsolutePath());
         try
         {
             ZipFile zipFile = new JarFile( file );
@@ -899,6 +905,7 @@ public class PluginManager implements MainWindowListener
 
     private void uninstall( File pluginDir )
     {
+        Log.warning("Uninstalling plugin: " + pluginDir);
         try
         {
             Files.walkFileTree( pluginDir.toPath(), new SimpleFileVisitor<Path>()
@@ -931,6 +938,7 @@ public class PluginManager implements MainWindowListener
      */
     public void removePublicPlugin( PublicPlugin plugin )
     {
+        Log.warning("Remove plugin: " + plugin.getName());
         for ( PublicPlugin publicPlugin : getPublicPlugins() )
         {
             if ( plugin.getName().equals( publicPlugin.getName() ) )
@@ -974,14 +982,17 @@ public class PluginManager implements MainWindowListener
             if ( osElement != null )
             {
                 String operatingSystem = osElement.getText();
+                // If no OS specified, then assume all of them are supported
+                if (isBlank(operatingSystem)) {
+                    return true;
+                }
                 final String currentOS = JiveInfo.getOS().toLowerCase();
                 // Iterate through comma-delimited string
                 StringTokenizer tkn = new StringTokenizer( operatingSystem, "," );
                 while ( tkn.hasMoreTokens() )
                 {
                     String os = tkn.nextToken().toLowerCase();
-                    if ( currentOS.contains( os ) || currentOS.equalsIgnoreCase( os ) )
-                    {
+                    if (currentOS.contains(os)) {
                         return true;
                     }
                 }
