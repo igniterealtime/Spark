@@ -19,8 +19,9 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
 public class FlashingPlugin implements Plugin {
-	
-	@Override
+    private FlashingHandler nativeHandler;
+
+    @Override
 	public boolean canShutDown() {
 		return true;
 	}
@@ -29,11 +30,14 @@ public class FlashingPlugin implements Plugin {
 	public void initialize() {
 		FlashingPreference preference = new FlashingPreference();
 		SparkManager.getPreferenceManager().addPreference(preference);
-		SparkManager.getNativeManager().addNativeHandler(new FlashingHandler());
+        nativeHandler = new FlashingHandler();
+        SparkManager.getNativeManager().addNativeHandler(nativeHandler);
 	}
 
 	@Override
 	public void shutdown() {
+        SparkManager.getNativeManager().removeNativeHandler(nativeHandler);
+        nativeHandler = null;
 	}
 
 	@Override

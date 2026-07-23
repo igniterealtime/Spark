@@ -27,7 +27,7 @@ public class FlashingResources {
     private static ClassLoader cl = FlashingResources.class.getClassLoader();
     static final ImageIcon LIGHTING_BOLT_IMAGE = getImageIcon("lightning.png");
 
-    public static String getString(String propertyName) {
+    static String getString(String propertyName) {
         try {
             return prb.getString(propertyName);
         } catch (Exception e) {
@@ -36,7 +36,7 @@ public class FlashingResources {
         }
     }
 
-    static ImageIcon getImageIcon(String icon) {
+    private static ImageIcon getImageIcon(String icon) {
         return new ImageIcon(cl.getResource(icon));
     }
 }

@@ -21,11 +21,7 @@ import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 
 public class FlashingHandler implements NativeHandler {
-	private final FlashWindow flasher;
-
-	public FlashingHandler() {
-		flasher = new FlashWindow();
-	}
+	private final FlashWindow flasher = new FlashWindow();
 
 	@Override
 	public void flashWindow(Window window) {

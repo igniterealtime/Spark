@@ -51,7 +51,6 @@ public class FlashingPreferenceDialog extends JPanel {
 		
 		flashingPanel.setBorder(BorderFactory.createTitledBorder(FlashingResources.getString("title.flashing")));
 		
-		// Setup MNEMORICS
 		ResourceUtils.resButton(flashingEnabled, FlashingResources.getString("flashing.enable"));
 		ResourceUtils.resLabel(lTyps, flashingType, FlashingResources.getString("flashing.type"));
 		
@@ -73,25 +72,27 @@ public class FlashingPreferenceDialog extends JPanel {
     }
     
     public void setFlashingType(String type) {
-    	if (FlashingPreferences.TYPE_CONTINUOUS.equals(type)) {
-    		flashingType.setSelectedIndex(0);
-    	}
-    	else if (FlashingPreferences.TYPE_TEMPORARY.equals(type)) {
-    		flashingType.setSelectedIndex(1);
-    	}
-    	else {
-    		flashingType.setSelectedIndex(0);
-    	}
+        switch (type) {
+            case FlashingPreferences.TYPE_CONTINUOUS:
+                flashingType.setSelectedIndex(0);
+                break;
+            case FlashingPreferences.TYPE_TEMPORARY:
+                flashingType.setSelectedIndex(1);
+                break;
+            default:
+                flashingType.setSelectedIndex(0);
+                break;
+        }
     }
     
     public String getFlashingType() {
-    	if (flashingType.getSelectedIndex() == 0) {
-    		return FlashingPreferences.TYPE_CONTINUOUS;
-    	}
-    	else if (flashingType.getSelectedIndex() == 1) {
-    		return FlashingPreferences.TYPE_TEMPORARY;
-    	}
-    	
-    	return "continuous";
+        switch (flashingType.getSelectedIndex()) {
+            case 0:
+                return FlashingPreferences.TYPE_CONTINUOUS;
+            case 1:
+                return FlashingPreferences.TYPE_TEMPORARY;
+            default:
+                return FlashingPreferences.TYPE_CONTINUOUS;
+        }
     }
 }

@@ -34,20 +34,17 @@ public class FlashingPreferences {
 
 	public FlashingPreferences() {
 		this.props = new Properties();
-
 		try {
 			props.load(new FileInputStream(getConfigFile()));
 		} catch (IOException e) {
 			// Can't load ConfigFile
 		}
-
 	}
 
 	public File getConfigFile() {
-		if (configFile == null)
-			configFile = new File(Spark.getSparkUserHome(),
-					"flashing.properties");
-
+		if (configFile == null) {
+            configFile = new File(Spark.getSparkUserHome(), "flashing.properties");
+        }
 		return configFile;
 	}
 
@@ -76,11 +73,11 @@ public class FlashingPreferences {
 	}
 
 	private boolean getBoolean(String property, boolean defaultValue) {
-		return Boolean.parseBoolean(props.getProperty(property, Boolean
-				.toString(defaultValue)));
+        String propertyVal = props.getProperty(property);
+        return propertyVal != null ? Boolean.parseBoolean(propertyVal) : defaultValue;
 	}
 
 	private void setBoolean(String property, boolean value) {
-		props.setProperty(property, Boolean.toString(value));
+		props.setProperty(property, String.valueOf(value));
 	}
 }

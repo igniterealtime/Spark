@@ -15,113 +15,88 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
-import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.util.log.Log;
 
 public class FlashWindow {
-	private final HashMap<Window, Thread> flashings = new HashMap<>();
+    private final HashMap<Window, Thread> flashings = new HashMap<>();
 
-	static {
-	    
-	boolean is64bit = System.getProperty("sun.arch.data.model").equals("64");
-	String arch = "";
-	if (is64bit) {
-	    arch = "64";
-	}
+    static {
+        boolean is64bit = System.getProperty("sun.arch.data.model").equals("64");
+        String arch = "";
+        if (is64bit) {
+            arch = "64";
+        }
         try {
             System.load(PluginManager.PLUGINS_DIRECTORY.getCanonicalPath() +
                 File.separator + "flashing" + File.separator + "native" + File.separator + "FlashWindow" + arch + ".dll");
         } catch (UnsatisfiedLinkError | IOException e) {
             Log.error(e);
         }
-	}
-
-	public native void flash(String name, boolean bool);
-
-	/*
-	 * @param frame The JFrame to be flashed
-	 * @param intratime The amount of time between the on and off states of a
-	 * single flash
-	 * @param intertime The amount of time between different flashes
-	 * @param count The number of times to flash the window
-	 */
-	public void flash(final Window window, final int intratime,
-			final int count) {
-		new Thread( () -> {
-            try {
-                if (window instanceof JFrame)
-                {
-                    // flash on and off each time
-                    for (int i = 0; i < count; i++) {
-                        flash(((JFrame) window).getTitle(), true);
-                        Thread.sleep(intratime);
-                    }
-                    // turn the flash off
-                    flash(((JFrame) window).getTitle(), false);
-                }
-            } catch (Exception ex) {
-                // System.out.println(ex.getMessage());
-            }
-        } ).start();
-	}
-
-    public void startFlashing(final Window window) {
-        if (flashings.get(window) == null) {
-            Thread t = new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(1500);
-                        if (window instanceof JFrame)
-                            flash(((JFrame) window).getTitle(), true);
-                    } catch (Exception ex) {
-                        flash(((JFrame) window).getTitle(), false);
-                        break;
-                    }
-                }
-            });
-            t.start();
-            flashings.put(window, t);
-        }
     }
 
-	public void stopFlashing(final Window window) {
-		if (flashings.get(window) != null) {
-			flashings.get(window).interrupt();
-			flashings.remove(window);
-		}
-	}
+    public native void flash(String name, boolean bool);
 
-	public static void main(String[] args) {
-		final JFrame frame = new JFrame();
-		frame.setTitle("Test");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FlowLayout());
-		JButton button = new JButton("Temp Flashing");
-		frame.getContentPane().add(button);
-		final FlashWindow winutil = new FlashWindow();
-		button.addActionListener( evt -> winutil.flash(frame, 750, 5) );
+    /*
+     * @param frame The JFrame to be flashed
+     * @param intratime The amount of time between the on and off states of a
+     * single flash
+     * @param intertime The amount of time between different flashes
+     * @param count The number of times to flash the window
+     */
+    public void flash(Window window, int intratime, int count) {
+        if (!(window instanceof JFrame)) {
+            return;
+        }
+        JFrame jFrame = (JFrame) window;
+        new Thread(() -> {
+            try {
+                // flash on and off each time
+                for (int i = 0; i < count; i++) {
+                    flash(jFrame.getTitle(), true);
+                    Thread.sleep(intratime);
+                }
+                // turn the flash off
+                flash(jFrame.getTitle(), false);
+            } catch (Exception ignored) {
+            }
+        }).start();
+    }
 
-		JButton startButton = new JButton("Start Flashing");
-		frame.getContentPane().add(startButton);
-		startButton.addActionListener( evt -> winutil.startFlashing(frame) );
+    public void startFlashing(final Window window) {
+        if (flashings.get(window) != null) {
+            return;
+        }
+        if (!(window instanceof JFrame)) {
+            return;
+        }
+        JFrame jFrame = (JFrame) window;
+        Thread t = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1500);
+                    flash(jFrame.getTitle(), true);
+                } catch (Exception ex) {
+                    flash(jFrame.getTitle(), false);
+                    break;
+                }
+            }
+        });
+        t.start();
+        flashings.put(window, t);
+    }
 
-		JButton stopButton = new JButton("Stop Flashing");
-		frame.getContentPane().add(stopButton);
-		stopButton.addActionListener( evt -> {
-            // winutil.flash(frame,750,1500,5);
-            winutil.stopFlashing(frame);
-        } );
-		frame.pack();
-		frame.setVisible(true);
-	}
-
+    public void stopFlashing(final Window window) {
+        Thread windowFlashingThread = flashings.remove(window);
+        if (windowFlashingThread != null) {
+            windowFlashingThread.interrupt();
+        }
+    }
 }
