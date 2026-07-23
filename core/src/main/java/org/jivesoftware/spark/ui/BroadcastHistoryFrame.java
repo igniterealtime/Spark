@@ -29,49 +29,46 @@ import static javax.swing.LayoutStyle.ComponentPlacement;
  * @author ps
  */
 public class BroadcastHistoryFrame extends JFrame {
-    private JFormattedTextField dateField;
-    private JTextArea broadcastHistoryArea;
-    private JLabel searchDate;
-    private JToggleButton searchButton;
+    private JFormattedTextField dateField = new JFormattedTextField();
+    private JTextArea broadcastHistoryArea = new JTextArea();
 
+    private JLabel searchDate = new JLabel();
+    private JToggleButton searchButton = new JToggleButton();
 
     public BroadcastHistoryFrame() {
         initComponents();
     }
 
-    public void readFromFile(String date) throws IOException {
+    public void readFromFile(String date) {
         File transcriptsFolder = SparkManager.getTranscriptDir();
         File myfile = new File(transcriptsFolder, "broadcast_history." + date + ".txt");
         if (!myfile.exists()) {
             return;
         }
-        String content = Files.readString(myfile.toPath());
-        broadcastHistoryArea.setText(content);
+        try {
+            String content = Files.readString(myfile.toPath());
+            broadcastHistoryArea.setText(content);
+        } catch (IOException ex) {
+            Log.error("Couldn't read from file", ex);
+        }
     }
 
     private void initComponents() {
-        broadcastHistoryArea = new JTextArea();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         broadcastHistoryArea.setEditable(false);
         broadcastHistoryArea.setLineWrap(true);
         broadcastHistoryArea.setWrapStyleWord(true);
 
-        searchButton = new JToggleButton();
-        dateField = new JFormattedTextField();
-        searchDate = new JLabel();
         Date date = new Date();
         Format formatter = new SimpleDateFormat("yyy-MM");
         String myDate = formatter.format(date);
         dateField.setValue(myDate);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         JScrollPane panelPane = new JScrollPane(broadcastHistoryArea);
         searchDate.setText(Res.getString("label.broadcast.history.search.date"));
         setTitle(Res.getString("title.broadcast.history"));
 
-        try {
-            readFromFile(myDate);
-        } catch (IOException ex) {
-            Log.error("Couldn't read from file", ex);
-        }
+        readFromFile(myDate);
 
         searchButton.setText((Res.getString("button.search")));
         searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -139,18 +136,13 @@ public class BroadcastHistoryFrame extends JFrame {
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {
         broadcastHistoryArea.setText("");
-        try {
-            readFromFile(dateField.getText());
-        } catch (IOException ex) {
-            Log.error("Couldn't read from file", ex);
-        }
+        readFromFile(dateField.getText());
     }
 
-    public void run() {
+    public static void invokeDialog() {
         invokeLater(() -> {
             BroadcastHistoryFrame frame = new BroadcastHistoryFrame();
             frame.setVisible(true);
-            frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         });
     }
 

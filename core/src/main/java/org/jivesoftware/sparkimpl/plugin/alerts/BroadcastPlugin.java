@@ -102,7 +102,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         actionsMenu.add(broadcastMenu);
 
         broadcastMenu.addActionListener(e -> broadcastToRoster());
-        broadcastHistoryMenu.addActionListener(e -> new BroadcastHistoryFrame().run());
+        broadcastHistoryMenu.addActionListener(e -> BroadcastHistoryFrame.invokeDialog());
         // Register with action menu
         JMenuItem startConversationMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationMenu, Res.getString("menuitem.start.a.chat"));
@@ -121,7 +121,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
             String jid = (String) JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
             if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(XmppStringUtils.parseDomain(jid))) {
-                if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
+                if (!isBlank(jid) && !jid.contains("@")) {
                     // Append server address
                     jid = jid + "@" + SparkManager.getConnection().getXMPPServiceDomain();
                 }
