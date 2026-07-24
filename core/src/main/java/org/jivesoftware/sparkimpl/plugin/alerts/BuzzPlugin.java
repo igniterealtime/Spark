@@ -100,7 +100,7 @@ public class BuzzPlugin implements Plugin {
      */
     private static boolean clientOfContactSupportsAttentions(ChatRoom room) {
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        List<Presence> allPresences = SparkManager.getRoster().getAllPresences(room.getBareJid());
+        List<Presence> allPresences = SparkManager.getRoster().getAvailablePresences(room.getBareJid());
         for (Presence presence : allPresences) {
             EntityFullJid fullJID = presence.getFrom().asEntityFullJidIfPossible();
             if (fullJID == null) {
