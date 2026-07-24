@@ -51,20 +51,22 @@ public abstract class SparkTabHandler {
         }
         else {
             Presence.Mode mode = presence.getMode();
-            if (mode == Presence.Mode.available || mode == null) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_AVAILABLE_STALE_IMAGE));
-            }
-            else if (mode == Presence.Mode.away) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY_STALE_IMAGE));
-            }
-            else if (mode == Presence.Mode.chat) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_FREE_CHAT_STALE_IMAGE));
-            }
-            else if (mode == Presence.Mode.dnd) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_DND_STALE_IMAGE));
-            }
-            else if (mode == Presence.Mode.xa) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_XA_STALE_IMAGE));
+            switch (mode) {
+                case available:
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_AVAILABLE_STALE_IMAGE));
+                    break;
+                case away:
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY_STALE_IMAGE));
+                    break;
+                case chat:
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_FREE_CHAT_STALE_IMAGE));
+                    break;
+                case dnd:
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_DND_STALE_IMAGE));
+                    break;
+                case xa:
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.IM_XA_STALE_IMAGE));
+                    break;
             }
         }
 

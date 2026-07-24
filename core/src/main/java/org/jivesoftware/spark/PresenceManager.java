@@ -192,54 +192,40 @@ public class PresenceManager {
 
     /**
      * Returns the icon associated with a users presence.
-     *
-     * @param presence the users presence.
-     * @return the icon associated with it.
      */
     public static Icon getIconFromPresence(Presence presence) {
-	if (isInvisible(presence)) {
+        if (isInvisible(presence)) {
             return SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
         }
-
         // Handle offline presence
         if (!presence.isAvailable()) {
             return SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
         }
-
-        Presence.Mode presenceMode = presence.getMode();
-        if (presenceMode == null) {
-            presenceMode = Presence.Mode.available;
-        }
-
-        Icon icon = null;
-
-        if (presenceMode.equals(Presence.Mode.available)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
-        }
-        else if (presenceMode.equals(Presence.Mode.chat)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.FREE_TO_CHAT_IMAGE);
-        }
-        else if (isOnPhone(presence)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE);
-        }
-        else if (presenceMode.equals(Presence.Mode.away)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
-        }
-        else if (presenceMode.equals(Presence.Mode.dnd)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_DND);
-        }
-        else if (presenceMode.equals(Presence.Mode.xa)) {
-            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_XA);
-        }
-
         // Check For ContactItem handlers
         Icon handlerIcon = SparkManager.getChatManager().getTabIconForContactHandler(presence);
         if (handlerIcon != null) {
-            icon = handlerIcon;
+            return handlerIcon;
+        }
+        if (isOnPhone(presence)) {
+            return SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE);
         }
 
-
-        return icon;
+        Presence.Mode presenceMode = presence.getMode();
+        switch (presenceMode) {
+            case available:
+                return SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
+            case chat:
+                return SparkRes.getImageIcon(SparkRes.Icon.FREE_TO_CHAT_IMAGE);
+            case away:
+                return SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
+            case dnd:
+                return SparkRes.getImageIcon(SparkRes.Icon.IM_DND);
+            case xa:
+                return SparkRes.getImageIcon(SparkRes.Icon.IM_XA);
+            default:
+                // never happens
+                throw new IllegalStateException("Unexpected value: " + presenceMode);
+        }
     }
 
     /**
@@ -258,7 +244,7 @@ public class PresenceManager {
         }
         return presence.getStatus() != null &&
             presence.getStatus().contains(Res.getString("status.on.phone")) &&
-            presenceMode.equals(Presence.Mode.away);
+            presenceMode == Presence.Mode.away;
     }
 
     public static boolean isInvisible(Presence presence) {

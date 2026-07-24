@@ -53,6 +53,8 @@ import org.jxmpp.jid.BareJid;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.from;
+import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.none;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
@@ -314,34 +316,30 @@ public class ContactItem extends JPanel {
         }
 
         String status = presence.getStatus();
-        Icon statusIcon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
         boolean isAvailable = false;
         if (status == null && presence.isAvailable()) {
-            Presence.Mode mode = presence.getMode();
-            if (mode == Presence.Mode.available) {
-                status = Res.getString("status.online");
-                isAvailable = true;
-            }
-            else if (mode == Presence.Mode.away) {
-                status = Res.getString("status.away");
-                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
-            }
-            else if (mode == Presence.Mode.chat) {
-                status = Res.getString("status.free.to.chat");
-            }
-            else if (mode == Presence.Mode.dnd) {
-                status = Res.getString("status.do.not.disturb");
-                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
-            }
-            else if (mode == Presence.Mode.xa) {
-                status = Res.getString("status.extended.away");
-                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_XA);
+            switch (presence.getMode()) {
+                case available:
+                    status = Res.getString("status.online");
+                    isAvailable = true;
+                    break;
+                case away:
+                    status = Res.getString("status.away");
+                    break;
+                case chat:
+                    status = Res.getString("status.free.to.chat");
+                    break;
+                case dnd:
+                    status = Res.getString("status.do.not.disturb");
+                    break;
+                case xa:
+                    status = Res.getString("status.extended.away");
+                    break;
             }
         }
 
         // Sets status icon and text based on presence
         if (presence.isAway()) {
-            statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
         }
         else if (presence.isAvailable()) {
             isAvailable = true;
@@ -352,7 +350,7 @@ public class ContactItem extends JPanel {
 
             Roster roster = SparkManager.getRoster();
             RosterEntry entry = roster.getEntry(getJid());
-            if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
+            if (entry != null && (entry.getType() == none || entry.getType() == from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_QUESTION));
@@ -374,14 +372,9 @@ public class ContactItem extends JPanel {
         }
 
         Icon sIcon = PresenceManager.getIconFromPresence(presence);
-        setIcon(sIcon != null ? sIcon : statusIcon);
+        setIcon(sIcon);
         if (status != null) {
             setStatus(status);
-        }
-
-        if (PresenceManager.isOnPhone(presence)) {
-            statusIcon = SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE);
-            setIcon(statusIcon);
         }
 
         // Always change nickname label to black.

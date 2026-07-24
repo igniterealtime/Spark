@@ -180,9 +180,7 @@ public class StatusBar extends JPanel implements VCardListener {
     protected void updatePresence() {
         setStatus(currentPresence.getStatus());
         final Icon icon = PresenceManager.getIconFromPresence(currentPresence);
-        if (icon != null) {
-            statusPanel.setIcon(icon);
-        }
+        statusPanel.setIcon(icon);
     }
 
     public void showPopup(MouseEvent e, JLabel lblStatus) {

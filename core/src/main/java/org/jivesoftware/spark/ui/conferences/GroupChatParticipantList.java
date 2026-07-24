@@ -261,9 +261,6 @@ public class GroupChatParticipantList extends JPanel {
             icon = getIconForRole(role, affiliation);
         } else {
             icon = PresenceManager.getIconFromPresence(presence);
-            if (icon == null) {
-                icon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
-            }
         }
 
         if (!exists(nickname)) {

@@ -315,9 +315,6 @@ public final class OnlineAgents extends JPanel {
                 }
                 else if (presence.getType() == Presence.Type.available) {
                     Icon icon = PresenceManager.getIconFromPresence(presence);
-                    if (icon == null) {
-                        icon = FastpathRes.getImageIcon(FastpathRes.GREEN_BALL);
-                    }
                     item.setIcon(icon);
                 }
             }
