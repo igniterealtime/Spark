@@ -41,9 +41,7 @@ import static org.jivesoftware.smack.util.StringUtils.isNullOrEmpty;
  * @author Derek DeMoro
  */
 public class PresenceManager {
-
     private static final List<Presence> PRESENCES = new ArrayList<>();
-
 
     static {
         // Add Available Presence
@@ -106,11 +104,7 @@ public class PresenceManager {
         if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE)) PRESENCES.add(invisible);
     }
 
-    /**
-     * Building Presence related data.
-     */
     private PresenceManager() {
-
     }
 
     /**
@@ -149,9 +143,7 @@ public class PresenceManager {
 
     /**
      * Returns the presence of a user.
-     *
-     * @param jid the users JID.
-     * @return the users presence.
+
      */
     public static Presence getPresence(BareJid jid) {
         if (jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
@@ -230,8 +222,6 @@ public class PresenceManager {
 
     /**
      * Returns the Presence Map.
-     *
-     * @return the Presence Map.
      */
     public static List<Presence> getPresences() {
         return PRESENCES;
@@ -239,9 +229,6 @@ public class PresenceManager {
     
     public static boolean isOnPhone(Presence presence) {
     	Presence.Mode presenceMode = presence.getMode();
-    	 if (presenceMode == null) {
-        	 presenceMode = Presence.Mode.available;
-        }
         return presence.getStatus() != null &&
             presence.getStatus().contains(Res.getString("status.on.phone")) &&
             presenceMode == Presence.Mode.away;

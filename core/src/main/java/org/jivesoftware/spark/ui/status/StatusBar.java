@@ -341,11 +341,6 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public void changeAvailability(final Presence presence) {
-        // SPARK-1524: if we were reconnected because of the error
-        // then we get presence with the mode == null. 
-        if (presence.getMode() == null) {
-            return;
-        }
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
             if (presence.hasExtension(VCardUpdateExtension.class)) {
                 // Update VCard
