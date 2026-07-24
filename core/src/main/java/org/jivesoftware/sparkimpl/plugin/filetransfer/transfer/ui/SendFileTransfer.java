@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,7 +24,6 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.*;
@@ -46,11 +44,11 @@ import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -248,7 +246,7 @@ public class SendFileTransfer extends JPanel {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                openFile(fileToSend);
+                BrowserLauncher.openInFileManager(fileToSend);
             }
 
             @Override
@@ -261,14 +259,6 @@ public class SendFileTransfer extends JPanel {
                 label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
-    }
-
-    private void openFile(File downloadedFile) {
-        try {
-            Desktop.getDesktop().open(downloadedFile);
-        } catch (IOException e) {
-            Log.error("An error occurred while trying to open downloaded file: " + downloadedFile, e);
-        }
     }
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname, String kBperSecond) {

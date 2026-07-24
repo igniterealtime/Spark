@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,6 +56,7 @@ import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -442,7 +442,7 @@ public class ReceiveFileTransfer extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        launchFile(downloadedFile);
+                        BrowserLauncher.openInFileManager(downloadedFile);
                     }
                 }
             });
@@ -463,7 +463,7 @@ public class ReceiveFileTransfer extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        launchFile(downloadedFile);
+                        BrowserLauncher.openInFileManager(downloadedFile);
                     }
                 }
             });
@@ -554,7 +554,7 @@ public class ReceiveFileTransfer extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                launchFile(downloadedFile);
+                BrowserLauncher.openInFileManager(downloadedFile);
             }
         });
 
@@ -784,41 +784,4 @@ public class ReceiveFileTransfer extends JPanel {
         return uri;
     }
 
-    /**
-     * Attempts to open the file. If no associated application can be found, or if that application fails to launch, or
-     * if the provided file is a directory, a file browser that shows the content of the folder in which the file
-     * resides is shown.
-     *
-     * @param file the file to be shown.
-     */
-    private void launchFile(File file) {
-        if (!Desktop.isDesktopSupported()) {
-            Log.warning("Cannot launch file (not supported in this environment).");
-            return;
-        }
-
-        final Desktop desktop = Desktop.getDesktop();
-        try {
-            desktop.open(file);
-        } catch (IOException ex) {
-            try {
-                // Potentially trying to open on a network path that has spaces (SPARK-1350). Try again, using a URI.
-                desktop.browse(getFileURI(file));
-                return;
-            } catch (Exception ex1) {
-                // The specified file has no associated application or the associated application fails to be launched.
-                // Show the folder containing the file as a last-ditch effort (SPARK-2199).
-                if (file.isFile() && file.getParentFile() != null) {
-                    try {
-                        desktop.open(file.getParentFile());
-                        return;
-                    } catch (IOException ex2) {
-                        // Log the original exception (see below)
-                    }
-                }
-            }
-            // In case of failure, log the original exception, which is likely to be most relevant.
-            Log.warning("Unable to open file: " + file.getName(), ex);
-        }
-    }
 }
