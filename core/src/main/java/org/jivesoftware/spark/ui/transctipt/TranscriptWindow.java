@@ -77,6 +77,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * This cache is used to recompose the UI when needed (which typically occurs when entries are added out-of-order).
      */
     private final LinkedList<TranscriptWindowEntry> entries = new LinkedList<>();
+    private final Color messageColor = (Color) UIManager.get("Message.foreground");
+    private final Color historyColor = (Color) UIManager.get("History.foreground");
 
     public TranscriptWindow()
     {
@@ -108,7 +110,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         // Clear and refill the UI component.
         try
         {
-            entries.sort( Comparator.comparing(TranscriptWindowEntry::isDelayed).thenComparing( TranscriptWindowEntry::getTimestamp ) );
+            entries.sort(Comparator.comparing(TranscriptWindowEntry::getTimestamp));
             clear();
             for ( TranscriptWindowEntry e : entries )
             {
@@ -247,7 +249,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 return;
             }
         }
-        add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
+        add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, messageColor, background ) );
     }
 
     private static String getMessageBodyByLang(Message message) {
@@ -361,7 +363,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     public void insertHistoryMessage( String userid, String message, Date date )
     {
         final ZonedDateTime sentDate = date.toInstant().atZone(ZoneId.systemDefault());
-        final Color historyColor = (Color) UIManager.get( "History.foreground" );
         add(new MessageEntry(sentDate, true, userid, historyColor, message, historyColor, null));
     }
 
