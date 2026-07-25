@@ -18,7 +18,6 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,6 +53,7 @@ import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -440,9 +440,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 try {
                     Log.warning("Open the URL in default browser" + e.getURL());
-                    Desktop.getDesktop().browse(e.getURL().toURI());
-                } catch (IOException | URISyntaxException ex) {
-                    Log.error(ex.getCause());
+                    BrowserLauncher.openURL(e.getURL().toURI().toString());
+                } catch (URISyntaxException ex) {
+                    Log.error(ex);
                 }
             }
         });

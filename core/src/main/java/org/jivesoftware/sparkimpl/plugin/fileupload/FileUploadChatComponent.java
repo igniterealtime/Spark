@@ -17,12 +17,12 @@ package org.jivesoftware.sparkimpl.plugin.fileupload;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -38,10 +38,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -49,7 +47,6 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -161,7 +158,7 @@ public class FileUploadChatComponent extends JPanel {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                openFile(fileToSend);
+                BrowserLauncher.openInFileManager(fileToSend);
             }
 
             @Override
@@ -174,14 +171,6 @@ public class FileUploadChatComponent extends JPanel {
                 label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
-    }
-
-    private void openFile(File downloadedFile) {
-        try {
-            Desktop.getDesktop().open(downloadedFile);
-        } catch (IOException e) {
-            Log.error("An error occurred while trying to open downloaded file: " + downloadedFile, e);
-        }
     }
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname, String kBperSecond) {

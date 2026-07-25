@@ -180,11 +180,7 @@ public class SparkTransferManager {
 //        commandPanel.add(viewDownloads);
 //        viewDownloads.addActionListener(new ActionListener() {
 //            public void actionPerformed(ActionEvent e) {              
-//                try {
-//					Desktop.getDesktop().browse(Downloads.getDownloadDirectory().toURI());
-//				} catch (IOException e1) {
-//					Log.error("Could not find file-browser");
-//				}
+//                BrowserLauncher.openFolder(Downloads.getDownloadDirectory());
 //            }
 //        });
     }
