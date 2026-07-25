@@ -78,7 +78,6 @@ public class BrowserLauncher {
             // Last resort: try as URL with https prefix
             openAsHttpsUrl(url);
         } catch (Exception e) {
-            e.printStackTrace();
             Log.error("Unable to open url: " + url, e);
         }
     }
@@ -192,21 +191,14 @@ public class BrowserLauncher {
     }
 
     public static void openFolder(File file) {
-        if (!Desktop.isDesktopSupported())
+        if (!Desktop.isDesktopSupported()) {
             return;
+        }
         Desktop dt = Desktop.getDesktop();
         try {
             dt.open(file);
         } catch (IOException ex) {
             Log.error("Unable to open folder: " + file, ex);
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-//        openURL("C:\\Users\\Admin\\Desktop\\avatar.jpg");
-//        openURL("C:\\Users\\Admin\\Desktop\\avatar.jpg");
-        openURL("D:\\work\\Spark\\core\\src\\main\\resources\\images\\alert.png");
-//        openURL("ftp://jkl.mn");
-//        openURL("ftp://jkl.mn");
     }
 }
