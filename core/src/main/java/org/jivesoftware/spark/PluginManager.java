@@ -148,7 +148,7 @@ public class PluginManager implements MainWindowListener
      */
     private void deleteOldPlugins( File pathToSearch )
     {
-        Log.debug("Deleting old plugins in " + pathToSearch.getAbsolutePath());
+        Log.warning("Deleting old plugins in " + pathToSearch.getAbsolutePath());
         File installPath = Spark.getPluginDirectory();
         File[] files = installPath.listFiles();
         List<File> installerFiles = files == null ? List.of() : Arrays.asList(files);
@@ -328,12 +328,12 @@ public class PluginManager implements MainWindowListener
             }
             // Don't load the plugin if it's on the Blacklist
             if (deactivatedPlugins.contains(publicPlugin.getName())) {
-                Log.debug("Not loading plugin " + publicPlugin.getName() + " as it is deactivated.");
+                Log.warning("Not loading plugin " + publicPlugin.getName() + " as it is deactivated.");
                 return null;
             }
             // Don't load the plugin if it's on the Blacklist
             if (blacklistPlugins.contains(lower) || blacklistPlugins.contains(publicPlugin.getPluginClass())) {
-                Log.debug("Not loading plugin " + publicPlugin.getName() + " as it is blacklisted.");
+                Log.warning("Not loading plugin " + publicPlugin.getName() + " as it is blacklisted.");
                 return null;
             }
         } catch (Exception e) {
