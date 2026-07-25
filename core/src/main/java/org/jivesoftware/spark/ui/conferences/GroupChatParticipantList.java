@@ -170,7 +170,7 @@ public class GroupChatParticipantList extends JPanel {
 
             Resourcepart displayName = userid.getResourcepart();
             userMap.put(displayName, userid);
-            if (p.getType() == Presence.Type.available) {
+            if (p.isAvailable()) {
                 addParticipant(userid, p);
                 agentInfoPanel.setVisible(true);
                 groupChatRoom.validate();

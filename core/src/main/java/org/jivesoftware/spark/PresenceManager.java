@@ -143,7 +143,6 @@ public class PresenceManager {
 
     /**
      * Returns the presence of a user.
-
      */
     public static Presence getPresence(BareJid jid) {
         if (jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {

@@ -179,10 +179,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             offlineItem.setPresence(offlinePresence);
             // set offline icon
             offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
-            // Set status if applicable.
-            if (ModelUtil.hasLength(status)) {
-                offlineItem.setStatusText(status);
-            }
+            offlineItem.setStatusText(status);
             // Add to offline contacts.
             offlineContacts.add(offlineItem);
 

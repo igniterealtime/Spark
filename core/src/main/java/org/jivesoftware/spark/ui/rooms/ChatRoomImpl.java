@@ -418,9 +418,7 @@ public class ChatRoomImpl extends ChatRoom {
                     if ( presence1.getType() == Presence.Type.unavailable && contactItem != null )
                     {
                         getTranscriptWindow().insertNotificationMessage( "*** " + Res.getString( "message.went.offline", participantNickname, time ), ChatManager.NOTIFICATION_COLOR );
-                    }
-                    else if ( oldType == Presence.Type.unavailable && presence1.getType() == Presence.Type.available )
-                    {
+                    } else if (oldType == Presence.Type.unavailable && presence1.isAvailable()) {
                         getTranscriptWindow().insertNotificationMessage( "*** " + Res.getString( "message.came.online", participantNickname, time ), ChatManager.NOTIFICATION_COLOR );
                     }
                 }

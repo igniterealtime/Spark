@@ -714,6 +714,11 @@ public class LocalPreferences {
         setBoolean("GrayingOut", enabled);
     }
 
+    /**
+     * SPARK-979 Some users complain about hardly readable nicknames of idle contacts.
+     * This option makes them look like all other contacts.
+     * Presence icon should be enough to distinguish idle users.
+     */
     public boolean isGrayingOutEnabled() {
         return getBoolean("GrayingOut", true);
     }

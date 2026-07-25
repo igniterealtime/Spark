@@ -25,6 +25,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -38,7 +39,6 @@ import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -61,6 +61,12 @@ import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.none;
  */
 public class ContactItem extends JPanel {
     public final static Comparator<ContactItem> CONTACT_ITEM_COMPARATOR = Comparator.comparing(ContactItem::getDisplayName, String.CASE_INSENSITIVE_ORDER);
+    private static final List<String> trivialStatusTexts = List.of(
+        "online",
+        "available",
+        Res.getString("status.online"),
+        Res.getString("available")
+    );
 
 	private final JLabel imageLabel = new JLabel();
     private final JLabel displayNameLabel = new JLabel();
@@ -80,10 +86,12 @@ public class ContactItem extends JPanel {
     private final int fontSize;
     private final int iconSize;
     private final boolean avatarsShowing;
+    private Color nicknameColor = (Color) UIManager.get("ContactItemNickname.foreground");
+    private final Color nicknameColorOffline = (Color) UIManager.get("ContactItemOffline.color");
 
     private static final Color COLOR_USER_ONLINE_NICKNAME = new Color(255, 128, 0);
 
-	public ContactItem(String alias, String nickname, BareJid jid) {
+    public ContactItem(String alias, String nickname, BareJid jid) {
         this.alias = trimToEmpty(alias);
         this.nickname = trimToEmpty(nickname);
         this.jid = requireNonNull(jid);
@@ -94,6 +102,7 @@ public class ContactItem extends JPanel {
         fontSize = pref.getContactListFontSize();
         iconSize = pref.getContactListIconSize();
         avatarsShowing = pref.areAvatarsVisible();
+        nicknameColor = pref.isGrayingOutEnabled() ? Color.gray : nicknameColor;
 
         // Set default presence
         presence = StanzaBuilder.buildPresence()
@@ -208,7 +217,7 @@ public class ContactItem extends JPanel {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = trimToEmpty(status);
     }
 
     /**
@@ -318,10 +327,10 @@ public class ContactItem extends JPanel {
         String status = presence.getStatus();
         boolean isAvailable = false;
         if (status == null && presence.isAvailable()) {
+            isAvailable = presence.getMode() == Presence.Mode.available;
             switch (presence.getMode()) {
                 case available:
-                    status = Res.getString("status.online");
-                    isAvailable = true;
+                    status = "";
                     break;
                 case away:
                     status = Res.getString("status.away");
@@ -345,25 +354,20 @@ public class ContactItem extends JPanel {
             isAvailable = true;
         }
         else {
-            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
-            getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
-
             Roster roster = SparkManager.getRoster();
             RosterEntry entry = roster.getEntry(getJid());
             if (entry != null && (entry.getType() == none || entry.getType() == from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_QUESTION));
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setStatusText(Res.getString("status.pending"));
             }
             else {
             	//We should keep the offline bullet (not available) instead of putting icon null.
             	setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
                 setFont(new Font("Dialog", Font.PLAIN, fontSize));
-                getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setAvailable(false);
-                setStatusText(!isBlank(status) ? status : "");
+                setStatusText(status);
             }
 
             sideIcon.setIcon(null);
@@ -373,39 +377,21 @@ public class ContactItem extends JPanel {
 
         Icon sIcon = PresenceManager.getIconFromPresence(presence);
         setIcon(sIcon);
-        if (status != null) {
-            setStatus(status);
-        }
 
         // Always change nickname label to black.
-        getNicknameLabel().setForeground((Color)UIManager.get("ContactItemNickname.foreground"));
-
+        getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
 
         if (isAvailable) {
-            getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
-            if (Res.getString("status.online").equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
-                setStatusText("");
-            }
-            else {
-                setStatusText(status);
-            }
+            getNicknameLabel().setForeground(nicknameColor);
+            // Remove obvious "Online" status text.
+            status = status == null || trivialStatusTexts.contains(status.toLowerCase()) ? "" : status;
         }
         else if (presence.isAvailable()) {
-       	  	LocalPreferences pref = SettingsManager.getLocalPreferences();
-       	  	if(pref.isGrayingOutEnabled())
-       	  	{
-       	  		getNicknameLabel().setFont(new Font("Dialog", Font.ITALIC, fontSize));
-                getNicknameLabel().setForeground(Color.gray);	
-       	  	}
-       	  	else
-       	  	{
-       	  		getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
-                getNicknameLabel().setForeground(Color.black);
-       	  	}
-            if (status != null) {
-                setStatusText(status);
-            }
+            getNicknameLabel().setForeground(nicknameColor);
+        } else {
+            getNicknameLabel().setForeground(nicknameColorOffline);
         }
+        setStatusText(status);
 
         setAvailable(true);
     }
@@ -414,6 +400,7 @@ public class ContactItem extends JPanel {
      * Sets the status label text based on the users status.
      */
     public void setStatusText(String status) {
+        status = trimToEmpty(status);
         setStatus(status);
         descriptionLabel.setText(!isBlank(status) ? " - " + status : "");
     }

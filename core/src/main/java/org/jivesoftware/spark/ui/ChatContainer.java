@@ -322,7 +322,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         final Resourcepart userid = p.getFrom().getResourceOrNull();
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
-        } else if (p.getType() == Presence.Type.available) {
+        } else if (p.isAvailable()) {
             fireUserHasJoined(chatRoom, userid);
         }
         // Change tab icon

@@ -313,7 +313,7 @@ public final class OnlineAgents extends JPanel {
                 if (presence.getType() == Presence.Type.unavailable) {
                     contactGroup.removeContactItem(item);
                 }
-                else if (presence.getType() == Presence.Type.available) {
+                else if (presence.isAvailable()) {
                     Icon icon = PresenceManager.getIconFromPresence(presence);
                     item.setIcon(icon);
                 }

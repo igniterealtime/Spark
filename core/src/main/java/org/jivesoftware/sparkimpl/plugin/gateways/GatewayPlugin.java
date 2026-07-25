@@ -319,7 +319,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             DomainBareJid domain = from.asDomainBareJid();
             Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
-                if (presence.getType() == Presence.Type.available) {
+                if (presence.isAvailable()) {
                     item.setSpecialIcon(transport.getIcon());
                 }
                 else {
@@ -336,12 +336,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         DomainBareJid domain = jid.asDomainBareJid();
         Transport transport = TransportUtils.getTransport(domain);
         if (transport != null) {
-            if (PresenceManager.isOnline(jid)) {
-                return transport.getIcon();
-            }
-            else {
-                return transport.getInactiveIcon();
-            }
+            return PresenceManager.isOnline(jid) ? transport.getIcon() : transport.getInactiveIcon();
         }
         return null;
     }

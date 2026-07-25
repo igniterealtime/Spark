@@ -277,9 +277,9 @@ public class ContactList extends JPanel implements
             && entry.isSubscriptionPending();
         // If online, check to see if they are in the offline group.
         // If so, remove from an offline group and add to all groups they belong to.
-        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().toString().contains("workgroup."))) {
+        if (presence.isAvailable() && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().toString().contains("workgroup."))) {
             changeOfflineToOnline(bareJID, entry, presence);
-        } else if (presence.getType() == Presence.Type.available) {
+        } else if (presence.isAvailable()) {
             updateContactItemsPresence(presence, entry, bareJID);
         } else if (presence.getType() == Presence.Type.unavailable && !isPending) {
             // If not available, move to an offline group.
@@ -2129,7 +2129,7 @@ public class ContactList extends JPanel implements
         final Roster roster = SparkManager.getRoster();
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
-            if (contactGroup == null && !Objects.equals(group.getName(), "")) {
+            if (isBlank(group.getName())) {
                 contactGroup = addContactGroup(group.getName());
             }
             if (contactGroup != null) {
