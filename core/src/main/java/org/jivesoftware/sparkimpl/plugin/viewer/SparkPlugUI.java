@@ -16,6 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -25,7 +26,14 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -37,44 +45,61 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
+import static java.awt.GridBagConstraints.EAST;
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.WEST;
+
+/**
+ * GUI dialog to manage plugins: Deactivate and activate back, install.
+ */
 public class SparkPlugUI extends JPanel {
-	private final PublicPlugin _plugin;
+    private final PublicPlugin _plugin;
     private final JButton installButton = new JButton();
     private final JButton deactivateButton = new JButton();
     private final JLabel imageIcon = new JLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final JLabel versionLabel = new JLabel();
+    private final JTextArea descriptionLabel = new JTextArea();
 
     public SparkPlugUI(PublicPlugin plugin) {
         _plugin = plugin;
         setLayout(new GridBagLayout());
         setBackground(Color.white);
 
-        JLabel titleLabel = new JLabel();
-        JLabel versionLabel = new JLabel();
-        JLabel descriptionLabel = new JLabel();
+        imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE));
+        add(imageIcon, new GridBagConstraints(0, 0, 1, 1, 0, 0, WEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-	imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE));
-        add(imageIcon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0, 0, WEST, NONE, new Insets(5, 5, 5, 0), 0, 0));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        titleLabel.setForeground(UIManager.getColor("Component.linkColor"));
 
-        add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
-        titleLabel.setFont(new Font("dialog", Font.BOLD, 11));
-        titleLabel.setForeground(new Color(80, 93, 198));
-
-        add(versionLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(versionLabel, new GridBagConstraints(2, 0, 1, 1, 0, 0, WEST, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         titleLabel.setText(plugin.getName());
-	if (plugin.getVersion() != null && plugin.getAuthor() != null) {
-	    versionLabel.setText(_plugin.getVersion() + " by "
-		    + _plugin.getAuthor());
-	}
+        if (plugin.getVersion() != null && plugin.getAuthor() != null) {
+            versionLabel.setText(_plugin.getVersion() + " by " + _plugin.getAuthor());
+        }
         descriptionLabel.setText(plugin.getDescription());
+        descriptionLabel.setLineWrap(true);
+        descriptionLabel.setWrapStyleWord(true);
+        descriptionLabel.setEditable(false);
+        descriptionLabel.setFocusable(false);
+        descriptionLabel.setOpaque(false);
+        descriptionLabel.setBorder(null);
+        descriptionLabel.setFont(UIManager.getFont("Label.font"));
+        descriptionLabel.setSize(new Dimension(500, Short.MAX_VALUE));
+        descriptionLabel.setMaximumSize(new Dimension(500, Short.MAX_VALUE));
+        descriptionLabel.setPreferredSize(new Dimension(500, descriptionLabel.getPreferredSize().height));
 
         installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
         deactivateButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
-        add(installButton, new GridBagConstraints(4, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
-        add(deactivateButton, new GridBagConstraints(5, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        Insets insets = new Insets(0, 5, 5, 5);
+        add(installButton, new GridBagConstraints(4, 0, 1, 2, 1, 0, EAST, NONE, insets, 0, 0));
+        add(deactivateButton, new GridBagConstraints(5, 0, 1, 2, 1, 0, EAST, NONE, insets, 0, 0));
 
-        if (_plugin.getChangeLog()!=null && _plugin.getReadMeURL() != null) {
+        if (_plugin.getChangeLog() != null && _plugin.getReadMeURL() != null) {
             RolloverButton changeLogButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.CHANGELOG_IMAGE));
             RolloverButton readMeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.README_IMAGE));
             changeLogButton.addActionListener(e -> {
@@ -92,11 +117,10 @@ public class SparkPlugUI extends JPanel {
 
             changeLogButton.setToolTipText(Res.getString("tooltip.view.changelog"));
             readMeButton.setToolTipText(Res.getString("tooltip.view.readme"));
-            add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
-            add(buttonPanel, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        }
-        else {
-            add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0));
+            add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 0));
+            add(buttonPanel, new GridBagConstraints(3, 1, 1, 1, 1, 0, WEST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+        } else {
+            add(descriptionLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         }
 
         installButton.setVisible(false);
@@ -108,8 +132,7 @@ public class SparkPlugUI extends JPanel {
         if (!pluginManager.isInstalled(_plugin)) {
             installButton.setVisible(true);
             deactivateButton.setVisible(false);
-        }
-        else {
+        } else {
             installButton.setVisible(false);
             deactivateButton.setVisible(true);
         }
@@ -154,15 +177,12 @@ public class SparkPlugUI extends JPanel {
             File largeIcon = new File(pluginDIR, "logo_large.gif");
             if (largeIcon.exists()) {
                 setIcon(new ImageIcon(largeIcon.toURI().toURL()));
-            }
-            else if (smallIcon.exists()) {
+            } else if (smallIcon.exists()) {
                 setIcon(new ImageIcon(smallIcon.toURI().toURL()));
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             Log.error(e);
         }
-
     }
 
     /**
@@ -173,9 +193,8 @@ public class SparkPlugUI extends JPanel {
         try {
             URL downloadURL = new URL(_plugin.getDownloadURL());
             filename = URLFileSystem.getFileName(downloadURL);
-        }
-        catch (MalformedURLException e) {
-            // Nothing to do
+        } catch (MalformedURLException e) {
+            Log.error(e);
         }
         return filename;
     }
