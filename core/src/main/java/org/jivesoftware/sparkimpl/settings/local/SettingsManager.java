@@ -289,6 +289,7 @@ public class SettingsManager {
             "contactListFontSize", "14",
             "chatRoomFontSize", "16",
             "passwordSaved", "true",
+            "GrayingOut", "false",
             "hideInTaskbar", "false" // new option
         );
         return List.of(v1, v2);

@@ -720,7 +720,7 @@ public class LocalPreferences {
      * Presence icon should be enough to distinguish idle users.
      */
     public boolean isGrayingOutEnabled() {
-        return getBoolean("GrayingOut", true);
+        return getBoolean("GrayingOut", false);
     }
 
     public void setLookAndFeel(String laf) {
