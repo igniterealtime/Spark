@@ -18,11 +18,11 @@ package org.jivesoftware.spark.plugins.transfersettings;
 import org.jivesoftware.spark.preference.Preference;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 /**
- * Preference object for file transfer settings. Used by Spark to show the associated UI and commit changes to preference settings.
+ * Preference object for file transfer settings.
+ * Used by Spark to show the associated UI and commit changes to preference settings.
  */
 public class TransferSettingsPreference implements Preference {
     static final String NAMESPACE = "transferSettings";
@@ -54,7 +54,7 @@ public class TransferSettingsPreference implements Preference {
 
     @Override
     public Icon getIcon() {
-        return new ImageIcon(getClass().getResource("/images/guard.png"));
+        return TGuardRes.TRANSFERGUARD_ICON;
     }
 
     @Override
