@@ -63,11 +63,8 @@ public class ButtonFactory {
 
     public RolloverButton createEmoticonButton() {
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
-        final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
-        if (smileEmoticon != null) {
-            URL emotionURL = emoticonManager.getEmoticonURL(smileEmoticon);
-            ImageIcon icon = new ImageIcon(emotionURL);
+        ImageIcon icon = emoticonManager.getEmoticonImage(":)");
+        if (icon != null) {
             return new RolloverButton(icon);
         }
         return new RolloverButton(":)");

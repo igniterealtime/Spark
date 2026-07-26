@@ -52,6 +52,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.io.File;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.CENTER;
@@ -101,7 +102,7 @@ public class ThemePanel extends JPanel {
     private final JComboBox<String> _showReconnectBox;
 
     private final JScrollPane emoticonScrollPane;
-    private JPanel emoticonsPanel;
+    private EmoticonPanel emoticonsPanel;
 
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -185,7 +186,7 @@ public class ThemePanel extends JPanel {
         TranscriptWindow emoticonPreviewTranscript = new TranscriptWindow();
         emoticonPreviewTranscript.setForceEmoticons(true);
 
-        String[] sizeChoices = {"16", "24", "32", "48", "96", "120"};
+        String[] sizeChoices = {"16", "24", "32", "48", "64"};
         avatarSizeField = new JComboBox<>(sizeChoices);
 
         String[] r = {
@@ -277,10 +278,8 @@ public class ThemePanel extends JPanel {
         hideInTaskbar.setSelected(pref.isHideInTaskbar());
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        if (emoticonManager.getEmoticonPacks() != null) {
-            for (String pack : emoticonManager.getEmoticonPacks()) {
-                emoticonBox.addItem(pack);
-            }
+        for (String pack : emoticonManager.getEmoticonPacks()) {
+            emoticonBox.addItem(pack);
         }
 
         final String activePack = pref.getEmoticonPack();
@@ -323,7 +322,8 @@ public class ThemePanel extends JPanel {
      */
     protected void showSelectedEmoticon() {
         EmoticonManager emoticonManager = EmoticonManager.getInstance();
-        int i = emoticonManager.getActiveEmoticonSet().size();
+        Set<Emoticon> activeEmoticonSet = emoticonManager.getActiveEmoticonSet();
+        int i = activeEmoticonSet.size();
         if (i == 0) {
             emoticonsPanel = new EmoticonPanel(1);
             JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
@@ -333,13 +333,13 @@ public class ThemePanel extends JPanel {
         } else {
             emoticonsPanel = new EmoticonPanel(10);
         }
-        for (Emoticon emoticon : emoticonManager.getActiveEmoticonSet()) {
+        for (Emoticon emoticon : activeEmoticonSet) {
             ImageIcon ico = new ImageIcon(emoticonManager.getEmoticonURL(emoticon));
             JLabel label = new JLabel(ico);
             emoticonsPanel.add(label);
         }
 
-        int rows = Math.min(((EmoticonPanel) emoticonsPanel).getNumRows() * 45, 300);
+        int rows = Math.min(emoticonsPanel.getNumRows() * 45, 300);
         emoticonScrollPane.setPreferredSize(new Dimension(300, rows));
         emoticonScrollPane.setViewportView(emoticonsPanel);
         this.revalidate();

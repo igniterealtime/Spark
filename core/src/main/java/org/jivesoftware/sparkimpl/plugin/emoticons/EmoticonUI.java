@@ -25,7 +25,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 
 import java.net.URL;
-import java.util.Collection;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -33,66 +33,60 @@ import javax.swing.JPanel;
 import javax.swing.ScrollPaneConstants;
 
 public class EmoticonUI extends JPanel {
-	private EmoticonPickListener listener;
+    private EmoticonPickListener listener;
 
-	public EmoticonUI() {
-		setBackground(Color.white);
-		final EmoticonManager manager = EmoticonManager.getInstance();
-		Collection<Emoticon> emoticons = manager.getActiveEmoticonSet();
-		if (emoticons != null) {
-			int no = emoticons.size();
-                        // Emoticons per row
-                        int cntInRow = 6;
-                        // Count rows of Emoticons
-			int rows = no / cntInRow + ((no % cntInRow == 0) ? 0 : 1);
-                        Container gridContainer = new Container();
-                        GridLayout grid = new GridLayout(0, cntInRow);
-                        JScrollPane scrollPane = new JScrollPane(gridContainer);
-                 	scrollPane.getViewport().setBackground(Color.WHITE);
-			scrollPane.setBorder(BorderFactory.createEmptyBorder());
-                        gridContainer.setLayout(grid);
-                        // Show only vertical scrollbar if it needed
-                        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                        int scrollBarWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
-                        // Add ScrollPane to Panel
-                        add(scrollPane);
-//                      setIgnoreRepaint(true);
-                        // Add Emoticons
-			for (Emoticon emoticon : emoticons) {
-				final String text = emoticon.getEquivalants().get(0);
-				String name = manager.getActiveEmoticonSetName();
-				final Emoticon smileEmoticon = manager.getEmoticon(name, text);
-				URL smileURL = manager.getEmoticonURL(smileEmoticon);
-				// Add Emoticon button
-				ImageIcon icon = new ImageIcon(smileURL);
+    public EmoticonUI() {
+        setBackground(Color.white);
+        final EmoticonManager manager = EmoticonManager.getInstance();
+        Set<Emoticon> emoticons = manager.getActiveEmoticonSet();
+        int no = emoticons.size();
+        // Emoticons per row
+        int cntInRow = 6;
+        // Count rows of Emoticons
+        int rows = no / cntInRow + ((no % cntInRow == 0) ? 0 : 1);
+        Container gridContainer = new Container();
+        GridLayout grid = new GridLayout(0, cntInRow);
+        JScrollPane scrollPane = new JScrollPane(gridContainer);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        gridContainer.setLayout(grid);
+        // Show only vertical scrollbar if it needed
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        int scrollBarWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
+        // Add ScrollPane to Panel
+        add(scrollPane);
+        // Add Emoticons
+        for (Emoticon emoticon : emoticons) {
+            String text = emoticon.getEquivalents().get(0);
+            URL smileURL = manager.getEmoticonURL(emoticon);
+            // Add Emoticon button
+            ImageIcon icon = new ImageIcon(smileURL);
 
-				RolloverButton emotButton = new RolloverButton();
-				emotButton.setIcon(icon);
-				emotButton.addActionListener( e -> listener.emoticonPicked(text) );
+            RolloverButton emotButton = new RolloverButton();
+            emotButton.setIcon(icon);
+            emotButton.addActionListener(e -> listener.emoticonPicked(text));
+            emotButton.setToolTipText(emoticon.getEmoticonName() + " " + text);
 
-                                gridContainer.add(emotButton);
-			}
-                        
-                        // Set up parameters of vertical scrollbar
-                        scrollPane.getVerticalScrollBar().setMaximum(rows);
-                        scrollPane.getVerticalScrollBar().setUnitIncrement(55);
+            gridContainer.add(emotButton);
+        }
+        // Set up parameters of vertical scrollbar
+        scrollPane.getVerticalScrollBar().setMaximum(rows);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(55);
+        // Change width of ScrollPane if it needed
+        Dimension containerPreferredSize = gridContainer.getPreferredSize();
+        if (containerPreferredSize.getHeight() > containerPreferredSize.getWidth()) {
+            int width = (int) containerPreferredSize.getWidth() + 2 * scrollBarWidth;
+            int height = (int) containerPreferredSize.getWidth() * 2 / 3;
+            scrollPane.setPreferredSize(new Dimension(width, height));
+        }
+    }
 
-                        // Change width of ScrollPane if it needed
-                        if (gridContainer.getPreferredSize().getHeight() > gridContainer.getPreferredSize().getWidth()) {
-                            scrollPane.setPreferredSize(new Dimension(
-                                (int) gridContainer.getPreferredSize().getWidth() + 2 * scrollBarWidth,
-                                (int) gridContainer.getPreferredSize().getWidth() * 2 / 3
-                            ));
-                        }
-                }
-	}
+    public void setEmoticonPickListener(EmoticonPickListener listener) {
+        this.listener = listener;
+    }
 
-	public void setEmoticonPickListener(EmoticonPickListener listener) {
-		this.listener = listener;
-	}
-
-	public interface EmoticonPickListener {
-		void emoticonPicked(String emoticon);
-	}
+    public interface EmoticonPickListener {
+        void emoticonPicked(String emoticon);
+    }
 }

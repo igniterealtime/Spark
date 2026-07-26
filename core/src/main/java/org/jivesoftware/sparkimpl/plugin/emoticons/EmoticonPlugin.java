@@ -43,11 +43,10 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * @author Derek DeMoro
  */
 public class EmoticonPlugin implements Plugin, ChatRoomListener {
-	private ChatManager chatManager;
 
-	@Override
-	public void initialize() {
-		chatManager = SparkManager.getChatManager();
+    @Override
+    public void initialize() {
+        ChatManager chatManager = SparkManager.getChatManager();
         // Listen for rooms opening to add emoticon picker
         chatManager.addChatRoomListener(this);
         // Add Preferences
@@ -55,66 +54,60 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
     }
 
     @Override
-	public void chatRoomOpened(final ChatRoom room) {
-		// Check to see if emoticons are enabled.
-		if (!SettingsManager.getLocalPreferences().areEmoticonsEnabled()) {
-			return;
-		}
-			// Add Emoticon button
-			final RolloverButton emoticonPicker = UIComponentRegistry.getButtonFactory().createEmoticonButton();
-			room.addEditorComponent(emoticonPicker);
-			emoticonPicker.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					// Show popup
-					final JPopupMenu popup = new JPopupMenu();
-					EmoticonUI emoticonUI = new EmoticonUI();
-					emoticonUI
-							.setEmoticonPickListener( emoticon -> {
-                                try {
-                                    popup.setVisible(false);
-                                    final ChatInputEditor editor = room.getChatInputEditor();
-                                    String currentText = editor.getText();
-                                    if (currentText.isEmpty() || currentText.endsWith(" ")) {
-                                        room.getChatInputEditor().insertText(emoticon + " ");
-                                    } else {
-                                        room.getChatInputEditor()
-                                                .insertText(" " + emoticon + " ");
-                                    }
-                                    room.getChatInputEditor().requestFocus();
-                                } catch (BadLocationException e1) {
-                                    Log.error(e1);
-                                }
-
-                            } );
-
-					popup.add(emoticonUI);
-                    int actualX = e.getX()+10;
-                    int actualY = e.getY();
-                    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    final ChatContainer chat = SparkManager.getChatManager().getChatContainer();
-                    // if height Spark Chat Windows > height 0.9* screenSize we should put emoticon window above
-                    if(chat.getHeight() > screenSize.getHeight()*0.90){
-                        actualY = e.getY()-100;
+    public void chatRoomOpened(ChatRoom room) {
+        // Check to see if emoticons are enabled.
+        if (!SettingsManager.getLocalPreferences().areEmoticonsEnabled()) {
+            return;
+        }
+        // Add Emoticon button
+        RolloverButton emoticonPicker = UIComponentRegistry.getButtonFactory().createEmoticonButton();
+        room.addEditorComponent(emoticonPicker);
+        emoticonPicker.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Show popup
+                JPopupMenu popup = new JPopupMenu();
+                EmoticonUI emoticonUI = new EmoticonUI();
+                emoticonUI.setEmoticonPickListener(emoticon -> {
+                    popup.setVisible(false);
+                    ChatInputEditor editor = room.getChatInputEditor();
+                    String currentText = editor.getText();
+                    String emoticonText = currentText.isEmpty() || currentText.endsWith(" ") ? emoticon + " " : " " + emoticon + " ";
+                    try {
+                        room.getChatInputEditor().insertText(emoticonText);
+                    } catch (BadLocationException e1) {
+                        Log.error(e1);
                     }
-					popup.show(emoticonPicker, actualX, actualY);
-				}
-			});
+                    room.getChatInputEditor().requestFocus();
+                });
 
-			room.addClosingListener( () -> room.removeEditorComponent(emoticonPicker) );
-	}
+                popup.add(emoticonUI);
+                int actualX = e.getX() + 10;
+                int actualY = e.getY();
+                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                final ChatContainer chat = SparkManager.getChatManager().getChatContainer();
+                // if height Spark Chat Windows > height 0.9*screenSize, we should put emoticon window above
+                if (chat.getHeight() > screenSize.getHeight() * 0.90) {
+                    actualY = e.getY() - 100;
+                }
+                popup.show(emoticonPicker, actualX, actualY);
+            }
+        });
 
-	@Override
-	public void shutdown() {
-	}
+        room.addClosingListener(() -> room.removeEditorComponent(emoticonPicker));
+    }
 
-	@Override
-	public boolean canShutDown() {
-		return false;
-	}
+    @Override
+    public void shutdown() {
+    }
 
-	@Override
-	public void uninstall() {
-	}
+    @Override
+    public boolean canShutDown() {
+        return false;
+    }
+
+    @Override
+    public void uninstall() {
+    }
 
 }

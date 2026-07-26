@@ -270,7 +270,11 @@ public class URLFileSystem {
      */
     public static String getName(URL url) {
         final String fileName = getFileName(url);
-        final int firstDot = fileName.lastIndexOf('.');
+        return getName(fileName);
+    }
+
+    public static String getName(String fileName) {
+        int firstDot = fileName.lastIndexOf('.');
         return firstDot > 0 ? fileName.substring(0, firstDot) : fileName;
     }
 

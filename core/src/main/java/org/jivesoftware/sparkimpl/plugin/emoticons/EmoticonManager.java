@@ -46,6 +46,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.Strings.CI;
 
 /**
  * Responsible for the handling of all Emoticon packs. Using the
@@ -61,22 +62,22 @@ public class EmoticonManager {
     // Mapped by pack name, then by 'equivalent' key.
     private final Map<String, Map<String, Emoticon>> emoticonMap = new HashMap<>();
     private final Map<String, ImageIcon> imageMap = new HashMap<>();
+    private Map<String, Emoticon> activeEmoticonMap;
 
     /**
      * The root emoticon directory.
      */
-    public File EMOTICON_DIRECTORY;
+    private File EMOTICON_DIRECTORY;
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public static EmoticonManager getInstance() {
-        synchronized (LOCK) {
-            if (null == singleton) {
-                EmoticonManager controller = new EmoticonManager();
-                singleton = controller;
-                return controller;
-            }
+        if (singleton != null) {
+            return singleton;
         }
-        return singleton;
+        synchronized (LOCK) {
+            singleton = new EmoticonManager();
+            return singleton;
+        }
     }
 
     private EmoticonManager() {
@@ -118,10 +119,10 @@ public class EmoticonManager {
                         // Check if File is Zip-File
                         int endIndex = file.getName().indexOf(".zip");
                         if (endIndex > 0) {
-                            String unzipURL = file.getName().substring(0, endIndex);
-                            File unzipFile = new File(profileEmoticonsFolder, unzipURL);
-                            if (!unzipFile.exists() || !checkIfSameFile(file, newFile)) {
-                                // Copy over and expand :)
+                            String unzippedFolderName = file.getName().substring(0, endIndex);
+                            File unzippedFolder = new File(profileEmoticonsFolder, unzippedFolderName);
+                            if (!unzippedFolder.exists() || !checkIfSameFile(file, newFile)) {
+                                Log.debug("Copying " + file.getName() + " to " + profileEmoticonsFolder + " and unpack");
                                 URLFileSystem.copy(file.toURI().toURL(), newFile);
                                 expandNewPack(newFile, profileEmoticonsFolder);
                             }
@@ -175,22 +176,15 @@ public class EmoticonManager {
     /**
      * Returns the active emoticon set within Spark.
      */
-    public Collection<Emoticon> getActiveEmoticonSet() {
+    public Set<Emoticon> getActiveEmoticonSet() {
         String emoticonPack = pref.getEmoticonPack();
         // If EmoticonPack is set
-        //When no emoticon set is available, return an empty list
         if (emoticonPack != null) {
             Map<String, Emoticon> emoticons = emoticonMap.get(emoticonPack);
-            return emoticons != null ? new LinkedHashSet<>(emoticons.values()) : List.of();
+            // When no emoticon set is available, return an empty list
+            return emoticons != null ? new LinkedHashSet<>(emoticons.values()) : Set.of();
         }
-        return List.of();
-    }
-
-    /**
-     * Returns the name of the active emoticon set.
-     */
-    public String getActiveEmoticonSetName() {
-        return pref.getEmoticonPack();
+        return Set.of();
     }
 
     /**
@@ -201,6 +195,7 @@ public class EmoticonManager {
     public void setActivePack(String pack) {
         pref.setEmoticonPack(pack);
         imageMap.clear();
+        activeEmoticonMap = null;
     }
 
     /**
@@ -213,21 +208,18 @@ public class EmoticonManager {
         if (!containsEmoticonPList(pack)) {
             return null;
         }
-
-        String name;
         // Copy to the emoticon area
         try {
             File dst = new File(EMOTICON_DIRECTORY, pack.getName());
             URLFileSystem.copy(pack.toURI().toURL(), dst);
-
             File rootDirectory = unzipPack(pack, EMOTICON_DIRECTORY);
-            name = URLFileSystem.getName(rootDirectory.toURI().toURL());
+            String name = URLFileSystem.getName(rootDirectory.toURI().toURL());
             addEmoticonPack(name);
-        } catch (IOException e) {
-            Log.error(e);
+            return name;
+        } catch (Exception e) {
+            Log.error("Unable to install emoticon pack: " + pack.getAbsolutePath(), e);
             return null;
         }
-        return name;
     }
 
     /**
@@ -240,11 +232,8 @@ public class EmoticonManager {
         if (!emoticonSet.exists()) {
             emoticonSet = new File(EMOTICON_DIRECTORY, packName + ".AdiumEmoticonset");
         }
-
         if (!emoticonSet.exists()) {
-            emoticonSet = new File(EMOTICON_DIRECTORY, "Default.adiumemoticonset");
-            packName = "Default";
-            setActivePack("Default");
+            Log.error("The emoticons file not found in " + emoticonSet.getAbsolutePath());
         }
 
         final File plist = new File(emoticonSet, "Emoticons.plist");
@@ -252,7 +241,6 @@ public class EmoticonManager {
             Log.error("Emoticons.plist not found in " + emoticonSet.getAbsolutePath());
             return;
         }
-        Map<String, Emoticon> emoticons = new LinkedHashMap<>();
 
         // Create SaxReader and set to non-validating parser.
         // This will allow for non-http problems to not break spark :)
@@ -280,6 +268,7 @@ public class EmoticonManager {
             return;
         }
 
+        Map<String, Emoticon> emoticons = new LinkedHashMap<>();
         Node root = emoticonFile.selectSingleNode("/plist/dict/dict");
         List<Node> keyList = root.selectNodes("key");
         List<Node> dictonaryList = root.selectNodes("dict");
@@ -295,7 +284,7 @@ public class EmoticonManager {
                 equivs.add(equivalent.getText());
             }
             final Emoticon emoticon = new Emoticon(key, name, equivs, emoticonSet);
-            for (String equivalent : emoticon.getEquivalants()) {
+            for (String equivalent : emoticon.getEquivalents()) {
                 emoticons.put(equivalent, emoticon);
             }
         }
@@ -319,21 +308,6 @@ public class EmoticonManager {
     }
 
     /**
-     * Retrieves the associated key emoticon.
-     *
-     * @param packName the name of the Archive Pack File.
-     * @param key      the key.
-     * @return the emoticon.
-     */
-    public Emoticon getEmoticon(String packName, String key) {
-        final Map<String, Emoticon> emoticons = emoticonMap.get(packName);
-        if (emoticons == null) {
-            return null;
-        }
-        return emoticons.get(key);
-    }
-
-    /**
      * Returns the <code>Emoticon</code> associated with the given key. Note:
      * This gets the emoticon from the active emoticon pack.
      *
@@ -341,7 +315,14 @@ public class EmoticonManager {
      * @return the Emoticon found. If no emoticon is found, null is returned.
      */
     public Emoticon getEmoticon(String key) {
-        return getEmoticon(getActiveEmoticonSetName(), key);
+        if (activeEmoticonMap == null) {
+            String packName = pref.getEmoticonPack();
+            activeEmoticonMap = emoticonMap.get(packName);
+            if (activeEmoticonMap == null) {
+                activeEmoticonMap = Map.of();
+            }
+        }
+        return activeEmoticonMap.get(key);
     }
 
     /**
@@ -352,39 +333,31 @@ public class EmoticonManager {
      */
     public ImageIcon getEmoticonImage(String key) {
         final Emoticon emoticon = getEmoticon(key);
-        if (emoticon != null) {
-            ImageIcon icon = imageMap.get(key);
-            if (icon == null) {
-                URL url = getEmoticonURL(emoticon);
-                icon = new ImageIcon(url);
-                imageMap.put(key, icon);
-            }
-            return imageMap.get(key);
+        if (emoticon == null) {
+            return null;
         }
-        return null;
+        ImageIcon icon = imageMap.computeIfAbsent(key, it -> {
+            URL url = getEmoticonURL(emoticon);
+            return new ImageIcon(url);
+        });
+        return icon;
     }
 
     /**
      * Returns a list of all available emoticon packs.
-     *
-     * @return Collection of Emoticon Pack names.
      */
     public Collection<String> getEmoticonPacks() {
-        final List<String> emoticonList = new ArrayList<>();
         File[] dirs = EMOTICON_DIRECTORY.listFiles(File::isDirectory);
         // If no emoticons are available
         if (dirs == null) {
-            return null;
+            return List.of();
         }
+        List<String> emoticonList = new ArrayList<>(dirs.length);
         for (File file : dirs) {
-            if (file.getName().toLowerCase().endsWith("adiumemoticonset")) {
-                try {
-                    String name = URLFileSystem.getName(file.toURI().toURL());
-                    name = name.replace("adiumemoticonset", "");
-                    name = name.replace("AdiumEmoticonset", "");
-                    emoticonList.add(name);
-                } catch (MalformedURLException ignored) {
-                }
+            String fileName = file.getName();
+            if (CI.endsWith(fileName, ".adiumemoticonset")) {
+                String name = URLFileSystem.getName(fileName);
+                emoticonList.add(name);
             }
         }
         return emoticonList;
@@ -397,15 +370,8 @@ public class EmoticonManager {
      * @param dist Dist file.
      */
     private void expandNewPack(File file, File dist) {
-        URL url;
-        try {
-            url = file.toURI().toURL();
-        } catch (MalformedURLException ignored) {
-            return;
-        }
-        String name = URLFileSystem.getName(url);
+        String name = URLFileSystem.getName(file.getName());
         File directory = new File(dist, name);
-
         // Unzip contents into directory
         unzipPack(file, directory.getParentFile());
     }
@@ -489,7 +455,7 @@ public class EmoticonManager {
     }
 
     /**
-     * Deletes Emoticons in pathToSearch that have a different md5-hash than its correspondant in install\spark\xtra\emoticons
+     * Deletes Emoticons in pathToSearch that have a different md5-hash than its correspondent in install\spark\xtra\emoticons
      */
     private void deleteOldEmoticons(File pathToSearch) {
         final File installPath = new File(Spark.getXtraDirectory(), "emoticons");
@@ -526,6 +492,7 @@ public class EmoticonManager {
     }
 
     private void uninstall(File emoticonDir) {
+        Log.warning("Uninstall emoticons pack: " + emoticonDir.getAbsolutePath());
         try {
             Files.walkFileTree(emoticonDir.toPath(), new SimpleFileVisitor<>() {
                 @Override
