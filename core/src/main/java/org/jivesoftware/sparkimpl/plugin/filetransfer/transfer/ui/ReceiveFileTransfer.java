@@ -29,13 +29,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
 import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -69,9 +79,17 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.WEST;
 import static org.jivesoftware.spark.util.BrowserLauncher.openFolder;
 
 public class ReceiveFileTransfer extends JPanel {
+    private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
+    private static final Color COLOR_BACKGROUND = new Color(239, 245, 250);
+    private static final Color COLOR_TITLE_ALERT = new Color(211, 174, 102);
+    private static final Color COLOR_TITLE = new Color(65, 139, 179);
+    private static final Color COLOR_BUTTON = UIManager.getColor("Component.linkColor");
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
@@ -94,31 +112,31 @@ public class ReceiveFileTransfer extends JPanel {
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
 
-        setBackground(new Color(250, 249, 242));
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        setBackground(COLOR_BACKGROUND_ALERT);
+        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        titleLabel.setForeground(new Color(211, 174, 102));
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        titleLabel.setForeground(COLOR_TITLE_ALERT);
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-        add(acceptButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-        add(pathButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(acceptButton, new GridBagConstraints(1, 2, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(pathButton, new GridBagConstraints(1, 2, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
         pathButton.setVisible(false);
-        add(declineButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(declineButton, new GridBagConstraints(2, 2, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         // Decorate Cancel Button
         decorateCancelButton();
 
-        pathButton.setForeground(new Color(73, 113, 196));
-        acceptButton.setForeground(new Color(73, 113, 196));
-        declineButton.setForeground(new Color(73, 113, 196));
-        pathButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        declineButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        acceptButton.setFont(new Font("Dialog", Font.BOLD, 11));
+        pathButton.setForeground(COLOR_BUTTON);
+        acceptButton.setForeground(COLOR_BUTTON);
+        declineButton.setForeground(COLOR_BUTTON);
+        pathButton.setFont(new Font("Dialog", Font.BOLD, 12));
+        declineButton.setFont(new Font("Dialog", Font.BOLD, 12));
+        acceptButton.setFont(new Font("Dialog", Font.BOLD, 12));
 
-        acceptButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-        declineButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+        acceptButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
+        declineButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
 
@@ -191,7 +209,6 @@ public class ReceiveFileTransfer extends JPanel {
             out.close();
 
             imageLabel.setIcon(GraphicUtils.getIcon(file));
-
             // Delete temp file when program exits.
             file.delete();
         } catch (IOException e) {
@@ -237,7 +254,7 @@ public class ReceiveFileTransfer extends JPanel {
                 Log.warning("Unable to reject the request.", ex);
             }
 
-            setBackground(new Color(239, 245, 250));
+            setBackground(COLOR_BACKGROUND);
             acceptButton.setVisible(false);
             declineButton.setVisible(false);
             if (Downloads.getDownloadDirectory() == null) {
@@ -261,7 +278,7 @@ public class ReceiveFileTransfer extends JPanel {
             });
 
             titleLabel.setText(ex.getMessage());
-            titleLabel.setForeground(new Color(65, 139, 179));
+            titleLabel.setForeground(COLOR_TITLE);
 
             invalidate();
             validate();
@@ -282,12 +299,12 @@ public class ReceiveFileTransfer extends JPanel {
         } catch (SmackException.NotConnectedException | InterruptedException ex) {
             Log.warning("Unable to reject the request.", ex);
         }
-        setBackground(new Color(239, 245, 250));
+        setBackground(COLOR_BACKGROUND);
         acceptButton.setVisible(false);
         declineButton.setVisible(false);
         fileLabel.setText("");
         titleLabel.setText(Res.getString("message.file.transfer.canceled"));
-        titleLabel.setForeground(new Color(65, 139, 179));
+        titleLabel.setForeground(COLOR_TITLE);
 
         invalidate();
         validate();
@@ -299,18 +316,17 @@ public class ReceiveFileTransfer extends JPanel {
         BareJid bareJID = requester.asBareJid();
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        final ContactItem contactItem = contactList
-            .getContactItemByJID(bareJID);
+        final ContactItem contactItem = contactList.getContactItemByJID(bareJID);
 
-        setBackground(new Color(239, 245, 250));
+        setBackground(COLOR_BACKGROUND);
         acceptButton.setVisible(false);
         declineButton.setVisible(false);
         titleLabel.setText(Res.getString("message.negotiate.file.transfer"));
-        titleLabel.setForeground(new Color(65, 139, 179));
+        titleLabel.setForeground(COLOR_TITLE);
 
-        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-        add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
+        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
+        add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
         cancelButton.setVisible(true);
         transfer = request.accept();
 
@@ -425,8 +441,7 @@ public class ReceiveFileTransfer extends JPanel {
         return downloadedFile;
     }
 
-    private void updateOnFinished(final FileTransferRequest request,
-                                  final File downloadedFile) {
+    private void updateOnFinished(FileTransferRequest request, File downloadedFile) {
         Jid requestor = request.getRequestor();
         BareJid bareJID = requestor.asBareJid();
         if (transfer.getAmountWritten() >= request.getFileSize()) {
@@ -512,7 +527,7 @@ public class ReceiveFileTransfer extends JPanel {
         declineButton.setVisible(false);
         fileLabel.setText("");
         titleLabel.setText(text);
-        titleLabel.setForeground(new Color(65, 139, 179));
+        titleLabel.setForeground(COLOR_TITLE);
         progressBar.setVisible(false);
         cancelButton.setVisible(false);
         invalidate();
@@ -538,8 +553,8 @@ public class ReceiveFileTransfer extends JPanel {
 
         final TransferButton openFileButton = new TransferButton();
         final TransferButton openFolderButton = new TransferButton();
-        add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
-        add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
+        add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0, 0, WEST, NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         openFileButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -575,18 +590,18 @@ public class ReceiveFileTransfer extends JPanel {
             }
         });
 
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         ResourceUtils.resButton(openFileButton, Res.getString("open"));
         ResourceUtils.resButton(openFolderButton, Res.getString("open.folder"));
 
-        openFileButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-        openFileButton.setForeground(new Color(73, 113, 196));
-        openFileButton.setFont(new Font("Dialog", Font.BOLD, 11));
+        openFileButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
+        openFileButton.setForeground(COLOR_BUTTON);
+        openFileButton.setFont(new Font("Dialog", Font.BOLD, 12));
 
-        openFolderButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-        openFolderButton.setForeground(new Color(73, 113, 196));
-        openFolderButton.setFont(new Font("Dialog", Font.BOLD, 11));
+        openFolderButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
+        openFolderButton.setForeground(COLOR_BUTTON);
+        openFolderButton.setFont(new Font("Dialog", Font.BOLD, 12));
 
         imageLabel.setIcon(GraphicUtils.getIcon(downloadedFile));
         imageLabel.addMouseListener(new MouseAdapter() {
@@ -675,11 +690,11 @@ public class ReceiveFileTransfer extends JPanel {
 
     private void showAlert(boolean alert) {
         if (alert) {
-            titleLabel.setForeground(new Color(211, 174, 102));
-            setBackground(new Color(250, 249, 242));
+            titleLabel.setForeground(COLOR_TITLE_ALERT);
+            setBackground(COLOR_BACKGROUND_ALERT);
         } else {
-            setBackground(new Color(239, 245, 250));
-            titleLabel.setForeground(new Color(65, 139, 179));
+            setBackground(COLOR_BACKGROUND);
+            titleLabel.setForeground(COLOR_TITLE);
         }
     }
 
@@ -695,8 +710,8 @@ public class ReceiveFileTransfer extends JPanel {
     private void decorateCancelButton() {
         cancelButton.setVisible(false);
         ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
-        cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-        cancelButton.setForeground(new Color(73, 113, 196));
+        cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
+        cancelButton.setForeground(COLOR_BUTTON);
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
@@ -757,31 +772,6 @@ public class ReceiveFileTransfer extends JPanel {
             popup.add(saveAsAction);
             popup.show(this, e.getX(), e.getY());
         }
-    }
-
-    /**
-     * Return correct URI for filePath. dont mind of local or remote path
-     *
-     * @param file to open
-     * @return URI for the file.
-     */
-    private static URI getFileURI(File file) {
-        URI uri = null;
-        String filePath = file.getPath().trim();
-        if (filePath.indexOf("http") == 0 || filePath.indexOf("\\") == 0) {
-            if (filePath.indexOf("\\") == 0)
-                filePath = "file:" + filePath;
-            try {
-                filePath = filePath.replaceAll(" ", "%20");
-                URL url = new URL(filePath);
-                uri = url.toURI();
-            } catch (MalformedURLException | URISyntaxException ex) {
-                Log.error(ex);
-            }
-        } else {
-            uri = new File(filePath).toURI();
-        }
-        return uri;
     }
 
 }

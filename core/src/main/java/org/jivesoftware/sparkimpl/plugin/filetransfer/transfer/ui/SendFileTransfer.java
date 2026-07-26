@@ -26,13 +26,20 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
@@ -59,6 +66,11 @@ import static java.awt.GridBagConstraints.WEST;
 import static org.jivesoftware.sparkimpl.settings.Sizes.Transfer.THUMBNAIL;
 
 public class SendFileTransfer extends JPanel {
+    private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
+    private static final Color COLOR_BACKGROUND = new Color(239, 245, 250);
+    private static final Color COLOR_TITLE_ALERT = new Color(211, 174, 102);
+    private static final Color COLOR_TITLE = new Color(65, 139, 179);
+    private static final Color COLOR_BUTTON = UIManager.getColor("Component.linkColor");
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
@@ -80,11 +92,11 @@ public class SendFileTransfer extends JPanel {
     public SendFileTransfer(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
-        setBackground(new Color(250, 249, 242));
+        setBackground(COLOR_BACKGROUND_ALERT);
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        titleLabel.setForeground(new Color(211, 174, 102));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        titleLabel.setForeground(COLOR_TITLE_ALERT);
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1, 0, NORTHWEST, NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
 
@@ -107,13 +119,13 @@ public class SendFileTransfer extends JPanel {
             sendFile(transfer, transferManager, fullJID, nickname);
         });
 
-        cancelButton.setForeground(new Color(73, 113, 196));
-        cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+        cancelButton.setForeground(COLOR_BUTTON);
+        cancelButton.setFont(new Font("Dialog", Font.BOLD, 12));
+        cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
 
-        retryButton.setForeground(new Color(73, 113, 196));
-        retryButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
+        retryButton.setForeground(COLOR_BUTTON);
+        retryButton.setFont(new Font("Dialog", Font.BOLD, 12));
+        retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BUTTON));
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
@@ -178,6 +190,7 @@ public class SendFileTransfer extends JPanel {
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
+                label:
                 while (true) {
                     try {
                         if (transfer.getBytesSent() > 0 && _startTime == 0) {
@@ -186,19 +199,20 @@ public class SendFileTransfer extends JPanel {
                         long startTime = System.currentTimeMillis();
                         long startByte = transfer.getBytesSent();
                         Thread.sleep(500);
-                        FileTransfer.Status status = transfer.getStatus();
-                        if (status == Status.complete) {
-                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.complete", filePath, nickname));
-                            break;
-                        } else if (status == Status.error) {
-                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.error", filePath, nickname));
-                            break;
-                        } else if (status == Status.cancelled) {
-                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.canceled", filePath, nickname));
-                            break;
-                        } else if (status == Status.refused) {
-                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
-                            break;
+                        Status status = transfer.getStatus();
+                        switch (status) {
+                            case complete:
+                                saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.complete", filePath, nickname));
+                                break label;
+                            case error:
+                                saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.error", filePath, nickname));
+                                break label;
+                            case cancelled:
+                                saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.canceled", filePath, nickname));
+                                break label;
+                            case refused:
+                                saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
+                                break label;
                         }
                         long endTime = System.currentTimeMillis();
                         long endByte = transfer.getBytesSent();
@@ -355,11 +369,11 @@ public class SendFileTransfer extends JPanel {
      * @param eventText Contains file transfer event text
      */
     private void saveEventToHistory(BareJid bareJid, String eventText) {
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+        Message message = StanzaBuilder.buildMessage()
             .setBody(eventText)
             .to(bareJid)
-            .from(SparkManager.getSessionManager().getJID());
-        Message message = messageBuilder.build();
+            .from(SparkManager.getSessionManager().getJID())
+            .build();
         chatRoom.addToTranscript(message, false);
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
     }
@@ -370,7 +384,7 @@ public class SendFileTransfer extends JPanel {
         }
 
         /**
-         * Decorates the button with the approriate UI configurations.
+         * Decorates the button with the appropriate UI configurations.
          */
         private void decorate() {
             setBorderPainted(false);
@@ -393,11 +407,11 @@ public class SendFileTransfer extends JPanel {
 
     private void showAlert(boolean alert) {
         if (alert) {
-            titleLabel.setForeground(new Color(211, 174, 102));
-            setBackground(new Color(250, 249, 242));
+            titleLabel.setForeground(COLOR_TITLE_ALERT);
+            setBackground(COLOR_BACKGROUND_ALERT);
         } else {
-            setBackground(new Color(239, 245, 250));
-            titleLabel.setForeground(new Color(65, 139, 179));
+            titleLabel.setForeground(COLOR_TITLE);
+            setBackground(COLOR_BACKGROUND);
         }
     }
 

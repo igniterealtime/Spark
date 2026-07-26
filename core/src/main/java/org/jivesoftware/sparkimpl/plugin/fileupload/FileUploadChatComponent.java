@@ -52,8 +52,12 @@ import java.net.URL;
 
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.WEST;
 
 public class FileUploadChatComponent extends JPanel {
+    private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
+    private static final Color COLOR_TITLE_ALERT = new Color(211, 174, 102);
+
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
@@ -65,14 +69,14 @@ public class FileUploadChatComponent extends JPanel {
 
     public FileUploadChatComponent() {
         setLayout(new GridBagLayout());
-        setBackground(new Color(250, 249, 242));
+        setBackground(COLOR_BACKGROUND_ALERT);
         Insets insets = new Insets(5, 5, 5, 5);
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0, 0, NORTHWEST, NONE, insets, 0, 0));
 
-        titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-        titleLabel.setForeground(new Color(211, 174, 102));
+        titleLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        titleLabel.setForeground(COLOR_TITLE_ALERT);
         add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1, 0, NORTHWEST, NONE, insets, 0, 0));
-        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, GridBagConstraints.WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(fileLabel, new GridBagConstraints(1, 1, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 5, 5), 0, 0));
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
@@ -113,8 +117,8 @@ public class FileUploadChatComponent extends JPanel {
         progressBar.setMaximum(100);
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
-        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1, 0, GridBagConstraints.WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
-        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1, 0, GridBagConstraints.WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
+        add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
+        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1, 0, WEST, NONE, new Insets(0, 5, 0, 5), 150, 0));
 
         SwingWorker worker = new SwingWorker() {
             @Override
@@ -203,15 +207,5 @@ public class FileUploadChatComponent extends JPanel {
             }
         }
         return false;
-    }
-
-    private void showAlert(boolean alert) {
-        if (alert) {
-            titleLabel.setForeground(new Color(211, 174, 102));
-            setBackground(new Color(250, 249, 242));
-        } else {
-            setBackground(new Color(239, 245, 250));
-            titleLabel.setForeground(new Color(65, 139, 179));
-        }
     }
 }
