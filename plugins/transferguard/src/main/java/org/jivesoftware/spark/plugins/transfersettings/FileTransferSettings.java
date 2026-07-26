@@ -19,7 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -34,40 +35,32 @@ import org.jxmpp.jid.util.JidUtil;
  * Bean whose properties are the various preference settings for file transfer.
  */
 public class FileTransferSettings {
-    private List<String> extensions = new ArrayList<>();
-    private List<EntityBareJid> JIDs = new ArrayList<>();
+    private Set<String> extensions = Set.of();
+    private Set<EntityBareJid> JIDs = Set.of();
     private int kb;
-    private boolean checkSize = false;
-    String cannedRejectionMessage;
+    private boolean checkSize;
+    private String cannedRejectionMessage;
     private static final File BACKING_STORE = new File(Spark.getSparkUserHome(), "/transferguard.properties");
 
     /**
-     * Returns a {@link List} of strings - one for each blocked file extension. Strings are in the form <tt>*.{extension}</tt>.
+     * Returns a {@link Set} of strings - one for each blocked file extension. Strings are in the form <tt>*.{extension}</tt>.
      */
-    public List<String> getBlockedExtensions(){
+    public Set<String> getBlockedExtensions(){
         return extensions;
     }
 
-    /**
-     * Sets the {@link List} of blocked file extensions.
-     * @param extensions    the {@link List} of blocked file extensions.
-     */
-    public void setBlockedExtensions(List<String> extensions){
+    public void setBlockedExtensions(Set<String> extensions){
         this.extensions = extensions;
     }
 
     /**
-     * Returns a {@link List} of blocked JIDs. File transfers from users with those JIDs will be automaticlly rejected.
+     * Returns a {@link Set} of blocked JIDs. File transfers from users with those JIDs will be automatically rejected.
      */
-    public List<EntityBareJid> getBlockedJIDs() {
+    public Set<EntityBareJid> getBlockedJIDs() {
         return JIDs;
     }
 
-    /**
-     * Sets the {@link List} of blocked JIDs.
-     * @param JIDs  the {@link List} of blocked JIDs.
-     */
-    public void setBlockedJIDS(List<EntityBareJid> JIDs){
+    public void setBlockedJIDS(Set<EntityBareJid> JIDs){
         this.JIDs = JIDs;
     }
 
@@ -79,10 +72,6 @@ public class FileTransferSettings {
         return kb;
     }
 
-    /**
-     * Sets the maximum file size in kilobytes for file transfers.
-     * @param kb the maximum file size in kilobytes for file transfers.
-     */
     public void setMaxFileSize(int kb){
         this.kb = kb;
     }
@@ -94,11 +83,6 @@ public class FileTransferSettings {
         return checkSize;
     }
 
-    /**
-     * If set to true, files larger than the maximum file size as returned by {@link #getMaxFileSize}
-     * will not be accepted.
-     * @param checkSize true if size should be checked.
-     */
     public void setCheckFileSize(boolean checkSize){
         this.checkSize = checkSize;
     }
@@ -111,11 +95,6 @@ public class FileTransferSettings {
         return cannedRejectionMessage;
     }
 
-    /**
-     * Sets the text of a canned message sent to requestors whose file transfers were automatically rejected. If set
-     * to null or an empty string, no message will be sent.
-     * @param cannedRejectionMessage the canned message text.
-     */
     public void setCannedRejectionMessage(String cannedRejectionMessage) {
         this.cannedRejectionMessage = cannedRejectionMessage;
     }
@@ -138,9 +117,9 @@ public class FileTransferSettings {
 
             String users = props.getProperty("jids");
             if (users != null) {
-                List<String> jidStrings = convertSettingsStringToList(users);
+                Set<String> jidStrings = convertSettingsStringToList(users);
                 Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
-                this.JIDs = new ArrayList<>(jidSet);
+                this.JIDs = jidSet;
             }
 
             String ignore = props.getProperty("checkFileSize");
@@ -170,6 +149,8 @@ public class FileTransferSettings {
             props.setProperty("maxSize", Integer.toString(kb));
             if (cannedRejectionMessage != null) {
                 props.setProperty("cannedResponse", cannedRejectionMessage);
+            } else {
+                props.remove("cannedResponse");
             }
             props.store(new FileOutputStream(BACKING_STORE), null);
         } catch (IOException ioe) {
@@ -178,33 +159,21 @@ public class FileTransferSettings {
     }
 
     /**
-     * Converts a list of strings to a single comma separated string
-     * @param settings the {@link List} of strings.
+     * Converts a list of strings to a single comma-separated string
      */
-    public static String convertSettingsListToString(List<? extends CharSequence> settings) {
-        StringBuilder buffer = new StringBuilder();
-        boolean first = true;
-        for (CharSequence cs : settings) {
-            if (!first) {
-                buffer.append(',');
-            } else {
-                first = false;
-            }
-            buffer.append(cs);
-        }
-        return buffer.toString();
+    public static String convertSettingsListToString(Collection<? extends CharSequence> settings) {
+        return String.join(",", settings);
     }
 
     /**
-     * Converts the supplied string to a {@link List} of strings. The input is split
-     * with the tokensL: ',' ':' '\n' '\t' '\r' and ' '.
-     * @param settings  the string to convert.
+     * Converts the supplied string to a {@link List} of strings in lower case.
+     * The input is split with the tokens: ',' ':' '\n' '\t' '\r' and ' '.
      */
-    public static List<String> convertSettingsStringToList(String settings) {
-        List<String> list = new ArrayList<>();
+    public static Set<String> convertSettingsStringToList(String settings) {
+        HashSet<String> list = new HashSet<>();
         StringTokenizer tokenizer = new StringTokenizer(settings, ",;\n\t\r ");
         while (tokenizer.hasMoreTokens()) {
-            list.add(tokenizer.nextToken());
+            list.add(tokenizer.nextToken().toLowerCase());
         }
         return list;
     }

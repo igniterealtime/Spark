@@ -26,8 +26,10 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.util.log.Log;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
- * Spark plugin which allows configuration of allowed file sizes, types, and senders for file transfer.
+ * Spark plugin that allows configuration of allowed file sizes, types, and senders for file transfer.
  * Transfer requests which don't meet the configured preferences are automatically rejected.
  */
 public class FileTransferSettingsPlugin implements Plugin {
@@ -46,7 +48,7 @@ public class FileTransferSettingsPlugin implements Plugin {
                 request.reject();
 
                 String responseMessage = settings.getCannedRejectionMessage();
-                if (responseMessage != null && !responseMessage.isEmpty()) {
+                if (!isBlank(responseMessage)) {
                     Message message = StanzaBuilder.buildMessage()
                         .to(request.getRequestor())
                         .setBody(responseMessage)
@@ -97,8 +99,8 @@ public class FileTransferSettingsPlugin implements Plugin {
     }
 
     /**
-     * Strips the extension off the supplied filename and prepends an asterisk. For example 'bad.doc' would return
-     * '*.doc'.
+     * Strips the extension off the supplied filename, lowercase and prepends an asterisk.
+     * For example, 'bad.DOC' would return '*.doc'.
      *
      * @param filename to return the extension for.
      * @return the extension.
@@ -106,7 +108,7 @@ public class FileTransferSettingsPlugin implements Plugin {
     private String getFileExtensionFromName(String filename) {
         int dotIdx = filename.lastIndexOf(".");
         if (dotIdx > 0 && dotIdx < (filename.length() - 1)) {
-            return "*" + filename.substring( dotIdx );
+            return "*" + filename.substring( dotIdx ).toLowerCase();
         }
         return null;
     }

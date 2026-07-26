@@ -19,13 +19,25 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.util.JidUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Set;
+
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.WEST;
 
 /**
  * UI for the file transfer preferences. It displays all the various preference settings for editing.
@@ -46,7 +58,8 @@ public class TransferSettingsPanel extends JPanel {
 
     /**
      * Populates all the gui controls with values from the supplied {@link FileTransferSettings}.
-     * @param settings  the {@link FileTransferSettings} to populate the gui from.
+     *
+     * @param settings the {@link FileTransferSettings} to populate the gui from.
      */
     public void applySettings(FileTransferSettings settings) {
         pnlTypes.setBlockedTypes(settings.getBlockedExtensions());
@@ -58,6 +71,7 @@ public class TransferSettingsPanel extends JPanel {
 
     /**
      * Populates the supplied {@link FileTransferSettings} from the values in the gui controls.
+     *
      * @param settings the {@link FileTransferSettings} to populate.
      */
     public void storeSettings(FileTransferSettings settings) {
@@ -69,51 +83,52 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class BlockedTypesPanel extends JPanel {
-	private final JTextArea txtBlockedTypes = new JTextArea(2, 0);
+        private final JTextArea txtBlockedTypes = new JTextArea(2, 0);
+
         BlockedTypesPanel() {
             txtBlockedTypes.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            
             txtBlockedTypes.setToolTipText(TGuardRes.getString("guard.settings.tooltips.blockedtypes"));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString("guard.settings.title.extensions")),
-                        new EmptyBorder(2,4,4,4)));
+            TitledBorder outsideBorder = new TitledBorder(TGuardRes.getString("guard.settings.title.extensions"));
+            setBorder(BorderFactory.createCompoundBorder(outsideBorder, new EmptyBorder(2, 4, 4, 4)));
             add(txtBlockedTypes, BorderLayout.CENTER);
         }
 
-        public void setBlockedTypes(List<String> types) {
+        public void setBlockedTypes(Set<String> types) {
             txtBlockedTypes.setText(FileTransferSettings.convertSettingsListToString(types));
         }
 
-        public List<String> getBlockedTypes() {
+        public Set<String> getBlockedTypes() {
             return FileTransferSettings.convertSettingsStringToList(txtBlockedTypes.getText());
         }
     }
 
     private static class BlockedPeoplePanel extends JPanel {
-	private final JTextArea txtBlockedPeople = new JTextArea(2, 0);
+        private final JTextArea txtBlockedPeople = new JTextArea(2, 0);
 
         BlockedPeoplePanel() {
             txtBlockedPeople.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
             txtBlockedPeople.setToolTipText(TGuardRes.getString("guard.settings.tooltips.blockedperson"));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString("guard.settings.title.person")),
-                        new EmptyBorder(2,4,4,4)));
+            TitledBorder outsideBorder = new TitledBorder(TGuardRes.getString("guard.settings.title.person"));
+            setBorder(BorderFactory.createCompoundBorder(outsideBorder, new EmptyBorder(2, 4, 4, 4)));
             add(txtBlockedPeople, BorderLayout.CENTER);
         }
 
-        public void setBlockedPeople(List<EntityBareJid> people) {
+        public void setBlockedPeople(Set<EntityBareJid> people) {
             txtBlockedPeople.setText(FileTransferSettings.convertSettingsListToString(people));
         }
 
-        public List<EntityBareJid> getBlockedPeople() {
-            List<String> jidStrings = FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
+        public Set<EntityBareJid> getBlockedPeople() {
+            Set<String> jidStrings = FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
             Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
-            return new ArrayList<>(jidSet);
+            return jidSet;
         }
     }
 
     private static class FileSizePanel extends JPanel {
-	private final JSpinner spinMaxSize = new JSpinner();
+        private final JLabel spinMaxSizeLabel = new JLabel(TGuardRes.getString(("guard.settings.label.maxsize")));
+        private final JSpinner spinMaxSize = new JSpinner();
         private final JCheckBox chkMaxEnabled = new JCheckBox(TGuardRes.getString("guard.settings.limitcheck"));
 
         FileSizePanel() {
@@ -122,19 +137,14 @@ public class TransferSettingsPanel extends JPanel {
             add(chkMaxEnabled);
 
             JPanel pnlSpinner = new JPanel(new GridBagLayout());
-            pnlSpinner.add(new JLabel(TGuardRes.getString(("guard.settings.label.maxsize"))),
-                    new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,2), 0, 0));
-            pnlSpinner.add(spinMaxSize,
-                    new GridBagConstraints(1, 0, 1, 1, 0.25, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
-            pnlSpinner.add(new JPanel(),
-                    new GridBagConstraints(2, 0, 1, 1, 0.75, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+            pnlSpinner.add(spinMaxSizeLabel, new GridBagConstraints(0, 0, 1, 1, 0, 0, WEST, NONE, new Insets(0, 0, 0, 2), 0, 0));
+            pnlSpinner.add(spinMaxSize, new GridBagConstraints(1, 0, 1, 1, 0.25, 0, WEST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            pnlSpinner.add(new JPanel(), new GridBagConstraints(2, 0, 1, 1, 0.75, 0, WEST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
             add(pnlSpinner);
 
-            chkMaxEnabled.addActionListener( evnt -> {
-                if (spinMaxSize != null) {
-                    spinMaxSize.setEnabled(chkMaxEnabled.isSelected());
-                }
-            } );
+            chkMaxEnabled.addActionListener(e -> {
+                spinMaxSize.setEnabled(chkMaxEnabled.isSelected());
+            });
         }
 
         public void setMaxFileSize(int kb) {
@@ -155,14 +165,14 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class CannedResponsePanel extends JPanel {
-	private final JTextArea txtMessage = new JTextArea(2, 0);
+        private final JTextArea txtMessage = new JTextArea(2, 0);
 
         CannedResponsePanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
             txtMessage.setToolTipText(TGuardRes.getString(("guard.settings.tooltips.textarea")));
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder(TGuardRes.getString(("guard.settings.title.rejectresponse"))),
-                        new EmptyBorder(2,4,4,4)));
+            TitledBorder outsideBorder = new TitledBorder(TGuardRes.getString(("guard.settings.title.rejectresponse")));
+            setBorder(BorderFactory.createCompoundBorder(outsideBorder, new EmptyBorder(2, 4, 4, 4)));
             add(txtMessage, BorderLayout.CENTER);
         }
 
