@@ -83,7 +83,6 @@ public class GroupChatRoom extends ChatRoom {
     private final MultiUserChat chat;
     private final SubjectPanel subjectPanel;
     private final List<EntityFullJid> currentUserList = new ArrayList<>();
-    private final Map<Resourcepart, Color> participantColors = new HashMap<>();
     private final List<EntityFullJid> blockedUsers = new ArrayList<>();
     private final GroupChatParticipantList roomInfo;
     private final RolloverButton settings;
@@ -607,9 +606,6 @@ public class GroupChatRoom extends ChatRoom {
                         scrollToBottom();
                     }
                     currentUserList.remove(from);
-                    synchronized (participantColors) {
-                        participantColors.remove(from.getResourcepart());
-                    }
                 }
             }
         } else {
@@ -963,10 +959,8 @@ public class GroupChatRoom extends ChatRoom {
         if (!pref.isMucRandomColors()) {
             return ChatManager.FROM_COLOR;
         }
-        synchronized (participantColors) {
-            Color userColor = participantColors.computeIfAbsent(nickname, XEP0392Utils::colorOfMucParticipant);
-            return userColor;
-        }
+        Color userColor = XEP0392Utils.colorOfMucParticipant(nickname);
+        return userColor;
     }
 
     public void notifySettingsAccessRight() {
