@@ -190,9 +190,9 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         useVersionAsResourceBox.setSelected(Default.getBoolean(Default.USE_VERSION_AS_RESOURCE));
         compressionBox.setSelected(Default.getBoolean(Default.COMPRESSION_ENABLED));
         debuggerBox.setSelected(Default.getBoolean(Default.DEBUGGER_ENABLED));
-        portField.setValue(Default.getString(Default.XMPP_PORT));
+        portField.setValue(Integer.parseInt(Default.getString(Default.XMPP_PORT)));
         resourceField.setText(Default.getString(Default.SHORT_NAME));
-        timeOutField.setValue(Default.getString(Default.TIME_OUT));
+        timeOutField.setValue(Integer.parseInt(Default.getString(Default.TIME_OUT)));
     }
     
     public void saveSettings()
