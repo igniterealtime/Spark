@@ -541,8 +541,8 @@ public class RosterDialog implements ActionListener {
             try {
                 roster.preApproveAndCreateEntry(contactJid, displayName, parentNames);
                 return;
-            } catch (SmackException.FeatureNotSupportedException e) {
-                Log.debug("Roster subscription pre-approval is unavailable; using a regular subscription request.");
+            } catch (SmackException.FeatureNotSupportedException ignored) {
+                // never happens
             }
         }
         roster.createItemAndRequestSubscription(contactJid, displayName, parentNames);
