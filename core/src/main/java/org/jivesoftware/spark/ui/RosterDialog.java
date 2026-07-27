@@ -540,11 +540,12 @@ public class RosterDialog implements ActionListener {
         if (roster.isSubscriptionPreApprovalSupported()) {
             try {
                 roster.preApproveAndCreateEntry(contactJid, displayName, parentNames);
-            } catch (SmackException.FeatureNotSupportedException ignored) {
+                return;
+            } catch (SmackException.FeatureNotSupportedException e) {
+                Log.debug("Roster subscription pre-approval is unavailable; using a regular subscription request.");
             }
-        } else {
-            roster.createItemAndRequestSubscription(contactJid, displayName, parentNames);
         }
+        roster.createItemAndRequestSubscription(contactJid, displayName, parentNames);
     }
 
     public List<AccountItem> getAccounts() {
@@ -571,7 +572,7 @@ public class RosterDialog implements ActionListener {
 		return;
 	}
 	
-	String contact = UserManager.escapeJID(jid);
+	String contact = jid;
 	String nickname = nicknameField.getText();
 	String group = (String) groupBox.getSelectedItem();
 
@@ -591,6 +592,10 @@ public class RosterDialog implements ActionListener {
 		contact = contact + "@" + transport.getXMPPServiceDomain();
 	    }
 	}
+
+	// Escape only after a complete JID has been constructed. Escaping a bare
+	// username first causes XmppStringUtils.parseLocalpart() to return null.
+	contact = UserManager.escapeJID(contact);
 
 	if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
 	    // Try to load nickname from VCard
