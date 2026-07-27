@@ -280,6 +280,9 @@ public class UserManager {
         }
 
         String node = XmppStringUtils.parseLocalpart(jid);
+        if (node == null || node.isEmpty()) {
+            return jid;
+        }
         String restOfJID = jid.substring(node.length());
         String builder = XmppStringUtils.escapeLocalpart(node) + restOfJID;
         return builder;
