@@ -32,6 +32,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/spark.properties</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>

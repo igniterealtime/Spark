@@ -833,12 +833,27 @@ return console.askYesNo(message, true);
     </widgetStyles>
   </installerGui>
   <mediaSets>
+    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" architecture="32">
+      <exclude>
+        <entry location="bin/startup.sh" />
+        <entry location="documentation" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="lib/windows64" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+        <entry location="resources/Info.plist" />
+        <entry location="resources/startup.sh" />
+      </exclude>
+      <jreBundle jdkProviderId="Zulu" release="11/latest" overrideJdkRelease="true" platform="windows-x86" />
+    </windows>
     <windows name="Windows 64bit (with JRE)" id="190" mediaFileName="spark_${compiler:sys.version}-with-jre-amd64" installDir="${compiler:sys.fullName}" architecture="64">
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="documentation" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
@@ -852,6 +867,7 @@ return console.askYesNo(message, true);
         <entry location="documentation" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
@@ -865,6 +881,7 @@ return console.askYesNo(message, true);
         <entry location="documentation" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
@@ -877,6 +894,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -891,6 +909,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -905,6 +924,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -919,6 +939,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -933,6 +954,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/linux64" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />
@@ -944,6 +966,7 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/linux64" />
+        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />

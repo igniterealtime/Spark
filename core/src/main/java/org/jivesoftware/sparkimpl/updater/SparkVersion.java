@@ -28,6 +28,7 @@ import org.jxmpp.JxmppContext;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Locale;
 
 public class SparkVersion extends IQ {
 
@@ -36,6 +37,8 @@ public class SparkVersion extends IQ {
     private String downloadURL;
     private String displayMessage;
     private String changeLogURL;
+    private String fileName;
+    private String sha256;
 
     public String getVersion() {
         return version;
@@ -77,6 +80,22 @@ public class SparkVersion extends IQ {
         this.changeLogURL = changeLogURL;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getSha256() {
+        return sha256;
+    }
+
+    public void setSha256(String sha256) {
+        this.sha256 = sha256;
+    }
+
 
     /**
      * Element name of the packet extension.
@@ -108,7 +127,22 @@ public class SparkVersion extends IQ {
         else {
             buf.append("<os>linux</os>");
         }
+        buf.element("arch", currentArchitecture());
         return buf;
+    }
+
+    static String currentArchitecture() {
+        final String arch = System.getProperty("os.arch", "unknown").toLowerCase(Locale.ROOT);
+        if (arch.equals("x86") || arch.matches("i[3-6]86")) {
+            return "x86";
+        }
+        if (arch.equals("amd64") || arch.equals("x86_64")) {
+            return "x64";
+        }
+        if (arch.equals("aarch64") || arch.equals("arm64")) {
+            return "arm64";
+        }
+        return arch;
     }
 
     /**
@@ -143,6 +177,15 @@ public class SparkVersion extends IQ {
                             break;
                         case "displayMessage":
                             version.setDisplayMessage(parser.nextText());
+                            break;
+                        case "changeLogURL":
+                            version.setChangeLogURL(parser.nextText());
+                            break;
+                        case "fileName":
+                            version.setFileName(parser.nextText());
+                            break;
+                        case "sha256":
+                            version.setSha256(parser.nextText());
                             break;
                     }
                 }

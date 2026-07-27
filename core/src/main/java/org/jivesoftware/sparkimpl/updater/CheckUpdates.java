@@ -55,24 +55,33 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CheckUpdates {
     public static final String UPDATER_SERVICE_SUBDOMAIN = "updater.";
     private final String mainUpdateURL;
     private JProgressBar bar;
     private TitlePanel titlePanel;
-    private boolean downloadComplete = false;
-    private boolean cancel = false;
+    private volatile boolean downloadComplete = false;
+    private volatile boolean cancel = false;
     public static boolean UPDATING = false;
-    private final boolean sparkPluginInstalled;
     private final XStream xstream = new XStream();
     private String sizeText;
 
@@ -87,12 +96,11 @@ public class CheckUpdates {
         xstream.registerConverter(new InstantConverter());
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
-        sparkPluginInstalled = isSparkPluginInstalled();
     }
 
     public SparkVersion newBuildAvailable() {
         SparkVersion serverVersion = null;
-        if (sparkPluginInstalled) {
+        if (isSparkPluginInstalled()) {
             serverVersion = getLatestVersion();
         }
         if (serverVersion == null && !Spark.disableUpdatesOnCustom()) {
@@ -158,127 +166,134 @@ public class CheckUpdates {
 
 
     public void downloadUpdate(final File downloadedFile, final SparkVersion version) {
-        Timer timer = new Timer();
+        cancel = false;
+        downloadComplete = false;
+        bar = new JProgressBar(0, 100);
+        bar.setStringPainted(true);
 
-        final HttpGet request = new HttpGet(version.getDownloadURL());
-        try (final CloseableHttpClient httpClient =
-                 HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .build()
-        ) {
-            httpClient.execute(request, response -> {
-                if (response.getCode() != 200) {
-                    return null;
+        final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
+        titlePanel = new TitlePanel(
+            Res.getString("title.upgrading.client"),
+            Res.getString("message.version", version.getVersion()),
+            SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24),
+            true
+        );
+
+        frame.getContentPane().setLayout(new GridBagLayout());
+        frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        JEditorPane pane = new JEditorPane();
+        boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
+        try {
+            pane.setEditable(false);
+            if (version.getChangeLogURL() != null) {
+                pane.setEditorKit(new HTMLEditorKit());
+                pane.setPage(version.getChangeLogURL());
+            } else if (version.getDisplayMessage() != null) {
+                pane.setText(version.getDisplayMessage());
+            }
+            if (displayContentPane) {
+                frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+            }
+        } catch (IOException e) {
+            Log.warning("Unable to load Spark update information.", e);
+        }
+
+        frame.getContentPane().setBackground(Color.WHITE);
+        frame.pack();
+        frame.setSize(displayContentPane ? 600 : 400, displayContentPane ? 400 : 110);
+        frame.setLocationRelativeTo(SparkManager.getMainWindow());
+        GraphicUtils.centerWindowOnScreen(frame);
+
+        final Thread thread = new Thread(() -> {
+            final Path target = downloadedFile.toPath();
+            final Path partial = target.resolveSibling(target.getFileName() + ".part");
+            try {
+                Files.createDirectories(target.getParent());
+                Files.deleteIfExists(partial);
+
+                final HttpGet request = new HttpGet(version.getDownloadURL());
+                try (final CloseableHttpClient httpClient = HttpClients.custom()
+                    .useSystemProperties()
+                    .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                    .build())
+                {
+                    httpClient.execute(request, response -> {
+                        if (response.getCode() != 200) {
+                            throw new IOException("Spark update download returned HTTP " + response.getCode());
+                        }
+                        final HttpEntity entity = response.getEntity();
+                        final long contentLength = entity.getContentLength();
+                        final ByteFormat formatter = new ByteFormat();
+                        sizeText = contentLength >= 0 ? formatter.format(contentLength) : Res.getString("unknown");
+                        SwingUtilities.invokeLater(() -> titlePanel.setDescription(
+                            Res.getString("message.version", version.getVersion()) + "\n" +
+                            Res.getString("message.file.size", sizeText)
+                        ));
+                        try (InputStream stream = entity.getContent(); OutputStream out = Files.newOutputStream(partial)) {
+                            copy(stream, out, contentLength);
+                        }
+                        return null;
+                    });
                 }
-                final HttpEntity entity = response.getEntity();
-                int contentLength = (int) entity.getContentLength();
-                bar = new JProgressBar(0, contentLength);
-                final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
-                frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
-                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24), true);
-                final Thread thread = new Thread( () -> {
-                    try {
-                        InputStream stream = entity.getContent();
-                        long size = entity.getContentLength();
-                        ByteFormat formater = new ByteFormat();
-                        sizeText = formater.format(size);
-                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + "\n" + Res.getString("message.file.size", sizeText));
-                        //noinspection ResultOfMethodCallIgnored
-                        downloadedFile.getParentFile().mkdirs();
 
-                        FileOutputStream out = new FileOutputStream(downloadedFile);
-                        copy(stream, out);
-                        out.close();
-
-                        if (!cancel) {
-                            downloadComplete = true;
-                            promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
-                        }
-                        else {
-                            out.close();
-                            //noinspection ResultOfMethodCallIgnored
-                            downloadedFile.delete();
-                        }
-                        frame.dispose();
-                    }
-                    catch (Exception ex) {
-                        // Nothing to do
-                    }
-                    finally {
-                        UPDATING = false;
-                        timer.cancel();
-                    }
-                } );
-
-                frame.getContentPane().setLayout(new GridBagLayout());
-                frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-                frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-                JEditorPane pane = new JEditorPane();
-                boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
+                if (cancel) {
+                    Files.deleteIfExists(partial);
+                    return;
+                }
+                verifyChecksum(partial, version.getSha256());
                 try {
-                    pane.setEditable(false);
-                    if (version.getChangeLogURL() != null) {
-                        pane.setEditorKit(new HTMLEditorKit());
-                        pane.setPage(version.getChangeLogURL());
-                    }
-                    else if (version.getDisplayMessage() != null) {
-                        pane.setText(version.getDisplayMessage());
-                    }
-                    if (displayContentPane) {
-                        frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                    }
+                    Files.move(partial, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } catch (AtomicMoveNotSupportedException e) {
+                    Files.move(partial, target, StandardCopyOption.REPLACE_EXISTING);
                 }
-                catch (IOException e) {
-                    Log.error(e);
-                }
-
-                frame.getContentPane().setBackground(Color.WHITE);
-                frame.pack();
-                if (displayContentPane) {
-                    frame.setSize(600, 400);
-                }
-                else {
-                    frame.setSize(400, 100);
-                }
-                frame.setLocationRelativeTo(SparkManager.getMainWindow());
-                GraphicUtils.centerWindowOnScreen(frame);
-                frame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent windowEvent) {
-                        thread.interrupt();
-                        cancel = true;
-                        UPDATING = false;
-                        if (!downloadComplete) {
-                            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
-                        }
+                downloadComplete = true;
+                SwingUtilities.invokeLater(() -> {
+                    frame.dispose();
+                    if (!cancel) {
+                        promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
                     }
                 });
-                frame.setVisible(true);
-                thread.start();
+            } catch (Exception ex) {
+                try {
+                    Files.deleteIfExists(partial);
+                } catch (IOException cleanupError) {
+                    Log.warning("Unable to delete incomplete Spark update " + partial, cleanupError);
+                }
+                if (cancel) {
+                    return;
+                }
+                Log.error("Unable to download or validate Spark update.", ex);
+                SwingUtilities.invokeLater(() -> {
+                    frame.dispose();
+                    JOptionPane.showMessageDialog(
+                        SparkManager.getMainWindow(),
+                        ex.getLocalizedMessage(),
+                        Res.getString("title.error"),
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                });
+            } finally {
+                UPDATING = false;
+            }
+        }, "Spark update downloader");
+        thread.setDaemon(true);
 
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    int seconds = 1;
-
-                    @Override
-                    public void run() {
-                        ByteFormat formatter = new ByteFormat();
-                        long value = bar.getValue();
-                        long average = value / seconds;
-                        String text = formatter.format(average) + "/Sec";
-                        String total = formatter.format(value);
-                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + "\n" +
-                            Res.getString("message.file.size", sizeText) + "\n" +
-                            Res.getString("message.transfer.rate") + ": " + text + "\n" +
-                            Res.getString("message.total.downloaded") + ": " + total);
-                        seconds++;
-                    }
-                }, 1000, 1000);
-                return null;
-            });
-        } catch (Exception e) {
-            Log.error(e);
-        }
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                cancel = true;
+                thread.interrupt();
+                UPDATING = false;
+                if (!downloadComplete) {
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        frame.setVisible(true);
+        thread.start();
     }
 
     /**
@@ -289,22 +304,48 @@ public class CheckUpdates {
      * @param in Source stream
      * @param out Destination stream
      */
-    private void copy(final InputStream in, final OutputStream out) {
-        int read = 0;
-        try {
-            final byte[] buffer = new byte[4096];
-            while (!cancel) {
-                int bytesRead = in.read(buffer);
-                if (bytesRead < 0) {
-                    break;
-                }
-                out.write(buffer, 0, bytesRead);
-                read += bytesRead;
-                bar.setValue(read);
+    private void copy(final InputStream in, final OutputStream out, final long expectedSize) throws IOException {
+        long totalRead = 0;
+        final byte[] buffer = new byte[64 * 1024];
+        while (!cancel) {
+            final int bytesRead = in.read(buffer);
+            if (bytesRead < 0) {
+                break;
+            }
+            out.write(buffer, 0, bytesRead);
+            totalRead += bytesRead;
+            if (expectedSize > 0) {
+                final int progress = (int)Math.min(100L, totalRead * 100L / expectedSize);
+                SwingUtilities.invokeLater(() -> bar.setValue(progress));
             }
         }
-        catch (IOException e) {
-            Log.error(e);
+        if (cancel) {
+            throw new IOException("Spark update download was cancelled");
+        }
+        if (expectedSize >= 0 && totalRead != expectedSize) {
+            throw new IOException("Incomplete Spark update: expected " + expectedSize + " bytes, received " + totalRead);
+        }
+    }
+
+    static void verifyChecksum(Path file, String expectedSha256) throws Exception {
+        if (expectedSha256 == null || expectedSha256.isBlank()) {
+            Log.warning("Spark update descriptor does not contain SHA-256. Integrity validation was skipped.");
+            return;
+        }
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (InputStream in = Files.newInputStream(file)) {
+            final byte[] buffer = new byte[64 * 1024];
+            int read;
+            while ((read = in.read(buffer)) >= 0) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        final StringBuilder actual = new StringBuilder(64);
+        for (byte value : digest.digest()) {
+            actual.append(String.format("%02x", value));
+        }
+        if (!actual.toString().equalsIgnoreCase(expectedSha256.trim())) {
+            throw new IOException("Spark update SHA-256 mismatch. Expected " + expectedSha256 + ", received " + actual);
         }
     }
 
@@ -323,6 +364,7 @@ public class CheckUpdates {
             return;
         }
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        final boolean serverUpdaterAvailable = isSparkPluginInstalled();
         //defaults to 7, 0=disabled
         int CheckForUpdates = localPreferences.getCheckForUpdates();
         if (CheckForUpdates == 0) {
@@ -340,13 +382,7 @@ public class CheckUpdates {
         // Check to see if it has been a CheckForUpdates (default 7) days
         Instant lastCheckedPlusAPeriod = lastChecked.plus(CheckForUpdates, ChronoUnit.DAYS);
         boolean periodOrLonger = Instant.now().isAfter(lastCheckedPlusAPeriod);
-        if (!periodOrLonger && !explicit && !sparkPluginInstalled) {
-            UPDATING = false;
-            return;
-        }
-        // beta versions downloaded only when explicitly checking for update
-        if (!explicit && !localPreferences.isBetaCheckingEnabled())
-        {
+        if (!periodOrLonger && !explicit && !serverUpdaterAvailable) {
             UPDATING = false;
             return;
         }
@@ -360,13 +396,14 @@ public class CheckUpdates {
                 }
                 return;
             }
+            if (!explicit && isPreRelease(serverVersion.getVersion()) && !localPreferences.isBetaCheckingEnabled()) {
+                UPDATING = false;
+                return;
+            }
 
             // Otherwise updates are available
             String downloadURL = serverVersion.getDownloadURL();
-            String filename = downloadURL.substring(downloadURL.lastIndexOf("/") + 1);
-            if (filename.indexOf('=') != -1) {
-                filename = filename.substring(filename.indexOf('=') + 1);
-            }
+            String filename = determineFileName(serverVersion);
             // Set Download Directory
             final File downloadDir = new File(Spark.getSparkUserHome(), "updates");
             //noinspection ResultOfMethodCallIgnored
@@ -405,7 +442,7 @@ public class CheckUpdates {
                             }
                             else {
                                 // Launch browser to download page.
-                                if (sparkPluginInstalled) {
+                                if (isSparkPluginInstalled()) {
                                     BrowserLauncher.openURL(serverVersion.getDownloadURL());
                                 } else {
                                     BrowserLauncher.openURL("https://igniterealtime.org/downloads/index.jsp#spark");
@@ -432,41 +469,111 @@ public class CheckUpdates {
      * @return returns true if the first version is greater than the second.
      */
     public static boolean isGreater(String firstVersion, String secondVersion) {
-        int indexOne = firstVersion.indexOf("_");
-        if (indexOne != -1) {
-            firstVersion = firstVersion.substring(indexOne + 1);
+        return compareVersions(firstVersion, secondVersion) > 0;
+    }
+
+    static int compareVersions(String firstVersion, String secondVersion) {
+        final ParsedVersion first = ParsedVersion.parse(firstVersion);
+        final ParsedVersion second = ParsedVersion.parse(secondVersion);
+        final int count = Math.max(first.numbers.size(), second.numbers.size());
+        for (int i = 0; i < count; i++) {
+            final int left = i < first.numbers.size() ? first.numbers.get(i) : 0;
+            final int right = i < second.numbers.size() ? second.numbers.get(i) : 0;
+            if (left != right) {
+                return Integer.compare(left, right);
+            }
         }
-        int indexTwo = secondVersion.indexOf("_");
-        if (indexTwo != -1) {
-            secondVersion = secondVersion.substring(indexTwo + 1);
+        if (first.qualifierRank != second.qualifierRank) {
+            return Integer.compare(first.qualifierRank, second.qualifierRank);
         }
-        firstVersion = firstVersion.replaceAll(".online", "");
-        secondVersion = secondVersion.replace(".online", "");
-        boolean versionOneBetaOrAlpha = firstVersion.toLowerCase().contains("beta") || firstVersion.toLowerCase().contains("alpha");
-        boolean versionTwoBetaOrAlpha = secondVersion.toLowerCase().contains("beta") || secondVersion.toLowerCase().contains("alpha");
-        // Handle case where they are both betas / alphas
-        if ((versionOneBetaOrAlpha && versionTwoBetaOrAlpha) || (!versionOneBetaOrAlpha && !versionTwoBetaOrAlpha)) {
-            return firstVersion.compareTo(secondVersion) >= 1;
-        }
-        // Handle the case where version 1 is a beta or alpha
-        if (versionOneBetaOrAlpha) {
-            String versionOne = getVersion(firstVersion);
-            return versionOne.compareTo(secondVersion) >= 1;
-        }
-        else if (versionTwoBetaOrAlpha) {
-            String versionTwo = getVersion(secondVersion);
-            int result = firstVersion.compareTo(versionTwo);
-            return result >= 0;
-        }
-        return firstVersion.compareTo(secondVersion) >= 1;
+        return Integer.compare(first.qualifierNumber, second.qualifierNumber);
+    }
+
+    static boolean isPreRelease(String version) {
+        return ParsedVersion.parse(version).qualifierRank < ParsedVersion.RELEASE_RANK;
     }
 
     public static String getVersion(String version) {
-        int lastIndexOf = version.lastIndexOf(".");
-        if (lastIndexOf != -1) {
-            return version.substring(0, lastIndexOf);
+        return ParsedVersion.parse(version).normalized;
+    }
+
+    static String determineFileName(SparkVersion version) {
+        if (version.getFileName() != null && !version.getFileName().isBlank()) {
+            return new File(version.getFileName()).getName();
         }
-        return version;
+        try {
+            final URI uri = URI.create(version.getDownloadURL());
+            final String query = uri.getRawQuery();
+            if (query != null) {
+                for (String parameter : query.split("&")) {
+                    final int separator = parameter.indexOf('=');
+                    if (separator > 0 && parameter.substring(0, separator).equals("client")) {
+                        return new File(URLDecoder.decode(parameter.substring(separator + 1), StandardCharsets.UTF_8)).getName();
+                    }
+                }
+            }
+            final String path = uri.getPath();
+            if (path != null && path.contains("/")) {
+                final String name = path.substring(path.lastIndexOf('/') + 1);
+                if (!name.isBlank()) {
+                    return name;
+                }
+            }
+        } catch (Exception e) {
+            Log.warning("Unable to determine Spark update filename from " + version.getDownloadURL(), e);
+        }
+        return "spark-update.bin";
+    }
+
+    private static final class ParsedVersion {
+        private static final int RELEASE_RANK = 5;
+        private static final Pattern PATTERN = Pattern.compile(
+            "(\\d+(?:[._]\\d+){1,3})(?:[-._]?(snapshot|alpha|beta|rc)(\\d*)?)?",
+            Pattern.CASE_INSENSITIVE
+        );
+
+        private final List<Integer> numbers;
+        private final int qualifierRank;
+        private final int qualifierNumber;
+        private final String normalized;
+
+        private ParsedVersion(List<Integer> numbers, int qualifierRank, int qualifierNumber, String normalized) {
+            this.numbers = numbers;
+            this.qualifierRank = qualifierRank;
+            this.qualifierNumber = qualifierNumber;
+            this.normalized = normalized;
+        }
+
+        private static ParsedVersion parse(String value) {
+            final String input = value == null ? "0.0.0" : value.toLowerCase(Locale.ROOT);
+            final Matcher matcher = PATTERN.matcher(input);
+            if (!matcher.find()) {
+                return new ParsedVersion(List.of(0), 0, 0, "0");
+            }
+            final String numeric = matcher.group(1).replace('_', '.');
+            final List<Integer> numbers = new ArrayList<>();
+            for (String part : numeric.split("\\.")) {
+                numbers.add(Integer.parseInt(part));
+            }
+            final String qualifier = matcher.group(2);
+            final int rank;
+            if (qualifier == null) {
+                rank = RELEASE_RANK;
+            } else {
+                switch (qualifier.toLowerCase(Locale.ROOT)) {
+                    case "rc": rank = 4; break;
+                    case "beta": rank = 3; break;
+                    case "alpha": rank = 2; break;
+                    case "snapshot": rank = 1; break;
+                    default: rank = 0;
+                }
+            }
+            final String qualifierNumberText = matcher.group(3);
+            final int qualifierNumber = qualifierNumberText == null || qualifierNumberText.isBlank() ? 0 : Integer.parseInt(qualifierNumberText);
+            final String qualifierSuffix = qualifierNumberText == null ? "" : qualifierNumberText;
+            final String normalized = numeric + (qualifier == null ? "" : "-" + qualifier + qualifierSuffix);
+            return new ParsedVersion(numbers, rank, qualifierNumber, normalized);
+        }
     }
 
     /**
@@ -538,24 +645,28 @@ public class CheckUpdates {
                 null);
         confirm.setConfirmListener(new ConfirmListener() {
             @Override
-			public void yesOption() {
+            public void yesOption() {
+                boolean launched = false;
                 try {
                     if (Spark.isWindows()) {
-                        Runtime.getRuntime().exec(downloadedFile.getAbsolutePath());
+                        new ProcessBuilder(downloadedFile.getAbsolutePath()).start();
+                        launched = true;
+                    } else if (Spark.isMac()) {
+                        new ProcessBuilder("open", downloadedFile.getCanonicalPath()).start();
+                        launched = true;
                     }
-                    else if (Spark.isMac()) {
-                        Runtime.getRuntime().exec("open " + downloadedFile.getCanonicalPath());
-                    }
+                } catch (IOException e) {
+                    Log.error("Unable to launch Spark update installer.", e);
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), e.getLocalizedMessage(), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
-                catch (IOException e) {
-                    Log.error(e);
+                if (launched) {
+                    SparkManager.getMainWindow().shutdown();
                 }
-                SparkManager.getMainWindow().shutdown();
             }
 
             @Override
-			public void noOption() {
-
+            public void noOption() {
+                // Keep the downloaded package for a later manual installation.
             }
         });
     }
