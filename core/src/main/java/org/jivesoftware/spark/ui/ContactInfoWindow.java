@@ -60,6 +60,7 @@ import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
+import static org.jivesoftware.spark.util.XEP0392Utils.colorOfContact;
 
 /**
  * Represents the UI for the "ToolTip" functionality in the ContactList.
@@ -82,13 +83,12 @@ public class ContactInfoWindow extends JPanel {
     private final JWindow window = new JWindow();
 
     private static ContactInfoWindow singleton;
-    private static final Object LOCK = new Object();
 
     public static ContactInfoWindow getInstance() {
         if (singleton != null) {
             return singleton;
         }
-        synchronized (LOCK) {
+        synchronized (ContactInfoWindow.class) {
             singleton = new ContactInfoWindow();
             return singleton;
         }
@@ -192,6 +192,7 @@ public class ContactInfoWindow extends JPanel {
         }
         iconLabel.setIcon(contactItem.getIcon());
         nicknameLabel.setText(contactItem.getDisplayName());
+        nicknameLabel.setForeground(colorOfContact(contactItem.getJid()));
 
         boolean isOnLeave = contactItem.getPresence() == null || contactItem.getPresence().getType() == Presence.Type.unavailable;
         boolean isAway = contactItem.getPresence().isAway();
