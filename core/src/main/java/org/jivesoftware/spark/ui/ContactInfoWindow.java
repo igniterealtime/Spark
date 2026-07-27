@@ -262,7 +262,9 @@ public class ContactInfoWindow extends JPanel {
         String clientResources = "";
         List<Presence> allPresences = SparkManager.getRoster().getAvailablePresences(contactJid);
         for (Presence p : allPresences) {
-            clientResources += p.getFrom().getResourceOrEmpty() + " " + (p.getMode() != available ? p.getMode() : "") + "\n";
+            clientResources += p.getFrom().getResourceOrEmpty() + " " +
+                (p.getMode() != available ? p.getMode() : "") + " " +
+                (p.getStatus() != null ? p.getStatus() : "") + "\n";
         }
         clientResourcesLabel.setText(clientResources);
     }
