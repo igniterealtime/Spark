@@ -533,7 +533,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {
-                UIComponentRegistry.getContactInfoWindow().dispose();
+                UIComponentRegistry.getContactInfoWindow().hideWindow();
                 return;
             }
         } catch (Exception e1) {
@@ -828,7 +828,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     TaskEngine.getInstance().cancelScheduledTask(timerTask);
                 }
                 canShowPopup = false;
-                UIComponentRegistry.getContactInfoWindow().dispose();
+                UIComponentRegistry.getContactInfoWindow().hideWindow();
             }
         });
         contactItemList.addMouseMotionListener(motionListener);
@@ -876,7 +876,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
             timerTask.setEvent(e);
             if (needToChangePopup(e) && timerTask.isNewPopupShown()) {
-                UIComponentRegistry.getContactInfoWindow().dispose();
+                UIComponentRegistry.getContactInfoWindow().hideWindow();
                 timerTask.setNewPopupShown(false);
             }
             mouseDragged = false;
@@ -885,7 +885,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         @Override
         public void mouseDragged(MouseEvent e) {
             if (timerTask.isNewPopupShown()) {
-                UIComponentRegistry.getContactInfoWindow().dispose();
+                UIComponentRegistry.getContactInfoWindow().hideWindow();
             }
             mouseDragged = true;
         }

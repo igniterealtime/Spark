@@ -67,6 +67,7 @@ import static org.jivesoftware.spark.ChatManager.TESTING_JID;
  * @author Derek DeMoro
  */
 public class ContactInfoWindow extends JPanel {
+    private static final Color COLOR_TEXT = Color.gray;
     private final JLabel nicknameLabel = new JLabel();
     private final JTextArea statusLabel = new JTextArea();
     private final JLabel idleLabel = new JLabel();
@@ -96,45 +97,46 @@ public class ContactInfoWindow extends JPanel {
     private ContactInfoWindow() {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
-        add(avatarLabel, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0, NORTHWEST, NONE, new Insets(2, 2, 2, 2), 0, 0));
-        add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, WEST, NONE, new Insets(2, 2, 0, 2), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
-        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
-        add(idleLabel, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
-        add(titleLabel, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-        add(phoneLabel, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
-        add(fullJIDLabel, new GridBagConstraints(0, 6, 4, 1, 1.0, 1.0, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
+        add(avatarLabel, new GridBagConstraints(0, 1, 1, 4, 0, 0, NORTHWEST, NONE, new Insets(2, 2, 2, 2), 0, 0));
+        add(iconLabel, new GridBagConstraints(1, 1, 1, 1, 0, 0, WEST, NONE, new Insets(2, 2, 0, 2), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(2, 1, 1, 1, 1, 0, WEST, HORIZONTAL, new Insets(2, 0, 0, 2), 0, 0));
+        add(statusLabel, new GridBagConstraints(2, 2, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+        add(idleLabel, new GridBagConstraints(2, 3, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 2), 0, 0));
+        add(titleLabel, new GridBagConstraints(2, 4, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        add(phoneLabel, new GridBagConstraints(2, 5, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
+        add(fullJIDLabel, new GridBagConstraints(0, 6, 4, 1, 1, 1, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
-        nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        statusLabel.setForeground(Color.gray);
+        Font dialogFont = new Font("Dialog", Font.PLAIN, 12);
+        nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        statusLabel.setFont(dialogFont);
+        statusLabel.setForeground(COLOR_TEXT);
         statusLabel.setLineWrap(true);
         statusLabel.setWrapStyleWord(true);
         statusLabel.setEditable(false);
         statusLabel.setBorder(null);
-        idleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        idleLabel.setForeground(Color.gray);
-        fullJIDLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        fullJIDLabel.setForeground(Color.gray);
-        titleLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        titleLabel.setForeground(Color.gray);
-        phoneLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        phoneLabel.setForeground(Color.gray);
-        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
+        idleLabel.setFont(dialogFont);
+        idleLabel.setForeground(COLOR_TEXT);
+        titleLabel.setFont(dialogFont);
+        titleLabel.setForeground(COLOR_TEXT);
+        phoneLabel.setFont(dialogFont);
+        phoneLabel.setForeground(COLOR_TEXT);
+        fullJIDLabel.setFont(dialogFont);
+        fullJIDLabel.setForeground(COLOR_TEXT);
+        fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, COLOR_TEXT));
 
-        setBorder(BorderFactory.createLineBorder(Color.gray, 1));
+        setBorder(BorderFactory.createLineBorder(COLOR_TEXT, 1));
         window.getContentPane().add(this);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContactListListener(new ContactListListener() {
             @Override
-			public void contactItemClicked(ContactItem item) {
-                    window.dispose();
+            public void contactItemClicked(ContactItem item) {
+                hideWindow();
             }
 
             @Override
-			public void contactItemDoubleClicked(ContactItem item) {
-                    window.dispose();
+            public void contactItemDoubleClicked(ContactItem item) {
+                hideWindow();
             }
         });
     }
@@ -172,14 +174,13 @@ public class ContactInfoWindow extends JPanel {
         if ((int) screenSize.getWidth() - getPreferredSize().getWidth() < x) {
             actualX = (int) mainWindowLocation.getX() - (int) getPreferredSize().getWidth();
         }
-
         // keep this away from bottom edge
         if (actualY + getHeight() > screenSize.height - 64) {
             actualY -= actualY + getHeight() - screenSize.height + 64;
         }
         // if width Spark Main Windows > width 0.9*screenSize we should put a window inside
-        if(SparkManager.getMainWindow().getWidth() > screenSize.getWidth()*0.9){
-            actualX = x-310;
+        if (SparkManager.getMainWindow().getWidth() > screenSize.getWidth() * 0.9) {
+            actualX = x - 310;
         }
         window.setLocation(actualX, actualY);
     }
@@ -222,7 +223,6 @@ public class ContactInfoWindow extends JPanel {
             if (avatarURL != null) {
                 icon = new ImageIcon(avatarURL);
             }
-
             if (icon != null && icon.getIconHeight() > 1) {
                 icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
             } else {
@@ -290,20 +290,6 @@ public class ContactInfoWindow extends JPanel {
 
     public ContactItem getContactItem() {
         return contactItem;
-    }
-
-    public void dispose() {
-        contactItem = null;
-        window.setVisible(false);
-        window.dispose();
-    }
-
-    @Override
-	public Dimension getPreferredSize() {
-        final Dimension size = super.getPreferredSize();
-        size.width = 300;
-        size.height = 125;
-        return size;
     }
 
     public void mouseExited(MouseEvent e) {
