@@ -45,11 +45,13 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.settings.Sizes;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
@@ -59,6 +61,7 @@ import static java.awt.GridBagConstraints.WEST;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.smack.packet.Presence.Mode.available;
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 import static org.jivesoftware.spark.util.XEP0392Utils.colorOfContact;
 
@@ -77,6 +80,7 @@ public class ContactInfoWindow extends JPanel {
     private final JLabel iconLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel phoneLabel = new JLabel();
+    private final JTextArea clientResourcesLabel = new JTextArea();
 
     private ContactItem contactItem;
 
@@ -105,6 +109,7 @@ public class ContactInfoWindow extends JPanel {
         add(titleLabel, new GridBagConstraints(2, 4, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
         add(phoneLabel, new GridBagConstraints(2, 5, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
         add(fullJIDLabel, new GridBagConstraints(0, 6, 4, 1, 1, 1, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
+        add(clientResourcesLabel, new GridBagConstraints(0, 7, 4, 1, 1, 1, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
         Font dialogFont = new Font("Dialog", Font.PLAIN, 12);
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 14));
@@ -123,6 +128,10 @@ public class ContactInfoWindow extends JPanel {
         fullJIDLabel.setFont(dialogFont);
         fullJIDLabel.setForeground(COLOR_TEXT);
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, COLOR_TEXT));
+        clientResourcesLabel.setLineWrap(true);
+        clientResourcesLabel.setWrapStyleWord(true);
+        clientResourcesLabel.setEditable(false);
+        phoneLabel.setBorder(null);
 
         setBorder(BorderFactory.createLineBorder(COLOR_TEXT, 1));
         window.getContentPane().add(this);
@@ -205,6 +214,7 @@ public class ContactInfoWindow extends JPanel {
         if (isOnLeave || isAway) {
             SwingUtilities.invokeLater(() -> retrieveIdleTime(isOnLeave));
         }
+        showClientResources(isOnLeave, contactItem.getJid());
 
         Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         String localPart = contactItem.getJid().getLocalpartOrThrow().asUnescapedString();
@@ -242,6 +252,19 @@ public class ContactInfoWindow extends JPanel {
             titleLabel.setText(title);
             phoneLabel.setText(phone);
         }
+    }
+
+    private void showClientResources(boolean isOnLeave, BareJid contactJid) {
+        if (isOnLeave) {
+            clientResourcesLabel.setText("");
+            return;
+        }
+        String clientResources = "";
+        List<Presence> allPresences = SparkManager.getRoster().getAvailablePresences(contactJid);
+        for (Presence p : allPresences) {
+            clientResources += p.getFrom().getResourceOrEmpty() + " " + (p.getMode() != available ? p.getMode() : "") + "\n";
+        }
+        clientResourcesLabel.setText(clientResources);
     }
 
     private void retrieveIdleTime(boolean isOnLeave) {
