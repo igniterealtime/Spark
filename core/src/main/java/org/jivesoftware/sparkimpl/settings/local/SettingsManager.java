@@ -78,7 +78,7 @@ public class SettingsManager {
             Log.error("Error saving settings.", e);
             return;
         }
-        Log.debug("Settings saved");
+        Log.warning("Settings saved");
     }
 
     /**
@@ -104,11 +104,14 @@ public class SettingsManager {
         File globalSettingsFile = new File("spark.properties");
         if (globalSettingsFile.exists()) {
             try {
+                Log.warning("Override Spark settings from " + globalSettingsFile.getAbsolutePath());
                 props.load(Files.newInputStream(globalSettingsFile.toPath()));
                 migrateProperties(props, defaults);
             } catch (IOException e) {
-                Log.error(e);
+                Log.error("Unable to load Spark settings", e);
             }
+        } else {
+            Log.warning("Spark settings file not found");
         }
         return new LocalPreferences(props);
     }
