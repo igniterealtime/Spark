@@ -193,7 +193,8 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             PemHelper.saveToPemFile(keyPair, IdentityController.KEY_FILE);
             PemHelper.saveToPemFile(request, IdentityController.CSR_FILE);
             JOptionPane.showMessageDialog(null,
-                    Res.getString("dialog.certificate.request.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+                    Res.getString("dialog.certificate.request.has.been.created") + "\n" +
+                        IdentityController.SECURITY_DIRECTORY);
         } catch (OperatorCreationException | NoSuchAlgorithmException | IOException | NoSuchProviderException e1) {
             Log.error("Couldn't create Certificate Signing Request", e1);
         }
@@ -212,7 +213,8 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
                 pemBuilder.add(cert);
                 pemBuilder.saveToPemFile(IdentityController.CERT_FILE);
                 JOptionPane.showMessageDialog(null,
-                        Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+                        Res.getString("dialog.self.signed.certificate.has.been.created") + "\n" +
+                            IdentityController.SECURITY_DIRECTORY);
             } else {
                 try {
                     idControll.addEntryToKeyStore(cert, keyPair.getPrivate());

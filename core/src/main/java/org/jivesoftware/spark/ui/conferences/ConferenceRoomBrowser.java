@@ -176,7 +176,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
         refreshButton.setToolTipText(Res.getString("message.update.room.list"));
         joinRoomButton.setToolTipText(Res.getString("message.join.conference.room"));
-        createButton.setToolTipText(Res.getString("message.create.or.join.room"));
+        createButton.setToolTipText(Res.getString("menuitem.create.room.description"));
 
         // Add Group Chat Table
         roomsTable = new RoomList();

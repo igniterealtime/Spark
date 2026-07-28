@@ -120,7 +120,7 @@ public class RoomCreationDialog extends JPanel {
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(
             Res.getString("title.create.room"),
-            Res.getString("message.create.or.join.room"),
+            Res.getString("title.create.room.description"),
             SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24),
             true);
 
