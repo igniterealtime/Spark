@@ -97,7 +97,7 @@ public class SettingsManager {
                 props.load(Files.newInputStream(settingsFile.toPath()));
                 migrateProperties(props, defaults);
             } catch (IOException e) {
-                Log.error(e);
+                Log.error("Unable to load Spark settings", e);
             }
         }
         // Override with global settings file
@@ -108,7 +108,7 @@ public class SettingsManager {
                 props.load(Files.newInputStream(globalSettingsFile.toPath()));
                 migrateProperties(props, defaults);
             } catch (IOException e) {
-                Log.error("Unable to load Spark settings", e);
+                Log.error("Unable to load overridden Spark settings", e);
             }
         } else {
             Log.warning("Spark settings file not found");
