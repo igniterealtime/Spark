@@ -18,17 +18,17 @@ public class TranslatorProperties {
      * returns the Instance of this Properties file
      */
     public static TranslatorProperties getInstance() {
+        if (instance != null) {
+            return instance;
+        }
         synchronized (LOCK) {
-            if (instance == null) {
-                instance = new TranslatorProperties();
-            }
+            instance = new TranslatorProperties();
             return instance;
         }
     }
 
     private TranslatorProperties() {
         this.props = new Properties();
-
         try {
             props.load(new FileInputStream(getConfigFile()));
         } catch (IOException e) {
@@ -43,9 +43,9 @@ public class TranslatorProperties {
 
     public void save() {
         try {
-            props.store(new FileOutputStream(getConfigFile()), "Storing Translator properties");
+            props.store(new FileOutputStream(getConfigFile()), null);
         } catch (Exception e) {
-            Log.error(e);
+            Log.error("Unable to store Translator properties", e);
         }
     }
 
@@ -90,7 +90,8 @@ public class TranslatorProperties {
     }
 
     private boolean getBoolean(String property, boolean defaultValue) {
-        return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
+        String propertyVal = props.getProperty(property);
+        return propertyVal != null ? Boolean.parseBoolean(propertyVal) : defaultValue;
     }
 
     public void setBoolean(String property, boolean value) {

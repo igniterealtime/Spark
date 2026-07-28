@@ -1,10 +1,11 @@
 package org.jivesoftware.spark.translator;
 
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+
+import static org.jivesoftware.spark.translator.TranslatorResource.ICON_TRANSLATOR;
 
 public class TranslatorPreference implements Preference {
     private static final String NAMESPACE = "translator";
@@ -18,8 +19,7 @@ public class TranslatorPreference implements Preference {
 
     @Override
     public Icon getIcon() {
-        ClassLoader cl = getClass().getClassLoader();
-        return new ImageIcon(cl.getResource("translator.png"));
+        return ICON_TRANSLATOR;
     }
 
     @Override

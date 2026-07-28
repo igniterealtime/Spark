@@ -15,25 +15,26 @@
  */
 package org.jivesoftware.spark.translator;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Locale;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.transctipt.TranscriptWindow;
 import org.jivesoftware.spark.util.log.Log;
 import space.dynomake.libretranslate.Language;
 import space.dynomake.libretranslate.Translator;
-import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.*;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * A plugin that uses external translation service API to translate instant messages between two users.
@@ -88,7 +89,7 @@ public class TranslatorPlugin implements Plugin {
                 return;
             }
             // Set server LibreTranslate API
-            if (properties.getUseCustomUrl() && !StringUtils.isBlank(properties.getUrl())) {
+            if (properties.getUseCustomUrl() && !isBlank(properties.getUrl())) {
                 Translator.setUrlApi(properties.getUrl());
                 Translator.setApiKey(properties.getApiKey());
             } else {
@@ -216,7 +217,7 @@ public class TranslatorPlugin implements Plugin {
         private Language getMyLanguage() {
             // the setting may be changed any time, so we have to always check it
             String myLanguageSetting = TranslatorProperties.getInstance().getMyLanguage();
-            return !isEmpty(myLanguageSetting) ? Language.fromCode(myLanguageSetting) : localeLanguage;
+            return !isBlank(myLanguageSetting) ? Language.fromCode(myLanguageSetting) : localeLanguage;
         }
 
         private Component findTranslatorComponent(ChatRoom room, String compName) {
