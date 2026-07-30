@@ -258,7 +258,6 @@ public final class MainWindow extends ChatFrame {
                 Presence byePresence = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.unavailable)
                     .setStatus(reason)
-                    .setPriority(-1)
                     .build();
                 try
                 {

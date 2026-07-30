@@ -103,11 +103,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
             .getXMPPServiceDomain());
         if (autoJoin) {
         Presence oldPresence = statusBar.getPresence();
-            Presence presence = StanzaBuilder.buildPresence()
-                .ofType(oldPresence.getType())
-                .setStatus(oldPresence.getStatus())
-                .setPriority(oldPresence.getPriority())
-                .setMode(oldPresence.getMode())
+            Presence presence = StanzaBuilder.buildPresenceFrom(oldPresence, (String) null)
                 .to(transport.getXMPPServiceDomain())
                 .build();
             try

@@ -267,7 +267,7 @@ public class PhonePlugin implements Plugin {
             // Send "on the phone" presence
             onPhonePresence = StanzaBuilder.buildPresence()
                 .ofType(Presence.Type.available)
-                .setStatus("On the phone")
+                .setStatus(Res.getString("status.on.phone"))
                 .setPriority(1)
                 .setMode(Presence.Mode.away)
                 .build();

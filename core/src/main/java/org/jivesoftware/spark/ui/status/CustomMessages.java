@@ -491,11 +491,9 @@ public class CustomMessages {
                         StatusItem item = statusBar.getStatusItem(getType());
                         Presence oldPresence = item.getPresence();
 
-                        Presence presence = StanzaBuilder.buildPresence()
-                            .ofType(oldPresence.getType())
+                        Presence presence = StanzaBuilder.buildPresenceFrom(oldPresence, (String) null)
                             .setStatus(getStatus())
                             .setPriority(getPriority())
-                            .setMode(oldPresence.getMode())
                             .build();
 
                         SparkManager.getSessionManager().changePresence(presence);
@@ -528,11 +526,9 @@ public class CustomMessages {
                         // Update current status.
                         StatusItem item = statusBar.getStatusItem(getType());
                         Presence oldPresence = item.getPresence();
-                        Presence presence = StanzaBuilder.buildPresence()
-                            .ofType(oldPresence.getType())
+                        Presence presence = StanzaBuilder.buildPresenceFrom(oldPresence, (String) null)
                             .setStatus(getStatus())
                             .setPriority(getPriority())
-                            .setMode(oldPresence.getMode())
                             .build();
 
                         SparkManager.getSessionManager().changePresence(presence);

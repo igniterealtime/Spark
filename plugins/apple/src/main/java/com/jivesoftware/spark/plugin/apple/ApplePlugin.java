@@ -257,7 +257,6 @@ public class ApplePlugin implements Plugin, NativeHandler {
                 .setPriority(0)
                 .setMode(p.getMode())
                 .build();
-
 		    SparkManager.getSessionManager().changePresence(newPresence);
 		}
 	    }
@@ -281,11 +280,8 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available"))
 		    .getPresence();
 
-        Presence newPresence = StanzaBuilder.buildPresence()
-            .ofType(presence.getType())
-            .setStatus(presence.getStatus())
+        Presence newPresence = StanzaBuilder.buildPresenceFrom(presence, (String) null)
             .setPriority(previousPriority != -1 ? previousPriority : presence.getPriority())
-            .setMode(presence.getMode())
             .build();
 
         SparkManager.getSessionManager().changePresence(newPresence);

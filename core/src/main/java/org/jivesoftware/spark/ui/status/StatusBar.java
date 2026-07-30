@@ -110,11 +110,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
         //setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
         SparkManager.getSessionManager().addPresenceListener(presence -> {
-            Presence statusPresence = StanzaBuilder.buildPresence()
-                .ofType(presence.getType())
+            Presence statusPresence = StanzaBuilder.buildPresenceFrom(presence, (String) null)
                 .setStatus(StringUtils.modifyWildcards(presence.getStatus()))
-                .setPriority(presence.getPriority())
-                .setMode(presence.getMode())
                 .build();
             changeAvailability(statusPresence);
 
@@ -247,11 +244,9 @@ public class StatusBar extends JPanel implements VCardListener {
                                 SwingWorker worker = new SwingWorker() {
                                     @Override
                                     public Object construct() {
-                                        Presence presence = StanzaBuilder.buildPresence()
-                                            .ofType(si.getPresence().getType())
+                                        Presence presence = StanzaBuilder.buildPresenceFrom(si.getPresence(), (String) null)
                                             .setStatus(customStatus)
                                             .setPriority(customItem.getPriority())
-                                            .setMode(si.getPresence().getMode())
                                             .build();
                                         return changePresence(presence);
                                     }
@@ -575,11 +570,8 @@ public class StatusBar extends JPanel implements VCardListener {
             JOptionPane.showMessageDialog(null, Res.getString("dialog.invisible.privacy.lists.not.supported"));
         }
 
-        Presence copyPresence = StanzaBuilder.buildPresence()
-            .ofType(presence.getType())
+        Presence copyPresence = StanzaBuilder.buildPresenceFrom(presence, (String)null)
             .setStatus(isNewPresenceInvisible ? null : presence.getStatus())
-            .setPriority(presence.getPriority())
-            .setMode(presence.getMode())
             .build();
         if (PresenceManager.areEqual(getCurrentPresence(), copyPresence)) {
             return presence.getStatus();

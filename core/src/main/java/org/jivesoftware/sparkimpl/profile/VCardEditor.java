@@ -320,11 +320,7 @@ public class VCardEditor {
             // Notify users on avatar change
             if (avatarBytes != null) {
                 Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
-                Presence newPresence = StanzaBuilder.buildPresence()
-                    .ofType(presence.getType())
-                    .setStatus(presence.getStatus())
-                    .setPriority(presence.getPriority())
-                    .setMode(presence.getMode())
+                Presence newPresence = StanzaBuilder.buildPresenceFrom(presence, (String) null)
                     .build();
 
                 // Change my own presence

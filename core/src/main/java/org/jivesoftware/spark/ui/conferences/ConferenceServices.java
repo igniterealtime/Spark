@@ -88,11 +88,7 @@ public class ConferenceServices implements InvitationListener {
                 }
                     GroupChatRoom groupChatRoom = (GroupChatRoom) room;
                     EntityBareJid jid = groupChatRoom.getMultiUserChat().getRoom();
-                    final Presence p = StanzaBuilder.buildPresence()
-                        .ofType(presence.getType())
-                        .setStatus(presence.getStatus())
-                        .setPriority(presence.getPriority())
-                        .setMode(presence.getMode())
+                    Presence p = StanzaBuilder.buildPresenceFrom(presence, (String) null)
                         .to(jid)
                         .build();
                     try {

@@ -77,11 +77,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
                 boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
                 if (autoJoin) {
                     Presence oldPresence = statusBar.getPresence();
-                    Presence presence = StanzaBuilder.buildPresence()
-                        .ofType(oldPresence.getType())
-                        .setStatus(oldPresence.getStatus())
-                        .setPriority(oldPresence.getPriority())
-                        .setMode(oldPresence.getMode())
+                    Presence presence = StanzaBuilder.buildPresenceFrom(oldPresence, (String) null)
                         .to(transport.getXMPPServiceDomain())
                         .build();
                     try

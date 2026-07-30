@@ -289,11 +289,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         return;
                     }
                     // Create new presence
-                    Presence p = StanzaBuilder.buildPresence()
-                        .ofType(presence.getType())
-                        .setStatus(presence.getStatus())
-                        .setPriority(presence.getPriority())
-                        .setMode(presence.getMode())
+                    Presence p = StanzaBuilder.buildPresenceFrom(presence, (String) null)
                         .to(transport.getXMPPServiceDomain())
                         .build();
                     try

@@ -211,14 +211,14 @@ public class CallManager implements InterlocutorListener {
         Presence current = SparkManager.getWorkspace().getStatusBar().getPresence();
 
         // Set offline presence if necessary.
-        if (offPhonePresence == null || !(current.getType().equals(Presence.Type.available) && current.getStatus().equals("On the phone") && current.getMode().equals(Presence.Mode.away))) {
+        if (offPhonePresence == null || !(current.getType().equals(Presence.Type.available) && current.getStatus().equals(Res.getString("status.on.phone")) && current.getMode().equals(Presence.Mode.away))) {
             offPhonePresence = current;
         }
 
         // Send on phone presence
         Presence onPhonePresence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.available)
-            .setStatus("On the phone")
+            .setStatus(Res.getString("status.on.phone"))
             .setPriority(1)
             .setMode(Presence.Mode.away)
             .build();
@@ -324,7 +324,7 @@ public class CallManager implements InterlocutorListener {
                 // Set user to available when all phone calls are hung up.
                 Presence availablePresence = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.available)
-                    .setStatus("Online")
+                    .setStatus(Res.getString("status.online"))
                     .setPriority(1)
                     .setMode(Presence.Mode.available)
                     .build();

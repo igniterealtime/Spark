@@ -51,11 +51,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     public void sendRealPresenceTo(Jid jid) throws SmackException.NotConnectedException
     {
         Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence(); 
-        Presence pack = StanzaBuilder.buildPresence()
-            .ofType(presence.getType())
-            .setStatus(presence.getStatus())
+        Presence pack = StanzaBuilder.buildPresenceFrom(presence, (String) null)
             .setPriority(1)
-            .setMode(presence.getMode())
             .to(jid)
             .build();
         try {

@@ -22,7 +22,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -229,11 +228,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 Presence oldPresence = statusItem.getPresence();
-                                Presence presence = StanzaBuilder.buildPresence()
-                                    .ofType(oldPresence.getType())
+                                Presence presence = StanzaBuilder.buildPresenceFrom(oldPresence, (String) null)
                                     .setStatus(customItem.getStatus())
                                     .setPriority(customItem.getPriority())
-                                    .setMode(oldPresence.getMode())
                                     .build();
                                 SparkManager.getSessionManager().changePresence(presence);
 
