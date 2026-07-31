@@ -180,7 +180,7 @@ public class PhonePlugin implements Plugin {
                             }
                         };
 
-                        callAction.putValue(Action.NAME, "Call");
+                        callAction.putValue(Action.NAME, Res.getString("button.call"));
                         callAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE));
                         popup.add(callAction);
                     }
@@ -213,7 +213,7 @@ public class PhonePlugin implements Plugin {
     private static void displayIncomingCallNotification(IncomingCall incomingCall) {
         if (!SettingsManager.getLocalPreferences().isDisableAsteriskToasterPopup()) {
             SparkToaster toasterManager = new SparkToaster();
-            toasterManager.setTitle("Incoming Phone Call");
+            toasterManager.setTitle(Res.getString("title.incoming.call"));
             toasterManager.setDisplayTime(15000);
             toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE));
             toasterManager.setComponent(incomingCall);

@@ -675,7 +675,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         }
 
-        setTitle(getGroupTitle() + " (" + count + " " + Res.getString("online") + ")");
+        setTitle(getGroupTitle() + " (" + count + " " + Res.getString("status.online") + ")");
         if (model.getSize() == 0) {
             model.addElement(noContacts);
         }

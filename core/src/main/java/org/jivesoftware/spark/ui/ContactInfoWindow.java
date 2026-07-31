@@ -207,7 +207,7 @@ public class ContactInfoWindow extends JPanel {
         boolean isAway = contactItem.getPresence().isAway();
         String status = contactItem.getStatus();
         if (isBlank(status)) {
-            status = isOnLeave ? Res.getString("offline") : Res.getString("online");
+            status = isOnLeave ? Res.getString("status.offline") : Res.getString("status.online");
         }
         statusLabel.setText(status);
         idleLabel.setText("");

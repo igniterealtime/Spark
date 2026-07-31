@@ -73,16 +73,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         }
     }
 
-    /**
-     * Returns the singleton instance of <CODE>PhoneManager</CODE>,
-     * creating it if necessary.
-     * <p/>
-     *
-     * @return the singleton instance of <Code>PhoneManager</CODE>
-     */
     public static PhoneManager getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
                 PhoneManager controller = new PhoneManager();
@@ -97,7 +88,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (number == null) {
             return null;
         }
-
         number = number.replace("-", "");
         number = number.replace("(", "");
         number = number.replace(")", "");
@@ -105,14 +95,10 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (number.startsWith("1")) {
             number = number.substring(1);
         }
-
         return number;
     }
 
     public static MediaLocator getMediaLocator(String locator) {
-        MediaLocator auxLocator;
-
-        System.out.println("--------------------------------");
         System.out.println("locator: " + locator);
 
         Vector<CaptureDeviceInfo> vectorAudioDevices = CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR));
@@ -133,7 +119,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
             }
         }
 
-
+        MediaLocator auxLocator;
         if (useStaticLocator) {
             if (mediaLocator == null) {
                 mediaLocator = new MediaLocator(locator);
@@ -143,39 +129,30 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         } else {
             auxLocator = new MediaLocator(locator);
         }
-
         return auxLocator;
     }
 
     public static DataSource getDataSource(String locator) {
-
         if (ds == null) {
-
             try {
                 ds = javax.media.Manager.createDataSource(getMediaLocator(locator));
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
-
         }
-
         return ds;
     }
 
     public static DataSource getDataSource(MediaLocator locator) {
-
         if (ds == null) {
-
             try {
                 ds = javax.media.Manager.createDataSource(locator);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
-
         }
-
         return ds;
     }
 
@@ -209,7 +186,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (phones.isEmpty()) {
             addListeners();
         }
-
         phones.add(phone);
     }
 
@@ -276,7 +252,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
                         }
                     };
                     worker.start();
-
                 }
             });
     }

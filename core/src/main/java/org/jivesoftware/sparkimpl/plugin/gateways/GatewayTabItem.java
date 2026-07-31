@@ -75,19 +75,19 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	    if (PresenceManager.isOnline(transport.getXMPPServiceDomain())) {
 
 		getTitlePane().setIcon(transport.getIcon());
-		_status.setText(Res.getString("online"));
+		_status.setText(Res.getString("status.online"));
 		setOnline();
 
 	    } else {
 		getTitlePane().setIcon(transport.getInactiveIcon());
-		_status.setText(Res.getString("offline"));
+		_status.setText(Res.getString("status.offline"));
 		setOffline();
 	    }
 
 	} else {
 	    // If not. set that transport is not registered yet
 	    getTitlePane().setIcon(transport.getInactiveIcon());
-	    _status.setText(Res.getString("offline"));
+	    _status.setText(Res.getString("status.offline"));
 	    setNotRegistered();
 	}
 
@@ -275,7 +275,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	public void signedIn(final boolean signedIn) {
 	if (!signedIn) {
 	    getTitlePane().setIcon(_transport.getInactiveIcon());
-	    _status.setText(Res.getString("offline"));
+	    _status.setText(Res.getString("status.offline"));
 	    if (!_transportRegistered) {
 
 		_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLUE_BALL));
@@ -287,7 +287,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
 	} else {
 	    getTitlePane().setIcon(_transport.getIcon());
-	    _status.setText(Res.getString("online"));
+	    _status.setText(Res.getString("status.online"));
 	    setOnline();
 
 	}

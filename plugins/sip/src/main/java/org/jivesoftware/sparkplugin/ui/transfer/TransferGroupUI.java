@@ -84,7 +84,7 @@ public class TransferGroupUI extends JPanel {
 
             Icon icon = PresenceManager.getIconFromPresence(presence);
             String status = presence.getStatus() != null ? presence.getStatus() : "";
-            if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
+            if ("Online".equals(status) || Res.getString("status.online").equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 status = "";
             }
 
