@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,10 +66,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final ContactItem noContacts = UIComponentRegistry.createContactGroupItem(Res.getString("group.empty"));
     private final ListMotionListener motionListener = new ListMotionListener();
     private boolean canShowPopup;
-    private boolean mouseDragged = false;
     private final LocalPreferences preferences = SettingsManager.getLocalPreferences();
     private ContactList contactList = Workspace.getInstance().getContactList();
-    private DisplayWindowTask timerTask = null;
+    private SwingTimerTask timerTask = null;
+    private ContactItem hoverItem;
 
     /**
      * Create a new ContactGroup.
@@ -515,32 +515,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        int loc = contactItemList.locationToIndex(e.getPoint());
-        Object o = model.getElementAt(loc);
-        if (!(o instanceof ContactItem)) {
-            return;
-        }
-        contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        Object o;
-        try {
-            int loc = contactItemList.locationToIndex(e.getPoint());
-            if (loc == -1) {
-                return;
-            }
-            o = model.getElementAt(loc);
-            if (!(o instanceof ContactItem)) {
-                UIComponentRegistry.getContactInfoWindow().hideWindow();
-                return;
-            }
-        } catch (Exception e1) {
-            Log.error(e1);
-            return;
-        }
-        contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
     }
 
     @Override
@@ -818,76 +796,74 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             @Override
             public void mouseEntered(MouseEvent mouseEvent) {
                 canShowPopup = true;
-                timerTask = new DisplayWindowTask(mouseEvent);
-                TaskEngine.getInstance().schedule(timerTask, 750, 1000);
+                contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent mouseEvent) {
-                if (timerTask != null) {
-                    TaskEngine.getInstance().cancelScheduledTask(timerTask);
-                }
                 canShowPopup = false;
+                hoverItem = null;
+                cancelExistingTimer();
                 UIComponentRegistry.getContactInfoWindow().hideWindow();
+                contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
         contactItemList.addMouseMotionListener(motionListener);
     }
 
-    private class DisplayWindowTask extends SwingTimerTask {
-        private MouseEvent event;
-        private boolean newPopupShown = false;
-
-        public DisplayWindowTask(MouseEvent e) {
-            event = e;
-        }
-
-        @Override
-        public void doRun() {
-            if (canShowPopup) {
-                if (!newPopupShown && !mouseDragged) {
-                    displayWindow(event);
-                    newPopupShown = true;
-                }
-            }
-        }
-
-        public void setEvent(MouseEvent event) {
-            this.event = event;
-        }
-
-        public void setNewPopupShown(boolean popupChanged) {
-            this.newPopupShown = popupChanged;
-        }
-
-        public boolean isNewPopupShown() {
-            return newPopupShown;
+    private void cancelExistingTimer() {
+        if (timerTask != null) {
+            TaskEngine.getInstance().cancelScheduledTask(timerTask);
+            timerTask = null;
         }
     }
 
     private class ListMotionListener extends MouseMotionAdapter {
         @Override
         public void mouseMoved(MouseEvent e) {
-            if (!canShowPopup) {
+            int index = contactItemList.locationToIndex(e.getPoint());
+            if (index < 0) {
                 return;
             }
-            if (e == null) {
-                return;
-            }
-            timerTask.setEvent(e);
-            if (needToChangePopup(e) && timerTask.isNewPopupShown()) {
-                UIComponentRegistry.getContactInfoWindow().hideWindow();
-                timerTask.setNewPopupShown(false);
-            }
-            mouseDragged = false;
-        }
 
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            if (timerTask.isNewPopupShown()) {
+            Rectangle bounds = contactItemList.getCellBounds(index, index);
+            if (bounds == null || !bounds.contains(e.getPoint())) {
+                hoverItem = null;
+                cancelExistingTimer();
                 UIComponentRegistry.getContactInfoWindow().hideWindow();
+                contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
+                return;
             }
-            mouseDragged = true;
+
+            contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
+            ContactItem item = model.get(index);
+
+            if (item == hoverItem) {
+                return;
+            }
+            hoverItem = item;
+
+            cancelExistingTimer();
+
+            UIComponentRegistry.getContactInfoWindow().hideWindow();
+
+            timerTask = new SwingTimerTask() {
+                @Override
+                public void doRun() {
+                    timerTask = null;
+                    if (!canShowPopup) {
+                        return;
+                    }
+
+                    if (hoverItem != item) {
+                        return; // Mouse moved elsewhere.
+                    }
+
+                    displayWindow(e);
+                }
+            };
+
+            TaskEngine.getInstance().schedule(timerTask, 750);
         }
     }
 
@@ -908,14 +884,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         };
         worker.start();
-    }
-
-    private boolean needToChangePopup(MouseEvent e) {
-        ContactInfoWindow contactInfoWindow = UIComponentRegistry.getContactInfoWindow();
-        int loc = getList().locationToIndex(e.getPoint());
-        ContactItem item = getList().getModel().getElementAt(loc);
-        ContactItem currentlyShownItem = contactInfoWindow.getContactItem();
-        return (item == null || currentlyShownItem == null) || !currentlyShownItem.getJid().equals(item.getJid());
     }
 
     protected DefaultListModel<ContactItem> getModel() {
