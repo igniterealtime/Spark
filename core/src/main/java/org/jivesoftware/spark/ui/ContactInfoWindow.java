@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
-import javax.swing.SwingUtilities;
 
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.resource.Res;
@@ -41,6 +40,7 @@ import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
@@ -211,10 +211,84 @@ public class ContactInfoWindow extends JPanel {
         }
         statusLabel.setText(status);
         idleLabel.setText("");
-        if (isOnLeave || isAway) {
-            SwingUtilities.invokeLater(() -> retrieveIdleTime(isOnLeave));
-        }
+        titleLabel.setText("");
+        phoneLabel.setText("");
         showClientResources(isOnLeave, contactItem.getJid());
+
+        // Reserve avatar space immediately so the layout does not change later.
+        final ImageIcon placeholder = GraphicUtils.scaleImageIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE), Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
+        avatarLabel.setIcon(placeholder);
+        avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+
+        // Load expensive data asynchronously.
+        final ContactItem currentItem = contactItem;
+
+        new SwingWorker() {
+            private String title;
+            private String phone;
+            private ImageIcon avatar;
+            private String idleText;
+
+            @Override
+            public Object construct() {
+                // Avatar
+                try {
+                    URL avatarURL = currentItem.getAvatarURL();
+                    if (avatarURL != null) {
+                        ImageIcon icon = new ImageIcon(avatarURL);
+                        if (icon.getIconHeight() > 1) {
+                            avatar = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    Log.warning("Unable to update avatar in contact info window", e);
+                }
+
+                if (avatar == null) {
+                    avatar = GraphicUtils.scaleImageIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE), Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
+                }
+
+                // VCard
+                try {
+                    VCard vcard = SparkManager.getVCardManager().getVCard(currentItem.getJid());
+                    if (vcard != null) {
+                        title = vcard.getField("TITLE");
+                        phone = vcard.getPhoneWork("VOICE");
+                    }
+                }
+                catch (Exception e) {
+                    Log.warning("Unable to load VCard", e);
+                }
+
+                // Idle time
+                if (isOnLeave || isAway) {
+                    idleText = retrieveIdleTimeText(currentItem, isOnLeave);
+                }
+
+                return null;
+            }
+
+            @Override
+            public void finished() {
+                if (contactItem != currentItem) {
+                    return;
+                }
+
+                avatarLabel.setIcon(avatar);
+                avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+
+                titleLabel.setText(title);
+                phoneLabel.setText(phone);
+
+                if (idleText != null) {
+                    idleLabel.setText(idleText);
+                }
+
+                revalidate();
+                repaint();
+            }
+        }.start();
 
         Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         String localPart = contactItem.getJid().getLocalpartOrThrow().asUnescapedString();
@@ -224,33 +298,6 @@ public class ContactInfoWindow extends JPanel {
         } else {
             fullJIDLabel.setText(localPart);
             fullJIDLabel.setIcon(null);
-        }
-
-        avatarLabel.setBorder(null);
-
-        try {
-            URL avatarURL = contactItem.getAvatarURL();
-            ImageIcon icon = null;
-            if (avatarURL != null) {
-                icon = new ImageIcon(avatarURL);
-            }
-            if (icon != null && icon.getIconHeight() > 1) {
-                icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
-            } else {
-                icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE);
-            }
-            avatarLabel.setIcon(icon);
-            avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        } catch (Exception e) {
-            Log.warning("Unable to update avatar in contact info window", e);
-        }
-
-        VCard vcard = SparkManager.getVCardManager().getVCard(contactItem.getJid());
-        if (vcard != null) {
-            String title = vcard.getField("TITLE");
-            String phone = vcard.getPhoneWork("VOICE");
-            titleLabel.setText(title);
-            phoneLabel.setText(phone);
         }
     }
 
@@ -269,31 +316,26 @@ public class ContactInfoWindow extends JPanel {
         clientResourcesLabel.setText(clientResources);
     }
 
-    private void retrieveIdleTime(boolean isOnLeave) {
-        // When the window was closed the contactItem is cleared
-        if (contactItem == null) {
-            return;
-        }
-        //If user is offline or away, try to see last activity
+    private String retrieveIdleTimeText(ContactItem contactItem, boolean isOnLeave) {
         try {
             //If user is away (not offline), last activity request is sent to client
-            Jid client = isOnLeave ? contactItem.getJid() : contactItem.getPresence().getFrom();
-            LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(client);
+            final Jid client = isOnLeave ? contactItem.getJid() : contactItem.getPresence().getFrom();
+            final LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(client);
             long idleTimeSec = activity.getIdleTime();
             if (idleTimeSec > 0) {
-                String idleText = formatIdleTime(isOnLeave, idleTimeSec);
-                idleLabel.setText(idleText);
+                return formatIdleTime(isOnLeave, idleTimeSec);
             }
         } catch (XMPPException.XMPPErrorException e) {
             Condition condition = e.getStanzaError().getCondition();
             if (condition == Condition.feature_not_implemented || condition == Condition.service_unavailable || condition == Condition.subscription_required || condition == Condition.forbidden) {
                 // ignore
-                return;
+                return null;
             }
-            Log.warning("Unable to get Last Activity from: " + contactItem + ": " + e);
+            Log.warning("Unable to get Last Activity from: " + contactItem, e);
         } catch (Exception e) {
             Log.warning("Unable to get Last Activity from: " + contactItem, e);
         }
+        return null;
     }
 
     private static String formatIdleTime(boolean isOnLeave, long idleTimeSec) {
