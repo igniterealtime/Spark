@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,21 +26,63 @@ import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collection;
 
 public class VersionViewer {
 
     private VersionViewer() {
-
     }
 
-    public static void viewVersion(Jid jid) {
+    public static void viewVersion(Collection<FullJid> fullJids) {
+        final XMPPConnection connection = SparkManager.getConnection();
+
+        final JTabbedPane tabbedPane = new JTabbedPane();
+        for (FullJid fullJid : fullJids) {
+            final JPanel card = createResourceCard(connection, fullJid);
+            final Resourcepart resource = fullJid.getResourceOrNull();
+            final String title = (resource != null)
+                ? resource.toString()
+                : fullJid.toString();
+            tabbedPane.addTab(title, card);
+        }
+
+        // Explanatory text above the tabs.
+        final JTextArea explanation = new JTextArea(Res.getString("message.client.information.multiple.resources"));
+        explanation.setEditable(false);
+        explanation.setLineWrap(true);
+        explanation.setWrapStyleWord(true);
+        explanation.setOpaque(false);
+        explanation.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
+        explanation.setFont(UIManager.getFont("Label.font"));
+
+        final JPanel content = new JPanel(new BorderLayout());
+        content.add(explanation, BorderLayout.NORTH);
+        content.add(tabbedPane, BorderLayout.CENTER);
+
+        // Use the bare JID of the first entry for the dialog's header text.
+        final Jid first = fullJids.iterator().next();
+        MessageDialog.showComponent(
+            Res.getString("title.version.and.time"),
+            Res.getString("message.client.information", UserManager.unescapeJID(first.asBareJid())),
+            SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_24x24),
+            content,
+            SparkManager.getMainWindow(),
+            450, 420, false);
+    }
+
+    /**
+     * Builds a loading/data card pair (CardLayout) for a single resource and fires the Version + Time requests to
+     * populate it asynchronously.
+     */
+    private static JPanel createResourceCard(final XMPPConnection connection, final Jid jid) {
         final JPanel loadingCard = new JPanel();
         final ImageIcon icon = new ImageIcon( VersionViewer.class.getClassLoader().getResource( "images/ajax-loader.gif"));
         loadingCard.add(new JLabel("loading... ", icon, JLabel.CENTER));
@@ -90,8 +132,7 @@ public class VersionViewer {
         cards.add(loadingCard);
         cards.add(dataCard);
 
-        final XMPPConnection connection = SparkManager.getConnection();
-        // Load Version
+        // Load version
         final Version versionRequest = Version.builder(connection)
             .ofType(IQ.Type.get)
             .to(jid)
@@ -132,7 +173,9 @@ public class VersionViewer {
                 cardLayout.last(cards);
             });
 
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
+        // Wrap so the card pair sits nicely inside a tab.
+        final JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.add(cards, BorderLayout.CENTER);
+        return wrapper;
     }
-
 }
