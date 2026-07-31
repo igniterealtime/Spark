@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+/**
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,16 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.resource.Res;
-import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.FullJid;
 
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Jabber Version.
@@ -133,7 +134,15 @@ public class JabberVersion implements Plugin {
                     JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            final Jid jid = presence.getFrom();
+
+            // Collect all available full JIDs for the selected user.
+            final Set<FullJid> allFullJids = SparkManager.getRoster()
+                .getAvailablePresences(presence.getFrom().asBareJid())
+                .stream()
+                .map(p -> p.getFrom().asFullJidIfPossible())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
             SwingWorker worker = new SwingWorker() {
                 @Override
 				public Object construct() {
@@ -143,12 +152,12 @@ public class JabberVersion implements Plugin {
                     catch (InterruptedException e1) {
                         // Nothing to do
                     }
-                    return jid;
+                    return allFullJids;
                 }
 
                 @Override
 				public void finished() {
-                    VersionViewer.viewVersion(jid);
+                    VersionViewer.viewVersion(allFullJids);
                 }
             };
             worker.start();

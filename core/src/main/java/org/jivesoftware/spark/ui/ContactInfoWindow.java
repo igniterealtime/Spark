@@ -80,7 +80,6 @@ public class ContactInfoWindow extends JPanel {
     private final JLabel iconLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel phoneLabel = new JLabel();
-    private final JTextArea clientResourcesLabel = new JTextArea();
 
     private ContactItem contactItem;
 
@@ -109,7 +108,6 @@ public class ContactInfoWindow extends JPanel {
         add(titleLabel, new GridBagConstraints(2, 4, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
         add(phoneLabel, new GridBagConstraints(2, 5, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 2, 2), 0, 0));
         add(fullJIDLabel, new GridBagConstraints(0, 6, 4, 1, 1, 1, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
-        add(clientResourcesLabel, new GridBagConstraints(0, 7, 4, 1, 1, 1, SOUTHWEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
 
         Font dialogFont = new Font("Dialog", Font.PLAIN, 12);
         nicknameLabel.setFont(new Font("Dialog", Font.BOLD, 14));
@@ -128,9 +126,6 @@ public class ContactInfoWindow extends JPanel {
         fullJIDLabel.setFont(dialogFont);
         fullJIDLabel.setForeground(COLOR_TEXT);
         fullJIDLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, COLOR_TEXT));
-        clientResourcesLabel.setLineWrap(true);
-        clientResourcesLabel.setWrapStyleWord(true);
-        clientResourcesLabel.setEditable(false);
         phoneLabel.setBorder(null);
 
         setBorder(BorderFactory.createLineBorder(COLOR_TEXT, 1));
@@ -213,7 +208,6 @@ public class ContactInfoWindow extends JPanel {
         idleLabel.setText("");
         titleLabel.setText("");
         phoneLabel.setText("");
-        showClientResources(isOnLeave, contactItem.getJid());
 
         // Reserve avatar space immediately so the layout does not change later.
         final ImageIcon placeholder = GraphicUtils.scaleImageIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE), Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
@@ -299,21 +293,6 @@ public class ContactInfoWindow extends JPanel {
             fullJIDLabel.setText(localPart);
             fullJIDLabel.setIcon(null);
         }
-    }
-
-    private void showClientResources(boolean isOnLeave, BareJid contactJid) {
-        if (isOnLeave) {
-            clientResourcesLabel.setText("");
-            return;
-        }
-        String clientResources = "";
-        List<Presence> allPresences = SparkManager.getRoster().getAvailablePresences(contactJid);
-        for (Presence p : allPresences) {
-            clientResources += p.getFrom().getResourceOrEmpty() + " " +
-                (p.getMode() != available ? p.getMode() : "") + " " +
-                (p.getStatus() != null ? p.getStatus() : "") + "\n";
-        }
-        clientResourcesLabel.setText(clientResources);
     }
 
     private String retrieveIdleTimeText(ContactItem contactItem, boolean isOnLeave) {
