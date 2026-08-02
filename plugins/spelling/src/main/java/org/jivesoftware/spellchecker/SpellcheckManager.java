@@ -63,12 +63,13 @@ public class SpellcheckManager {
     }
 
     public SpellDictionary getDictionary(String language) {
+        File personalDictionary = new File(SparkManager.getUserDirectory(), "personalDictionary.dict");
         try {
             InputStream dictionary = getClass().getClassLoader().getResourceAsStream("dictionary/" + language + ".zip");
             if (dictionary == null) {
                 Log.error("Dictionary not found");
+                return null;
             }
-            File personalDictionary = new File(SparkManager.getUserDirectory(), "personalDictionary.dict");
             SpellDictionary dict = new OpenOfficeSpellDictionary(dictionary, personalDictionary);
             return dict;
         } catch (IOException e) {

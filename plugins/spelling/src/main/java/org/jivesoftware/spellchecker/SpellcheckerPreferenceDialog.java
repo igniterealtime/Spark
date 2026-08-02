@@ -42,7 +42,6 @@ public class SpellcheckerPreferenceDialog extends JPanel {
     private final JPanel spellPanel = new JPanel();
     private final JLabel lLanguage = new JLabel();
 
-    private final Locale[] locales = Locale.getAvailableLocales();
     private final ArrayList<String> languages;
 
     public SpellcheckerPreferenceDialog(ArrayList<String> languages) {
@@ -52,15 +51,10 @@ public class SpellcheckerPreferenceDialog extends JPanel {
         ignoreCase.addActionListener(e -> setIgnoreUppercase(ignoreCase.isSelected()));
         spellcheckingEnabled.addActionListener(e -> updateUI(spellcheckingEnabled.isSelected()));
         for (String language : languages) {
-            for (final Locale locale : locales) {
-                if (locale.toString().equals(language)) {
-                    String label = locale.getDisplayLanguage(Locale.getDefault());
-                    if (!locale.getDisplayCountry(locale).isEmpty()) {
-                        label = label + "-" + locale.getDisplayCountry(locale);
-                    }
-                    spellLanguages.addItem(label);
-                }
-            }
+            String localeTag = language.replace("_", "-");
+            Locale locale = Locale.forLanguageTag(localeTag);
+            String label = locale.getDisplayName(Locale.getDefault());
+            spellLanguages.addItem(label);
         }
 
         Insets insets = new Insets(5, 5, 5, 5);
