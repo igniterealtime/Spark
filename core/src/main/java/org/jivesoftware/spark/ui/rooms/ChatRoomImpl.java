@@ -58,6 +58,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.Strings.CS;
 import static org.jivesoftware.spark.util.StringUtils.replaceMe;
 
@@ -165,7 +166,6 @@ public class ChatRoomImpl extends ChatRoom {
             addToRosterButton.addActionListener(this);
         }
 
-        lastActivity = System.currentTimeMillis();
         Log.debug("Loaded chat room impl: " + title);
     }
 
@@ -222,7 +222,7 @@ public class ChatRoomImpl extends ChatRoom {
         // Remove control characters
         text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
         // If the body is empty, just return and do nothing
-        if (!ModelUtil.hasLength(text)) {
+        if (isBlank(text)) {
             return;
         }
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
@@ -236,7 +236,6 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Fire Message Filters
         SparkManager.getChatManager().filterOutgoingMessage(this, messageBuilder);
-
         // Fire Global Filters
         Message message = messageBuilder.build();
         SparkManager.getChatManager().fireGlobalMessageSentListeners(this, message);
@@ -296,7 +295,6 @@ public class ChatRoomImpl extends ChatRoom {
     private void displaySendMessage( Message message )
     {
         lastActivity = System.currentTimeMillis();
-
         try {
             getTranscriptWindow().insertMessage( getNickname(), message, ChatManager.TO_COLOR);
             getChatInputEditor().selectAll();
@@ -308,7 +306,6 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error( "Error sending message", ex);
         }
-
         // Notify users that message has been sent
         fireMessageSent(message);
 
@@ -324,27 +321,14 @@ public class ChatRoomImpl extends ChatRoom {
         return roomname;
     }
 
-
     @Override
 	public Icon getTabIcon() {
         return tabIcon;
     }
 
-    public void setTabIcon(Icon icon) {
-        this.tabIcon = icon;
-    }
-
     @Override
 	public String getTabTitle() {
         return tabTitle;
-    }
-
-    public void setTabTitle(String tabTitle) {
-        this.tabTitle = tabTitle;
-    }
-
-    public void setRoomTitle(String roomTitle) {
-        this.roomTitle = roomTitle;
     }
 
     @Override
@@ -379,8 +363,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     /**
      * Returns the users full jid (ex. macbeth@jivesoftware.com/spark) or null if user is offline.
-     *
-     * @return the users Full JID.
      */
     public EntityFullJid getJidOnline() {
         presence = PresenceManager.getPresence(getParticipantJID());
@@ -637,13 +619,6 @@ public class ChatRoomImpl extends ChatRoom {
             getNotificationLabel().setText("");
             getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
         }
-    }
-
-    /**
-     * Returns the current presence of the client this room was created for.
-     */
-    public Presence getPresence() {
-        return presence;
     }
 
     @Override

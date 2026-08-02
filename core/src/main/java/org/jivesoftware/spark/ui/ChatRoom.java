@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.awt.GridBagConstraints.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement
@@ -69,42 +70,40 @@ import static java.awt.GridBagConstraints.*;
  */
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
+    private final JPanel chatPanel = new JPanel(new GridBagLayout());
+    private final JSplitPane splitPane = new JSplitPane();
+    private final JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
-    private final JPanel chatPanel;
-    private final JSplitPane splitPane;
-    private final JSplitPane verticalSplit;
+    private final JLabel notificationLabel = new JLabel();
+    private final TranscriptWindow transcriptWindow = UIComponentRegistry.createTranscriptWindow();
+    private final ChatAreaSendField chatAreaButton = new ChatAreaSendField();
+    private final ChatToolBar toolbar = new ChatToolBar();
+    private final JScrollPane textScroller = new JScrollPane(transcriptWindow);
+    private final JPanel bottomPanel = new JPanel();
 
-    private final JLabel notificationLabel;
-    private final TranscriptWindow transcriptWindow;
-    private final ChatAreaSendField chatAreaButton;
-    private final ChatToolBar toolbar;
-    private final JScrollPane textScroller;
-    private final JPanel bottomPanel;
-
-    private final JPanel editorWrapperBar;
-    private final JPanel editorBarRight;
-    private final JPanel editorBarLeft;
-    private final JPanel chatWindowPanel;
+    private final JPanel editorWrapperBar = new JPanel(new BorderLayout());
+    private final JPanel editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
+    private final JPanel editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
+    private final JPanel chatWindowPanel = new JPanel();
 
     private int unreadMessageCount;
 
     private boolean mousePressed;
 
     private final CopyOnWriteArrayList<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<MessageListener> messageListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<FileDropListener> fileDropListeners = new CopyOnWriteArrayList<>();
 
     private ChatRoomTransferHandler transferHandler;
 
-    private final List<String> packetIDList;
-    private final CopyOnWriteArrayList<MessageListener> messageListeners;
-    private final List<Message> transcript;
-    private final CopyOnWriteArrayList<FileDropListener> fileDropListeners;
+    private final List<String> packetIDList = new ArrayList<>();
+    private final List<Message> transcript = new ArrayList<>();
 
     private final MouseAdapter transcriptWindowMouseListener;
 
     private final KeyAdapter chatEditorKeyListener;
     private ChatFrame _chatFrame;
     private final RolloverButton _alwaysOnTopItem;
-    private boolean _isAlwaysOnTopActive;
 
     // Chat state
     private TimerTask typingTimerTask;
@@ -112,30 +111,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private ChatState lastNotificationSent;
     private final long pauseTimePeriod = 2000;
     private final long inactiveTimePeriod = 120000;
-    protected long lastActivity;
+    protected long lastActivity = System.currentTimeMillis(); // set the last activity to be right now
     /** Flag to show is the room is stale i.e. it was last active more than defaultChatLengthTimeout (15 min) */
     boolean stale;
 
     private static final Color COLOR_BOTTOM_PANEL_BORDER = new Color(197, 213, 230);
 
     protected ChatRoom() {
-        chatPanel = new JPanel(new GridBagLayout());
-        transcriptWindow = UIComponentRegistry.createTranscriptWindow();
-        splitPane = new JSplitPane();
-        packetIDList = new ArrayList<>();
-        notificationLabel = new JLabel();
-        toolbar = new ChatToolBar();
-        bottomPanel = new JPanel();
-
-        messageListeners = new CopyOnWriteArrayList<>();
-        transcript = new ArrayList<>();
-
-        editorWrapperBar = new JPanel(new BorderLayout());
-        editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
         editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
-        fileDropListeners = new CopyOnWriteArrayList<>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
             @Override
@@ -161,10 +145,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
-        chatAreaButton = new ChatAreaSendField();
         chatAreaButton.setVisible(true);
         chatAreaButton.setEnabled(true);
-        textScroller = new JScrollPane(transcriptWindow);
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
@@ -177,7 +159,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         splitPane.setBorder(null);
         splitPane.setOneTouchExpandable(false);
         // Add Vertical Split Pane
-        verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         add(verticalSplit, new GridBagConstraints(0, 1, 1, 1, 1, 1, CENTER, BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         verticalSplit.setBorder(null);
@@ -185,7 +166,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         verticalSplit.setTopComponent(splitPane);
 
         textScroller.setAutoscrolls(true);
-
         // For the first 5*150ms we wait for transcript to load and move
         // ScrollPane to max position if size of ScrollPane changed
         textScroller.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
@@ -227,7 +207,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.getVerticalScrollBar().setBlockIncrement(200);
         textScroller.getVerticalScrollBar().setUnitIncrement(20);
 
-        chatWindowPanel = new JPanel();
         chatWindowPanel.setLayout(new GridBagLayout());
         chatWindowPanel.add(textScroller, new GridBagConstraints(0, 10, 1, 1, 1, 1, WEST, BOTH, new Insets(0, 0, 0, 0), 0, 0));
         chatWindowPanel.setOpaque(false);
@@ -293,20 +272,16 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-        _isAlwaysOnTopActive = pref.isChatWindowAlwaysOnTop();
-        _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
-
+        _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(pref.isChatWindowAlwaysOnTop());
         _alwaysOnTopItem.addActionListener(actionEvent -> {
-            if (!_isAlwaysOnTopActive) {
+            if (!pref.isChatWindowAlwaysOnTop()) {
                 pref.setChatWindowAlwaysOnTop(true);
                 _chatFrame.setWindowAlwaysOnTop(true);
-                _isAlwaysOnTopActive = true;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_ACTIVE));
 
             } else {
                 pref.setChatWindowAlwaysOnTop(false);
                 _chatFrame.setWindowAlwaysOnTop(false);
-                _isAlwaysOnTopActive = false;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_DEACTIVE));
             }
         });
@@ -399,7 +374,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private void handleNickNameCompletion() throws ChatRoomNotFoundException {
         // Search for a name that starts with the same word as the last word in the chat input editor.
         final String text = getChatInputEditor().getText();
-        if (text == null || text.isEmpty()) {
+        if (isBlank(text)) {
             return;
         }
 

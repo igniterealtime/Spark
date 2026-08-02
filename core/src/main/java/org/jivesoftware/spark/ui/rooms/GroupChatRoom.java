@@ -229,9 +229,6 @@ public class GroupChatRoom extends ChatRoom {
             }
         });
 
-        // set the last activity to be right now
-        lastActivity = System.currentTimeMillis();
-
         final GroupChatRoomTransferHandler transferHandler = new GroupChatRoomTransferHandler(this);
         getTranscriptWindow().setTransferHandler(transferHandler);
         // Adds the Settings and Subject Button to the right Toolbar
@@ -982,7 +979,6 @@ public class GroupChatRoom extends ChatRoom {
         if (!chatStatEnabled || !SparkManager.getConnection().isConnected()) {
             return;
         }
-
         // XEP-0085: SHOULD NOT send 'gone' in a MUC.
         if (state == ChatState.gone) {
             return;
