@@ -281,50 +281,29 @@ public class PhonePlugin implements Plugin {
                 dialDialog.setVisible(false);
             }
 
-/*
+            // Restore the presence the user had before the call. Without this Spark stays
+            // "On the phone" for ever once a call ends.
+            //
+            // The original implementation reconciled this against UserIdlePlugin's
+            // desktop-lock and idle state. That is not restored here: it called
+            // UserIdlePlugin.getDesktopLockStatus(), which no longer exists, and read the
+            // now-private 'latestPresence' and 'pref' fields. Its counterpart in
+            // UserIdlePlugin#setOnline() is also still commented out, so bringing the
+            // reconciliation back is a separate change that has to touch core.
+            final Presence restored;
             if (offPhonePresence != null) {
-                // Reconcile presence after phone call based on lock status
-                if (((offPhonePresence.getMode() == Presence.Mode.away) && (!UserIdlePlugin.getDesktopLockStatus())
-                    && (UserIdlePlugin.latestPresence != null)) && (!UserIdlePlugin.latestPresence.getStatus().contentEquals("On the Phone"))) {
-                    SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
-                    Log.debug("PhonePlugin: Setting presence from UserIdlePlugin");
-                } else if ((UserIdlePlugin.getDesktopLockStatus()) && ((offPhonePresence.getStatus().equals("Online"))
-                    || (offPhonePresence.getStatus().equals("Free to chat")))) {
-                    Presence presence = StanzaBuilder.buildPresence()
-                        .ofType(Presence.Type.available)
-                        .setStatus(UserIdlePlugin.pref.getIdleMessage())
-                        .setPriority(1)
-                        .setMode(Presence.Mode.away)
-                        .build();
-                    SparkManager.getSessionManager().changePresence(presence);
-                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from pref.idle message");
-                } else if (UserIdlePlugin.getDesktopLockStatus() && (!offPhonePresence.isAway())) {
-                    Presence presence = StanzaBuilder.buildPresence()
-                        .ofType(Presence.Type.available)
-                        .setStatus(offPhonePresence.getStatus())
-                        .setPriority(1)
-                        .setMode(Presence.Mode.away)
-                        .build();
-                    SparkManager.getSessionManager().changePresence(presence);
-                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from user defined presence");
-                } else {
-                    // Set user to previous presence state when all phone calls are hung up.
-                    SparkManager.getSessionManager().changePresence(offPhonePresence);
-                    Log.debug("PhonePlugin: Setting Presence from PhonePlugin.");
-                }
+                restored = offPhonePresence;
+                Log.debug("PhonePlugin: restoring presence held before the call");
             } else {
-                // If no previous state available, set status to Available
-                Presence availablePresence = StanzaBuilder.buildPresence()
+                restored = StanzaBuilder.buildPresence()
                     .ofType(Presence.Type.available)
-                    .setStatus("Online")
+                    .setStatus(Res.getString("status.online"))
                     .setPriority(1)
                     .setMode(Presence.Mode.available)
                     .build();
-
-                SparkManager.getSessionManager().changePresence(availablePresence);
-                Log.debug("no previous state available from Phone Plugin..setting to Online");
+                Log.debug("PhonePlugin: no previous presence recorded, setting Online");
             }
-*/
+            SparkManager.getSessionManager().changePresence(restored);
         }
 
         @Override
