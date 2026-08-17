@@ -457,13 +457,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     joinRoomItem.setEnabled(true);
                     addRoomButton.setEnabled(true);
                     addRoomItem.setEnabled(true);
-                    addBookmarkUI(!isBookmarked(roomInfo.getRoom()));
+                    addBookmarkUI(isBookmarked(roomInfo.getRoom()));
                 } else {
                     joinRoomButton.setEnabled(false);
                     addRoomButton.setEnabled(false);
                     joinRoomItem.setEnabled(false);
                     addRoomItem.setEnabled(false);
-                    addBookmarkUI(true);
+                    addBookmarkUI(false);
                 }
             });
     }
@@ -717,10 +717,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     /**
      * Toggles the bookmark room button depending on it's state.
      *
-     * @param addBookmark true if the button should display itself as bookmarkable :)
+     * @param isBookmarked true if the selected room is already bookmarked, in which case the button offers to remove it.
      */
-    private void addBookmarkUI(boolean addBookmark) {
-        if (addBookmark) {
+    private void addBookmarkUI(boolean isBookmarked) {
+        if (isBookmarked) {
             ResourceUtils.resButton(addRoomButton, Res.getString("button.remove.bookmark"));
             addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DELETE_BOOKMARK_ICON));
         } else {
