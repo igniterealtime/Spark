@@ -475,38 +475,25 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, NORTH);
+        // Add this content panel
+        mainPanel.add(this, CENTER);
 
-        // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
-            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-        mainPanel.add(pane, CENTER);
-        final JOptionPane p = new JOptionPane();
+        // Add close button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton closeButton = new JButton(Res.getString("close"));
+        closeButton.addActionListener(e -> dlg.dispose());
+        buttonPanel.add(closeButton);
+        mainPanel.add(buttonPanel, SOUTH);
 
-        dlg = p.createDialog(SparkManager.getMainWindow(),
+        dlg = new JDialog(SparkManager.getMainWindow(),
             Res.getString("title.browse.room.service", serviceName));
         dlg.setModal(false);
         dlg.addComponentListener(this);
+        dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
-
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String) pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    pane.removePropertyChangeListener(this);
-                    dlg.dispose();
-                } else if (Res.getString("close").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                }
-            }
-        };
-
-        pane.addPropertyChangeListener(changeListener);
-
         dlg.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
