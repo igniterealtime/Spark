@@ -16,6 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.phone;
 
 import org.jivesoftware.spark.phone.client.PhoneClient;
+import org.jivesoftware.spark.phone.client.action.PhoneActionIQ;
 import org.jivesoftware.spark.phone.client.action.PhoneActionIQProvider;
 import org.jivesoftware.spark.phone.client.event.*;
 import org.jivesoftware.resource.Res;
@@ -61,8 +62,8 @@ public class PhonePlugin implements Plugin {
 
     @Override
     public void initialize() {
-        ProviderManager.addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
-        ProviderManager.addIQProvider("phone-action", "http://jivesoftware.com/xmlns/phone", new PhoneActionIQProvider());
+        ProviderManager.addExtensionProvider(PhoneEventExtension.ELEMENT, PhoneEventExtension.NAMESPACE, new PhoneEventPacketExtensionProvider());
+        ProviderManager.addIQProvider(PhoneActionIQ.ELEMENT, PhoneEventExtension.NAMESPACE, new PhoneActionIQProvider());
 
         MediaPreference preferences = new MediaPreference();
         SparkManager.getPreferenceManager().addPreference(preferences);

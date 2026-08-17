@@ -8,5 +8,11 @@
     <class>org.jivesoftware.sparkplugin.SoftPhonePlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
+    <depends>
+        <plugin>
+            <name>Phone manager</name>
+            <version>2.0.0</version>
+        </plugin>
+    </depends>
 </plugin>
 

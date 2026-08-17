@@ -2,16 +2,10 @@
     <name>${project.name}</name>
     <version>${project.version}</version>
     <description>${project.description}</description>
-    <author>Derek DeMoro</author>
+    <author>Jive Software</author>
     <homePage>https://IgniteRealtime.org</homePage>
     <email>support@IgniteRealtime.org</email>
-    <class>org.jivesoftware.spark.plugin.jingle.JinglePlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
-    <depends>
-        <plugin>
-            <name>Phone manager</name>
-            <version>2.0.0</version>
-        </plugin>
-    </depends>
+    <class>org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin</class>
 </plugin>
