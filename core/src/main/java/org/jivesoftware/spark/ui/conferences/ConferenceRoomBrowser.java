@@ -422,14 +422,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             return;
         }
 
-        boolean isBookmarked = isBookmarked(roomInfo.getRoom());
+        boolean wasBookmarked = isBookmarked(roomInfo.getRoom());
         String roomName = roomInfo.getName() != null ? roomInfo.getName() : roomInfo.getRoom().getLocalpart().toString();
-        conferences.addOrRemoveNode(serviceName, isBookmarked, roomName, roomInfo.getRoom());
+        conferences.addOrRemoveNode(serviceName, wasBookmarked, roomName, roomInfo.getRoom());
         int viewRow = roomsTable.getSelectedRow();
         int modelRow = sorter.convertRowIndexToModel(viewRow);
-        ImageIcon bookmarkIcon = isBookmarked ? SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON);
+        ImageIcon bookmarkIcon = wasBookmarked ? SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON);
         roomsTable.getTableModel().setValueAt(new JLabel(bookmarkIcon), modelRow, 0);
-        addBookmarkUI(!isBookmarked);
+        addBookmarkUI(!wasBookmarked);
     }
 
 
@@ -452,19 +452,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     return;
                 }
                 RoomInfo roomInfo = selectedRoomInfo();
-                if (roomInfo != null) {
-                    joinRoomButton.setEnabled(true);
-                    joinRoomItem.setEnabled(true);
-                    addRoomButton.setEnabled(true);
-                    addRoomItem.setEnabled(true);
-                    addBookmarkUI(isBookmarked(roomInfo.getRoom()));
-                } else {
-                    joinRoomButton.setEnabled(false);
-                    addRoomButton.setEnabled(false);
-                    joinRoomItem.setEnabled(false);
-                    addRoomItem.setEnabled(false);
-                    addBookmarkUI(false);
-                }
+                boolean hasSelectedRoom = roomInfo != null;
+                joinRoomItem.setEnabled(hasSelectedRoom);
+                joinRoomButton.setEnabled(hasSelectedRoom);
+                addRoomItem.setEnabled(hasSelectedRoom);
+                addRoomButton.setEnabled(hasSelectedRoom);
+                addBookmarkUI(hasSelectedRoom && isBookmarked(roomInfo.getRoom()));
             });
     }
 
