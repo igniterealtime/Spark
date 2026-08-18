@@ -164,4 +164,10 @@ public class PublicPlugin {
     public List<PluginDependency> getDependency() {
    	 return dependencies;
     }
+
+    @Override
+    public String toString() {
+        return name + ":" + version;
+    }
+
 }
