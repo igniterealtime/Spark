@@ -28,6 +28,8 @@ import java.awt.Font;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.jivesoftware.sparkimpl.profile.VCardManager.getNumbersFromPhone;
+
 public class PreviousConversationPanel extends JPanel {
     final JLabel previousLabel = new JLabel("Previous Conversations:");
     private final Color greenColor = new Color(91, 175, 41);
@@ -109,8 +111,8 @@ public class PreviousConversationPanel extends JPanel {
         /*
         final CallList callList = SoftPhoneManager.getInstance().getLogManager().getCallList();
         for (HistoryCall call : callList.getList()) {
-            String number = TelephoneUtils.getNumbersFromPhone(call.getNumber());
-            if (number.equals(TelephoneUtils.getNumbersFromPhone(phoneNumber))) {
+            String number = getNumbersFromPhone(call.getNumber());
+            if (number.equals(getNumbersFromPhone(phoneNumber))) {
                 count++;
                 if (count > 4) {
                     break;

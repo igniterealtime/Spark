@@ -39,6 +39,8 @@ import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 
+import static org.jivesoftware.sparkimpl.profile.VCardManager.getNumbersFromPhone;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.TimerTask;
@@ -314,7 +316,7 @@ public class PhonePlugin implements Plugin {
                 public void doRun() {
                     String callerID = event.getCallerID();
                     if (ModelUtil.hasLength(callerID)) {
-                        String number = PhoneManager.getNumbersFromPhone(callerID);
+                        String number = getNumbersFromPhone(callerID);
                         if (PhoneManager.getInstance().containsCurrentCall(number)) {
                             return;
                         }

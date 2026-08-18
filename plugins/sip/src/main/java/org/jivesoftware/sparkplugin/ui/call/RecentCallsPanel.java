@@ -37,6 +37,8 @@ import org.jivesoftware.spark.component.renderer.JPanelRenderer;
 import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
 
+import static org.jivesoftware.sparkimpl.profile.VCardManager.getNumbersFromPhone;
+
 /**
  * UI to represent all calls relating to this user.
  *
@@ -56,8 +58,8 @@ public class RecentCallsPanel extends JPanel {
 
         final LogManager logManager = SoftPhoneManager.getInstance().getLogManager();
         for (HistoryCall call : logManager.getCallHistory()) {
-            String number = SoftPhoneManager.getNumbersFromPhone(call.getNumber());
-            String newCallNumber = SoftPhoneManager.getNumbersFromPhone(ic.getCall().getNumber());
+            String number = getNumbersFromPhone(call.getNumber());
+            String newCallNumber = getNumbersFromPhone(ic.getCall().getNumber());
             if (number.equals(newCallNumber)) {
                 final CallEntry callEntry = new CallEntry(call.getNumber(), new Date(call.getTime()));
                 model.addElement(callEntry);

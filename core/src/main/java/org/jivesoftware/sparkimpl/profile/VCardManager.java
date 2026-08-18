@@ -483,7 +483,11 @@ public class VCardManager {
      * @return the phone number only (5551212)
      */
     public static String getNumbersFromPhone(String number) {
-        return replaceChars(number, "()- ", "");
+        String clearNumber = replaceChars(number, "()- ", "");
+        if (number.startsWith("1")) {
+            clearNumber = clearNumber.substring(1);
+        }
+        return clearNumber;
     }
 
     /**

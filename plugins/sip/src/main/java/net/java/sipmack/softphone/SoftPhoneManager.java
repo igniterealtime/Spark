@@ -1127,22 +1127,6 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
         return missedCalls;
     }
 
-    public static String getNumbersFromPhone(String number) {
-        if (number == null) {
-            return null;
-        }
-
-        number = number.replace("-", "");
-        number = number.replace("(", "");
-        number = number.replace(")", "");
-        number = number.replace(" ", "");
-        if (number.startsWith("1")) {
-            number = number.substring(1);
-        }
-
-        return number;
-    }
-
     public SipAccount getSipAccount() {
         return saccount;
     }

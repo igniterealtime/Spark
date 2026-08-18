@@ -37,6 +37,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
+import static org.jivesoftware.sparkimpl.profile.VCardManager.getNumbersFromPhone;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -230,7 +232,7 @@ public class CallManager implements InterlocutorListener {
                 final String callState = evt.getNewState();
 
                 String callNumber = interlocutorUI.getCall().getNumber();
-                callNumber = SoftPhoneManager.getNumbersFromPhone(callNumber);
+                callNumber = getNumbersFromPhone(callNumber);
                 PhonePanel panel = calls.get(callNumber);
 
                 if (callState.equals(Call.CONNECTED)) {
@@ -269,7 +271,7 @@ public class CallManager implements InterlocutorListener {
 	      	  public void run()
 	      	  {
 			        String phoneNumber = interlocutorUI.getCall().getNumber();
-			        phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
+			        phoneNumber = getNumbersFromPhone(phoneNumber);
 			
 			        PhonePanel panel = calls.get(phoneNumber);
 			        ChatRoom chatRoom = null;
@@ -354,7 +356,7 @@ public class CallManager implements InterlocutorListener {
 
             public void finished() {
                 String phoneNumber = interlocutorUI.getCall().getNumber();
-                phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
+                phoneNumber = getNumbersFromPhone(phoneNumber);
 
                 final PhonePanel phonePanel = calls.get(phoneNumber);
                 if (phonePanel == null) {
@@ -393,14 +395,14 @@ public class CallManager implements InterlocutorListener {
         if (component instanceof PhonePanel) {
             final PhonePanel phonePanel = (PhonePanel) component;
             phoneNumber = phonePanel.getPhoneNumber();
-            phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
+            phoneNumber = getNumbersFromPhone(phoneNumber);
         } else if (component instanceof ChatRoom) {
             ChatRoom chatRoom = (ChatRoom) component;
             Component comp = chatRoom.getSplitPane().getRightComponent();
             if (comp != null && comp instanceof PhonePanel) {
                 final PhonePanel phonePanel = (PhonePanel) comp;
                 phoneNumber = phonePanel.getPhoneNumber();
-                phoneNumber = SoftPhoneManager.getNumbersFromPhone(phoneNumber);
+                phoneNumber = getNumbersFromPhone(phoneNumber);
             }
         }
 

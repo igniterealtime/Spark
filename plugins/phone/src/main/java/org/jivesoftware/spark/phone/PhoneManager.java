@@ -84,20 +84,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         return singleton;
     }
 
-    public static String getNumbersFromPhone(String number) {
-        if (number == null) {
-            return null;
-        }
-        number = number.replace("-", "");
-        number = number.replace("(", "");
-        number = number.replace(")", "");
-        number = number.replace(" ", "");
-        if (number.startsWith("1")) {
-            number = number.substring(1);
-        }
-        return number;
-    }
-
     public static MediaLocator getMediaLocator(String locator) {
         System.out.println("locator: " + locator);
 
@@ -176,7 +162,6 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         // Handle ChatRooms.
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(this);
-
         // Handle ContextMenus.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContextMenuListener(this);
