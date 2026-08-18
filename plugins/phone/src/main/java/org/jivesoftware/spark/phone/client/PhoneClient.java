@@ -9,19 +9,20 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.client.action.PhoneActionIQ;
 import org.jivesoftware.spark.phone.client.event.BasePhoneEventListener;
 import org.jivesoftware.spark.phone.client.event.HangUpEvent;
 import org.jivesoftware.spark.phone.client.event.OnPhoneEvent;
 import org.jivesoftware.spark.phone.client.event.PhoneEventExtension;
 import org.jivesoftware.spark.phone.client.event.RingEvent;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Client for the Asterisk-IM Openfire plugin.
@@ -32,9 +33,6 @@ import java.util.logging.Logger;
  * relies on that to decide whether to show any phone UI at all.
  */
 public class PhoneClient {
-
-    private static final Logger log = Logger.getLogger(PhoneClient.class.getName());
-
     /** Disco item name published by the Asterisk-IM plugin. */
     private static final String COMPONENT_NAME = "phone";
 
@@ -46,35 +44,32 @@ public class PhoneClient {
     private final CopyOnWriteArrayList<BasePhoneEventListener> listeners = new CopyOnWriteArrayList<>();
 
     public PhoneClient(XMPPConnection conn) throws XMPPException, SmackException, InterruptedException {
-        this.connection = conn;
-
         if (!conn.isAuthenticated()) {
             throw new SmackException.SmackMessageException("Connection is not authenticated!");
         }
-
+        this.connection = conn;
         final ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(conn);
-
-        Jid found = null;
-        final DiscoverItems items = discoveryManager.discoverItems(conn.getXMPPServiceDomain());
-        for (final DiscoverItems.Item item : items.getItems()) {
-            if (COMPONENT_NAME.equals(item.getName())) {
-                found = item.getEntityID();
-                break;
-            }
-        }
-        if (found == null) {
-            throw new SmackException.SmackMessageException("Server does not have phone services");
-        }
-        this.component = found;
-
-        final DiscoverInfo info = discoveryManager.discoverInfo(component,
-                conn.getUser().getLocalpart().asUnescapedString());
+        component = findDiscoComponent();
+        String node = conn.getUser().getLocalpart().asUnescapedString();
+        DiscoverInfo info = discoveryManager.discoverInfo(component, node);
         if (!info.containsFeature(PHONE_FEATURE)) {
             throw new SmackException.SmackMessageException("User does not have phone support");
         }
 
         conn.addAsyncStanzaListener(new PhoneEventStanzaListener(),
                 new StanzaExtensionFilter(PhoneEventExtension.ELEMENT, PhoneEventExtension.NAMESPACE));
+    }
+
+    private Jid findDiscoComponent() throws SmackException.SmackMessageException {
+        Map<Jid, DiscoverItems.Item> discoItems = SparkManager.getSessionManager().getDiscoveredItems();
+        for (var entry : discoItems.entrySet()) {
+            DiscoverItems.Item item = entry.getValue();
+            if (COMPONENT_NAME.equals(item.getName())) {
+                Jid found = item.getEntityID();
+                return found;
+            }
+        }
+        throw new SmackException.SmackMessageException("Server does not have phone services");
     }
 
     /**
@@ -130,7 +125,7 @@ public class PhoneClient {
                 try {
                     dispatch(event);
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Unable to dispatch phone event", e);
+                    Log.warning("Unable to dispatch phone event", e);
                 }
             }
         }
