@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -269,9 +269,7 @@ public class ContactItem extends JPanel {
                 }
                 this.hash = hash;
                 if (!hashExists(hash)) {
-                    // Persists the avatar locally based on the new hash.
-                    SparkManager.getVCardManager().reloadVCard(getJid().asEntityBareJidIfPossible());
-                    updateAvatarInSideIcon();
+                    SparkManager.getVCardManager().addToQueue(getJid().asEntityBareJidIfPossible());
                 }
             }
         }

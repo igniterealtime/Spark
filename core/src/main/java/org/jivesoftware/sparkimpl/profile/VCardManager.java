@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2026 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -378,7 +379,12 @@ public class VCardManager {
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
             ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
-            item.setNickname(vcard.getNickName());
+            if (item != null) {
+                SwingUtilities.invokeLater(() -> {
+                    item.setNickname(vcard.getNickName());
+                    item.updateAvatarInSideIcon();
+                });
+            }
             return vcard;
         }
         catch (XMPPException | SmackException | InterruptedException e) {
