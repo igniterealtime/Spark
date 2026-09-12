@@ -26,7 +26,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class MediaPreference implements Preference {
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/media";
-    private final MediaPreferencePanel panel = new MediaPreferencePanel();
+    private MediaPreferencePanel panel;
 
     @Override
     public String getErrorMessage() {
@@ -35,6 +35,7 @@ public class MediaPreference implements Preference {
 
     @Override
     public JComponent getGUI() {
+        panel = new MediaPreferencePanel();
         return panel;
     }
 
