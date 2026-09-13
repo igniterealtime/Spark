@@ -17,7 +17,7 @@
 package org.jivesoftware.sparkplugin.ui.call;
 
 import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+import org.jivesoftware.spark.util.TelephoneUtils;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import org.jivesoftware.spark.component.TimeTrackingLabel;

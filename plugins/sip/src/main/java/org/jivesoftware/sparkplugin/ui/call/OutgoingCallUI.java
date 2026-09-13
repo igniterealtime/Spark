@@ -42,7 +42,7 @@ import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+import org.jivesoftware.spark.util.TelephoneUtils;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
 
 public class OutgoingCallUI extends JPanel {

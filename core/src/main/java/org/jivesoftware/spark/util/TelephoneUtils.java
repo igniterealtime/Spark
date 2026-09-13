@@ -13,30 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkplugin.callhistory;
+package org.jivesoftware.spark.util;
+
+import static org.apache.commons.lang3.StringUtils.replaceChars;
 
 public class TelephoneUtils {
 
-
     private TelephoneUtils() {
+    }
+
+    /**
+     * Parses out the numbers only from a phone number.
+     *
+     * @param number the full phone number.
+     * @return the phone number only (5551212)
+     */
+    public static String getNumbersFromPhone(String number) {
+        String clearNumber = replaceChars(number, "()- ", "");
+        if (number.startsWith("1")) {
+            clearNumber = clearNumber.substring(1);
+        }
+        return clearNumber;
     }
 
     public static String removeInvalidChars(String number) {
         if (number == null) {
             return null;
         }
-
         for (String str : new String[]{"-", "(", ")", " ", "+", "[", "]"})
             number = number.replace(str, "");
-
         return number;
     }
 
     public static String formatPattern(String number, String pattern) {
-
         StringBuffer str = new StringBuffer();
         number = removeInvalidChars(number);
-
         for (int i = 0, j = 0; i < number.length(); j++) {
             if (j < pattern.length()) {
                 char c = pattern.charAt(j);
@@ -48,14 +59,28 @@ public class TelephoneUtils {
                 str.append(number.charAt(i++));
             }
         }
-
         return str.toString();
     }
 
-    public static void main(String args[]) {
+    public static String formatPhoneNumber(String number) {
+        number = number.trim();
+        if (number.length() != 10) {
+            return number;
+        }
+        String buf = "";
+        buf += "(";
+        String areaCode = number.substring(0, 3);
+        buf += areaCode;
+        buf += ") ";
 
-        System.out.println(TelephoneUtils.formatPattern("0(34-325-)5223478", "x(xx)xxxx-xxxx"));
-        System.out.println(TelephoneUtils.formatPattern("503-([972])-7215", "(xxx)xxx-xxxx"));
+        String nextThree = number.substring(3, 6);
+        buf += " ";
+        buf += nextThree;
+        buf += "-";
 
+        String lastThree = number.substring(6, 10);
+        buf += lastThree;
+        return buf;
     }
+
 }

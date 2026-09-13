@@ -80,8 +80,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.replaceChars;
 import static org.jivesoftware.smack.packet.StanzaError.Condition.resource_constraint;
+import static org.jivesoftware.spark.util.TelephoneUtils.getNumbersFromPhone;
 
 /**
  * VCardManager handles all VCard loading/caching within Spark.
@@ -480,20 +480,6 @@ public class VCardManager {
         }
 
         return null;
-    }
-
-    /**
-     * Parses out the numbers only from a phone number.
-     *
-     * @param number the full phone number.
-     * @return the phone number only (5551212)
-     */
-    public static String getNumbersFromPhone(String number) {
-        String clearNumber = replaceChars(number, "()- ", "");
-        if (number.startsWith("1")) {
-            clearNumber = clearNumber.substring(1);
-        }
-        return clearNumber;
     }
 
     /**

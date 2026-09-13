@@ -16,8 +16,12 @@
 package org.jivesoftware.spellchecker;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -30,8 +34,11 @@ import java.util.zip.ZipFile;
 import org.dts.spell.SpellChecker;
 import org.dts.spell.dictionary.openoffice.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
+import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+
+import static java.nio.file.Files.newInputStream;
 
 public class SpellcheckManager {
     private static SpellcheckManager instance = null;
@@ -65,6 +72,16 @@ public class SpellcheckManager {
     public SpellDictionary getDictionary(String language) {
         File personalDictionary = new File(SparkManager.getUserDirectory(), "personalDictionary.dict");
         try {
+            int dictPathSepPos = language.indexOf("|");
+            if (dictPathSepPos != -1) {
+                String dicPath = language.substring(dictPathSepPos + 1);
+                String affixFilePath = dicPath.substring(0, dicPath.length() - 4) + ".aff";
+                InputStream dicIS = new FileInputStream(dicPath);
+                InputStream affIS = new FileInputStream(affixFilePath);
+                SpellDictionary dict = new OpenOfficeSpellDictionary(affIS, dicIS, personalDictionary, true);
+                return dict;
+            }
+            // load from JAR
             InputStream dictionary = getClass().getClassLoader().getResourceAsStream("dictionary/" + language + ".zip");
             if (dictionary == null) {
                 Log.error("Dictionary not found");
@@ -105,13 +122,31 @@ public class SpellcheckManager {
                         if (entry.getName().startsWith("dictionary/") && entry.getName().endsWith(".zip")) {
                             String languageFile = entry.getName().substring(11);
                             String lang = languageFile.substring(0, languageFile.lastIndexOf(".zip"));
-                            languages.add(lang);
+//                            languages.add(lang);
                         }
                     }
                 }
             }
         } catch (Exception e) {
             Log.error(e);
+        }
+        if (Spark.isLinux()) {
+            loadHunspellDictionaries();
+        }
+    }
+
+    private void loadHunspellDictionaries() {
+        File hunspellDir = new File("/usr/share/hunspell");
+        File[] files = hunspellDir.listFiles(File::isFile);
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            String fileName = file.getName();
+            if (fileName.endsWith(".dic")) {
+                String locale = fileName.substring(0, fileName.length() - 4);
+                languages.add(locale + "|" + file);
+            }
         }
     }
 }

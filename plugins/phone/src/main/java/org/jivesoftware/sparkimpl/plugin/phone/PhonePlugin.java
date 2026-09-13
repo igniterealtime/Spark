@@ -39,7 +39,7 @@ import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 
-import static org.jivesoftware.sparkimpl.profile.VCardManager.getNumbersFromPhone;
+import static org.jivesoftware.spark.util.TelephoneUtils.getNumbersFromPhone;
 
 import javax.swing.*;
 import java.awt.event.*;

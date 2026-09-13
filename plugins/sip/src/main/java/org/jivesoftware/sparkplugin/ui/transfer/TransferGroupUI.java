@@ -28,7 +28,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
+import org.jivesoftware.spark.util.TelephoneUtils;
 
 import javax.swing.*;
 import java.awt.*;

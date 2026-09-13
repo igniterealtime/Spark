@@ -51,9 +51,15 @@ public class SpellcheckerPreferenceDialog extends JPanel {
         ignoreCase.addActionListener(e -> setIgnoreUppercase(ignoreCase.isSelected()));
         spellcheckingEnabled.addActionListener(e -> updateUI(spellcheckingEnabled.isSelected()));
         for (String language : languages) {
-            String localeTag = language.replace("_", "-");
-            Locale locale = Locale.forLanguageTag(localeTag);
-            String label = locale.getDisplayName(Locale.getDefault());
+            int dictPathSepPos = language.indexOf("|");
+            String localeCode = dictPathSepPos != -1 ? language.substring(0, dictPathSepPos) : language;
+            String localeTag = localeCode.replace("_", "-");
+            Locale dictLocale = Locale.forLanguageTag(localeTag);
+            String label = dictLocale.getDisplayName(Locale.getDefault());
+            if (dictPathSepPos != -1) {
+                String dictPath = language.substring(dictPathSepPos + 1);
+                label += " (" + dictPath + ")";
+            }
             spellLanguages.addItem(label);
         }
 

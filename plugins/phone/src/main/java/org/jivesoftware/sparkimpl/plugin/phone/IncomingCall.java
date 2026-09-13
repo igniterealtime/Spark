@@ -27,6 +27,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import static org.jivesoftware.spark.util.TelephoneUtils.formatPhoneNumber;
+
 /**
  * UI to display incoming call information
  */
@@ -62,26 +64,12 @@ public class IncomingCall extends JPanel {
     }
 
     public void setCallerNumber(String number) {
-        String buf = "";
         if (number == null) {
             return;
         }
-
-        if (number.trim().length() == 10) {
-            buf += "(";
-            String areaCode = number.substring(0, 3);
-            buf += areaCode;
-            buf += ") ";
-
-            String nextThree = number.substring(3, 6);
-            buf += " ";
-            buf += nextThree;
-            buf += "-";
-
-            String lastThree = number.substring(6, 10);
-            buf += lastThree;
-        }
+        String buf = formatPhoneNumber(number);
 
         callerNumberLabel.setText(buf);
     }
+
 }
