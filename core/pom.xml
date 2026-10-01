@@ -16,7 +16,14 @@
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <properties>
-        <bouncycastle.version>1.79</bouncycastle.version>
+        <!--
+        The BC version should be the same as Smack use, but be newer for a patch version.
+        Check the current Smack version's dependcency:
+        https://github.com/igniterealtime/Smack/blob/master/build-logic/src/main/groovy/org.igniterealtime.smack.java-common-conventions.gradle#L36
+        Check the latest version of the Bouncy Castle library:
+        https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on
+        -->
+        <bouncycastle.version>1.85</bouncycastle.version>
     </properties>
 
     <build>
@@ -137,6 +144,7 @@
             <artifactId>smack-core</artifactId>
             <version>${dependency.smack.version}</version>
             <exclusions>
+                <!-- TODO Remove after https://github.com/igniterealtime/Smack/pull/708 -->
                 <exclusion>
                     <groupId>org.minidns</groupId>
                     <artifactId>minidns-core</artifactId>
@@ -198,7 +206,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.6.3</version>
+            <version>5.6.4</version>
             <exclusions>
                 <exclusion>
                     <!-- Exclude the slf4j-api 1.7 because we use the slf4j-api 2.0 -->

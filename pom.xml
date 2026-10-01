@@ -79,7 +79,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.smack.version>4.5.0-rc1</dependency.smack.version>
+        <dependency.smack.version>4.5.0</dependency.smack.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.release>11</maven.compiler.release>
