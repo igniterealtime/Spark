@@ -19,13 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -37,8 +32,6 @@ import org.dts.spell.dictionary.SpellDictionary;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
-
-import static java.nio.file.Files.newInputStream;
 
 public class SpellcheckManager {
     private static SpellcheckManager instance = null;
@@ -72,6 +65,7 @@ public class SpellcheckManager {
     public SpellDictionary getDictionary(String language) {
         File personalDictionary = new File(SparkManager.getUserDirectory(), "personalDictionary.dict");
         try {
+            // The dict path after |
             int dictPathSepPos = language.indexOf("|");
             if (dictPathSepPos != -1) {
                 String dicPath = language.substring(dictPathSepPos + 1);
@@ -109,6 +103,11 @@ public class SpellcheckManager {
 
     private void loadSupportedLanguages() {
         languages = new ArrayList<>();
+        loadDictFromPluginJar();
+        loadDictFromSystemFolders();
+    }
+
+    private void loadDictFromPluginJar() {
         try {
             String qualifiedClassName = getClass().getName();
             Class<?> qc = Class.forName(qualifiedClassName);
@@ -122,28 +121,43 @@ public class SpellcheckManager {
                         if (entry.getName().startsWith("dictionary/") && entry.getName().endsWith(".zip")) {
                             String languageFile = entry.getName().substring(11);
                             String lang = languageFile.substring(0, languageFile.lastIndexOf(".zip"));
-//                            languages.add(lang);
+                            languages.add(lang);
                         }
                     }
                 }
             }
+            languages.sort(String::compareTo);
         } catch (Exception e) {
             Log.error(e);
         }
-        if (Spark.isLinux()) {
-            loadHunspellDictionaries();
+    }
+
+    private void loadDictFromSystemFolders() {
+        String userHome = System.getProperty("user.home");
+        // $XDG_DATA_HOME/hunspell
+        String userDictFolder = userHome + "/.local/share/hunspell";
+        if (Spark.isWindows()) {
+            // %USERPROFILE%\AppData\Roaming\hunspell
+            loadHunspellDictionaries(userHome + "\\AppData\\Roaming\\hunspell");
+        } else if (Spark.isMac()) {
+            loadHunspellDictionaries("/Library/Spelling");
+            loadHunspellDictionaries(userDictFolder);
+        } else { // Linux, Unix
+            loadHunspellDictionaries("/usr/share/hunspell");
+            loadHunspellDictionaries(userDictFolder);
         }
     }
 
-    private void loadHunspellDictionaries() {
-        File hunspellDir = new File("/usr/share/hunspell");
+    private void loadHunspellDictionaries(String folder) {
+        File hunspellDir = new File(folder);
         File[] files = hunspellDir.listFiles(File::isFile);
         if (files == null) {
             return;
         }
+        Arrays.sort(files);
         for (File file : files) {
             String fileName = file.getName();
-            if (fileName.endsWith(".dic")) {
+            if (fileName.endsWith(".dic") && !fileName.startsWith("hyph_")) {
                 String locale = fileName.substring(0, fileName.length() - 4);
                 languages.add(locale + "|" + file);
             }

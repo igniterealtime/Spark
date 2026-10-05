@@ -15,10 +15,8 @@
  */
 package org.jivesoftware.spellchecker;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -33,15 +31,14 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import static org.jivesoftware.spellchecker.SpellcheckerRes.ICON_SPELLING;
 
 /**
- * This Class adds the SpellCheckButton to the ChatWindow and implements the
- * ActionListener to react on buttonclicks
+ * Add the SpellCheck button to the chat window
  */
 public class SpellcheckChatRoomDecorator {
     private JTextComponentSpellChecker _sc;
     private RolloverButton _spellingButton;
     private final ChatRoom _room;
-    private final JComboBox<String> _languageSelection = new JComboBox<>();
-    private Map<String, String> _languages = new HashMap<>();
+    private final JComboBox<String> selectedLanguage = new JComboBox<>();
+    private final List<String> languages = SpellcheckManager.getInstance().getSupportedLanguages();
 
     public SpellcheckChatRoomDecorator(ChatRoom room) {
         _room = room;
@@ -51,10 +48,10 @@ public class SpellcheckChatRoomDecorator {
         }
         _sc = new JTextComponentSpellChecker(SpellcheckManager.getInstance().getSpellChecker());
 
-        languagesToLocales();
+        languagesToLocales(preference);
 
-        _languageSelection.addActionListener(e -> {
-            String lang = _languages.get((String) _languageSelection.getSelectedItem());
+        selectedLanguage.addActionListener(e -> {
+            String lang = getSelectedLanguage();
             _sc.stopRealtimeMarkErrors();
             _sc = new JTextComponentSpellChecker(new SpellChecker(SpellcheckManager.getInstance().getDictionary(lang)));
             setIgnoreUppercase(preference.getPreferences().getIgnoreUppercase());
@@ -72,7 +69,7 @@ public class SpellcheckChatRoomDecorator {
         });
         _room.getEditorBar().add(_spellingButton);
         if (preference.getPreferences().getLanguageSelectionInChatRoom()) {
-            _room.getEditorBar().add(_languageSelection);
+            _room.getEditorBar().add(selectedLanguage);
         }
         setIgnoreUppercase(preference.getPreferences().getIgnoreUppercase());
 
@@ -86,21 +83,23 @@ public class SpellcheckChatRoomDecorator {
         _sc.getSpellChecker().setCaseSensitive(!ignoreUppercase);
     }
 
-    private void languagesToLocales() {
-        SpellcheckerPreferences preferences = SpellcheckManager.getInstance().getSpellcheckerPreference().getPreferences();
-        String spellLanguage = preferences.getSpellLanguage();
-        _languages.clear();
-        List<String> languages = SpellcheckManager.getInstance().getSupportedLanguages();
+    private void languagesToLocales(SpellcheckerPreference preference) {
+        SpellcheckerPreferences preferences = preference.getPreferences();
         for (String language : languages) {
             String localeTag = language.replace("_", "-");
             Locale locale = Locale.forLanguageTag(localeTag);
             String label = locale.getDisplayName(Locale.getDefault());
-            _languageSelection.addItem(label);
-            _languages.put(label, language);
-            if (language.equals(spellLanguage)) {
-                _languageSelection.setSelectedItem(label);
-            }
+            selectedLanguage.addItem(label);
         }
+        setSelectedLanguage(preferences.getSpellLanguage());
     }
 
+
+    private String getSelectedLanguage() {
+        return selectedLanguage.getSelectedIndex() > -1 ? languages.get(selectedLanguage.getSelectedIndex()) : "";
+    }
+
+    private void setSelectedLanguage(String language) {
+        selectedLanguage.setSelectedIndex(languages.indexOf(language));
+    }
 }
