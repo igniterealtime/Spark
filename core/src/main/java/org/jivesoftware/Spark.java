@@ -342,20 +342,12 @@ public final class Spark {
             String basePath;
             if (isWindows()) {
                 String localAppData = System.getenv("LOCALAPPDATA");
-                if (!isEmpty(localAppData)) {
-                    basePath = localAppData;
-                } else {
-                    basePath = System.getProperty("user.home") + File.separator + "AppData" + File.separator + "Local";
-                }
+                basePath = !isEmpty(localAppData) ? localAppData : System.getProperty("user.home") + "\\AppData\\Local";
             } else if (isMac()) {
-                basePath = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Caches";
+                basePath = System.getProperty("user.home") + "/Library/Caches";
             } else {
                 String xdg = System.getenv("XDG_CACHE_HOME");
-                if (!isEmpty(xdg)) {
-                    basePath = xdg;
-                } else {
-                    basePath = System.getProperty("user.home") + File.separator + ".cache";
-                }
+                basePath = !isEmpty(xdg) ? xdg : System.getProperty("user.home") + "/.cache";
             }
 
             File dir = new File(basePath, "Spark").getAbsoluteFile();
