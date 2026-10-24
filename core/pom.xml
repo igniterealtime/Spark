@@ -18,12 +18,12 @@
     <properties>
         <!--
         The BC version should be the same as Smack use, but be newer for a patch version.
-        Check the current Smack version's dependcency:
+        Check the current Smack version's dependency:
         https://github.com/igniterealtime/Smack/blob/master/build-logic/src/main/groovy/org.igniterealtime.smack.java-common-conventions.gradle#L36
         Check the latest version of the Bouncy Castle library:
         https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on
         -->
-        <bouncycastle.version>1.85</bouncycastle.version>
+        <bouncycastle.version>1.86</bouncycastle.version>
     </properties>
 
     <build>
@@ -311,7 +311,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>12.2.1</version>
+                        <version>13.0.0</version>
                         <executions>
                             <execution>
                                 <goals>
