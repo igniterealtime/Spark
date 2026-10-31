@@ -1493,11 +1493,7 @@ public class ContactList extends JPanel implements
                     // Someone else wants to subscribe to our presence. Ask user for approval
                     SwingUtilities.invokeLater(() ->
                     {
-                        try {
                             subscriptionRequest(bareJid);
-                        } catch (SmackException.NotConnectedException | InterruptedException e) {
-                            Log.warning("Unable to process subscription request from: " + presence.getFrom(), e);
-                        }
                     });
                     break;
                 case unsubscribe:
@@ -1716,7 +1712,7 @@ public class ContactList extends JPanel implements
         return new ArrayList<>(groupList);
     }
 
-    private void subscriptionRequest(final BareJid jid) throws SmackException.NotConnectedException, InterruptedException {
+    private void subscriptionRequest(final BareJid jid) {
         final SubscriptionDialog subscriptionDialog = new SubscriptionDialog();
         subscriptionDialog.invoke(jid);
     }
