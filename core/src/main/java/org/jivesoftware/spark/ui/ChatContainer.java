@@ -311,6 +311,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     private void handleRoomPresence(final Presence p) {
         final EntityBareJid roomname = p.getFrom().asEntityBareJidIfPossible();
+        final Resourcepart userid = p.getFrom().getResourceOrNull();
+        if (roomname == null || userid == null) {
+            Log.warning("Invalid presence received: " + p);
+            return;
+        }
         ChatRoom chatRoom;
         try {
             chatRoom = getChatRoom(roomname);
@@ -319,7 +324,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        final Resourcepart userid = p.getFrom().getResourceOrNull();
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
         } else if (p.isAvailable()) {
