@@ -22,6 +22,8 @@ import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.spark.util.GraphicUtils.addItemIfNotExists;
+import static space.dynomake.libretranslate.ApiProviders.API_URL_LIBRETRANSLATE;
 
 public class TranslatorPreferencePanel extends JPanel {
     private final JCheckBox _enabledCheckbox = new JCheckBox(TranslatorResource.getString("translator.enabled"));
@@ -68,20 +70,21 @@ public class TranslatorPreferencePanel extends JPanel {
     }
 
     public void initializeValues() {
-        TranslatorProperties props = TranslatorProperties.getInstance();
-        _enabledCheckbox.setSelected(props.getEnabledTranslator());
-        Language myLanguage = Language.fromCode(props.getMyLanguage());
+        TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+        _enabledCheckbox.setSelected(translatorProps.isEnabledTranslator());
+        Language myLanguage = Language.fromCode(translatorProps.getMyLanguage());
         _myLanguage.setSelectedItem(myLanguage);
-        _useCustomUrl.setSelected(props.getUseCustomUrl());
+        _useCustomUrl.setSelected(translatorProps.isUseCustomUrl());
         _url.setEditable(true);
-        for (String apiUrl : ApiProviders.API_URLS) {
-            GraphicUtils.addItemIfNotExists(_url, apiUrl);
+//        for (String apiUrl : ApiProviders.API_URLS) {
+//            addItemIfNotExists(_url, apiUrl);
+//        }
+        addItemIfNotExists(_url, API_URL_LIBRETRANSLATE);
+        if (!isBlank(translatorProps.getUrl())) {
+            addItemIfNotExists(_url, translatorProps.getUrl());
+            _url.setSelectedItem(translatorProps.getUrl());
         }
-        if (!isBlank(props.getUrl())) {
-            GraphicUtils.addItemIfNotExists(_url, props.getUrl());
-            _url.setSelectedItem(props.getUrl());
-        }
-        _apiKey.setText(props.getApiKey());
+        _apiKey.setText(translatorProps.getApiKey());
     }
 
     public void storeValues() {
@@ -115,14 +118,15 @@ public class TranslatorPreferencePanel extends JPanel {
             _apiKey.setEnabled(_useCustomUrl.isSelected());
         });
 
-        if (!TranslatorProperties.getInstance().getEnabledTranslator()) {
+        TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+        if (!translatorProps.isEnabledTranslator()) {
             _myLanguage.setEnabled(false);
             _url.setEnabled(false);
             _apiKey.setEnabled(false);
             _useCustomUrl.setEnabled(false);
         }
 
-        if (!TranslatorProperties.getInstance().getUseCustomUrl()) {
+        if (!translatorProps.isUseCustomUrl()) {
             _url.setEnabled(false);
             _apiKey.setEnabled(false);
         }

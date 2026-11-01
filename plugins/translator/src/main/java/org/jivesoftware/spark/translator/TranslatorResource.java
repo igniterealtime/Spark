@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 public class TranslatorResource {
     private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/translator_i18n");
-    private static ClassLoader cl = TranslatorResource.class.getClassLoader();
+    private static final ClassLoader cl = TranslatorResource.class.getClassLoader();
     static ImageIcon ICON_TRANSLATOR = new ImageIcon(cl.getResource("translation/translator.png"));
 
     static String getString(String propertyName) {

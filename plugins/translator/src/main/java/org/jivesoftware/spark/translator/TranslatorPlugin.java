@@ -84,14 +84,14 @@ public class TranslatorPlugin implements Plugin {
     private static class TranslationChatRoomListener implements org.jivesoftware.spark.ui.ChatRoomListener {
         @Override
         public void chatRoomOpened(ChatRoom room) {
-            TranslatorProperties properties = TranslatorProperties.getInstance();
-            if (!properties.getEnabledTranslator()) {
+            TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+            if (!translatorProps.isApiAccessible() ) {
                 return;
             }
             // Set server LibreTranslate API
-            if (properties.getUseCustomUrl() && !isBlank(properties.getUrl())) {
-                Translator.setUrlApi(properties.getUrl());
-                Translator.setApiKey(properties.getApiKey());
+            if (translatorProps.isUseCustomUrl() && !isBlank(translatorProps.getUrl())) {
+                Translator.setUrlApi(translatorProps.getUrl());
+                Translator.setApiKey(translatorProps.getApiKey());
             } else {
                 Translator.setUrlApi(TranslatorUtil.getDefaultUrl());
                 Translator.setApiKey(null);
@@ -138,7 +138,8 @@ public class TranslatorPlugin implements Plugin {
             if (currentBody == null) {
                 return;
             }
-            if (!TranslatorProperties.getInstance().getEnabledTranslator()) {
+            TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+            if (!translatorProps.isApiAccessible()) {
                 return;
             }
             @SuppressWarnings("unchecked")
@@ -182,7 +183,8 @@ public class TranslatorPlugin implements Plugin {
             if (currentBody == null) {
                 return;
             }
-            if (!TranslatorProperties.getInstance().getEnabledTranslator()) {
+            TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+            if (!translatorProps.isApiAccessible()) {
                 return;
             }
             JCheckBox translatorIncoming = (JCheckBox) findTranslatorComponent(room, "translatorIncoming");
@@ -216,7 +218,8 @@ public class TranslatorPlugin implements Plugin {
          */
         private Language getMyLanguage() {
             // the setting may be changed any time, so we have to always check it
-            String myLanguageSetting = TranslatorProperties.getInstance().getMyLanguage();
+            TranslatorProperties translatorProps = TranslatorProperties.getInstance();
+            String myLanguageSetting = translatorProps.getMyLanguage();
             return !isBlank(myLanguageSetting) ? Language.fromCode(myLanguageSetting) : localeLanguage;
         }
 

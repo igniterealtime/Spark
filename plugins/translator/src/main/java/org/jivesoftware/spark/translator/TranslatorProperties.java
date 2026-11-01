@@ -9,14 +9,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static space.dynomake.libretranslate.ApiProviders.API_URL_LIBRETRANSLATE;
+
 public class TranslatorProperties {
     private final Properties props;
     private static final Object LOCK = new Object();
     private static TranslatorProperties instance = null;
 
-    /**
-     * returns the Instance of this Properties file
-     */
     public static TranslatorProperties getInstance() {
         if (instance != null) {
             return instance;
@@ -49,15 +49,17 @@ public class TranslatorProperties {
         }
     }
 
-    public boolean getEnabledTranslator() {
-        return getBoolean("active", false);
+    public boolean isEnabledTranslator() {
+        boolean active = getBoolean("active", false);
+
+        return active;
     }
 
     public void setEnabledTranslator(boolean enable) {
         setBoolean("active", enable);
     }
 
-    public boolean getUseCustomUrl() {
+    public boolean isUseCustomUrl() {
         return getBoolean("useCustomUrl", false);
     }
 
@@ -87,6 +89,17 @@ public class TranslatorProperties {
 
     public void setMyLanguage(String language) {
         props.setProperty("myLanguage", language);
+    }
+
+    public boolean isApiAccessible() {
+        if (!isEnabledTranslator()) {
+            return false;
+        }
+        // The LibreTranslate API now requires an API key
+        if (API_URL_LIBRETRANSLATE.equals(getUrl())) {
+            return !isBlank(getApiKey());
+        }
+        return true;
     }
 
     private boolean getBoolean(String property, boolean defaultValue) {

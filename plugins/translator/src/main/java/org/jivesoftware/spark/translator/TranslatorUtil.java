@@ -15,9 +15,10 @@
  */
 package org.jivesoftware.spark.translator;
 
-import space.dynomake.libretranslate.ApiProviders;
 import space.dynomake.libretranslate.Language;
 import space.dynomake.libretranslate.Translator;
+
+import static space.dynomake.libretranslate.ApiProviders.API_URL_LIBRETRANSLATE;
 
 /**
  * A utility class that uses external translation service API to translate text to various languages.
@@ -35,7 +36,7 @@ public class TranslatorUtil {
     }
 
     public static String getDefaultUrl(){
-        return ApiProviders.API_URL_FEDILAB;
+        return API_URL_LIBRETRANSLATE;
     }
 
 }
