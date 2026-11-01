@@ -51,6 +51,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.resource.Res;
 
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+
 public class Notes extends JPanel {
 	private JFrame notesFrame;
     private final JScrollPane scrollPane;
@@ -206,7 +208,7 @@ public class Notes extends JPanel {
     }
 
     public void showError(String error) {
-        JOptionPane.showMessageDialog(this, error, FpRes.getString("title.notes"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, error, Res.getString("title.notes"), ERROR_MESSAGE);
     }
 
     /**

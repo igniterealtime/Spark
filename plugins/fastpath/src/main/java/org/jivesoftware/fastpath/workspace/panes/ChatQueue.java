@@ -37,6 +37,7 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -67,8 +68,8 @@ public class ChatQueue extends JPanel {
         acceptButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.CIRCLE_CHECK_IMAGE));
         declineButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
 
-        ResourceUtils.resButton(acceptButton, FpRes.getString("button.accept"));
-        ResourceUtils.resButton(declineButton, FpRes.getString("button.reject"));
+        ResourceUtils.resButton(acceptButton, Res.getString("button.accept"));
+        ResourceUtils.resButton(declineButton, Res.getString("button.reject"));
 
         progressBar = new JProgressBar();
         progressBar.setFont(new Font("Dialog", Font.BOLD, 11));

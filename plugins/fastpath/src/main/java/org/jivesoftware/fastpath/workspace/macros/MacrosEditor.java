@@ -39,6 +39,7 @@ import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.ext.macros.Macro;
@@ -49,6 +50,8 @@ import org.jivesoftware.spark.component.Table;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class MacrosEditor extends JPanel {
 
@@ -70,9 +73,9 @@ public class MacrosEditor extends JPanel {
         add(new JScrollPane(initialResponseField), new GridBagConstraints(0, 1, 1, 1, 1.0, .5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
         ResourceUtils.resLabel(initialResponseLabel, initialResponseField, FpRes.getString("label.initial.response"));
-        ResourceUtils.resButton(newButton, FpRes.getString("button.new"));
-        ResourceUtils.resButton(deleteButton, FpRes.getString("button.delete"));
-        ResourceUtils.resButton(saveButton, FpRes.getString("button.save"));
+        ResourceUtils.resButton(newButton, Res.getString("button.new"));
+        ResourceUtils.resButton(deleteButton, Res.getString("delete"));
+        ResourceUtils.resButton(saveButton, Res.getString("button.save"));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         buttonPanel.add(newButton);
@@ -163,7 +166,7 @@ public class MacrosEditor extends JPanel {
             FastpathPlugin.getAgentSession().saveMacros(macroGroup);
         }
         catch (Exception ex) {
-            JOptionPane.showMessageDialog(dialog, FpRes.getString("message.macros.not.saved"), FpRes.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, FpRes.getString("message.macros.not.saved"), Res.getString("title.error"), ERROR_MESSAGE);
         }
 
         String initialResponse = initialResponseField.getText();

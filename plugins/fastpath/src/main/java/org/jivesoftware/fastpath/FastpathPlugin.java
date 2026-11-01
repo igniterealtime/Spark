@@ -18,6 +18,7 @@ package org.jivesoftware.fastpath;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -78,7 +79,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             container = new FastpathContainer();
             workgroupLabel = new JLabel(FpRes.getString("workgroup"));
             comboBox = new JComboBox<>();
-            joinButton = new JButton(FpRes.getString("join"), null);
+            joinButton = new JButton(Res.getString("join"), null);
             logoutButton = new RolloverButton(FpRes.getString("logout"), null);
             // Initialize tab handler for Fastpath chats.
             fastpathTabHandler = new FastpathTabHandler();

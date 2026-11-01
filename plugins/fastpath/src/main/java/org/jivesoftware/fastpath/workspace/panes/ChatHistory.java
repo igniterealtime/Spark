@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -50,6 +51,8 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
+
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class ChatHistory extends JPanel {
 	private final DefaultListModel<HistoryItem> model = new DefaultListModel<>();
@@ -188,7 +191,7 @@ public class ChatHistory extends JPanel {
         }
 
         if (transcript == null) {
-            JOptionPane.showMessageDialog(this, FpRes.getString("message.transcript.not.found.error"), FpRes.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, FpRes.getString("message.transcript.not.found.error"), Res.getString("title.error"), ERROR_MESSAGE);
             return;
         }
 

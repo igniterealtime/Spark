@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smackx.workgroup.packet.Transcripts;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -66,7 +67,7 @@ public class UserHistoryItem extends JPanel {
         agentsLabel.setOpaque(false);
 
         final SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        JLabel timeLabel = new JLabel(FpRes.getString("date") + ":");
+        JLabel timeLabel = new JLabel(Res.getString("date") + ":");
         timeLabel.setFont(new Font("Dialog", Font.BOLD, 11));
 
         String theDate = simpleFormat.format(joinTime);

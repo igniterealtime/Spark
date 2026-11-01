@@ -43,6 +43,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
@@ -66,6 +67,8 @@ import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
+
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 
 /**
@@ -124,7 +127,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         jidField.setText("");
 
         String title = FpRes.getString("invite.agent");
-        String acceptButton = FpRes.getString("invite");
+        String acceptButton = Res.getString("invite");
         if (transfer) {
             title = FpRes.getString("transfer.to.agent");
             acceptButton = FpRes.getString("transfer");
@@ -175,7 +178,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
             inviteLabel.setText(FpRes.getString("transfer.to") + ":");
         }
         else {
-            inviteLabel.setText(FpRes.getString("invite") + ":");
+            inviteLabel.setText(Res.getString("invite") + ":");
         }
 
 
@@ -258,7 +261,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = {acceptButton, FpRes.getString("cancel")};
+        Object[] options = {acceptButton, Res.getString("cancel")};
 
         // Create objects to add to mainPanel.
         final JPanel parentPanel = new JPanel();
@@ -314,27 +317,27 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent e) {
         String value = (String)pane.getValue();
-        if (FpRes.getString("cancel").equals(value)) {
+        if (Res.getString("cancel").equals(value)) {
             isValid = false;
             dlg.setVisible(false);
         }
-        else if (FpRes.getString("invite").equals(value) || FpRes.getString("transfer").equals(value)) {
+        else if (Res.getString("invite").equals(value) || FpRes.getString("transfer").equals(value)) {
             String agent = jidField.getText();
             boolean isValidJID = agent.contains("@");
 
             if (!ModelUtil.hasLength(agent)) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.no.agent.selected.error"),
-                    FpRes.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    FpRes.getString("error"), ERROR_MESSAGE);
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
             }
             else if (!isValidJID) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.jid.invalid.error"),
-                    FpRes.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    Res.getString("title.error"), ERROR_MESSAGE);
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
             }
             else if (!ModelUtil.hasLength(getMessage())) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.message.required.error"),
-                    FpRes.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    Res.getString("title.error"), ERROR_MESSAGE);
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
             }
             else {

@@ -32,6 +32,7 @@ import javax.swing.JTextPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -87,9 +88,9 @@ public class ChatViewer extends JPanel {
                 Presence presence = (Presence) stanza;
                 String from = presence.getFrom().getResourceOrThrow().toString();
                 if (presence.getType() == Presence.Type.available) {
-                    from = FpRes.getString("message.user.joined.room", from);
+                    from = Res.getString("message.user.joined.room", from);
                 } else {
-                    from = FpRes.getString("message.user.left.room", from);
+                    from = Res.getString("message.user.left.room", from);
                 }
                 chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
                 Message message = StanzaBuilder.buildMessage()

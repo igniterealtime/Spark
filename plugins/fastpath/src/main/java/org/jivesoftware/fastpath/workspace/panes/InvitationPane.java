@@ -36,6 +36,7 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane.RoomState;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -83,7 +84,7 @@ public class InvitationPane {
         transcriptAlert.add(userImage, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
         userImage.setFont(new Font("Dialog", Font.BOLD, 12));
 
-        final JLabel inviterLabel = new JLabel(FpRes.getString("from") + ":");
+        JLabel inviterLabel = new JLabel(Res.getString("from") + ":");
         inviterLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         final WrappedLabel inviterValueLabel = new WrappedLabel();
 
@@ -100,7 +101,7 @@ public class InvitationPane {
         transcriptAlert.add(nameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         transcriptAlert.add(valueLabel, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
-        final JLabel messageLabel = new JLabel(FpRes.getString("message") + ":");
+        JLabel messageLabel = new JLabel(Res.getString("message") + ":");
         messageLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         final WrappedLabel messageValueLabel = new WrappedLabel();
         messageValueLabel.setText(reason);
@@ -111,8 +112,8 @@ public class InvitationPane {
         final RolloverButton acceptButton = new RolloverButton("Accept", FastpathRes.getImageIcon(FastpathRes.CIRCLE_CHECK_IMAGE));
         final RolloverButton rejectButton = new RolloverButton("Decline", FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
 
-        ResourceUtils.resButton(acceptButton, FpRes.getString("button.accept"));
-        ResourceUtils.resButton(rejectButton, FpRes.getString("button.reject"));
+        ResourceUtils.resButton(acceptButton, Res.getString("button.accept"));
+        ResourceUtils.resButton(rejectButton, Res.getString("button.reject"));
 
         LinkLabel infoButton = new LinkLabel(FpRes.getString("message.view.more.information"), null, Color.blue, Color.red);
         transcriptAlert.add(infoButton, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
