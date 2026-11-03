@@ -48,7 +48,7 @@ public class GroupChatPreference implements Preference {
     }
 
     @Override
-	public String getTooltip() {
+	public String getBriefDescription() {
         return Res.getString("title.group.chat");
     }
 

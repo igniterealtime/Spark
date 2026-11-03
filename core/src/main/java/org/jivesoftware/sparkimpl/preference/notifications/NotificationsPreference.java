@@ -48,7 +48,7 @@ public class NotificationsPreference implements Preference {
 	}
 
 	@Override
-	public String getTooltip() {
+	public String getBriefDescription() {
 		return Res.getString("tooltip.notifications");
 	}
 

@@ -85,8 +85,8 @@ public class ApplePreference implements Preference {
     }
 
     @Override
-    public String getTooltip() {
-	return "Apple Plugin Features";
+    public String getBriefDescription() {
+	    return AppleRes.getString("apple.settings.description");
     }
 
     @Override

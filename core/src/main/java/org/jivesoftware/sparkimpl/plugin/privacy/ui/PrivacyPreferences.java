@@ -40,7 +40,7 @@ public class PrivacyPreferences implements Preference {
     }
 
     @Override
-    public String getTooltip() {
+    public String getBriefDescription() {
         return _toolTip;
     }
 

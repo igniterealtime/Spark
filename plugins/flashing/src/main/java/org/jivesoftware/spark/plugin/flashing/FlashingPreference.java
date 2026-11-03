@@ -76,7 +76,7 @@ public class FlashingPreference implements Preference {
 	}
 
 	@Override
-	public String getTooltip() {
+	public String getBriefDescription() {
 		return FlashingResources.getString("title.flashing");
 	}
 

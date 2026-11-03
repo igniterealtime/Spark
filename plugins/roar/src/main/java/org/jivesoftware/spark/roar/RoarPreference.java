@@ -43,8 +43,8 @@ public class RoarPreference implements Preference {
     }
 
     @Override
-    public String getTooltip() {
-        return "ROAR";
+    public String getBriefDescription() {
+        return RoarResources.getString("roar.settings");
     }
 
     @Override

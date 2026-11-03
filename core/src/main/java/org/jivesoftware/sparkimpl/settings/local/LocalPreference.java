@@ -44,7 +44,7 @@ public class LocalPreference implements Preference {
     }
 
     @Override
-	public String getTooltip() {
+	public String getBriefDescription() {
         return Res.getString("title.login.settings");
     }
 

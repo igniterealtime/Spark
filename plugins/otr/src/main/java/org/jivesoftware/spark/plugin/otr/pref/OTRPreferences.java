@@ -27,7 +27,7 @@ public class OTRPreferences implements Preference {
     }
 
     @Override
-    public String getTooltip() {
+    public String getBriefDescription() {
         return OTRResources.getString("otr.title");
     }
 

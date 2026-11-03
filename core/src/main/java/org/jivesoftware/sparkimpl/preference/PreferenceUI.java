@@ -36,7 +36,7 @@ public class PreferenceUI extends JLabel {
         Icon icon = null;
         try {
             listName = preference.getListName();
-            toolTip = GraphicUtils.createToolTip(preference.getTooltip());
+            toolTip = GraphicUtils.createToolTip(preference.getBriefDescription());
             icon = preference.getIcon();
         } catch (Exception e) {
             Log.error(e);

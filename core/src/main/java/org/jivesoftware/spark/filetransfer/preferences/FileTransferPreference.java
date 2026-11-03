@@ -47,7 +47,7 @@ public class FileTransferPreference implements Preference {
     }
 
     @Override
-	public String getTooltip() {
+	public String getBriefDescription() {
         return Res.getString("tooltip.file.transfer");
     }
 

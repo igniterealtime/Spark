@@ -39,7 +39,7 @@ public class ThemePreference implements Preference {
     }
 
     @Override
-	public String getTooltip() {
+	public String getBriefDescription() {
         return Res.getString("tooltip.appearance");
     }
 

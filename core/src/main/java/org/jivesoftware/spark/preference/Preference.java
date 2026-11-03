@@ -36,10 +36,14 @@ public interface Preference {
     Icon getIcon();
 
     /**
-     * Return the tooltip to use for this preference. The tooltip is displayed
-     * whenever a user places their mouse cursor over the icon.
+     * Return the description with a brief introduction to a user.
      */
-    String getTooltip();
+    String getBriefDescription();
+
+    @Deprecated(forRemoval = true)
+    default String getTooltip() {
+        return getBriefDescription();
+    }
 
     /**
      * Return the title to use inside the Preferences list. The title is displayed below

@@ -32,7 +32,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -116,16 +115,16 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
 
         // Create the title panel for this dialog
         String title = "";
-        String toolTip = "";
+        String desciption = "";
         Icon icon = null;
         try {
             title = pref.getTitle();
-            toolTip = pref.getTooltip();
+            desciption = pref.getBriefDescription();
             icon = pref.getIcon();
         } catch (Exception e) {
             Log.error(e);
         }
-        TitlePanel titlePanel = new TitlePanel(title, toolTip, icon);
+        TitlePanel titlePanel = new TitlePanel(title, desciption, icon);
 
         flowPanel.add(comp, BorderLayout.CENTER);
         flowPanel.add(titlePanel, BorderLayout.NORTH);

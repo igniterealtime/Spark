@@ -101,7 +101,7 @@ public class SpellcheckerPreference implements Preference {
     }
 
     @Override
-    public String getTooltip() {
+    public String getBriefDescription() {
         return SpellcheckerRes.getString("title.spellchecker");
     }
 

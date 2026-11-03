@@ -47,7 +47,7 @@ public class ChatPreference implements Preference {
     }
 
     @Override
-	public String getTooltip() {
+	public String getBriefDescription() {
         return Res.getString("title.general.chat.settings");
     }
 

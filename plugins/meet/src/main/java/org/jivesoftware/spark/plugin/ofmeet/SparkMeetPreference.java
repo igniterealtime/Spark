@@ -88,7 +88,7 @@ public class SparkMeetPreference implements Preference {
 	}
 
 	@Override
-	public String getTooltip() {
+	public String getBriefDescription() {
 		return SparkMeetResource.getString("name");
 	}
 

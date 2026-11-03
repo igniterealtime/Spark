@@ -23,7 +23,7 @@ public class TranslatorPreference implements Preference {
     }
 
     @Override
-    public String getTooltip() {
+    public String getBriefDescription() {
         return TranslatorResource.getString("translator.title");
     }
 

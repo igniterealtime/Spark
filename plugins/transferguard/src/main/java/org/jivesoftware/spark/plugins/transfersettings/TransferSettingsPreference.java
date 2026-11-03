@@ -73,8 +73,8 @@ public class TransferSettingsPreference implements Preference {
     }
 
     @Override
-    public String getTooltip() {
-        return "Configure allowed file transfer types, sizes, and senders";
+    public String getBriefDescription() {
+        return TGuardRes.getString("guard.settings.title.settings.description");
     }
 
     @Override
