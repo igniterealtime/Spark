@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
@@ -58,24 +59,38 @@ public final class TitlePanel extends JPanel {
         setTitle(title);
         // Set the description
         setDescription(description);
-        
+
+        Font labelFont = UIManager.getFont("Label.font");
+        if (labelFont == null) {
+            labelFont = new Font("Dialog", Font.BOLD, 12);
+        }
+        Color labelForeground = UIManager.getColor("Label.foreground");
+        if (labelForeground == null) {
+            labelForeground = Color.black;
+        }
+        Color panelBackground = UIManager.getColor("Panel.background");
+        if (panelBackground == null) {
+            panelBackground = Color.gray.brighter();
+        }
+
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
-        
-        descriptionLabel.setBackground(Color.white);
-        
+
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panel.setBackground(Color.white.brighter());
+        panel.setBackground(panelBackground);
         panel.setLayout(new GridBagLayout());
         panel.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
         panel.add(iconLabel, new GridBagConstraints(2, 0, 1, 2, 0, 0, NORTHEAST, NONE, new Insets(2, 2, 2, 2), 0, 0));
         panel.add(descriptionLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, NORTHWEST, HORIZONTAL, new Insets(0, 9, 5, 5), 0, 0));
 
         titleLabel.setVerticalTextPosition(JLabel.CENTER);
-        titleLabel.setFont(new Font("Dialog", Font.BOLD, 14));
-        titleLabel.setForeground(Color.black);
-        descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        titleLabel.setFont(labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() + 2));
+        titleLabel.setForeground(labelForeground);
+        descriptionLabel.setFont(labelFont);
+        descriptionLabel.setForeground(labelForeground);
+        descriptionLabel.setBackground(panelBackground);
+
         add(panel, new GridBagConstraints(0, 0, 1, 0, 1, 0, WEST, HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
     }
 
@@ -104,6 +119,14 @@ public final class TitlePanel extends JPanel {
             desc = "<HTML><BODY>" + desc + "</HTML></BODY>";
         }
         descriptionLabel.setText(desc);
+    }
+
+    public JLabel getTitleLabel() {
+        return titleLabel;
+    }
+
+    public JLabel getDescriptionLabel() {
+        return descriptionLabel;
     }
 
 }
