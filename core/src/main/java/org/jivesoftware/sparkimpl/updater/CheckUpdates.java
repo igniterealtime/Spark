@@ -175,7 +175,7 @@ public class CheckUpdates {
                 bar = new JProgressBar(0, contentLength);
                 final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
                 frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
-                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24), true);
+                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24));
                 final Thread thread = new Thread( () -> {
                     try {
                         InputStream stream = entity.getContent();

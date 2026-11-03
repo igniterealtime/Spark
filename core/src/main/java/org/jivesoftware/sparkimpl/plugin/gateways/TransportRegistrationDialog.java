@@ -36,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -87,7 +86,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
 
         transport = TransportUtils.getTransport(serviceName);
 
-        final TitlePanel titlePanel = new TitlePanel(transport.getTitle(), transport.getInstructions(), transport.getIcon(), true);
+        TitlePanel titlePanel = new TitlePanel(transport.getTitle(), transport.getInstructions(), transport.getIcon());
 
         int line = 0;
         add(titlePanel, new GridBagConstraints(0, line, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

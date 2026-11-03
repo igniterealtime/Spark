@@ -39,7 +39,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -121,8 +120,8 @@ public class RoomCreationDialog extends JPanel {
         TitlePanel titlePanel = new TitlePanel(
             Res.getString("title.create.room"),
             Res.getString("title.create.room.description"),
-            SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24),
-            true);
+            SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24)
+        );
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

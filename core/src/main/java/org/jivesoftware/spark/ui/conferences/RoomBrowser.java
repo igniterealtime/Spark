@@ -142,7 +142,7 @@ public class RoomBrowser extends JPanel {
         }
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for", roomJID), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for", roomJID), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

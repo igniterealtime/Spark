@@ -40,7 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 
@@ -108,7 +107,7 @@ public final class PasswordDialog implements PropertyChangeListener {
         passwordField = new JPasswordField();
         passwordField.setText(password);
 
-        TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
+        TitlePanel titlePanel = new TitlePanel(title, description, icon);
 
         // Construct main panel with layout.
         final JPanel mainPanel = new JPanel();

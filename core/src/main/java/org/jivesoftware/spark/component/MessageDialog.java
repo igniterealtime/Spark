@@ -82,7 +82,7 @@ public final class MessageDialog
         {
             // Create the title panel for this dialog
             final String desc = trimToNull(description);
-            final TitlePanel titlePanel = new TitlePanel(Res.getString("message.default.error"), desc, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE), true);
+            TitlePanel titlePanel = new TitlePanel(Res.getString("message.default.error"), desc, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE)); //FIXME
 
             final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );
@@ -180,7 +180,7 @@ public final class MessageDialog
             textPane.setBackground( Color.white );
 
             // Create the title panel for this dialog
-            titlePanel = new TitlePanel( header, null, icon, true );
+            titlePanel = new TitlePanel( header, null, icon);
 
             // Construct main panel w/ layout.
             final JPanel mainPanel = new JPanel();
@@ -236,7 +236,7 @@ public final class MessageDialog
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel( title, description, icon, true );
+        titlePanel = new TitlePanel( title, description, icon);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -300,7 +300,7 @@ public final class MessageDialog
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel( title, description, icon, true );
+        titlePanel = new TitlePanel( title, description, icon);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

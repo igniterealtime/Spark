@@ -45,7 +45,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -92,7 +91,7 @@ public class VCardEditor {
 
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.edit.profile"),
-            Res.getString("message.save.profile"), icon, true);
+            Res.getString("message.save.profile"), icon);
         // Construct main panel w/ layout.
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());

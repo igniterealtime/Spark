@@ -89,7 +89,7 @@ public final class InputTextAreaDialog implements PropertyChangeListener {
         textArea = new JTextArea();
         textArea.setLineWrap(true);
 
-        TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
+        TitlePanel titlePanel = new TitlePanel(title, description, icon);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

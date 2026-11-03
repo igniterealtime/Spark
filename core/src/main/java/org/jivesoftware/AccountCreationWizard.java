@@ -463,7 +463,7 @@ public class AccountCreationWizard extends JPanel {
         SwingUtilities.invokeLater(this::pickRandomPublicXmppProvider);
         dialog = new JDialog(parent, Res.getString("title.create.new.account"), true);
 
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.account.create.registration"), Res.getString("message.account.create"), null, true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.account.create.registration"), Res.getString("message.account.create"), null);
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.getContentPane().add(titlePanel, BorderLayout.NORTH);
         dialog.getContentPane().add(this, BorderLayout.CENTER);

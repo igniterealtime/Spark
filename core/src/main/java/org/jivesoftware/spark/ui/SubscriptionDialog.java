@@ -155,7 +155,7 @@ public class SubscriptionDialog {
             icon = transport.getIcon();
         }
 
-        TitlePanel messageLabel = new TitlePanel("", message, icon, true);
+        TitlePanel messageLabel = new TitlePanel("", message, icon);
 
         // Add Message Label
         mainPanel.add(messageLabel, new GridBagConstraints(0, 0, 6, 1, 1, 0, WEST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

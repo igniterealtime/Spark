@@ -35,12 +35,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import org.jivesoftware.Spark;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
@@ -192,7 +190,7 @@ public class BroadcastDialog extends JPanel {
         final JDialog dlg;
         TitlePanel titlePanel;
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), null, true);
+        titlePanel = new TitlePanel(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), null);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

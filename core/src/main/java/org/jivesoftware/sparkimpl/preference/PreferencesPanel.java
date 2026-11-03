@@ -125,8 +125,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         } catch (Exception e) {
             Log.error(e);
         }
-        TitlePanel titlePanel = new TitlePanel(title, toolTip, icon, false);
-
+        TitlePanel titlePanel = new TitlePanel(title, toolTip, icon);
 
         flowPanel.add(comp, BorderLayout.CENTER);
         flowPanel.add(titlePanel, BorderLayout.NORTH);

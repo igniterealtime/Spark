@@ -53,7 +53,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -261,7 +260,7 @@ final class InvitationDialog extends JPanel {
         }
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

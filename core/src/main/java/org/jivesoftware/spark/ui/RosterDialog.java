@@ -267,7 +267,7 @@ public class RosterDialog {
      * Display the RosterDialog using a parent container.
      */
     public void showRosterDialog(JFrame parent) {
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), null, true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.add.contact"), Res.getString("message.add.contact.to.list"), null);
 
         JPanel mainPanel = new JPanel() {
             @Override

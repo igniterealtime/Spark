@@ -77,7 +77,7 @@ public class RosterPickList extends JPanel {
         }
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.roster"), Res.getString("message.select.one.or.more"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.roster"), Res.getString("message.select.one.or.more"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

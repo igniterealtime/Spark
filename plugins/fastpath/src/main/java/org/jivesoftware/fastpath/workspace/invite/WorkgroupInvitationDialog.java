@@ -185,12 +185,12 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         if (transfer) {
             // Create the title panel for this dialog
             titlePanel = new TitlePanel(FpRes.getString("title.transfer"), FpRes.getString("message.transfer.to.another.agent"),
-                FastpathRes.getImageIcon(FastpathRes.CHATTING_AGENT_IMAGE), true);
+                FastpathRes.getImageIcon(FastpathRes.CHATTING_AGENT_IMAGE));
         }
         else {
             // Create the title panel for this dialog
             titlePanel = new TitlePanel(FpRes.getString("title.invitation"), FpRes.getString("message.invite.another.agent"),
-                FastpathRes.getImageIcon(FastpathRes.CHATTING_AGENT_IMAGE), true);
+                FastpathRes.getImageIcon(FastpathRes.CHATTING_AGENT_IMAGE));
         }
 
         // Build Tree

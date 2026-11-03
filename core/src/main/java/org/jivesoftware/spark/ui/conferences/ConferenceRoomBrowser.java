@@ -17,8 +17,6 @@ package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
@@ -469,7 +467,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         TitlePanel titlePanel = new TitlePanel(
             Res.getString("title.create.or.bookmark.room"),
             Res.getString("message.add.favorite.room"),
-            SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
+            SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
