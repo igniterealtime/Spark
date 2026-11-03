@@ -40,6 +40,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Application preferences (from the "spark.properties").
@@ -1022,7 +1023,11 @@ public class LocalPreferences {
     }
 
     private void setString(String property, String value) {
-        props.setProperty(property, value);
+        if (isBlank(value)) {
+            props.remove(property);
+        } else {
+            props.setProperty(property, value);
+        }
     }
 
     public boolean isAutoAcceptMucInvite() {
