@@ -56,11 +56,6 @@ public class SparkMeetPreference implements Preference {
 	}
 
 	@Override
-	public String getErrorMessage() {
-		return null;
-	}
-
-	@Override
 	public JComponent getGUI() {
         panel = new MeetingPanel();
 		panel.setMeetingsBaseUrl(props.getProperty("url"));
@@ -90,11 +85,6 @@ public class SparkMeetPreference implements Preference {
 	@Override
 	public String getBriefDescription() {
 		return SparkMeetResource.getString("name");
-	}
-
-	@Override
-	public boolean isDataValid() {
-		return true;
 	}
 
 	@Override

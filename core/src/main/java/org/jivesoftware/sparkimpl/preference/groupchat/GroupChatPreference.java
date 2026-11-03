@@ -76,16 +76,6 @@ public class GroupChatPreference implements Preference {
     }
 
     @Override
-	public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
-	public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
 	public JComponent getGUI() {
         panel = new GroupChatPreferencePanel();
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();

@@ -58,14 +58,4 @@ public class OTRPreferences implements Preference {
         OTRProperties.getInstance().setOTRCloseOnDisconnect(pref.isCloseOnDisc());
         OTRProperties.getInstance().save();
     }
-
-    @Override
-    public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        return null;
-    }
 }

@@ -103,15 +103,4 @@ public class FileTransferPreference implements Preference {
             OutgoingFileTransfer.setResponseTimeout(timeOutMs);
         }
     }
-
-    @Override
-	public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-	public String getErrorMessage() {
-        return null;
-    }
-
 }

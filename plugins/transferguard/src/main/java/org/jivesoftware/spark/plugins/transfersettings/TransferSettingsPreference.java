@@ -41,11 +41,6 @@ public class TransferSettingsPreference implements Preference {
     }
 
     @Override
-    public String getErrorMessage() {
-        return "What happened here?";
-    }
-
-    @Override
     public JComponent getGUI() {
         gui = new TransferSettingsPanel();
         gui.applySettings(settings);
@@ -75,11 +70,6 @@ public class TransferSettingsPreference implements Preference {
     @Override
     public String getBriefDescription() {
         return TGuardRes.getString("guard.settings.title.settings.description");
-    }
-
-    @Override
-    public boolean isDataValid() {
-        return true;
     }
 
     @Override

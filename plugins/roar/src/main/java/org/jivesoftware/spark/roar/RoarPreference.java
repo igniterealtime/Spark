@@ -74,16 +74,6 @@ public class RoarPreference implements Preference {
     }
 
     @Override
-    public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        return "roooooooooaaaaaar";
-    }
-
-    @Override
     public Object getData() {
         return _props;
     }

@@ -45,6 +45,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import static java.util.Objects.requireNonNull;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
     /**
@@ -139,48 +140,29 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         if (e.getValueIsAdjusting()) {
             return;
         }
-            if (currentPreference != null) {
-                try {
-                    if (currentPreference.isDataValid()) {
-                        Log.debug("Saving preference " + currentPreference.getNamespace());
-                        currentPreference.commit();
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
-                                Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                        list.removeListSelectionListener(this);
-                        list.setSelectedIndex(e.getLastIndex());
-                        list.addListSelectionListener(this);
-                    }
-                }
-                catch ( Throwable t )
-                {
-                    // This is observed with some plugins, that require classes not (no longer) provided by Spark.
-                    Log.error( "An error occurred while trying to commit settings for preference: " + currentPreference.getListName(), t );
-                    JOptionPane.showMessageDialog( this, "Unable to save all settings for " + currentPreference.getListName() + ":\n" + t.getMessage(),
-                                                   Res.getString( "title.error" ), JOptionPane.ERROR_MESSAGE );
-                    list.removeListSelectionListener( this );
-                    list.setSelectedIndex( e.getLastIndex() );
-                    list.addListSelectionListener( this );
-                }
-            }
-            selectionChanged();
-    }
-
-    public boolean closing() {
         if (currentPreference != null) {
-            if (currentPreference.isDataValid()) {
+            try {
                 Log.debug("Saving preference " + currentPreference.getNamespace());
                 currentPreference.commit();
-                SettingsManager.fireListeners();
-                return true;
-            }
-            else {
-                JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
-                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                return false;
+            } catch (Throwable t) {
+                // This is observed with some plugins, that require classes not (no longer) provided by Spark.
+                Log.error("An error occurred while trying to commit settings for preference: " + currentPreference.getListName(), t);
+                JOptionPane.showMessageDialog(this, "Unable to save all settings for " + currentPreference.getListName() + ":\n" + t.getMessage(),
+                    Res.getString("title.error"), ERROR_MESSAGE);
+                list.removeListSelectionListener(this);
+                list.setSelectedIndex(e.getLastIndex());
+                list.addListSelectionListener(this);
             }
         }
-        return true;
+        selectionChanged();
+    }
+
+    public void closing() {
+        if (currentPreference == null) {
+            return;
+        }
+        Log.debug("Saving preference " + currentPreference.getNamespace());
+        currentPreference.commit();
+        SettingsManager.fireListeners();
     }
 }

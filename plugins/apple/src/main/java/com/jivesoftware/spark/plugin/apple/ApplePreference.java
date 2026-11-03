@@ -47,11 +47,6 @@ public class ApplePreference implements Preference {
     }
 
     @Override
-    public String getErrorMessage() {
-	return "error with apple plugin";
-    }
-
-    @Override
     public JComponent getGUI() {
         _prefpanel = new ApplePreferencePanel();
         _prefpanel.setDockBadges(_props.getDockBadges());
@@ -87,11 +82,6 @@ public class ApplePreference implements Preference {
     @Override
     public String getBriefDescription() {
 	    return AppleRes.getString("apple.settings.description");
-    }
-
-    @Override
-    public boolean isDataValid() {
-	return true;
     }
 
     @Override

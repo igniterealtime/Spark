@@ -54,16 +54,6 @@ public class TranslatorPreference implements Preference {
     }
 
     @Override
-    public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
     public Object getData() {
         return _props;
     }

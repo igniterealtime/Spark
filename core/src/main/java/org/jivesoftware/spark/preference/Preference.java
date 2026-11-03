@@ -76,13 +76,20 @@ public interface Preference {
 
     /**
      * Return true if the data supplied is valid, otherwise return false.
+     * @deprecated the panel must perform the validation
      */
-    boolean isDataValid();
+    @Deprecated(forRemoval = true)
+    default boolean isDataValid() {
+        return true;
+    }
 
     /**
-     * The error message to display if #isDataDisplayed returns false.
+     * The error message to display if #isDataValid returns false.
      */
-    String getErrorMessage();
+    @Deprecated(forRemoval = true)
+    default String getErrorMessage() {
+        return null;
+    }
 
     /**
      * Returns the data model representing this preference.
@@ -97,6 +104,6 @@ public interface Preference {
      * Called when Spark is closing. This should be used to persist any information at that time.
      * @deprecated the saving of properties should happen only on commit(). Not used anymore.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default void shutdown() {}
 }

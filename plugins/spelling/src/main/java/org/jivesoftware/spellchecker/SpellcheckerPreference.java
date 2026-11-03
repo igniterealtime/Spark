@@ -65,11 +65,6 @@ public class SpellcheckerPreference implements Preference {
     }
 
     @Override
-    public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
     public JComponent getGUI() {
         dialog = new SpellcheckerPreferenceDialog(languages);
         dialog.setAutoSpellCheckingEnabled(preferences.isAutoSpellCheckerEnabled());
@@ -103,11 +98,6 @@ public class SpellcheckerPreference implements Preference {
     @Override
     public String getBriefDescription() {
         return SpellcheckerRes.getString("title.spellchecker");
-    }
-
-    @Override
-    public boolean isDataValid() {
-        return true;
     }
 
     @Override

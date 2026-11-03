@@ -29,7 +29,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  */
 public class ChatPreference implements Preference {
     private ChatPreferencePanel panel;
-    private String errorMessage = "Error";
 
     /**
      * Define the Namespace used for this preference.
@@ -77,17 +76,6 @@ public class ChatPreference implements Preference {
         pref.setBuzzEnabled(panel.isBuzzEnabled());
         pref.setCloseUnreadMessageEnabled(panel.isCloseUnreadMessageEnabled());
         pref.setChatHistoryAscending(panel.isSortChatHistoryAscending());
-    }
-
-    @Override
-	public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    @Override
-	public boolean isDataValid() {
-        boolean dataIsValid = true;
-        return dataIsValid;
     }
 
     @Override

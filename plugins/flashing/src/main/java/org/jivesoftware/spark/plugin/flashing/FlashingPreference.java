@@ -43,11 +43,6 @@ public class FlashingPreference implements Preference {
 	}
 
 	@Override
-	public String getErrorMessage() {
-		return null;
-	}
-
-	@Override
 	public JComponent getGUI() {
         dialog = new FlashingPreferenceDialog();
         dialog.setFlashing(preferences.isFlashingEnabled());
@@ -78,11 +73,6 @@ public class FlashingPreference implements Preference {
 	@Override
 	public String getBriefDescription() {
 		return FlashingResources.getString("title.flashing");
-	}
-
-	@Override
-	public boolean isDataValid() {
-		return true;
 	}
 
 	@Override

@@ -76,21 +76,6 @@ public class NotificationsPreference implements Preference {
 	}
 
 	@Override
-	public Object getData() {
-		return null;
-	}
-
-	@Override
-	public String getErrorMessage() {
-		return "";
-	}
-
-	@Override
-	public boolean isDataValid() {
-		return true;
-	}
-
-	@Override
 	public JComponent getGUI() {
         panel = new NotificationsUI();
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();

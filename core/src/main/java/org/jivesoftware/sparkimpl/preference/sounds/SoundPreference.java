@@ -140,16 +140,6 @@ public class SoundPreference implements Preference {
     }
 
     @Override
-	public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-	public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
 	public Object getData() {
         return preferences;
     }

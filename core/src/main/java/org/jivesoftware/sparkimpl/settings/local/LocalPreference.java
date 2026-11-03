@@ -31,7 +31,6 @@ public class LocalPreference implements Preference {
     public static final String NAMESPACE = "LOGIN";
     private LocalPreferencePanel panel;
     private final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-    private String errorMessage = "Error";
 
     @Override
 	public String getTitle() {
@@ -75,16 +74,6 @@ public class LocalPreference implements Preference {
         preferences.setStartOnStartup(panel.isStartOnStartup());
         preferences.setIdleMessage(panel.getIdleMessage());
         preferences.setUsingSingleTrayClick(panel.useSingleClickInTray());
-    }
-
-    @Override
-	public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    @Override
-	public boolean isDataValid() {
-        return true;
     }
 
     @Override

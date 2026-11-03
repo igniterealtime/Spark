@@ -63,24 +63,12 @@ public class ThemePreference implements Preference {
 	public void load() {}
 
     @Override
-	public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-	public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
 	public void commit() {
         final String pack = panel.getThemePanel().getSelectedEmoticonPack();
         boolean emotEnabled = panel.getThemePanel().areEmoticonsEnabled();
         boolean grayingOutEnabled = panel.getThemePanel().isGrayingOutEnabled();
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if(pack != null){
-            pref.setEmoticonPack(pack);
-        }
+        pref.setEmoticonPack(pack);
         pref.setEmoticonsEnabled(emotEnabled);
         pref.setLookAndFeel(panel.getThemePanel().getSelectedLookAndFeelClassName());
         pref.setAvatarVisible(panel.getThemePanel().areAvatarsVisible());

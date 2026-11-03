@@ -29,13 +29,15 @@ public class MediaPreference implements Preference {
     private MediaPreferencePanel panel;
 
     @Override
-    public String getErrorMessage() {
-        return null;
-    }
-
-    @Override
     public JComponent getGUI() {
+        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
         panel = new MediaPreferencePanel();
+        panel.setAudioSystem(localPreferences.getAudioSystem());
+        panel.setVideoDevice(localPreferences.getVideoDevice());
+        panel.setAudioDevice(localPreferences.getAudioDevice());
+        panel.setStunServer(localPreferences.getStunFallbackHost());
+        panel.setStunPort(localPreferences.getStunFallbackPort());
+        panel.setPlaybackDevice(localPreferences.getPlaybackDevice());
         return panel;
     }
 
@@ -65,19 +67,7 @@ public class MediaPreference implements Preference {
     }
 
     @Override
-    public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
     public void load() {
-        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        panel.setAudioSystem(localPreferences.getAudioSystem());
-        panel.setVideoDevice(localPreferences.getVideoDevice());
-        panel.setAudioDevice(localPreferences.getAudioDevice());
-        panel.setStunServer(localPreferences.getStunFallbackHost());
-        panel.setStunPort(localPreferences.getStunFallbackPort());
-        panel.setPlaybackDevice(localPreferences.getPlaybackDevice());
     }
 
     @Override

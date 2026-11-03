@@ -66,14 +66,4 @@ public class PrivacyPreferences implements Preference {
     @Override
     public void commit() {
     }
-
-    @Override
-    public boolean isDataValid() {
-        return true;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        return "error in privacy plugin?";
-    }
 }

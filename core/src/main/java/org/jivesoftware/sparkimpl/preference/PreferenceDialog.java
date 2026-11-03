@@ -48,39 +48,24 @@ public class PreferenceDialog implements PropertyChangeListener
 
         preferenceDialog.setMinimumSize( new Dimension( 600, 600 ) );
 
-
         JButton btn_apply = new JButton( Res.getString( "apply" ) );
         JButton btn_save = new JButton( Res.getString( "save" ) );
         JButton btn_close = new JButton( Res.getString( "close" ) );
 
-        btn_close.addActionListener( e ->
-                                     {
-                                         preferenceDialog.setVisible( false );
-                                         preferenceDialog.dispose();
-                                     } );
+        btn_close.addActionListener(e -> {
+            preferenceDialog.setVisible(false);
+            preferenceDialog.dispose();
+        });
 
-        btn_save.addActionListener( e ->
-                                    {
-                                        boolean okToClose = prefPanel.closing();
-                                        if ( okToClose )
-                                        {
-                                            preferenceDialog.setVisible( false );
-                                            preferenceDialog.dispose();
-                                        }
-                                        else
-                                        {
-                                            pane.setValue( JOptionPane.UNINITIALIZED_VALUE );
-                                        }
-                                    } );
+        btn_save.addActionListener(e -> {
+            prefPanel.closing();
+            preferenceDialog.setVisible(false);
+            preferenceDialog.dispose();
+        });
 
-        btn_apply.addActionListener( e ->
-                                     {
-                                         boolean okToClose = prefPanel.closing();
-                                         if ( !okToClose )
-                                         {
-                                             pane.setValue( JOptionPane.UNINITIALIZED_VALUE );
-                                         }
-                                     } );
+        btn_apply.addActionListener(e -> {
+            prefPanel.closing();
+        });
 
         Object[] options = { btn_apply, btn_save, btn_close };
         pane = new JOptionPane( contentPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[ 0 ] );
