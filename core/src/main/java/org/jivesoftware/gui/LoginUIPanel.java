@@ -174,13 +174,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         init();
     }
 
-    // Should be called only from the Event Dispatcher Thread.
     private void init() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
-
         ResourceUtils.resButton(cbSavePassword, Res.getString("checkbox.save.password"));
         ResourceUtils.resButton(cbAutoLogin, Res.getString("checkbox.auto.login"));
         ResourceUtils.resButton(btnSignUp, Res.getString("label.accounts"));
@@ -318,13 +312,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         }
     }
 
-    // Should be called only from the Event Dispatcher Thread.
     private void configureVisibility() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
-
         int height = filler3.getPreferredSize().height;
         if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) || !localPref.isPswdAutologin()) {
             pnlCheckboxes.remove(cbAutoLogin);
@@ -631,10 +619,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     protected void afterLogin() {
         Log.debug("Performing post-login tasks");
-        // The Event Dispatcher Thread should only be used for fast tasks. The tasks in this method potentially are not.
-        if (SmackConfiguration.DEBUG && EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
-        }
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
         // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
@@ -767,8 +751,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     /**
      * Returns the username the user defined.
-     *
-     * Should be called only from the Event Dispatcher Thread.
      */
     private String getUsername() {
         return XmppStringUtils.escapeLocalpart(tfUsername.getText().trim());
@@ -778,11 +760,8 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         tfUsername.setText(trimToEmpty(XmppStringUtils.unescapeLocalpart(username)));
     }
 
-
     /**
      * Returns the resulting bareJID from username and server
-     *
-     * Should be called only from the Event Dispatcher Thread.
      */
     private String getBareJid() {
         return getUsername() + "@" + getServerName();
@@ -790,8 +769,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     /**
      * Returns the password specified by the user.
-     *
-     * Should be called only from the Event Dispatcher Thread.
      */
     private String getPassword() {
         return new String(tfPassword.getPassword()).trim();
@@ -803,8 +780,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     /**
      * Returns the server name specified by the user.
-     *
-     * Should be called only from the Event Dispatcher Thread.
      */
     private String getServerName() {
         return tfDomain.getText().trim();
@@ -868,14 +843,8 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
     /**
      * Checks the users input and enables/disables the login button depending on
      * state.
-     *
-     * Should be called only from the Event Dispatcher Thread.
      */
     private boolean validateDialog() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         boolean loginIsPossible = !isBlank(getServerName())
             && (!isBlank(getUsername()) || cbAnonymous.isSelected())
             && (!isBlank(getPassword()) || localPref.isSSOEnabled());
@@ -898,17 +867,9 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
     /**
      * Enables/Disables the editable components in the login screen.
      *
-     * Should be called only from the Event Dispatcher Thread.
-     *
      * @param available true to enable components, otherwise false to disable.
      */
-    private void setComponentsAvailable(boolean available)
-    {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
-
+    private void setComponentsAvailable(boolean available) {
         cbSavePassword.setEnabled(available);
         cbAutoLogin.setEnabled(available);
         cbLoginInvisible.setEnabled(available);
@@ -936,16 +897,9 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
     /**
      * Displays the progress bar.
      *
-     * Should be called only from the Event Dispatcher Thread.
-     *
      * @param visible true to display progress bar, false to hide it.
      */
     private void setProgressBarVisible(boolean visible) {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
-
         lblProgress.setVisible(visible);
     }
 
@@ -1242,15 +1196,9 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     /**
      * Initializes Spark's main window.
-     *
-     * Should only be called from the Event Dispatcher Thread
      */
     private void startSpark() {
         Log.debug("Starting Spark's main window.");
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         // Invoke the MainWindow.
         try {
             final MainWindow mainWindow = MainWindow.getInstance();
@@ -1394,9 +1342,11 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
             localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
             localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
-            if (Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE) != Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE)) {
-                localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
-                localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
+            boolean useHostnameAsResource = Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE);
+            boolean useVersionAsResource = Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE);
+            if (useHostnameAsResource != useVersionAsResource) {
+                localPref.setUseHostnameAsResource(useHostnameAsResource);
+                localPref.setUseVersionAsResource(useVersionAsResource);
             }
             localPref.setFileTransferIbbOnly(Enterprise.containsFeature(Enterprise.IBB_FEATURE));
         }
