@@ -46,15 +46,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 import javax.net.ssl.SSLContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -130,6 +123,7 @@ import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Opt
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
 import org.jivesoftware.spark.util.BrowserLauncher;
+import org.jivesoftware.spark.util.DnsUtils;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -895,9 +889,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
     }
 
     /**
-     * Displays the progress bar.
-     *
-     * @param visible true to display progress bar, false to hide it.
+     * Display or hide the progress bar.
      */
     private void setProgressBarVisible(boolean visible) {
         lblProgress.setVisible(visible);
@@ -952,9 +944,13 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             switch (ssoMethod) {
                 case "dns":
                     if (princRealm != null) { //princRealm is null if we got a LoginException above.
-                        ssoKdc = getDnsKdc(princRealm);
-                        System.setProperty("java.security.krb5.realm", princRealm);
-                        System.setProperty("java.security.krb5.kdc", ssoKdc);
+                        ssoKdc = DnsUtils.getDnsKdc(princRealm);
+                        if (!isBlank(ssoKdc)) {
+                            System.setProperty("java.security.krb5.realm", princRealm);
+                            System.setProperty("java.security.krb5.kdc", ssoKdc);
+                        } else {
+                            Log.error("Could not resolve KDC for realm via DNS: " + princRealm);
+                        }
                     }
                     break;
                 case "manual":
@@ -1285,52 +1281,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         }
     }
 
-    /**
-     * Use DNS to lookup a KDC
-     *
-     * @param realm The realm to look up
-     * @return the KDC hostname
-     */
-    private String getDnsKdc(String realm) {
-        //Assumption: the KDC will be found with the SRV record
-        // _kerberos._udp.$realm
-        try {
-            Hashtable<String, String> env = new Hashtable<>();
-            env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
-            DirContext context = new InitialDirContext(env);
-            Attributes dnsLookup = context.getAttributes("_kerberos._udp." + realm, new String[]{"SRV"});
-
-            ArrayList<Integer> priorities = new ArrayList<>();
-            HashMap<Integer, List<String>> records = new HashMap<>();
-            for (Enumeration<?> e = dnsLookup.getAll(); e.hasMoreElements();) {
-                Attribute record = (Attribute) e.nextElement();
-                for (Enumeration<?> e2 = record.getAll(); e2.hasMoreElements();) {
-                    String sRecord = (String) e2.nextElement();
-                    String[] sRecParts = sRecord.split(" ");
-                    Integer pri = Integer.valueOf(sRecParts[0]);
-                    if (priorities.contains(pri)) {
-                        List<String> recs = records.get(pri);
-                        if (recs == null) {
-                            recs = new ArrayList<>();
-                        }
-                        recs.add(sRecord);
-                    } else {
-                        priorities.add(pri);
-                        List<String> recs = new ArrayList<>();
-                        recs.add(sRecord);
-                        records.put(pri, recs);
-                    }
-                }
-            }
-            Collections.sort(priorities);
-            List<String> l = records.get(priorities.get(0));
-            String toprec = l.get(0);
-            String[] sRecParts = toprec.split(" ");
-            return sRecParts[3];
-        } catch (NamingException e) {
-            return "";
-        }
-    }
 
     private void persistEnterprise() {
         new Enterprise();
