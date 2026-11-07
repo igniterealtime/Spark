@@ -23,8 +23,8 @@ import org.jivesoftware.spark.plugin.PluginClassLoader;
 
 public abstract class PluginRes {
 	private static PluginClassLoader classLoader;
-	private static final Map<String, String> sparkResCache = new HashMap<>();
-	private static final Map<String, String> defaultResCache = new HashMap<>();
+	private static final Map<String, String> sparkResCache = new HashMap<>(350);
+	private static final Map<String, String> defaultResCache = new HashMap<>(150);
 	private static final Map<String, String> i18nResCache = new HashMap<>();
 	private static final Map<String, String> preferenceResCache = new HashMap<>();
 
@@ -33,14 +33,19 @@ public abstract class PluginRes {
     }
 
     public static void putRes(String key, String value, ResourceType name) {
-        if (name.equals(ResourceType.SPARK)) {
-            putSparkRes(key, value);
-        } else if (name.equals(ResourceType.DEFAULT)) {
-            putDefaultRes(key, value);
-        } else if (name.equals(ResourceType.PREFERENCES)) {
-            putPreferenceRes(key, value);
-        } else if (name.equals(ResourceType.I18N)) {
-            puti18nRes(key, value);
+        switch (name) {
+            case SPARK:
+                putSparkRes(key, value);
+                break;
+            case DEFAULT:
+                putDefaultRes(key, value);
+                break;
+            case PREFERENCES:
+                putPreferenceRes(key, value);
+                break;
+            case I18N:
+                putI18nRes(key, value);
+                break;
         }
     }
 
@@ -97,7 +102,7 @@ public abstract class PluginRes {
         return getRes(key, i18nResCache);
     }
 
-    private static void puti18nRes(String key, String value) {
+    private static void putI18nRes(String key, String value) {
         putRes(key, value, i18nResCache);
     }
 }

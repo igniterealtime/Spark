@@ -54,7 +54,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.PropertyResourceBundle;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -508,35 +508,31 @@ public class PluginManager implements MainWindowListener
         Thread.currentThread().setContextClassLoader( classLoader );
     }
 
-    private void loadPluginResources( String resourceName, ResourceType type )
-    {
+    private void loadPluginResources(String resourceName, ResourceType type) {
         Log.debug("Loading plugin resources from " + resourceName);
-        try
-        {
-            PropertyResourceBundle prbPlugin = (PropertyResourceBundle) ResourceBundle.getBundle( resourceName, Locale.getDefault(), classLoader );
-            for ( String key : prbPlugin.keySet() )
-            {
-                PluginRes.putRes( key, prbPlugin.getString( key ), type );
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle(resourceName, Locale.getDefault(), classLoader);
+            for (String key : bundle.keySet()) {
+                PluginRes.putRes(key, bundle.getString(key), type);
             }
-        }
-        catch ( Exception ex )
-        {
-            Log.debug( resourceName + " is not overwritten in plugin " );
+        } catch (MissingResourceException ex) {
+            Log.debug(resourceName + " is not overwritten in plugin");
+        } catch (Exception ex) {
+            Log.error("Error loading plugin resources from " + resourceName, ex);
         }
     }
 
     /**
      * Loads property resources from spark.properties, default.properties, spark_i18n.properties (properly localized)
-     * located in a plugin's jar, if any In case the plugin contains preferences.properties, plugin specific defaults will
-     * be loaded instead of spark defaults for preferences This method is called right after all plugins are loaded,
-     * specifically after plugins class loader is initialized and plugins jars are loaded in classpath
+     * located in a plugin's jar, if any. In case the plugin contains preferences.properties, plugin specific defaults will
+     * be loaded instead of spark defaults for preferences. This method is called right after all plugins are loaded,
+     * specifically after plugins class loader is initialized and plugins jars are loaded in classpath.
      */
-    private void loadPluginResources()
-    {
-        loadPluginResources( "spark", ResourceType.SPARK );
-        loadPluginResources( "default", ResourceType.DEFAULT );
-        loadPluginResources( "preferences", ResourceType.PREFERENCES );
-        loadPluginResources( "spark_i18n", ResourceType.I18N );
+    private void loadPluginResources() {
+        loadPluginResources("spark", ResourceType.SPARK);
+        loadPluginResources("default", ResourceType.DEFAULT);
+        loadPluginResources("preferences", ResourceType.PREFERENCES);
+        loadPluginResources("spark_i18n", ResourceType.I18N);
     }
 
     /**
