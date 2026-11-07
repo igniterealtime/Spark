@@ -520,12 +520,7 @@ public final class MainWindow extends ChatFrame {
         });
 
         // Show About Box
-	menuAbout.addActionListener(new AbstractAction() {
-	    @Override
-		public void actionPerformed(ActionEvent e) {
-		showAboutBox();
-	    }
-	});
+        menuAbout.addActionListener(e -> AboutDialog.showAboutBox());
 
 	if (!Default.getBoolean(Default.DISABLE_UPDATES) && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
 		// Execute spark update checker after one minute.
@@ -638,91 +633,6 @@ public final class MainWindow extends ChatFrame {
         }
     }
 
-    /**
-     * Returns About Box Pane.
-     * @return JEditorPane About Box
-     */
-    private JEditorPane getAboutBoxPane() {
-        // Get values from default.properties file
-        final String APPLICATION_INFO1 = Default.getString(Default.APPLICATION_INFO1);
-        final String APPLICATION_INFO2 = Default.getString(Default.APPLICATION_INFO2);
-        final String APPLICATION_INFO3 = Default.getString(Default.APPLICATION_INFO3);
-        final String APPLICATION_LICENSE_LINK = Default.getString(Default.APPLICATION_LICENSE_LINK);
-        final String APPLICATION_LICENSE_LINK_TXT = Default.getString(Default.APPLICATION_LICENSE_LINK_TXT);
-        final String APPLICATION_INFO4 = Default.getString(Default.APPLICATION_INFO4);
-        final String APPLICATION_LINK = Default.getString(Default.APPLICATION_LINK);
-        final String APPLICATION_LINK_TXT = Default.getString(Default.APPLICATION_LINK_TXT);
-        final boolean DISPLAY_DEV_INFO = Default.getBoolean(Default.DISPLAY_DEV_INFO);
-        final String JAVA_VERSION = Default.getString(Default.JAVA_VERSION);
-
-        // Construct About Box text
-        StringBuilder aboutBoxText = new StringBuilder();
-        aboutBoxText.append(JiveInfo.getName()).append(" ").append(JiveInfo.getVersion());
-        // Add APPLICATION_INFO1 if not empty
-        if (!("".equals(APPLICATION_INFO1))) {
-            aboutBoxText.append("<br/>").append(APPLICATION_INFO1);
-        }
-        // Add APPLICATION_INFO2 if not empty
-        if (!("".equals(APPLICATION_INFO2))) {
-            aboutBoxText.append("<br/>").append(APPLICATION_INFO2);
-        }
-        // Add APPLICATION_INFO3 if not empty
-        if (!("".equals(APPLICATION_INFO3))) {
-            aboutBoxText.append("<br/>").append(APPLICATION_INFO3);
-        }
-        // Add APPLICATION_LICENSE_LINK if not empty
-        if (!("".equals(APPLICATION_LICENSE_LINK))) {
-            aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LICENSE_LINK).append("\">")
-                .append(APPLICATION_LICENSE_LINK_TXT).append("</a>");
-        }
-        // Add APPLICATION_LINK if not empty
-        if (!("".equals(APPLICATION_LINK))) {
-            aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LINK).append("\">")
-                .append(APPLICATION_LINK_TXT).append("</a>");
-        }
-        // Add APPLICATION_INFO4 if not empty
-        if (!("".equals(APPLICATION_INFO4))) {
-            aboutBoxText.append("<br/>").append(APPLICATION_INFO4);
-        }
-        aboutBoxText.append("<br/>Smack Version: ").append(Smack.getVersion());
-        if (DISPLAY_DEV_INFO) {
-            // Add Java JRE Version if is empty
-            if ("".equals(JAVA_VERSION)) {
-                aboutBoxText.append("<br/>JRE Version: ").append(System.getProperty("java.version"));
-                aboutBoxText.append(" ").append(System.getProperty("os.arch"));
-            }
-        }
-
-        // copy window style
-        JPanel p = new JPanel();
-        Font font = p.getFont();
-
-        // create some css from the JPanel's font
-        String style = ("font-family:" + font.getFamily() + ";") +
-            "font-weight:" + (font.isBold() ? "bold" : "normal") + ";" +
-            "font-size:" + font.getSize() + "pt;";
-
-        // assemble html
-        JEditorPane ep = new JEditorPane("text/html",
-            "<html><body style=\"" + style + "\">" + aboutBoxText + "</body></html>");
-        // handle link events
-        ep.addHyperlinkListener(e -> {
-            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                BrowserLauncher.openURL(e.getURL().toString());
-            }
-        });
-        ep.setEditable(false);
-        ep.setBackground(p.getBackground());
-        return ep;
-    }
-
-    /**
-     * Displays the About Box for Spark.
-     */
-    private static void showAboutBox() {
-        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), SparkManager.getMainWindow().getAboutBoxPane(),
-            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE));
-    }
 
     /**
      * Displays the Spark error log.
