@@ -33,7 +33,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -45,13 +44,10 @@ import java.security.Principal;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import javax.net.ssl.SSLContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
@@ -152,15 +148,12 @@ import org.minidns.dnsname.DnsName;
  * The LoginDialog is used only for login in registered users into the XMPP server.
  * @author KeepToo
  */
-public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, CallbackHandler {
+public class LoginUIPanel extends JPanel implements KeyListener, FocusListener {
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
     private final RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
-    /**
-     * Creates new form LoginWindow
-     */
     public LoginUIPanel() {
         initComponents();
         //SPARK-2115 SPARK-2295 Allow account creation or password changes over an insecure (e.g. unencrypted) connections.
@@ -582,7 +575,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         // Before creating any connections. Update proxy if needed.
         updateProxyConfig();
         loginDialog = new JFrame(JiveInfo.getName());
-
         // Construct Dialog
         EventQueue.invokeLater(() -> {
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
@@ -591,7 +583,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             loginDialog.setSize(550, 400);
             // Center dialog on screen
             GraphicUtils.centerWindowOnScreen(loginDialog);
-
             // Show dialog
             loginDialog.addWindowListener(new WindowAdapter() {
                 @Override
@@ -603,7 +594,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             if (!isBlank(getUsername())) {
                 tfPassword.requestFocus();
             }
-
             if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
                 // Make dialog top most.
                 loginDialog.setVisible(true);
@@ -783,7 +773,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         tfDomain.setText(trimToEmpty(xmppDomain));
     }
 
-
     private JPopupMenu getPopup() {
         JPopupMenu popup = new JPopupMenu();
         for (final String key : _usernames) {
@@ -810,9 +799,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         return popup;
     }
 
-    /**
-     * KeyListener implementation.
-     */
     @Override
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ENTER)
@@ -823,9 +809,12 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT
-                && ((JTextField) e.getSource()).getCaretPosition() == ((JTextField) e.getSource()).getText().length()) {
-            getPopup().show(otherUsers, 0, 0);
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            JTextField textField = (JTextField) e.getSource();
+            boolean atEndOfText = textField.getCaretPosition() == textField.getText().length();
+            if (atEndOfText) {
+                getPopup().show(otherUsers, 0, 0);
+            }
         }
     }
 
@@ -835,8 +824,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
     }
 
     /**
-     * Checks the users input and enables/disables the login button depending on
-     * state.
+     * Checks the users input and enables/disables the login button depending on state.
      */
     private boolean validateDialog() {
         boolean loginIsPossible = !isBlank(getServerName())
@@ -860,8 +848,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
 
     /**
      * Enables/Disables the editable components in the login screen.
-     *
-     * @param available true to enable components, otherwise false to disable.
      */
     private void setComponentsAvailable(boolean available) {
         cbSavePassword.setEnabled(available);
@@ -924,7 +910,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             String princName = localPref.getLastUsername();
             String princRealm = null;
             try {
-                LoginContext lc = new LoginContext("com.sun.security.jgss.krb5.initiate");
+                LoginContext lc = new LoginContext("com.sun.security.jgss.krb5.initiate", this::handleAuthCallback);
                 lc.login();
                 Subject mySubject = lc.getSubject();
                 for (Principal p : mySubject.getPrincipals()) {
@@ -1175,8 +1161,7 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
         });
     }
 
-    @Override
-    public void handle(Callback[] callbacks) throws IOException {
+    private void handleAuthCallback(Callback[] callbacks) {
         for (Callback callback : callbacks) {
             if (callback instanceof NameCallback) {
                 NameCallback ncb = (NameCallback) callback;
@@ -1195,7 +1180,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
      */
     private void startSpark() {
         Log.debug("Starting Spark's main window.");
-        // Invoke the MainWindow.
         try {
             final MainWindow mainWindow = MainWindow.getInstance();
             // Creates the Spark  Workspace and add to MainWindow
@@ -1280,7 +1264,6 @@ public class LoginUIPanel extends JPanel implements KeyListener, FocusListener, 
             }
         }
     }
-
 
     private void persistEnterprise() {
         new Enterprise();
