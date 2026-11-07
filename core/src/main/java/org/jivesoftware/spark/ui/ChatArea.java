@@ -18,43 +18,39 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
-import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.util.JidUtil;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URI;
-import java.util.*;
-import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.awt.Cursor.DEFAULT_CURSOR;
+import static java.awt.Cursor.HAND_CURSOR;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_C;
+import static java.awt.event.KeyEvent.VK_V;
+import static java.awt.event.KeyEvent.VK_X;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
- * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
- * formatting of bold, italics, underlined and urls.
+ * The ChatArea class handles proper chat text formatting such as url handling.
+ * Use ChatArea for proper formatting of bold, italics, underlined and urls.
  */
-public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener, ActionListener {
-
-    /**
-     * The default Hand cursor.
-     */
-    public static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
-     * The default Text Cursor.
-     */
-    public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-
+public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener {
     /**
      * The currently selected Font Size to use.
      */
@@ -70,83 +66,81 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     private final CopyOnWriteArrayList<LinkInterceptor> interceptors = new CopyOnWriteArrayList<>();
 
-    protected Boolean forceEmoticons = false;
+    protected boolean forceEmoticons = false;
 
     /**
      * ChatArea Constructor.
      */
     public ChatArea() {
         cutMenu = new JMenuItem(Res.getString("action.cut"));
-        cutMenu.addActionListener(this);
+        cutMenu.addActionListener(e -> cutAction());
 
         copyMenu = new JMenuItem(Res.getString("action.copy"));
-        copyMenu.addActionListener(this);
+        copyMenu.addActionListener(e -> SparkManager.setClipboard(getSelectedText()));
 
         pasteMenu = new JMenuItem(Res.getString("action.paste"));
-        pasteMenu.addActionListener(this);
+        pasteMenu.addActionListener(e -> pasteAction());
 
         selectAll = new JMenuItem(Res.getString("action.select.all"));
-        selectAll.addActionListener(this);
+        selectAll.addActionListener(e -> {
+            requestFocus();
+            selectAll();
+        });
 
         // Set Default Font
         setFont(new Font("Dialog", Font.PLAIN, fontSize));
 
-
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl x"), "cut");
-
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_X, CTRL_DOWN_MASK), "cut");
         getActionMap().put("cut", new AbstractAction("cut") {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
                 cutAction();
             }
         });
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl c"), "copy");
-
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK), "copy");
         getActionMap().put("copy", new AbstractAction("copy") {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
                 SparkManager.setClipboard(getSelectedText());
             }
         });
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ctrl v"), "paste");
 
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK), "paste");
         getActionMap().put("paste", new AbstractAction("paste") {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
                 pasteAction();
             }
         });
 
-        setEditorKit( new WrapEditorKit() ); // SPARK-1613 Ensure that long text wraps.
+        setEditorKit(new WrapEditorKit()); // SPARK-1613 Ensure that long text wraps.
     }
 
     /**
-     * setText is a core JTextPane method that can beused to inject a different Document type
+     * setText is a core JTextPane method that can be used to inject a different Document type
      * for instance HTMLDocument (setText("<HTML></HTML>")
      * We should keep the functionality - it is useful when we want to inject a different Document type
-     * instead of StyleDocument 
+     * instead of StyleDocument
      */
     public void setInitialContent(String content) {
         super.setText(content);
-    } 
-    
-   
-    /**
-     * Removes the last appearance of word from the TextArea
-     */
-    public void removeLastWord(String word)
-    {
-	select(getText().lastIndexOf(word),getText().length());	
-	replaceSelection("");
     }
-    
+
+    /**
+     * Removes the last appearance of the word from the TextArea
+     */
+    public void removeLastWord(String word) {
+        select(getText().lastIndexOf(word), getText().length());
+        replaceSelection("");
+    }
+
     /**
      * Removes everything in between <b>begin</b> and <b>end</b>
      */
-    public void removeWordInBetween(int begin, int end){
-	select(begin, end);
-	replaceSelection("");
+    public void removeWordInBetween(int begin, int end) {
+        select(begin, end);
+        replaceSelection("");
     }
 
     /**
@@ -159,7 +153,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     @Override
-	public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {
         try {
             final int pos = viewToModel2D(e.getPoint());
             final Element element = getStyledDocument().getCharacterElement(pos);
@@ -193,7 +187,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     @Override
-	public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
             handlePopup(e);
         }
@@ -203,44 +197,36 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * This launches the <code>BrowserLauncher</code> with the URL
      * located in <code>ChatArea</code>. Note that the url will
      * automatically be clickable when added to <code>ChatArea</code>
-     *
-     * @param e - the MouseReleased event
      */
     @Override
-	public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
             handlePopup(e);
         }
     }
 
     @Override
-	public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {
     }
 
     @Override
-	public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e) {
     }
 
     @Override
-	public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e) {
     }
 
     /**
-     * Checks to see if the mouse is located over a browseable
-     * link.
-     *
-     * @param e - the current MouseEvent.
+     * Checks to see if the mouse is located over a browseable link.
      */
     @Override
-	public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(MouseEvent e) {
         checkForLink(e);
     }
 
     /**
-     * Checks to see if the mouse is located over a browseable
-     * link.
-     *
-     * @param e - the current MouseEvent.
+     * Checks to see if the mouse is located over a browseable link.
      */
     private void checkForLink(MouseEvent e) {
         try {
@@ -249,15 +235,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
                 final Object o = as.getAttribute("link");
-                if (o != null) {
-                    setCursor(HAND_CURSOR);
-                }
-                else {
-                    setCursor(DEFAULT_CURSOR);
-                }
+                setCursor(Cursor.getPredefinedCursor(o != null ? HAND_CURSOR : DEFAULT_CURSOR));
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.error("Error in CheckLink:", ex);
         }
     }
@@ -272,40 +252,29 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         popup.add(selectAll);
 
         // Handle enable
-        boolean textSelected = ModelUtil.hasLength(getSelectedText());
+        boolean textSelected = !isBlank(getSelectedText());
         String clipboard = SparkManager.getClipboard();
         cutMenu.setEnabled(textSelected && isEditable());
         copyMenu.setEnabled(textSelected);
-        pasteMenu.setEnabled(ModelUtil.hasLength(clipboard) && isEditable());
+        pasteMenu.setEnabled(!isBlank(clipboard) && isEditable());
 
         popup.show(this, e.getX(), e.getY());
     }
 
-    /**
-     * Adds a <code>ContextMenuListener</code> to ChatArea.
-     */
     public void addContextMenuListener(ContextMenuListener listener) {
         contextMenuListeners.addIfAbsent(listener);
     }
 
-    /**
-     * Remove a <code>ContextMenuListener</code> to ChatArea.
-     */
     public void removeContextMenuListener(ContextMenuListener listener) {
         contextMenuListeners.remove(listener);
     }
 
-    private void fireContextMenuListeners()
-    {
-        for ( final ContextMenuListener listener : contextMenuListeners )
-        {
-            try
-            {
-                listener.poppingUp( this, popup );
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A ContextMenuListener (" + listener + ") threw an exception while processing a 'poppingUp' event. ChatArea: '" + this + "', popup: '" + popup + "'.", e );
+    private void fireContextMenuListeners() {
+        for (final ContextMenuListener listener : contextMenuListeners) {
+            try {
+                listener.poppingUp(this, popup);
+            } catch (Exception e) {
+                Log.error("A ContextMenuListener (" + listener + ") threw an exception while processing a 'poppingUp' event. ChatArea: '" + this + "', popup: '" + popup + "'.", e);
             }
         }
     }
@@ -318,41 +287,18 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         interceptors.remove(interceptor);
     }
 
-    public boolean fireLinkInterceptors( MouseEvent event, String link )
-    {
-        for ( final LinkInterceptor interceptor : interceptors )
-        {
-            try
-            {
-                final boolean handled = interceptor.handleLink( event, link );
-                if ( handled )
-                {
+    public boolean fireLinkInterceptors(MouseEvent event, String link) {
+        for (final LinkInterceptor interceptor : interceptors) {
+            try {
+                final boolean handled = interceptor.handleLink(event, link);
+                if (handled) {
                     return true;
                 }
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A LinkInterceptor (" + interceptor + ") threw an exception while processing link: '" + link + "', event: '" + event + "'.", e );
+            } catch (Exception e) {
+                Log.error("A LinkInterceptor (" + interceptor + ") threw an exception while processing link: '" + link + "', event: '" + event + "'.", e);
             }
         }
         return false;
-    }
-
-    @Override
-	public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == cutMenu) {
-            cutAction();
-        }
-        else if (e.getSource() == copyMenu) {
-            SparkManager.setClipboard(getSelectedText());
-        }
-        else if (e.getSource() == pasteMenu) {
-            pasteAction();
-        }
-        else if (e.getSource() == selectAll) {
-            requestFocus();
-            selectAll();
-        }
     }
 
     private void cutAction() {
@@ -368,17 +314,11 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         }
     }
 
-    protected void releaseResources() {
-        getActionMap().remove("copy");
-        getActionMap().remove("cut");
-        getActionMap().remove("paste");
-    }
-
-    public Boolean getForceEmoticons() {
+    public boolean getForceEmoticons() {
         return forceEmoticons;
     }
 
-    public void setForceEmoticons(Boolean forceEmoticons) {
+    public void setForceEmoticons(boolean forceEmoticons) {
         this.forceEmoticons = forceEmoticons;
     }
 }

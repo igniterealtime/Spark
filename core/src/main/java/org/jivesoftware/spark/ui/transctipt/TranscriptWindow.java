@@ -30,12 +30,14 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatArea;
 import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.history.HistoryWindow;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.parts.Resourcepart;
 
@@ -55,12 +57,15 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_C;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.applySpans;
 import static org.jivesoftware.spark.ui.transctipt.MarkupConverter.rawHtmlToMarkup;
 
 /**
- * Provides a window in which a chat is presented to the end user, by listing all chat messages in order. This
- * implementation is usable for both one-on-one chats, as well as multi-user chats.
+ * Provides a window in which a chat is presented to the end user by listing all chat messages in order.
+ * This implementation is usable for both one-on-one chats and multi-user chats.
  *
  * The class primary responsibility is to maintain an (time-based) ordered list of entries, and provides various methods
  * to add new entries. Responsibility for the visual representation of each entry is delegated to the implementation of
@@ -80,26 +85,23 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     private final Color messageColor = (Color) UIManager.get("Message.foreground");
     private final Color historyColor = (Color) UIManager.get("History.foreground");
 
-    public TranscriptWindow()
-    {
-        setEditable( false );
-        addMouseListener( this );
-        addMouseMotionListener( this );
-        setDragEnabled( true );
-        addContextMenuListener( this );
+    public TranscriptWindow() {
+        setEditable(false);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        setDragEnabled(true);
+        addContextMenuListener(this);
 
         // Make sure ctrl-c works
-        getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( "ctrl c" ), "copy" );
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK), "copy");
 
-        getActionMap().put( "copy", new AbstractAction( "copy" )
-        {
+        getActionMap().put("copy", new AbstractAction("copy") {
             @Override
-			public void actionPerformed( ActionEvent evt )
-            {
-                StringSelection stringSelection = new StringSelection( getSelectedText() );
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents( stringSelection, null );
+            public void actionPerformed(ActionEvent evt) {
+                StringSelection stringSelection = new StringSelection(getSelectedText());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
             }
-        } );
+        });
 
     }
 
@@ -108,41 +110,30 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
     private synchronized void reOrder() {
         // Clear and refill the UI component.
-        try
-        {
+        try {
             entries.sort(Comparator.comparing(TranscriptWindowEntry::getTimestamp));
             clear();
-            for ( TranscriptWindowEntry e : entries )
-            {
-                e.addTo( this );
+            for (TranscriptWindowEntry e : entries) {
+                e.addTo(this);
             }
-        }
-        catch ( BadLocationException ex )
-        {
-            Log.error( "An exception prevented chat content to be redrawn in the user interface!", ex );
-        }
-        finally
-        {
+        } catch (BadLocationException ex) {
+            Log.error("An exception prevented chat content to be redrawn in the user interface!", ex);
+        } finally {
             isReordingScheduled = false;
         }
     }
 
-    protected synchronized void add( TranscriptWindowEntry entry )
-    {
-        if ( !entries.isEmpty() )
-        {
-            if ( entry.getTimestamp().isBefore( entries.getLast().getTimestamp() ) && !(entries.getLast() instanceof CustomTextEntry) )
-            {
-                Log.debug( "A chat entry appears to have been delivered out of order. The transcript window must be reordered!" );
+    protected synchronized void add(TranscriptWindowEntry entry) {
+        if (!entries.isEmpty()) {
+            if (entry.getTimestamp().isBefore(entries.getLast().getTimestamp()) && !(entries.getLast() instanceof CustomTextEntry)) {
+                Log.debug("A chat entry appears to have been delivered out of order. The transcript window must be reordered!");
                 if (!isReordingScheduled) {
-                    Log.debug( "Scheduling new re-ordering of entries in the transcript window." );
+                    Log.debug("Scheduling new re-ordering of entries in the transcript window.");
                     isReordingScheduled = true;
-                    TaskEngine.getInstance().schedule(new TimerTask()
-                    {
+                    TaskEngine.getInstance().schedule(new TimerTask() {
                         @Override
 
-                        public void run()
-                        {
+                        public void run() {
                             SwingUtilities.invokeLater(() -> reOrder());
                         }
                     }, 250);
@@ -150,44 +141,35 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             }
             if (!entry.getTimestamp().toLocalDate().isEqual(entries.getLast().getTimestamp().toLocalDate())) {
                 // The date appeared to have rolled over, since the last entry. Add a 'start-of-day' entry before we add the new entry.
-                final StartOfDayEntry startOfDayEntry = new StartOfDayEntry( entry.getTimestamp() );
+                final StartOfDayEntry startOfDayEntry = new StartOfDayEntry(entry.getTimestamp());
                 try {
-                    startOfDayEntry.addTo( this );
+                    startOfDayEntry.addTo(this);
                 } catch (BadLocationException ignored) {
                 }
             }
         }
-        entries.add( entry );
-        try
-        {
-            entry.addTo( this );
-        }
-        catch ( BadLocationException ex )
-        {
-            Log.error( "An exception prevented chat content to be displayed in the user interface!", ex );
+        entries.add(entry);
+        try {
+            entry.addTo(this);
+        } catch (BadLocationException ex) {
+            Log.error("An exception prevented chat content to be displayed in the user interface!", ex);
         }
     }
 
     /**
      * Inserts a component into the transcript window.
-     *
-     * @param component the component to insert.
      */
-    public void addComponent( Component component )
-    {
+    public void addComponent(Component component) {
         final StyledDocument doc = (StyledDocument) getDocument();
         // The image must first be wrapped in a style
-        Style style = doc.addStyle( "StyleName", null );
-        StyleConstants.setComponent( style, component );
+        Style style = doc.addStyle("StyleName", null);
+        StyleConstants.setComponent(style, component);
         // Insert the image at the end of the text
-        try
-        {
-            doc.insertString( doc.getLength(), "ignored text", style );
-            doc.insertString( doc.getLength(), "\n", null );
-        }
-        catch ( BadLocationException e )
-        {
-            Log.error( e );
+        try {
+            doc.insertString(doc.getLength(), "ignored text", style);
+            doc.insertString(doc.getLength(), "\n", null);
+        } catch (BadLocationException e) {
+            Log.error(e);
         }
     }
 
@@ -201,9 +183,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param message    the message to insert.
      * @param foreground the color to use for the nickname (excluding the message text) foreground.
      */
-    public void insertMessage( CharSequence nickname, Message message, Color foreground )
-    {
-        insertMessage( nickname, message, foreground, null );
+    public void insertMessage(CharSequence nickname, Message message, Color foreground) {
+        insertMessage(nickname, message, foreground, null);
     }
 
     /**
@@ -214,23 +195,17 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param foreground the color to use for the nickname (excluding the message text) foreground.
      * @param background the color to use for the entire background (eg, to highlight).
      */
-    public void insertMessage( CharSequence nickname, Message message, Color foreground, Color background )
-    {
+    public void insertMessage(CharSequence nickname, Message message, Color foreground, Color background) {
         String nicknameStr = nickname.toString();
-        for ( TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors() )
-        {
-            try
-            {
-                boolean handled = interceptor.isMessageIntercepted( this, nicknameStr, message );
-                if ( handled )
-                {
+        for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
+            try {
+                boolean handled = interceptor.isMessageIntercepted(this, nicknameStr, message);
+                if (handled) {
                     // Do nothing.
                     return;
                 }
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A TranscriptWindowInterceptor ('" + interceptor + "') threw an exception while processing a chat message (current user: '" + nickname + "').", e );
+            } catch (Exception e) {
+                Log.error("A TranscriptWindowInterceptor ('" + interceptor + "') threw an exception while processing a chat message (current user: '" + nickname + "').", e);
             }
         }
 
@@ -249,7 +224,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 return;
             }
         }
-        add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, messageColor, background ) );
+        add(new MessageEntry(sentDate, isDelayed, nicknameStr, foreground, body, messageColor, background));
     }
 
     private static String getMessageBodyByLang(Message message) {
@@ -299,9 +274,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param message         the information message to insert.
      * @param foregroundColor the foreground color to use.
      */
-    public synchronized void insertNotificationMessage( String message, Color foregroundColor )
-    {
-        add( new CustomTextEntry( ZonedDateTime.now(), message, foregroundColor ) );
+    public synchronized void insertNotificationMessage(String message, Color foregroundColor) {
+        add(new CustomTextEntry(ZonedDateTime.now(), message, foregroundColor));
     }
 
     /**
@@ -314,9 +288,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param underline  true to have text underlined.
      * @param foreground the foreground color.
      */
-    public synchronized void insertCustomText( String text, boolean bold, boolean underline, Color foreground )
-    {
-        add( new CustomTextEntry( ZonedDateTime.now(), text, foreground, bold, false, underline, false ) );
+    public synchronized void insertCustomText(String text, boolean bold, boolean underline, Color foreground) {
+        add(new CustomTextEntry(ZonedDateTime.now(), text, foreground, bold, false, underline, false));
     }
 
     /**
@@ -375,15 +348,14 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * Disable the entire <code>TranscriptWindow</code> and visually represent
      * it as disabled.
      */
-    public void showWindowDisabled()
-    {
+    public void showWindowDisabled() {
         final Document document = getDocument();
         final SimpleAttributeSet attrs = new SimpleAttributeSet();
-        StyleConstants.setForeground( attrs, Color.LIGHT_GRAY );
+        StyleConstants.setForeground(attrs, Color.LIGHT_GRAY);
 
         final int length = document.getLength();
         StyledDocument styledDocument = getStyledDocument();
-        styledDocument.setCharacterAttributes( 0, length, attrs, false );
+        styledDocument.setCharacterAttributes(0, length, attrs, false);
     }
 
     /**
@@ -394,50 +366,44 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param headerData the string to prepend to the transcript.
      * @see ChatRoom#getTranscripts()
      */
-    public void saveTranscript( String fileName, List<Message> transcript, String headerData )
-    {
+    public void saveTranscript(String fileName, List<Message> transcript, String headerData) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        try
-        {
+        try {
             File defaultSaveFile = new File(Spark.getSparkUserHome(), fileName);
-            final JFileChooser fileChooser = new JFileChooser( defaultSaveFile );
-            fileChooser.setSelectedFile( defaultSaveFile );
+            JFileChooser fileChooser = new JFileChooser(defaultSaveFile);
+            fileChooser.setSelectedFile(defaultSaveFile);
 
             // Show save dialog; this method does not return until the dialog is closed
-            int result = fileChooser.showSaveDialog( this );
+            int result = fileChooser.showSaveDialog(this);
             final File selFile = fileChooser.getSelectedFile();
 
-            if ( selFile != null && result == JFileChooser.APPROVE_OPTION )
-            {
+            if (selFile != null && result == JFileChooser.APPROVE_OPTION) {
                 final StringBuilder buf = new StringBuilder();
-                buf.append( "<html><body>" );
-                if ( headerData != null )
-                {
-                    buf.append( headerData );
+                buf.append("<html><body>");
+                if (headerData != null) {
+                    buf.append(headerData);
                 }
 
-                buf.append( "<table width=600>" );
+                buf.append("<table width=600>");
                 Resourcepart ownNickname = pref.getNickname();
                 for (Message message : transcript) {
                     String from = getMessageFrom(message, ownNickname);
-                    final String body = message.getBody();
-                    final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
+                    String body = message.getBody();
+                    JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
                     Date insertionDate = extension != null ? (Date) extension.getProperty("insertionDate") : null;
                     String value = insertionDate != null ? "(" + MSG_DATE_FORMATTER.format(insertionDate) + ") " : "";
-                    buf.append( "<tr><td nowrap><font size=2>" ).append( value ).append( "<strong>" ).append( from ).append( ":</strong>&nbsp;" ).append( body ).append( "</font></td></tr>" );
+                    buf.append("<tr><td nowrap><font size=2>").append(value).append("<strong>").append(from).append(":</strong>&nbsp;").append(body).append("</font></td></tr>");
                 }
-                buf.append( "</table></body></html>" );
-                final BufferedWriter writer = new BufferedWriter( new FileWriter( selFile ) );
-                writer.write( buf.toString() );
+                buf.append("</table></body></html>");
+                BufferedWriter writer = new BufferedWriter(new FileWriter(selFile));
+                writer.write(buf.toString());
                 writer.close();
-                JOptionPane.showMessageDialog( SparkManager.getMainWindow(), "Chat transcript has been saved.",
-                                               "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE );
+                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Chat transcript has been saved.",
+                    "Chat Transcript Saved", JOptionPane.INFORMATION_MESSAGE);
             }
-        }
-        catch ( Exception ex )
-        {
-            Log.error( "Unable to save chat transcript.", ex );
-            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE );
+        } catch (Exception ex) {
+            Log.error("Unable to save chat transcript.", ex);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Could not save transcript.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -454,17 +420,11 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         return ownNickname.toString();
     }
 
-    public void cleanup()
-    {
-        super.releaseResources();
-
+    public void cleanup() {
         clear();
-
-        removeMouseListener( this );
-        removeMouseMotionListener( this );
-
-        removeContextMenuListener( this );
-        getActionMap().remove( "copy" );
+        removeMouseListener(this);
+        removeMouseMotionListener(this);
+        removeContextMenuListener(this);
     }
 
     /**
@@ -474,62 +434,45 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param popup  the popup menu to add to.
      */
     @Override
-	public void poppingUp( final Object object, JPopupMenu popup )
-    {
+    public void poppingUp(final Object object, JPopupMenu popup) {
         popup.addSeparator();
-        popup.add(new AbstractAction(Res.getString("action.print"), SparkRes.getImageIcon(SparkRes.Icon.PRINTER_IMAGE_16x16))
-        {
+        popup.add(new AbstractAction(Res.getString("action.print"), SparkRes.getImageIcon(SparkRes.Icon.PRINTER_IMAGE_16x16)) {
             @Override
-			public void actionPerformed( ActionEvent actionEvent )
-            {
-                SparkManager.printChatTranscript( (TranscriptWindow) object );
+            public void actionPerformed(ActionEvent actionEvent) {
+                SparkManager.printChatTranscript((TranscriptWindow) object);
             }
-        } );
+        });
 
         if (!Default.getBoolean(Default.HIDE_HISTORY_SETTINGS) && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)
-        		&& !Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
-            popup.add(new AbstractAction(Res.getString("action.clear"), SparkRes.getImageIcon(SparkRes.Icon.ERASER_IMAGE))
-            {
+            && !Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+            popup.add(new AbstractAction(Res.getString("action.clear"), SparkRes.getImageIcon(SparkRes.Icon.ERASER_IMAGE)) {
                 @Override
-				public void actionPerformed( ActionEvent actionEvent )
-                {
-                    String user = null;
-                    try
-                    {
-                        ChatManager manager = SparkManager.getChatManager();
-                        ChatRoom room = manager.getChatContainer().getActiveChatRoom();
-                        user = room.getBareJid().toString();
-
-                        int ok = JOptionPane.showConfirmDialog( (TranscriptWindow) object,
-                                                                Res.getString( "delete.permanently" ),
-                                                                Res.getString( "delete.log.permanently" ),
-                                                                JOptionPane.YES_NO_OPTION,
-                                                                JOptionPane.QUESTION_MESSAGE );
-                        if ( ok == JOptionPane.YES_OPTION )
-                        {
-                            // This actions must be move into Transcript Plugin!
-                            File transcriptDir = SparkManager.getTranscriptDir();
-                            File transcriptFile = new File( transcriptDir, user + ".xml" );
-                            //noinspection ResultOfMethodCallIgnored
-                            transcriptFile.delete();
-                            transcriptFile = new File( transcriptDir, user + "_current.xml" );
-                            //noinspection ResultOfMethodCallIgnored
-                            transcriptFile.delete();
-                            clear();
-                        }
+                public void actionPerformed(ActionEvent actionEvent) {
+                    ChatManager manager = SparkManager.getChatManager();
+                    ChatRoom room;
+                    try {
+                        room = manager.getChatContainer().getActiveChatRoom();
+                    } catch (ChatRoomNotFoundException e) {
+                        return;
                     }
-                    catch ( Exception ex )
-                    {
-                        Log.error( "An exception occurred while trying to clear history for a chat room " + user, ex );
+
+                    int ok = JOptionPane.showConfirmDialog((TranscriptWindow) object,
+                        Res.getString("delete.permanently"),
+                        Res.getString("delete.log.permanently"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                    if (ok == JOptionPane.YES_OPTION) {
+                        clearTranscriptionsHistory(room.getBareJid());
                     }
                 }
-            } );
+            });
         }
         ChatRoom room = null;
-        try{
+        try {
             room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-        }catch (Exception e){
-            Log.error( "An exception occurred while trying to get active chat room " + room, e );
+        } catch (Exception e) {
+            Log.error("An exception occurred while trying to get active chat room " + room, e);
+            return;
         }
 
         // History window
@@ -546,6 +489,23 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     }
                 }
             });
+        }
+    }
+
+    private void clearTranscriptionsHistory(EntityBareJid roomBareJid) {
+        try {
+            String user = roomBareJid.toString();
+            // This actions must be move into Transcript Plugin!
+            File transcriptDir = SparkManager.getTranscriptDir();
+            File transcriptFile = new File(transcriptDir, user + ".xml");
+            //noinspection ResultOfMethodCallIgnored
+            transcriptFile.delete();
+            File transcriptFileCurrent = new File(transcriptDir, user + "_current.xml");
+            //noinspection ResultOfMethodCallIgnored
+            transcriptFileCurrent.delete();
+            clear();
+        } catch (Exception ex) {
+            Log.error("An exception occurred while trying to clear history for a chat room " + roomBareJid, ex);
         }
     }
 
