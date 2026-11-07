@@ -20,11 +20,11 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.Smack;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
+import org.jivesoftware.spark.AboutDialog;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
@@ -38,9 +38,9 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
+import org.jivesoftware.spark.util.GraphicUtils;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -633,7 +633,6 @@ public final class MainWindow extends ChatFrame {
         }
     }
 
-
     /**
      * Displays the Spark error log.
      */
@@ -673,12 +672,12 @@ public final class MainWindow extends ChatFrame {
         openFolder.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                openFolder.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                openFolder.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                openFolder.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                openFolder.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
 
             @Override

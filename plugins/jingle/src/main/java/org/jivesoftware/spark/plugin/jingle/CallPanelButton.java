@@ -16,7 +16,6 @@
 package org.jivesoftware.spark.plugin.jingle;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -26,6 +25,8 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 public class CallPanelButton extends JButton implements MouseListener {
     private final Icon normalIcon;
@@ -84,7 +85,7 @@ public class CallPanelButton extends JButton implements MouseListener {
         if (!selected) {
             setIcon(hoverIcon);
         }
-        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setCursor(HAND_CURSOR);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class CallPanelButton extends JButton implements MouseListener {
         if (!selected) {
             setIcon(normalIcon);
         }
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        setCursor(DEFAULT_CURSOR);
     }
 
     public void setButtonSelected(boolean selected) {

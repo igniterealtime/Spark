@@ -40,6 +40,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.jivesoftware.spark.ChatManager.TESTING_JID;
 import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -796,7 +798,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             @Override
             public void mouseEntered(MouseEvent mouseEvent) {
                 canShowPopup = true;
-                contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
+                contactItemList.setCursor(HAND_CURSOR);
             }
 
             @Override
@@ -805,7 +807,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 hoverItem = null;
                 cancelExistingTimer();
                 UIComponentRegistry.getContactInfoWindow().hideWindow();
-                contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
+                contactItemList.setCursor(DEFAULT_CURSOR);
             }
         });
         contactItemList.addMouseMotionListener(motionListener);
@@ -831,11 +833,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 hoverItem = null;
                 cancelExistingTimer();
                 UIComponentRegistry.getContactInfoWindow().hideWindow();
-                contactItemList.setCursor(GraphicUtils.DEFAULT_CURSOR);
+                contactItemList.setCursor(DEFAULT_CURSOR);
                 return;
             }
 
-            contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
+            contactItemList.setCursor(HAND_CURSOR);
             ContactItem item = model.get(index);
 
             if (item == hoverItem) {

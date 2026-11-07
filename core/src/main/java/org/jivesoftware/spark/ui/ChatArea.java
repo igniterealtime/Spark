@@ -29,7 +29,6 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -37,14 +36,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static java.awt.Cursor.DEFAULT_CURSOR;
-import static java.awt.Cursor.HAND_CURSOR;
 import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 import static java.awt.event.KeyEvent.VK_C;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling.
@@ -235,7 +234,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
                 final Object o = as.getAttribute("link");
-                setCursor(Cursor.getPredefinedCursor(o != null ? HAND_CURSOR : DEFAULT_CURSOR));
+                setCursor(o != null ? HAND_CURSOR : DEFAULT_CURSOR);
             }
         } catch (Exception ex) {
             Log.error("Error in CheckLink:", ex);

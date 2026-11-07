@@ -39,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,6 +52,8 @@ import java.net.URL;
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 public class FileUploadChatComponent extends JPanel {
     private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
@@ -167,12 +168,12 @@ public class FileUploadChatComponent extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                label.setCursor(HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                label.setCursor(DEFAULT_CURSOR);
             }
         });
     }

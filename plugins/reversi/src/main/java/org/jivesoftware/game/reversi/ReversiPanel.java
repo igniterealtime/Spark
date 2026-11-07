@@ -34,6 +34,8 @@ import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
+
 /**
  * The game UI, which is created after both players have accepted a new game.
  *
@@ -306,7 +308,7 @@ public class ReversiPanel extends JPanel {
         public void mouseEntered(MouseEvent e) {
             super.mouseEntered(e);
             if (reversi.getCurrentPlayer() != otherPlayer && reversi.isValidMove(block.getIndex())) {
-                block.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                block.setCursor(HAND_CURSOR);
                 block.setBorder(BorderFactory.createLineBorder(Color.WHITE));
             }
         }

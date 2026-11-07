@@ -18,7 +18,6 @@ package org.jivesoftware.spark.filetransfer;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -84,6 +83,7 @@ import org.jxmpp.jid.Jid;
 
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
 import static org.jivesoftware.spark.util.BrowserLauncher.openFolder;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -285,7 +285,7 @@ public class SparkTransferManager {
                 }
 
                 final Frame frame = new Frame();
-                frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 
                 selectionPanel.setImage(bufferedImage);
                 selectionPanel.validate();
@@ -305,7 +305,7 @@ public class SparkTransferManager {
                         }
 
                         frame.dispose();
-                        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                        frame.setCursor(DEFAULT_CURSOR);
 
                         if (mainWindowVisible) {
                             mainWindow.setVisible(true);
@@ -322,7 +322,7 @@ public class SparkTransferManager {
                     public void keyReleased(KeyEvent e) {
                         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                             frame.dispose();
-                            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                            frame.setCursor(DEFAULT_CURSOR);
                             if (mainWindowVisible) {
                                 mainWindow.setVisible(true);
                             }
@@ -473,7 +473,7 @@ public class SparkTransferManager {
         String imageName = "image_" + StringUtils.randomString(2) + ".png";
         final File imageFile = new File(tmpDirectory, imageName);
         // Write image to system.
-        room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        room.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         SwingWorker writeImageThread = new SwingWorker() {
             @Override
@@ -492,7 +492,7 @@ public class SparkTransferManager {
                 ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
-                room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                room.setCursor(DEFAULT_CURSOR);
             }
         };
         writeImageThread.start();

@@ -83,6 +83,8 @@ import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
 import static org.jivesoftware.spark.util.BrowserLauncher.openFolder;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 public class ReceiveFileTransfer extends JPanel {
     private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
@@ -143,36 +145,36 @@ public class ReceiveFileTransfer extends JPanel {
         pathButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                pathButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                pathButton.setCursor(HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                pathButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                pathButton.setCursor(DEFAULT_CURSOR);
             }
         });
 
         acceptButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                acceptButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                acceptButton.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                acceptButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                acceptButton.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
 
         declineButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                declineButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                declineButton.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                declineButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                declineButton.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
     }
@@ -465,12 +467,12 @@ public class ReceiveFileTransfer extends JPanel {
             imageLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    imageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    imageLabel.setCursor(GraphicUtils.HAND_CURSOR);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    imageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    imageLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
                 }
             });
 
@@ -486,12 +488,12 @@ public class ReceiveFileTransfer extends JPanel {
             titleLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    titleLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    titleLabel.setCursor(GraphicUtils.HAND_CURSOR);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    titleLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    titleLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
                 }
             });
 
@@ -559,12 +561,12 @@ public class ReceiveFileTransfer extends JPanel {
         openFileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                openFileButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                openFileButton.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                openFileButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                openFileButton.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
 
             @Override
@@ -576,12 +578,12 @@ public class ReceiveFileTransfer extends JPanel {
         openFolderButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                openFolderButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                openFolderButton.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                openFolderButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                openFolderButton.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
 
             @Override
@@ -725,12 +727,12 @@ public class ReceiveFileTransfer extends JPanel {
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                cancelButton.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                cancelButton.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
     }

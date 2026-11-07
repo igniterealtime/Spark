@@ -17,6 +17,9 @@ package org.jivesoftware.sparkplugin.components;
 
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -102,14 +105,14 @@ public class DialButton extends JButton implements MouseListener {
         if (!selected) {
             setIcon(hoverIcon);
         }
-        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setCursor(HAND_CURSOR);
     }
 
     public void mouseExited(MouseEvent e) {
         if (!selected) {
             setIcon(normalIcon);
         }
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        setCursor(DEFAULT_CURSOR);
     }
 
     public void setButtonSelected(boolean selected) {

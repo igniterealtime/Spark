@@ -64,6 +64,8 @@ import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
 import static org.jivesoftware.sparkimpl.settings.Sizes.Transfer.THUMBNAIL;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 public class SendFileTransfer extends JPanel {
     private static final Color COLOR_BACKGROUND_ALERT = new Color(250, 249, 242);
@@ -171,12 +173,12 @@ public class SendFileTransfer extends JPanel {
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                cancelButton.setCursor(HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                cancelButton.setCursor(DEFAULT_CURSOR);
             }
         });
 
@@ -265,12 +267,12 @@ public class SendFileTransfer extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                label.setCursor(HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                label.setCursor(DEFAULT_CURSOR);
             }
         });
     }

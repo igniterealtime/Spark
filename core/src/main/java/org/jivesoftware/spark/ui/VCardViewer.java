@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -47,6 +46,8 @@ import static java.awt.GridBagConstraints.NORTHWEST;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.spark.util.GraphicUtils.toHTMLColor;
 import static org.jivesoftware.spark.util.XEP0392Utils.colorOfContact;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -54,9 +55,6 @@ import static org.jivesoftware.spark.util.XEP0392Utils.colorOfContact;
  * @author Derek DeMoro
  */
 public class VCardViewer extends JPanel {
-	private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-    private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
-
     private final BareJid jid;
     private final JLabel avatarImage;
 
@@ -149,7 +147,7 @@ public class VCardViewer extends JPanel {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     emailTime.setText(hoverText);
-                    setCursor(LINK_CURSOR);
+                    setCursor(HAND_CURSOR);
                 }
 
                 @Override
@@ -168,12 +166,12 @@ public class VCardViewer extends JPanel {
         jidLabel.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseEntered(MouseEvent mouseEvent) {
-                jidLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                jidLabel.setCursor(HAND_CURSOR);
             }
 
             @Override
 			public void mouseExited(MouseEvent mouseEvent) {
-                jidLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                jidLabel.setCursor(DEFAULT_CURSOR);
             }
 
             @Override

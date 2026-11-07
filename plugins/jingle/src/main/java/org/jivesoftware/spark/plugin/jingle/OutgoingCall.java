@@ -55,6 +55,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityFullJid;
 
 import static org.jivesoftware.spark.plugin.jingle.Ringing.*;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 /**
  * Handles UI controls for outgoing jingle calls.
@@ -132,12 +134,12 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                cancelButton.setCursor(HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                cancelButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                cancelButton.setCursor(DEFAULT_CURSOR);
             }
         });
 
@@ -214,12 +216,12 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                component.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                component.setCursor(GraphicUtils.HAND_CURSOR);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                component.setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
     }

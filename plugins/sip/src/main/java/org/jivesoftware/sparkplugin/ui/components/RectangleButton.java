@@ -16,6 +16,8 @@
 package org.jivesoftware.sparkplugin.ui.components;
 
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -77,11 +79,11 @@ public class RectangleButton extends JButton implements MouseListener {
 
     public void mouseEntered(MouseEvent e) {
         setIcon(hoverIcon);
-        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setCursor(HAND_CURSOR);
     }
 
     public void mouseExited(MouseEvent e) {
         setIcon(normalIcon);
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        setCursor(DEFAULT_CURSOR);
     }
 }

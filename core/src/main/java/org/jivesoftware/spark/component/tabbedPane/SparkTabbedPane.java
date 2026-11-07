@@ -35,6 +35,9 @@ import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
+
 public class SparkTabbedPane extends JPanel {
     private static final String NAME = "SparkTabbedPane";
     private final CopyOnWriteArrayList<SparkTabbedPaneListener> listeners = new CopyOnWriteArrayList<>();
@@ -43,17 +46,6 @@ public class SparkTabbedPane extends JPanel {
     private final Icon closeActiveButtonIcon;
     private boolean closeEnabled = false;
     private int dragTabIndex = -1;
-
-    /**
-     * The default Hand cursor.
-     */
-    public static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
-     * The default Text Cursor.
-     */
-    public static final Cursor DEFAULT_CURSOR = new Cursor(
-            Cursor.DEFAULT_CURSOR);
 
     public SparkTabbedPane() {
         this(JTabbedPane.TOP);

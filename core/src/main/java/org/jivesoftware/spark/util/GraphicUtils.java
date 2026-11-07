@@ -70,16 +70,8 @@ public final class GraphicUtils {
 
     private static final Map<String, Image> imageCache = new HashMap<>();
 
-    /**
-     * The default Hand cursor.
-     */
-    public static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
-     * The default Text Cursor.
-     */
-    public static final Cursor DEFAULT_CURSOR = new Cursor(
-	    Cursor.DEFAULT_CURSOR);
+    public static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+    public static final Cursor DEFAULT_CURSOR = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
     private GraphicUtils() {
     }

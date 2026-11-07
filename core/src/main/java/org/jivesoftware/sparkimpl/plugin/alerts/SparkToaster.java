@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -46,6 +45,8 @@ import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.EAST;
 import static java.awt.GridBagConstraints.HORIZONTAL;
@@ -70,17 +71,6 @@ import static org.jivesoftware.spark.util.StringUtils.replaceMe;
  * @see <a href="https://sourceforge.net/projects/jtoaster/">JToaster</a>
  */
 public class SparkToaster {
-
-    /**
-     * The default Hand cursor.
-     */
-    public static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
-     * The default Text Cursor.
-     */
-    public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-
     // Width of the toaster
     private int toasterWidth = 200;
 

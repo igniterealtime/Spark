@@ -37,6 +37,9 @@ import java.util.StringTokenizer;
 
 import javax.swing.*;
 
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
+
 /**
  * Internal implementation of the Title pane in the northern region of a CollapsiblePane.
  *
@@ -90,12 +93,12 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseEntered(MouseEvent e) {
-                setCursor(GraphicUtils.HAND_CURSOR);
+                setCursor(HAND_CURSOR);
             }
 
             @Override
 			public void mouseExited(MouseEvent e) {
-                setCursor(GraphicUtils.DEFAULT_CURSOR);
+                setCursor(DEFAULT_CURSOR);
             }
         });
 

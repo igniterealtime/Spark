@@ -23,7 +23,9 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 
 import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.log.Log;
+
+import static org.jivesoftware.spark.util.GraphicUtils.DEFAULT_CURSOR;
+import static org.jivesoftware.spark.util.GraphicUtils.HAND_CURSOR;
 
 /**
  * The <code>LinkLabel</code> class is a JLabel subclass
@@ -33,9 +35,6 @@ import org.jivesoftware.spark.util.log.Log;
  * @author Derek DeMoro
  */
 final public class LinkLabel extends JLabel implements MouseListener {
-	// cursors used in url-link related displays and default display
-    private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-    private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private final Color rolloverTextColor;
     private final Color foregroundTextColor;
     private final String labelURL;
@@ -91,7 +90,7 @@ final public class LinkLabel extends JLabel implements MouseListener {
     @Override
 	public void mouseEntered(MouseEvent me) {
         this.setForeground(rolloverTextColor);
-        this.setCursor(LINK_CURSOR);
+        this.setCursor(HAND_CURSOR);
     }
 
     @Override
