@@ -18,12 +18,10 @@ package org.jivesoftware.fastpath.workspace.panes;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -59,6 +57,8 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
+import static org.jivesoftware.spark.util.StringUtils.makeFirstWordCapital;
+
 
 /**
  * AgentsTable is responsible for managing all agents in the owning workgroup.
@@ -77,7 +77,7 @@ public final class OnlineAgents extends JPanel {
         setBackground(Color.white);
 
         final Localpart name = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
-        final String title = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial(name);
+        String title = makeFirstWordCapital(name);
 
         contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title), false, false, false);
         contactGroup.getContainerPanel().add( topToolbar, BorderLayout.NORTH);

@@ -15,313 +15,31 @@
  */
 package org.jivesoftware.spark.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.BreakIterator;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jivesoftware.smack.util.MD5;
 
-/**
- * Utility class to peform common String manipulation algorithms.
- */
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import static java.nio.file.Files.readAllBytes;
+import static java.util.regex.Pattern.quote;
 
 public class StringUtils {
-
     // Constants used by escapeHTMLTags
     private static final char[] QUOTE_ENCODE = "&quot;".toCharArray();
     private static final char[] AMP_ENCODE = "&amp;".toCharArray();
     private static final char[] LT_ENCODE = "&lt;".toCharArray();
     private static final char[] GT_ENCODE = "&gt;".toCharArray();
 
-    // patterns for the email address checks
-    private static final Pattern basicAddressPattern;
-    private static final Pattern validUserPattern;
-    private static final Pattern domainPattern;
-    private static final Pattern ipDomainPattern;
-    private static final Pattern tldPattern;
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
-    // prepare the patterns
-    static {
-	// constants used in the parsing of email addresses
-	String basicAddress = "^([\\w\\.-]+)@([\\w\\.-]+)$";
-	String specialChars = "\\(\\)><@,;:\\\\\\\"\\.\\[\\]";
-	String validChars = "[^ \f\n\r\t" + specialChars + "]";
-	String atom = validChars + "+";
-	String quotedUser = "(\"[^\"]+\")";
-	String word = "(" + atom + "|" + quotedUser + ")";
-	String validUser = "^" + word + "(\\." + word + ")*$";
-	String domain = "^" + atom + "(\\." + atom + ")+$";
-	String ipDomain = "^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$";
-
-	// from http://www.icann.org/tlds/
-	String knownTLDs = "^\\.(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum)$";
-
-	basicAddressPattern = Pattern.compile(basicAddress,
-		Pattern.CASE_INSENSITIVE);
-	validUserPattern = Pattern.compile(validUser, Pattern.CASE_INSENSITIVE);
-	domainPattern = Pattern.compile(domain, Pattern.CASE_INSENSITIVE);
-	ipDomainPattern = Pattern.compile(ipDomain, Pattern.CASE_INSENSITIVE);
-	tldPattern = Pattern.compile(knownTLDs, Pattern.CASE_INSENSITIVE);
+    private StringUtils() {
     }
 
-    /**
-     * Replaces all instances of oldString with newString in string.
-     * 
-     * @param string
-     *            the String to search to perform replacements on
-     * @param oldString
-     *            the String that should be replaced by newString
-     * @param newString
-     *            the String that will replace all instances of oldString
-     * @return a String will all instances of oldString replaced by newString
-     */
-    public static String replace(String string, String oldString,
-	    String newString) {
-	if (string == null) {
-	    return null;
-	}
-
-	// If the newString is null or zero length, just return the string since
-	// there's nothing
-	// to replace.
-	if (newString == null) {
-	    return string;
-	}
-
-	int i = 0;
-
-	// Make sure that oldString appears at least once before doing any
-	// processing.
-	if ((i = string.indexOf(oldString, i)) >= 0) {
-	    // Use char []'s, as they are more efficient to deal with.
-	    char[] string2 = string.toCharArray();
-	    char[] newString2 = newString.toCharArray();
-	    int oLength = oldString.length();
-	    StringBuilder buf = new StringBuilder(string2.length);
-	    buf.append(string2, 0, i).append(newString2);
-	    i += oLength;
-	    int j = i;
-
-	    // Replace all remaining instances of oldString with newString.
-	    while ((i = string.indexOf(oldString, i)) > 0) {
-		buf.append(string2, j, i - j).append(newString2);
-		i += oLength;
-		j = i;
-	    }
-
-	    buf.append(string2, j, string2.length - j);
-	    return buf.toString();
-	}
-
-	return string;
-    }
-
-    /**
-     * Replaces all instances of oldString with newString in line with the added
-     * feature that matches of newString in oldString ignore case.
-     * 
-     * @param line
-     *            the String to search to perform replacements on
-     * @param oldString
-     *            the String that should be replaced by newString
-     * @param newString
-     *            the String that will replace all instances of oldString
-     * @return a String will all instances of oldString replaced by newString
-     */
-    public static String replaceIgnoreCase(String line, String oldString,
-	    String newString) {
-	if (line == null) {
-	    return null;
-	}
-
-	String lcLine = line.toLowerCase();
-	String lcOldString = oldString.toLowerCase();
-	int i = 0;
-	if ((i = lcLine.indexOf(lcOldString, i)) >= 0) {
-	    char[] line2 = line.toCharArray();
-	    char[] newString2 = newString.toCharArray();
-	    int oLength = oldString.length();
-	    StringBuilder buf = new StringBuilder(line2.length);
-	    buf.append(line2, 0, i).append(newString2);
-	    i += oLength;
-	    int j = i;
-	    while ((i = lcLine.indexOf(lcOldString, i)) > 0) {
-		buf.append(line2, j, i - j).append(newString2);
-		i += oLength;
-		j = i;
-	    }
-	    buf.append(line2, j, line2.length - j);
-	    return buf.toString();
-	}
-	return line;
-    }
-
-    /**
-     * Replaces all instances of oldString with newString in line with the added
-     * feature that matches of newString in oldString ignore case. </p> The
-     * count paramater is set to the number of replaces performed.
-     * 
-     * @param line
-     *            the String to search to perform replacements on
-     * @param oldString
-     *            the String that should be replaced by newString
-     * @param newString
-     *            the String that will replace all instances of oldString
-     * @param count
-     *            a value that will be updated with the number of replaces
-     *            <p/>
-     *            performed.
-     * @return a String will all instances of oldString replaced by newString
-     */
-
-    public static String replaceIgnoreCase(String line, String oldString,
-	    String newString, int[] count) {
-	if (line == null) {
-	    return null;
-	}
-	String lcLine = line.toLowerCase();
-	String lcOldString = oldString.toLowerCase();
-	int i = 0;
-	if ((i = lcLine.indexOf(lcOldString, i)) >= 0) {
-	    int counter = 1;
-	    char[] line2 = line.toCharArray();
-	    char[] newString2 = newString.toCharArray();
-	    int oLength = oldString.length();
-	    StringBuilder buf = new StringBuilder(line2.length);
-	    buf.append(line2, 0, i).append(newString2);
-	    i += oLength;
-	    int j = i;
-	    while ((i = lcLine.indexOf(lcOldString, i)) > 0) {
-		counter++;
-		buf.append(line2, j, i - j).append(newString2);
-		i += oLength;
-		j = i;
-	    }
-	    buf.append(line2, j, line2.length - j);
-	    count[0] = counter;
-	    return buf.toString();
-	}
-	return line;
-    }
-
-    /**
-     * Replaces all instances of oldString with newString in line.
-     * <p/>
-     * The count Integer is updated with number of replaces.
-     * 
-     * @param line
-     *            the String to search to perform replacements on
-     * @param oldString
-     *            the String that should be replaced by newString
-     * @param newString
-     *            the String that will replace all instances of oldString
-     * @param count
-     *            Number of replaces.
-     * @return a String will all instances of oldString replaced by newString
-     */
-    public static String replace(String line, String oldString,
-	    String newString, int[] count) {
-	if (line == null) {
-	    return null;
-	}
-	int i = 0;
-	if ((i = line.indexOf(oldString, i)) >= 0) {
-	    int counter = 1;
-	    char[] line2 = line.toCharArray();
-	    char[] newString2 = newString.toCharArray();
-	    int oLength = oldString.length();
-	    StringBuilder buf = new StringBuilder(line2.length);
-	    buf.append(line2, 0, i).append(newString2);
-	    i += oLength;
-	    int j = i;
-	    while ((i = line.indexOf(oldString, i)) > 0) {
-		counter++;
-		buf.append(line2, j, i - j).append(newString2);
-		i += oLength;
-		j = i;
-	    }
-	    buf.append(line2, j, line2.length - j);
-	    count[0] = counter;
-	    return buf.toString();
-	}
-	return line;
-    }
-
-    /**
-     * This method takes a string and strips out all tags except <br>
-     * tags while still leaving the tag body intact.
-     * 
-     * @param in
-     *            the text to be converted.
-     * @return the input string with all tags removed.
-     */
-    public static String stripTags(String in) {
-	if (in == null) {
-	    return null;
-	}
-
-	return stripTags(in, false);
-    }
-
-    /**
-     * This method takes a string and strips out all tags while still leaving
-     * the tag body intact.
-     *
-     * @param in         the text to be converted.
-     * @param stripBRTag Remove BR tags.
-     * @return the input string with all tags removed.
-     */
-    public static String stripTags(String in, boolean stripBRTag) {
-        if (in == null) {
-            return null;
-        }
-
-        char ch;
-        int i = 0;
-        int last = 0;
-        char[] input = in.toCharArray();
-        int len = input.length;
-        StringBuilder out = new StringBuilder((int) (len * 1.3));
-        for (; i < len; i++) {
-            ch = input[i];
-            if (ch <= '>') {
-                if (ch == '<') {
-                    if (!stripBRTag && i + 3 < len && input[i + 1] == 'b'
-                        && input[i + 2] == 'r' && input[i + 3] == '>') {
-                        i += 3;
-                        continue;
-                    }
-                    if (i > last) {
-                        if (last > 0) {
-                            out.append(" ");
-                        }
-                        out.append(input, last, i - last);
-                    }
-                    last = i + 1;
-                } else if (ch == '>') {
-                    last = i + 1;
-                }
-            }
-        }
-        if (last == 0) {
-            return in;
-        }
-        if (i > last) {
-            out.append(input, last, i - last);
-        }
-        return out.toString();
+    public static String replace(String string, String oldString, String newString) {
+        return string.replace(oldString, newString);
     }
 
     /**
@@ -378,724 +96,10 @@ public class StringUtils {
     }
 
     /**
-     * Used by the hash method.
-     */
-    private static MessageDigest digest = null;
-
-    /**
-     * <b>Hashes a String using the Md5 algorithm</b> and returns the result as
-     * a String of hexadecimal numbers. This method is synchronized to avoid
-     * excessive MessageDigest object creation. If calling this method becomes a
-     * bottleneck in your code, you may wish to maintain a pool of MessageDigest
-     * objects instead of using this method.
-     * <p/>
-     * A hash is a one-way function -- that is, given an input, an output is
-     * easily computed. However, given the output, the input is almost
-     * impossible to compute. This is useful for passwords since we can store
-     * the hash and a hacker will then have a very hard time determining the
-     * original password.
-     * <p/>
-     * In Jive, every time a user logs in, we simply take their plain text
-     * password, compute the hash, and compare the generated hash to the stored
-     * hash. Since it is almost impossible that two passwords will generate the
-     * same hash, we know if the user gave us the correct password or not. The
-     * only negative to this system is that password recovery is basically
-     * impossible. Therefore, a reset password method is used instead.
-     * 
-     * @param data
-     *            the String to compute the hash of.
-     * @return a hashed version of the passed-in String
-     */
-    public synchronized static String hash(String data) {
-	if (digest == null) {
-	    try {
-		digest = MessageDigest.getInstance("MD5");
-	    } catch (NoSuchAlgorithmException nsae) {
-		// Nothing to do
-	    }
-	}
-	// Now, compute hash.
-        digest.update(data.getBytes(StandardCharsets.UTF_8));
-        return encodeHex(digest.digest());
-    }
-
-    public synchronized static String hash(byte[] data) {
-	if (digest == null) {
-	    try {
-		digest = MessageDigest.getInstance("MD5");
-	    } catch (NoSuchAlgorithmException nsae) {
-		// Nothing to do
-	    }
-	}
-	// Now, compute hash.
-	digest.update(data);
-	return encodeHex(digest.digest());
-    }
-
-    /**
-     * Turns an array of bytes into a String representing each byte as an
-     * unsigned hex number.
-     * 
-     * @param bytes
-     *            an array of bytes to convert to a hex-string
-     * @return generated hex string
-     */
-    public static String encodeHex(byte[] bytes) {
-	StringBuilder buf = new StringBuilder(bytes.length * 2);
-	int i;
-
-	for (i = 0; i < bytes.length; i++) {
-	    if (((int) bytes[i] & 0xff) < 0x10) {
-		buf.append("0");
-	    }
-	    buf.append(Long.toString((int) bytes[i] & 0xff, 16));
-	}
-	return buf.toString();
-    }
-
-    /**
-     * Turns a hex encoded string into a byte array. It is specifically meant to
-     * "reverse" the toHex(byte[]) method.
-     * 
-     * @param hex
-     *            a hex encoded String to transform into a byte array.
-     * @return a byte array representing the hex String[
-     */
-    public static byte[] decodeHex(String hex) {
-	char[] chars = hex.toCharArray();
-	byte[] bytes = new byte[chars.length / 2];
-	int byteCount = 0;
-	for (int i = 0; i < chars.length; i += 2) {
-	    int newByte = 0x00;
-	    newByte |= hexCharToByte(chars[i]);
-	    newByte <<= 4;
-	    newByte |= hexCharToByte(chars[i + 1]);
-	    bytes[byteCount] = (byte) newByte;
-	    byteCount++;
-	}
-	return bytes;
-    }
-
-    /**
-     * Returns the the byte value of a hexadecmical char (0-f). It's assumed
-     * that the hexidecimal chars are lower case as appropriate.
-     * 
-     * @param ch
-     *            a hexedicmal character (0-f)
-     * @return the byte value of the character (0x00-0x0F)
-     */
-    private static byte hexCharToByte(char ch) {
-	switch (ch) {
-	case '0':
-	    return 0x00;
-	case '1':
-	    return 0x01;
-	case '2':
-	    return 0x02;
-	case '3':
-	    return 0x03;
-	case '4':
-	    return 0x04;
-	case '5':
-	    return 0x05;
-	case '6':
-	    return 0x06;
-	case '7':
-	    return 0x07;
-	case '8':
-	    return 0x08;
-	case '9':
-	    return 0x09;
-	case 'a':
-	    return 0x0A;
-	case 'b':
-	    return 0x0B;
-	case 'c':
-	    return 0x0C;
-	case 'd':
-	    return 0x0D;
-	case 'e':
-	    return 0x0E;
-	case 'f':
-	    return 0x0F;
-	}
-	return 0x00;
-    }
-
-    /**
-     * The method below is under the following license
-     * <p/>
-     * <p/>
-     * <p/>
-     * ====================================================================
-     * <p/>
-     * <p/>
-     * <p/>
-     * The Apache Software License, Version 1.1
-     * <p/>
-     * <p/>
-     * <p/>
-     * Copyright (c) 2002-2003 The Apache Software Foundation. All rights
-     * <p/>
-     * reserved.
-     * <p/>
-     * <p/>
-     * <p/>
-     * Redistribution and use in source and binary forms, with or without
-     * <p/>
-     * modification, are permitted provided that the following conditions
-     * <p/>
-     * are met:
-     * <p/>
-     * <p/>
-     * <p/>
-     * 1. Redistributions of source code must retain the above copyright
-     * <p/>
-     * notice, this list of conditions and the following disclaimer.
-     * <p/>
-     * <p/>
-     * <p/>
-     * 2. Redistributions in binary form must reproduce the above copyright
-     * <p/>
-     * notice, this list of conditions and the following disclaimer in
-     * <p/>
-     * the documentation and/or other materials provided with the
-     * <p/>
-     * distribution.
-     * <p/>
-     * <p/>
-     * <p/>
-     * 3. The end-user documentation included with the redistribution, if
-     * <p/>
-     * any, must include the following acknowlegement:
-     * <p/>
-     * "This product includes software developed by the
-     * <p/>
-     * Apache Software Foundation (http://www.apache.org/)."
-     * <p/>
-     * Alternately, this acknowlegement may appear in the software itself,
-     * <p/>
-     * if and wherever such third-party acknowlegements normally appear.
-     * <p/>
-     * <p/>
-     * <p/>
-     * 4. The names "The Jakarta Project", "Commons", and "Apache Software
-     * <p/>
-     * Foundation" must not be used to endorse or promote products derived
-     * <p/>
-     * from this software without prior written permission. For written
-     * <p/>
-     * permission, please contact apache@apache.org.
-     * <p/>
-     * <p/>
-     * <p/>
-     * 5. Products derived from this software may not be called "Apache"
-     * <p/>
-     * nor may "Apache" appear in their names without prior written
-     * <p/>
-     * permission of the Apache Group.
-     * <p/>
-     * <p/>
-     * <p/>
-     * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-     * <p/>
-     * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-     * <p/>
-     * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-     * <p/>
-     * DISCLAIMED. IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-     * <p/>
-     * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-     * <p/>
-     * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-     * <p/>
-     * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-     * <p/>
-     * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-     * <p/>
-     * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-     * <p/>
-     * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-     * <p/>
-     * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-     * <p/>
-     * SUCH DAMAGE.
-     * <p/>
-     * ====================================================================
-     * <p/>
-     * <p/>
-     * <p/>
-     * This software consists of voluntary contributions made by many
-     * <p/>
-     * individuals on behalf of the Apache Software Foundation. For more
-     * <p/>
-     * information on the Apache Software Foundation, please see
-     * <p/>
-     * <http://www.apache.org/>.
-     */
-    private static final BitSet allowed_query = new BitSet(256);
-
-    static {
-	for (int i = '0'; i <= '9'; i++) {
-	    allowed_query.set(i);
-	}
-
-	for (int i = 'a'; i <= 'z'; i++) {
-	    allowed_query.set(i);
-	}
-
-	for (int i = 'A'; i <= 'Z'; i++) {
-	    allowed_query.set(i);
-	}
-
-	allowed_query.set('-');
-	allowed_query.set('_');
-	allowed_query.set('.');
-	allowed_query.set('!');
-	allowed_query.set('~');
-	allowed_query.set('*');
-	allowed_query.set('\'');
-	allowed_query.set('(');
-	allowed_query.set(')');
-    }
-
-    /**
-     * Encodes URI string. This is a replacement for the
-     * java.net.URLEncode#encode(String, String) class which is broken under JDK
-     * 1.3.
-     * 
-     * @param original
-     *            the original character sequence
-     * @param charset
-     *            the protocol charset
-     * @return URI character sequence
-     * @throws UnsupportedEncodingException
-     *             unsupported character encoding
-     */
-    public static String URLEncode(String original, String charset)
-	    throws UnsupportedEncodingException {
-	// encode original to uri characters.
-	if (original == null) {
-	    return null;
-	}
-	// escape octet to uri characters.
-	byte[] octets;
-
-	try {
-	    octets = original.getBytes(charset);
-	} catch (UnsupportedEncodingException error) {
-	    throw new UnsupportedEncodingException();
-	}
-
-	StringBuilder buf = new StringBuilder(octets.length);
-	for (byte octet : octets) {
-	    char c = (char) octet;
-	    if (allowed_query.get(c)) {
-		buf.append(c);
-	    } else {
-		buf.append('%');
-		char hexadecimal = Character.forDigit((octet >> 4) & 0xF, 16);
-		buf.append(Character.toUpperCase(hexadecimal)); // high
-		hexadecimal = Character.forDigit(octet & 0xF, 16);
-		buf.append(Character.toUpperCase(hexadecimal)); // low
-	    }
-	}
-
-	return buf.toString();
-    }
-
-    private static final int fillchar = '=';
-    private static final String cvt = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	    + "abcdefghijklmnopqrstuvwxyz" + "0123456789+/";
-
-    /**
-     * Converts a line of text into an array of lower case words using a
-     * {@link BreakIterator}.wordInstance().
-     * <p/>
-     * This method is under the Jive Open Source Software License
-     * 
-     * @author Mark Imbriaco.
-     * 
-     * @param text
-     *            a String of text to convert into an array of words
-     * @return text broken up into an array of words.
-     */
-    public static String[] toLowerCaseWordArray(String text) {
-	if (text == null || text.isEmpty()) {
-	    return new String[0];
-	}
-
-	ArrayList<String> wordList = new ArrayList<>();
-	BreakIterator boundary = BreakIterator.getWordInstance();
-	boundary.setText(text);
-	int start = 0;
-
-	for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary
-		.next()) {
-	    String tmp = text.substring(start, end).trim();
-	    // Remove characters that are not needed.
-	    tmp = replace(tmp, "+", "");
-	    tmp = replace(tmp, "/", "");
-	    tmp = replace(tmp, "\\", "");
-	    tmp = replace(tmp, "#", "");
-	    tmp = replace(tmp, "*", "");
-	    tmp = replace(tmp, ")", "");
-	    tmp = replace(tmp, "(", "");
-	    tmp = replace(tmp, "&", "");
-	    if (!tmp.isEmpty()) {
-		wordList.add(tmp);
-	    }
-	}
-	return wordList.toArray(new String[0]);
-    }
-
-    /**
-     * Pseudo-random number generator object for use with randomString(). The
-     * Random class is not considered to be cryptographically secure, so only
-     * use these random Strings for low to medium security applications.
-     */
-    private static final Random randGen = new Random();
-
-    /**
-     * Array of numbers and letters of mixed case. Numbers appear in the list
-     * twice so that there is a more equal chance that a number will be picked.
-     * We can use the array to get a random number or letter by picking a random
-     * array index.
-     */
-    private static final char[] numbersAndLetters = ("0123456789abcdefghijklmnopqrstuvwxyz"
-	    + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ").toCharArray();
-
-    /**
-     * Returns a random String of numbers and letters (lower and upper case) of
-     * the specified length. The method uses the Random class that is built-in
-     * to Java which is suitable for low to medium grade security uses. This
-     * means that the output is only pseudo random, i.e., each number is
-     * mathematically generated so is not truly random.
-     * <p>
-     * <p/>
-     * <p/>
-     * The specified length must be at least one. If not, the method will return
-     * <code>null</code>.
-     * 
-     * @param length
-     *            the desired length of the random String to return.
-     * @return a random String of numbers and letters of the specified length.
-     */
-    public static String randomString(int length) {
-	if (length < 1) {
-	    return null;
-	}
-	// Create a char buffer to put random letters and numbers in.
-	char[] randBuffer = new char[length];
-	for (int i = 0; i < randBuffer.length; i++) {
-	    randBuffer[i] = numbersAndLetters[randGen.nextInt(71)];
-	}
-	return new String(randBuffer);
-    }
-
-    /**
-     * Intelligently chops a String at a word boundary (whitespace) that occurs
-     * at the specified index in the argument or before. However, if there is a
-     * newline character before <code>length</code>, the String will be chopped
-     * there. If no newline or whitespace is found in <code>string</code> up to
-     * the index <code>length</code>, the String will chopped at
-     * <code>length</code>.
-     * <p/>
-     * For example, chopAtWord("This is a nice String", 10, -1) will return
-     * <p/>
-     * "This is a" which is the first word boundary less than or equal to 10
-     * characters into the original String.
-     * 
-     * @param string
-     *            the String to chop.
-     * @param length
-     *            the index in <code>string</code> to start looking for a
-     *            <p/>
-     *            whitespace boundary at.
-     * @param minLength
-     *            the minimum length the word should be chopped at. This is
-     *            helpful
-     *            <p/>
-     *            for words with no natural boundaries, ie:
-     *            "thisisareallylonglonglongword".
-     *            <p/>
-     *            This must be smaller than length and can be -1 if no minLength
-     *            is wanted
-     * @return a substring of <code>string</code> whose length is less than or
-     *         <p/>
-     *         equal to <code>length</code>, and that is chopped at whitespace.
-     */
-    public static String chopAtWord(String string, int length, int minLength) {
-	// guard clauses
-	if (length < 2) {
-	    throw new IllegalArgumentException("Length specified (" + length
-		    + ") must be > 2");
-	} else if (minLength >= length) {
-	    throw new IllegalArgumentException(
-		    "minLength must be smaller than length");
-	}
-
-	int sLength = (string == null) ? -1 : string.length();
-	// shortcircuit clauses
-	if (sLength < 1) {
-	    return string;
-	}
-	// minLength specified, string is smaller than the minLength, return the
-	// string
-	else if (minLength != -1 && sLength < minLength) {
-	    return string;
-	}
-	// no minLength specified, string is smaller than length
-	else if (minLength == -1 && sLength < length) {
-	    return string;
-	}
-
-	if (string == null)
-	    return null;
-	char[] charArray = string.toCharArray();
-	// String is longer than the length specified, attempt to find a newline
-	// or a space
-	if (sLength > length) {
-	    sLength = length;
-	    // First check if there is a newline character before length; if so,
-	    // chop word there.
-	    for (int i = 0; i < sLength - 1; i++) {
-		// Windows
-		if (charArray[i] == '\r' && charArray[i + 1] == '\n') {
-		    return string.substring(0, i + 1);
-		}
-		// Unix
-		else if (charArray[i] == '\n') {
-		    return string.substring(0, i);
-		}
-	    }
-	    // Also check boundary case of Unix newline
-	    if (charArray[sLength - 1] == '\n') {
-		return string.substring(0, sLength - 1);
-	    }
-	    // No newline, so chop at the first whitespace.
-	    for (int i = sLength - 1; i > 0; i--) {
-		if (charArray[i] == ' ') {
-		    return string.substring(0, i).trim();
-		}
-	    }
-	}
-	// String is shorter than length but longer than minLength,
-	// make sure there is a space in the string before minLength
-	else if (minLength != -1 && sLength > minLength) {
-	    for (int i = 0; i < minLength; i++) {
-		if (charArray[i] == ' ') {
-		    return string;
-		}
-	    }
-	}
-	// Did not find a word boundary, so return a string at the min length,
-	// if a min
-	// length was specified:
-	if (minLength > -1 && minLength <= string.length()) {
-	    return string.substring(0, minLength);
-	}
-	// Did not find word boundary or min length so return original String
-	// chopped at
-	// specified length.
-	return string.substring(0, length);
-    }
-
-    /**
-     * Intelligently chops a String at a word boundary (whitespace) that occurs
-     * <p/>
-     * at the specified index in the argument or before. However, if there is a
-     * <p/>
-     * newline character before <code>length</code>, the String will be chopped
-     * <p/>
-     * there. If no newline or whitespace is found in <code>string</code> up to
-     * <p/>
-     * the index <code>length</code>, the String will chopped at
-     * <code>length</code>.
-     * <p/>
-     * <p/>
-     * <p/>
-     * For example, chopAtWord("This is a nice String", 10) will return
-     * <p/>
-     * "This is a" which is the first word boundary less than or equal to 10
-     * <p/>
-     * characters into the original String.
-     * 
-     * @param string
-     *            the String to chop.
-     * @param length
-     *            the index in <code>string</code> to start looking for a
-     *            <p/>
-     *            whitespace boundary at.
-     * @return a substring of <code>string</code> whose length is less than or
-     *         <p/>
-     *         equal to <code>length</code>, and that is chopped at whitespace.
-     */
-    public static String chopAtWord(String string, int length) {
-	return chopAtWord(string, length, -1);
-    }
-
-    /**
-     * Returns a substring of the given string which represents the words around
-     * the given word.
-     * <p/>
-     * For example, passing in "This is a quick test a test", "{a,test}" and 5
-     * would return a string
-     * <p/>
-     * of "This is a quick" - that's 5 characters (or to the end of the word,
-     * whichever
-     * <p/>
-     * is greater) on either side of "a". Also, since {a,test} is passed in a
-     * "a" is found
-     * <p/>
-     * first in the string, we base the substring off of the position of "a".
-     * The wordList is
-     * <p/>
-     * really just a list of strings to try - the first one found is used.
-     * <p>
-     * <p/>
-     * <p/>
-     * <p/>
-     * Note: The wordList passed in should be lowercase.
-     * 
-     * @param input
-     *            The string to parse.
-     * @param wordList
-     *            The words to look for - the first one found in the string is
-     *            used.
-     * @param numChars
-     *            The number of characters on either side to include in the
-     *            chop.
-     * @return a substring of the given string matching the criteria, otherwise
-     *         "".
-     */
-    public static String chopAtWordsAround(String input, String[] wordList,
-	    int numChars) {
-	if (input == null || input.isBlank() || wordList == null
-		|| wordList.length == 0 || numChars == 0) {
-	    return "";
-	}
-	String lc = input.toLowerCase();
-	for (String aWordList : wordList) {
-	    int pos = lc.indexOf(aWordList);
-	    if (pos > -1) {
-		int beginIdx = pos - numChars;
-		if (beginIdx < 0) {
-		    beginIdx = 0;
-		}
-
-		int endIdx = pos + numChars;
-
-		if (endIdx > input.length() - 1) {
-		    endIdx = input.length() - 1;
-		}
-
-		char[] chars = input.toCharArray();
-
-		while (beginIdx > 0 && chars[beginIdx] != ' '
-			&& chars[beginIdx] != '\n' && chars[beginIdx] != '\r') {
-		    beginIdx--;
-		}
-		while (endIdx < input.length() && chars[endIdx] != ' '
-			&& chars[endIdx] != '\n' && chars[endIdx] != '\r') {
-		    endIdx++;
-		}
-		return input.substring(beginIdx, endIdx);
-	    }
-	}
-	return input.substring(0, Math.min(input.length(), 200));
-    }
-
-    /**
-     * Reformats a string where lines that are longer than <tt>width</tt>
-     * <p/>
-     * are split apart at the earliest wordbreak or at maxLength, whichever is
-     * <p/>
-     * sooner. If the width specified is less than 5 or greater than the input
-     * <p/>
-     * Strings length the string will be returned as is.
-     * <p/>
-     * <p/>
-     * <p/>
-     * Please note that this method can be lossy - trailing spaces on wrapped
-     * <p/>
-     * lines may be trimmed.
-     * 
-     * @param input
-     *            the String to reformat.
-     * @param width
-     *            the maximum length of any one line.
-     * @param locale
-     *            of the string to be wrapped.
-     * @return a new String with reformatted as needed.
-     */
-    public static String wordWrap(String input, int width, Locale locale) {
-	// protect ourselves
-	if (input == null) {
-	    return "";
-	} else if (width < 5) {
-	    return input;
-	} else if (width >= input.length()) {
-	    return input;
-	}
-
-	StringBuilder buf = new StringBuilder(input);
-	boolean endOfLine = false;
-	int lineStart = 0;
-
-	for (int i = 0; i < buf.length(); i++) {
-	    if (buf.charAt(i) == '\n') {
-		lineStart = i + 1;
-		endOfLine = true;
-	    }
-	    // handle splitting at width character
-	    if (i > lineStart + width - 1) {
-		if (!endOfLine) {
-		    int limit = i - lineStart - 1;
-		    BreakIterator breaks = BreakIterator
-			    .getLineInstance(locale);
-		    breaks.setText(buf.substring(lineStart, i));
-		    int end = breaks.last();
-		    // if the last character in the search string isn't a space,
-		    // we can't split on it (looks bad). Search for a previous
-		    // break character
-		    if (end == limit + 1) {
-			if (!Character
-				.isWhitespace(buf.charAt(lineStart + end))) {
-			    end = breaks.preceding(end - 1);
-			}
-		    }
-		    // if the last character is a space, replace it with a \n
-		    if (end != BreakIterator.DONE && end == limit + 1) {
-			buf.replace(lineStart + end, lineStart + end + 1, "\n");
-			lineStart = lineStart + end;
-		    }
-		    // otherwise, just insert a \n
-		    else if (end != BreakIterator.DONE && end != 0) {
-			buf.insert(lineStart + end, '\n');
-			lineStart = lineStart + end + 1;
-		    } else {
-			buf.insert(i, '\n');
-			lineStart = i + 1;
-		    }
-		} else {
-		    buf.insert(i, '\n');
-		    lineStart = i + 1;
-		    endOfLine = false;
-		}
-	    }
-	}
-
-	return buf.toString();
-    }
-
-    /**
      * Highlights words in a string. Words matching ignores case. The actual
-     * higlighting method is specified with the start and end higlight tags.
-     * Those might be beginning and ending HTML bold tags, or anything else.
-     * This method is under the Jive Open Source Software License and was
-     * written by Mark Imbriaco.
-     * 
+     * highlighting method is specified with the start and end highlight tags.
+     *
+     * @author Mark Imbriaco.
      * @param string
      *            the String to highlight words in.
      * @param words
@@ -1106,35 +110,24 @@ public class StringUtils {
      *            the tag that should be inserted to end highlighting.
      * @return a new String with the specified words highlighted.
      */
-    public static String highlightWords(String string, String[] words,
-	    String startHighlight, String endHighlight) {
-	if (string == null || words == null || startHighlight == null
-		|| endHighlight == null) {
-	    return null;
-	}
-
-	StringBuilder regexp = new StringBuilder();
-	regexp.append("(?i)\\b(");
-	// Iterate through each word and generate a word list for the regexp.
-	for (int x = 0; x < words.length; x++) {
-	    // Escape "$", "|", ".", "/", and "?" to keep us out of trouble in
-	    // our regexp.
-	    words[x] = words[x].replaceAll("([\\$\\?\\|\\/\\.])", "\\\\$1");
-	    regexp.append(words[x]);
-
-	    if (x != words.length - 1) {
-		regexp.append("|");
-	    }
-	}
-	regexp.append(")");
-
-	return string.replaceAll(regexp.toString(), startHighlight + "$1"
-		+ endHighlight);
+    public static String highlightWords(String string, String[] words, String startHighlight, String endHighlight) {
+        if (string == null || words == null || words.length == 0) {
+            return string;
+        }
+        StringBuilder regexp = new StringBuilder("(?i)\\b(");
+        // Iterate through each word and generate a word list for the regexp.
+        for (int i = 0; i < words.length; i++) {
+            if (i > 0) {
+                regexp.append('|');
+            }
+            regexp.append(quote(words[i]));
+        }
+        regexp.append(')');
+        return string.replaceAll(regexp.toString(), startHighlight + "$1" + endHighlight);
     }
 
     /**
      * Escapes all necessary characters in the String so that it can be used
-     * <p/>
      * in an XML doc.
      * 
      * @param string
@@ -1197,7 +190,6 @@ public class StringUtils {
 
     /**
      * Unescapes the String by converting XML escape sequences back into normal
-     * <p/>
      * characters.
      * 
      * @param string
@@ -1205,240 +197,26 @@ public class StringUtils {
      * @return the string with appropriate characters unescaped.
      */
     public static String unescapeFromXML(String string) {
-	string = replace(string, "&lt;", "<");
-	string = replace(string, "&gt;", ">");
-	string = replace(string, "&quot;", "\"");
-	return replace(string, "&amp;", "&");
+        if (string == null) {
+            return null;
+        }
+        string = replace(string, "&lt;", "<");
+        string = replace(string, "&gt;", ">");
+        string = replace(string, "&quot;", "\"");
+        string = replace(string, "&amp;", "&");
+        return string;
     }
-
-    private static final char[] zeroArray = "0000000000000000000000000000000000000000000000000000000000000000"
-	    .toCharArray();
-
-    /**
-     * Pads the supplied String with 0's to the specified length and returns
-     * <p/>
-     * the result as a new String. For example, if the initial String is
-     * <p/>
-     * "9999" and the desired length is 8, the result would be "00009999".
-     * <p/>
-     * This type of padding is useful for creating numerical values that need
-     * <p/>
-     * to be stored and sorted as character data. Note: the current
-     * <p/>
-     * implementation of this method allows for a maximum <tt>length</tt> of
-     * <p/>
-     * 64.
-     * 
-     * @param string
-     *            the original String to pad.
-     * @param length
-     *            the desired length of the new padded String.
-     * @return a new String padded with the required number of 0's.
-     */
-    public static String zeroPadString(String string, int length) {
-	if (string == null || string.length() > length) {
-	    return string;
-	}
-		return String.valueOf( zeroArray, 0, length - string.length() ) + string;
-    }
-
-    /**
-     * Formats a Date as a String. Depending on how Dates are defined in the
-     * database
-     * <p/>
-     * (character data or numberic), the format return will either be a fifteen
-     * character long String
-     * <p/>
-     * made up of the Date's padded millisecond value, or will simply be the
-     * Date's millesecond value.
-     * 
-     * @param date
-     *            Date to convert to milliseconds.
-     * @return a Date encoded as a String.
-     */
-    public static String dateToMillis(Date date) {
-	return Long.toString(date.getTime());
-    }
-
-    /**
-     * Validate an email address. This isn't 100% perfect but should handle just
-     * about everything
-     * <p/>
-     * that is in common use.
-     * 
-     * @param addr
-     *            the email address to validate
-     * @return true if the address is valid, false otherwise
-     */
-    public static boolean isValidEmailAddress(String addr) {
-        if (addr == null) {
-            return false;
-        }
-
-        addr = addr.trim();
-
-        if (addr.isEmpty()) {
-            return false;
-        }
-        // basic address check
-        Matcher matcher = basicAddressPattern.matcher(addr);
-        if (!matcher.matches()) {
-            return false;
-        }
-        String userPart = matcher.group(1);
-        String domainPart = matcher.group(2);
-        // user address check
-        matcher = validUserPattern.matcher(userPart);
-        if (!matcher.matches()) {
-            return false;
-        }
-        // ip domain check
-        matcher = ipDomainPattern.matcher(domainPart);
-        if (matcher.matches()) {
-            // if the pattern matched, check to make sure that the ip range is
-            // valid
-            for (int i = 1; i < 5; i++) {
-                String num = matcher.group(i);
-
-                if (num == null) {
-                    return false;
-                }
-
-                if (Integer.parseInt(num) > 254) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        // symbolic domain check
-        matcher = domainPattern.matcher(domainPart);
-        if (matcher.matches()) {
-            String tld = matcher.group(matcher.groupCount());
-            // Permit top-level-domains of 3 (includes dot separator) because
-            // these could be
-            // country codes which we are not going to check for.
-            matcher = tldPattern.matcher(tld);
-            return tld.length() == 3 || matcher.matches();
-        } else {
-            return false;
-        }
-        // all tests passed
-    }
-
-    // Testing method
-    /*
-     * public static void main(String[] args) { { String test1 =
-     * "The quick brown fox jumped"; int chop11 = test1.length(); int chop12 =
-     * test1.length() - 1; int chop13 = test1.length() - 3; int chop14 =
-     * test1.length() - "jumped".length(); int chop15 = test1.length() -
-     * "ox jumped".length(); // run test 1 String result11 = chopAtWord(test1,
-     * chop11); String result12 = chopAtWord(test1, chop12); String result13 =
-     * chopAtWord(test1, chop13); String result14 = chopAtWord(test1, chop14);
-     * String result15 = chopAtWord(test1, chop15); // print results if
-     * (test1.equals(result11)) { System.err.println("Test 1.1 passed, result: "
-     * + result11); } else { System.err.println("Test 1.1 failed, result: " +
-     * result11); }
-     * 
-     * if ("The quick brown fox".equals(result12)) {
-     * System.err.println("Test 1.2 passed, result: " + result12); } else {
-     * System.err.println("Test 1.2 failed, result: " + result12); }
-     * 
-     * if ("The quick brown fox".equals(result13)) {
-     * System.err.println("Test 1.3 passed, result: " + result13); } else {
-     * System.err.println("Test 1.3 failed, result: " + result13); }
-     * 
-     * if ("The quick brown fox".equals(result14)) {
-     * System.err.println("Test 1.4 passed, result: " + result14); } else {
-     * System.err.println("Test 1.4 failed, result: " + result14); }
-     * 
-     * if ("The quick brown".equals(result15)) {
-     * System.err.println("Test 1.5 passed, result: " + result15); } else {
-     * System.err.println("Test 1.5 failed, result: " + result15); } }
-     * 
-     * System.err.println("");
-     * 
-     * { String test2 = "The quick brown fox jumped"; int chop21 =
-     * test2.length(); int chop22 = test2.length() - 1; int chop23 =
-     * test2.length() - 3; int chop24 = test2.length() - "jumped".length(); int
-     * chop25 = test2.length() - "ox jumped".length(); // run test 1 String
-     * result21 = chopAtWord(test2, chop21, 0); String result22 =
-     * chopAtWord(test2, chop22, 0); String result23 = chopAtWord(test2, chop23,
-     * 0); String result24 = chopAtWord(test2, chop24, 0); String result25 =
-     * chopAtWord(test2, chop25, 0); // print results if
-     * (test2.equals(result21)) { System.err.println("Test 2.1 passed, result: "
-     * + result21); } else { System.err.println("Test 2.1 failed, result: " +
-     * result21); }
-     * 
-     * if ("The quick brown fox".equals(result22)) {
-     * System.err.println("Test 2.2 passed, result: " + result22); } else {
-     * System.err.println("Test 2.2 failed, result: " + result22); }
-     * 
-     * if ("The quick brown fox".equals(result23)) {
-     * System.err.println("Test 2.3 passed, result: " + result23); } else {
-     * System.err.println("Test 2.3 failed, result: " + result23); }
-     * 
-     * if ("The quick brown fox".equals(result24)) {
-     * System.err.println("Test 2.4 passed, result: " + result24); } else {
-     * System.err.println("Test 2.4 failed, result: " + result24); }
-     * 
-     * if ("The quick brown".equals(result25)) {
-     * System.err.println("Test 2.5 passed, result: " + result25); } else {
-     * System.err.println("Test 2.5 failed, result: " + result25); } }
-     * 
-     * System.err.println("");
-     * 
-     * { String test3 = "Thequickbrownfoxjumped"; int chop31 = test3.length();
-     * int chop32 = test3.length() - 1; int chop33 = test3.length() - 3; int
-     * chop34 = test3.length() - "jumped".length(); int chop35 = test3.length()
-     * - "ox jumped".length(); // run test 1 String result31 = chopAtWord(test3,
-     * chop31, "Thequickbrownfoxjumped".length()); String result32 =
-     * chopAtWord(test3, chop32, "Thequick".length()); String result33 =
-     * chopAtWord(test3, chop33, "Thequick".length()); String result34 =
-     * chopAtWord(test3, chop34, "Thequick".length()); String result35 =
-     * chopAtWord(test3, chop35, "Thequick".length()); // print results if
-     * ("Thequick".equals(result31)) {
-     * System.err.println("Test 3.1 passed, result: " + result31); } else {
-     * System.err.println("Test 3.1 failed, result: " + result31); }
-     * 
-     * if ("Thequick".equals(result32)) {
-     * System.err.println("Test 3.2 passed, result: " + result32); } else {
-     * System.err.println("Test 3.2 failed, result: " + result32); }
-     * 
-     * if ("Thequick".equals(result33)) {
-     * System.err.println("Test 3.3 passed, result: " + result33); } else {
-     * System.err.println("Test 3.3 failed, result: " + result33); }
-     * 
-     * if ("Thequick".equals(result34)) {
-     * System.err.println("Test 3.4 passed, result: " + result34); } else {
-     * System.err.println("Test 3.4 failed, result: " + result34); }
-     * 
-     * if ("Thequick".equals(result35)) {
-     * System.err.println("Test 3.5 passed, result: " + result35); } else {
-     * System.err.println("Test 3.5 failed, result: " + result35); } }
-     * 
-     * System.err.println("");
-     * 
-     * { String test4 = "Java.Lang.ClassNotFoundException:com.Citrix"; int
-     * length = test4.length()-3; int min = 20; String result =
-     * chopAtWord(test4, length, min); System.err.println("result: " + result);
-     * } }
-     */
 
     /**
      * Converts the first Character of a CharSequence to its Uppercase Instance<br>
      * test -> Test
      * @return String, with first char uppercased
      */
-    public static String makeFirstWordCaptial(CharSequence cs) {
-        String word = cs.toString();
-	if (word.length() < 2) {
-	    return word;
-	}
-
-	String firstWord = word.substring(0, 1);
-	String restOfWord = word.substring(1);
-
-	return firstWord.toUpperCase() + restOfWord;
+    public static String makeFirstWordCapital(CharSequence cs) {
+        if (cs.length() == 0) {
+            return "";
+        }
+        return Character.toUpperCase(cs.charAt(0)) + cs.toString().substring(1);
     }
 
     /**
@@ -1453,79 +231,34 @@ public class StringUtils {
      * @author Wolf Posdorfer
      */
     public static String modifyWildcards(String resource) {
-	if(resource==null)
-	    return "";
-	
-	resource = resource.replace("%random%",
-		"" + Math.round((Math.random() * 1000)));
+        if (resource == null) {
+            return "";
+        }
+        resource = resource.replace("%random%", String.valueOf(Math.round(Math.random() * 1000)));
+        resource = resource.replace("%system%", System.getProperty("os.name", "").replace(" ", ""));
+        resource = resource.replace("%version%", System.getProperty("os.version", "").replace(" ", ""));
+        resource = resource.replace("%time%", LocalTime.now().format(TIME_FORMATTER));
 
-	resource = resource.replace("%system%", System.getProperty("os.name")
-		.replace(" ", ""));
-
-	resource = resource.replace("%version%",
-		System.getProperty("os.version").replace(" ", ""));
-
-	final String DATE_FORMAT_NOW = "HH:mm";
-	Calendar cal = Calendar.getInstance();
-	SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
-
-	resource = resource.replace("%time%", sdf.format(cal.getTime()));
-
-	while (resource.contains("%property{")) {
-	    if (resource.contains("%property{") && resource.contains("}/%")) {
-		int indexofbeginning = resource.indexOf("%property{");
-		int indexofending = resource.indexOf("}/%");
-
-		String begin = resource.substring(0, indexofbeginning);
-		String middle = System.getProperty(resource.substring(
-			indexofbeginning+10, indexofending));
-		String end = resource.substring(indexofending + 3);
-		resource = begin + middle + end;
-	    }
-	}
-
-	return resource;
+        while (resource.contains("%property{") && resource.contains("}/%")) {
+            int start = resource.indexOf("%property{");
+            int end = resource.indexOf("}/%", start);
+            if (end == -1) {
+                break;
+            }
+            String begin = resource.substring(0, start);
+            String propKey = resource.substring(start + "%property{".length(), end);
+            String propValue = System.getProperty(propKey, "");
+            String rest = resource.substring(end + "}/%".length());
+            resource = begin + propValue + rest;
+        }
+        return resource;
     }
-    
+
     /**
      * Creates an MD5 Checksum of a File, given the Filepath
-     * @param filepath
-     * @return md5 checksum
-     * @throws IOException 
-     * @throws NoSuchAlgorithmException 
-     * @throws Exception
      */
-    public static String getMD5Checksum(String filepath) throws NoSuchAlgorithmException, IOException {
-        byte[] b = createChecksum(filepath);
-        StringBuilder result = new StringBuilder();
-        for (byte value : b) {
-            result.append(Integer.toString((value & 0xff) + 0x100, 16).substring(1));
-        }
-        return result.toString();
-    }
-    
-    /**
-     * creates an MD5 checksum of a File, given the Filepath
-     * @param filename
-     * @return byte[] md5 sum
-     * @throws NoSuchAlgorithmException 
-     * @throws IOException 
-     * @throws Exception
-     */
-    public static byte[] createChecksum(String filename) throws NoSuchAlgorithmException, IOException {
-	InputStream fis = new FileInputStream(filename);
-
-	byte[] buffer = new byte[1024];
-	MessageDigest complete = MessageDigest.getInstance("MD5");
-	int numRead;
-	do {
-	    numRead = fis.read(buffer);
-	    if (numRead > 0) {
-		complete.update(buffer, 0, numRead);
-	    }
-	} while (numRead != -1);
-	fis.close();
-	return complete.digest();
+    public static String getMD5Checksum(String filepath) throws IOException {
+        return MD5.hex(readAllBytes(Path.of(filepath)));
     }
 
     /**
@@ -1534,7 +267,7 @@ public class StringUtils {
      * @param version A java version String
      * @return The major
      */
-    public static int getJavaMajorVersion( String version ) {
+    public static int getJavaMajorVersion(String version) {
         if (version.startsWith("1.")) {
             int dot = version.indexOf('.', 2);
             if ( dot == -1 ) {
@@ -1562,24 +295,24 @@ public class StringUtils {
      * @param text A input string
      * @return String with replaced special letter
      */
-    public static String replaceSpecialLetters(String text){
+    public static String replaceSpecialLetters(String text) {
         return text
-            .replaceAll("á|â|à|å|ã|ä", "a")
-            .replaceAll("Á|Â|À|Å|Ã|Ä", "A")
-            .replaceAll("é|ê|è|ë", "e")
-            .replaceAll("É|Ê|È|Ë", "E")
-            .replaceAll("í|î|ì|і", "i")
-            .replaceAll("Í|Î|Ì|І", "I")
-            .replaceAll("ó|ô|ò|õ|ö", "o")
-            .replaceAll("Ó|Ô|Ò|Õ|Ö", "O")
-            .replaceAll("ú|û|ù|ü", "u")
-            .replaceAll("Ú|Û|Ù|Ü", "U")
-            .replaceAll("ñ", "n")
-            .replaceAll("Ñ", "N")
-            .replaceAll("ý", "y")
-            .replaceAll("Ý", "Y")
-			.replaceAll("ё", "е")
-			.replaceAll("Ё", "Е");
+                .replaceAll("[áâàåãä]", "a")
+                .replaceAll("[ÁÂÀÅÃÄ]", "A")
+                .replaceAll("[éêèë]", "e")
+                .replaceAll("[ÉÊÈË]", "E")
+                .replaceAll("[íîìі]", "i")
+                .replaceAll("[ÍÎÌІ]", "I")
+                .replaceAll("[óôòõö]", "o")
+                .replaceAll("[ÓÔÒÕÖ]", "O")
+                .replaceAll("[úûùü]", "u")
+                .replaceAll("[ÚÛÙÜ]", "U")
+                .replace('ñ', 'n')
+                .replace('Ñ', 'N')
+                .replace('ý', 'y')
+                .replace('Ý', 'Y')
+                .replace('ё', 'е')
+                .replace('Ё', 'Е');
     }
 
     public static String replaceMe(String msg, String nickname) {

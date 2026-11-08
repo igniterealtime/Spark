@@ -56,6 +56,7 @@ import static java.awt.GridBagConstraints.EAST;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.WEST;
+import static org.jivesoftware.spark.util.StringUtils.makeFirstWordCapital;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {
     private static Workgroup wgroup;
@@ -266,7 +267,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             @Override
             public void finished() {
                 XMPPConnection con = SparkManager.getConnection();
-                String workgroupName = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial((String)comboBox.getSelectedItem());
+                String selectedWorkgroup = (String) comboBox.getSelectedItem();
+                String workgroupName = makeFirstWordCapital(selectedWorkgroup);
                 workgroupLabel.setText(FpRes.getString("message.workgroup.logged.into", workgroupName));
                 logoutButton.setVisible(true);
                 joinButton.setVisible(false);
