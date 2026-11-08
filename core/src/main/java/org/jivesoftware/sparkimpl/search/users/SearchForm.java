@@ -45,7 +45,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+
+import static java.awt.event.KeyEvent.VK_ENTER;
 
 public class SearchForm extends JPanel {
     private UserSearchResults searchResults;
@@ -82,11 +83,7 @@ public class SearchForm extends JPanel {
 
         searchButton.addActionListener( e -> performSearch() );
 
-        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        String enterString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(enter);
-
-        // Handle Left Arrow
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(enterString), "enter");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER, 0), "enter");
 
         getActionMap().put("enter", new AbstractAction("enter") {
 	    @Override

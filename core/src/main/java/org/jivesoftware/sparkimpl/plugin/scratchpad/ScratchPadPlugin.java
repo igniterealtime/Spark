@@ -41,6 +41,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_F5;
+import static java.awt.event.KeyEvent.VK_F6;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+
 /**
  * Allows users to have scratch paper within Spark.
  */
@@ -72,7 +77,7 @@ public class ScratchPadPlugin implements Plugin {
             TaskEngine.getInstance().schedule(startTask, 500);
 
             ContactList contactList = SparkManager.getWorkspace().getContactList();
-            contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
+            contactList.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F6, CTRL_DOWN_MASK), "viewNotes");
 
             contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
                 @Override
@@ -82,7 +87,7 @@ public class ScratchPadPlugin implements Plugin {
                 }
             });
 
-            contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
+            contactList.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F5, CTRL_DOWN_MASK), "viewTasks");
 
             contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
                 @Override

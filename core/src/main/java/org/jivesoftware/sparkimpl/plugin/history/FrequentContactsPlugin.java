@@ -46,6 +46,10 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import static java.awt.event.KeyEvent.VK_T;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+
 /**
  * Adds a simple feature to list your most "Popular" contacts.
  * Popular contacts is basically who you talk with the most.
@@ -132,8 +136,8 @@ public class FrequentContactsPlugin implements Plugin {
         });
 
         // Add KeyMappings
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "favoritePeople");
-        SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "favoritePeople");
+        SparkManager.getMainWindow().getRootPane().getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "favoritePeople");
+        SparkManager.getMainWindow().getRootPane().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
 			@Override
 			public void actionPerformed(ActionEvent e) {

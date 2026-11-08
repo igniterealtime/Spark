@@ -48,6 +48,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_F11;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+
 /**
  * Jabber Version.
  * Displays which version of Spark users are running.
@@ -89,7 +93,7 @@ public class JabberVersion implements Plugin {
         }, packetFilter);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F11"), "viewClient");
+        contactList.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F11, CTRL_DOWN_MASK), "viewClient");
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
 			public void poppingUp(final Object component, JPopupMenu popup) {

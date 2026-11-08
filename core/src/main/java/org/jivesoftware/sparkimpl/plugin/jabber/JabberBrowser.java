@@ -61,6 +61,8 @@ import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.WEST;
+import static java.awt.event.KeyEvent.VK_F8;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -225,7 +227,7 @@ public class JabberBrowser implements Plugin {
 
     @Override
     public void initialize() {
-        SparkManager.getWorkspace().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F8"), "showBrowser");
+        SparkManager.getWorkspace().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F8, 0), "showBrowser");
         AbstractAction actionShowXmppBrowser = new AbstractAction("showBrowser") {
             @Override
             public void actionPerformed(ActionEvent evt) {

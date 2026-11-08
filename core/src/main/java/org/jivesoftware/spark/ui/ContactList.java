@@ -75,6 +75,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_F;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.from;
 import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.none;
@@ -169,7 +171,7 @@ public class ContactList extends JPanel implements
         showHideMenu.setSelected(false);
         // Add KeyMappings
         MainWindow mainWindow = SparkManager.getMainWindow();
-        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        mainWindow.getRootPane().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F, CTRL_DOWN_MASK), "searchContacts");
         mainWindow.getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -177,7 +179,7 @@ public class ContactList extends JPanel implements
             }
         });
         // Handle Command-F on Macs
-        mainWindow.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "appleStrokeF");
+        mainWindow.getRootPane().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "appleStrokeF");
         mainWindow.getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
             @Override
             public void actionPerformed(ActionEvent evt) {

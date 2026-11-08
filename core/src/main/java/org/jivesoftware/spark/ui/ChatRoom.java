@@ -62,6 +62,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.awt.GridBagConstraints.*;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_F4;
+import static java.awt.event.KeyEvent.VK_SPACE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -250,7 +255,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().addKeyListener(chatEditorKeyListener);
 
-        getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
+        getChatInputEditor().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F4, CTRL_DOWN_MASK), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -259,7 +264,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-        getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
+        getChatInputEditor().getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_SPACE, CTRL_DOWN_MASK), "handleCompletion");
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -571,17 +576,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Checks to see if enter was pressed and validates room.
      */
     private void checkForEnter(KeyEvent e) {
-        final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiersEx());
-        if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))
-                && e.getKeyChar() == KeyEvent.VK_ENTER) {
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiersEx());
+        if (!keyStroke.equals(KeyStroke.getKeyStroke(VK_ENTER, SHIFT_DOWN_MASK))
+                && e.getKeyChar() == VK_ENTER) {
             e.consume();
             sendMessage();
             getChatInputEditor().setText("");
             getChatInputEditor().setCaretPosition(0);
 
             SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
-        } else if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))) {
-            final Document document = getChatInputEditor().getDocument();
+        } else if (keyStroke.equals(KeyStroke.getKeyStroke(VK_ENTER, SHIFT_DOWN_MASK))) {
+            Document document = getChatInputEditor().getDocument();
             try {
                 document.insertString(getChatInputEditor().getCaretPosition(), "\n", null);
                 getChatInputEditor().requestFocusInWindow();

@@ -53,11 +53,14 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
+import static java.awt.event.InputEvent.ALT_DOWN_MASK;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_F;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_W;
-import static org.jivesoftware.spark.util.StringUtils.keyStroke2String;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -150,12 +153,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * alt-left or right arrow keys.
      */
     private void addKeyNavigation() {
-        KeyStroke leftStroke = KeyStroke.getKeyStroke(VK_LEFT, 0);
-        String leftStrokeString = keyStroke2String(leftStroke);
         // Handle Left Arrow
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
-        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_LEFT, ALT_DOWN_MASK), "navigateLeft");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_LEFT, ALT_DOWN_MASK), "navigateLeft");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(VK_LEFT, ALT_DOWN_MASK), "navigateLeft");
         getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -163,12 +164,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-        KeyStroke rightStroke = KeyStroke.getKeyStroke(VK_RIGHT, 0);
-        String rightStrokeString = keyStroke2String(rightStroke);
         // Handle Right Arrow
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
-        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_RIGHT, ALT_DOWN_MASK), "navigateRight");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_RIGHT, ALT_DOWN_MASK), "navigateRight");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(VK_RIGHT, ALT_DOWN_MASK), "navigateRight");
 
         getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
             @Override
@@ -177,10 +176,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_ESCAPE, 0), "escape");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(VK_ESCAPE, 0), "escape");
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, CTRL_DOWN_MASK), "escape");
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "escape");
 
         getActionMap().put("escape", new AbstractAction("escape") {
@@ -190,7 +189,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         });
 
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | InputEvent.SHIFT_DOWN_MASK), "shiftCmdW");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | SHIFT_DOWN_MASK), "shiftCmdW");
         getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -200,7 +199,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         // Add KeyMappings
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "searchContacts");
-        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_F, CTRL_DOWN_MASK), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
 
             @Override

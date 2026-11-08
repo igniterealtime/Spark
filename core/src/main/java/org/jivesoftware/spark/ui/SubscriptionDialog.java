@@ -53,7 +53,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -64,6 +63,7 @@ import static java.awt.GridBagConstraints.NORTHEAST;
 import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.SOUTH;
 import static java.awt.GridBagConstraints.WEST;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.util.GroupUtils.loadGroupBox;
@@ -222,7 +222,7 @@ public class SubscriptionDialog {
             }
         });
 
-        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        KeyStroke key = KeyStroke.getKeyStroke(VK_ESCAPE, 0);
         ActionListener action = e -> unsubscribeAndClose();
         dialog.getRootPane().registerKeyboardAction(action, key, JComponent.WHEN_FOCUSED);
         dialog.setIconImage(SparkManager.getApplicationImage().getImage());

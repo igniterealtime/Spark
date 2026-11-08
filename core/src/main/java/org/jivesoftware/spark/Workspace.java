@@ -74,6 +74,8 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
 
+import static java.awt.event.KeyEvent.VK_F12;
+
 /**
  * The inner Container for Spark.
  * The Workspace is the container for all plugins into the Spark installation.
@@ -165,8 +167,8 @@ public class Workspace extends JPanel implements StanzaListener {
         add(statusBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
 
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
-        this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_F12, 0), "showDebugger");
+        getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
