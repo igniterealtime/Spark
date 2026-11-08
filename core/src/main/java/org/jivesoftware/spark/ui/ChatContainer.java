@@ -53,6 +53,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
+import static java.awt.event.KeyEvent.VK_F;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_W;
 import static org.jivesoftware.spark.util.StringUtils.keyStroke2String;
 
 /**
@@ -122,7 +126,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         setCloseButtonEnabled(true);
         // Add Key Navigation
         addKeyNavigation();
-        this.setFocusable(false);
+        setFocusable(false);
         setOpaque(true);
         setBackground(Color.white);
         // Create task for focusing chat.
@@ -146,48 +150,48 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * alt-left or right arrow keys.
      */
     private void addKeyNavigation() {
-        KeyStroke leftStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+        KeyStroke leftStroke = KeyStroke.getKeyStroke(VK_LEFT, 0);
         String leftStrokeString = keyStroke2String(leftStroke);
         // Handle Left Arrow
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
-        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
-        this.getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 navigateLeft();
             }
         });
 
-        KeyStroke rightStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
+        KeyStroke rightStroke = KeyStroke.getKeyStroke(VK_RIGHT, 0);
         String rightStrokeString = keyStroke2String(rightStroke);
         // Handle Right Arrow
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
-        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
 
-        this.getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
+        getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 navigateRight();
             }
         });
 
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
-        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
+        getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
 
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "escape");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "escape");
 
-        this.getActionMap().put("escape", new AbstractAction("escape") {
+        getActionMap().put("escape", new AbstractAction("escape") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 closeActiveRoom();
             }
         });
 
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | InputEvent.SHIFT_DOWN_MASK), "shiftCmdW");
-        this.getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | InputEvent.SHIFT_DOWN_MASK), "shiftCmdW");
+        getActionMap().put("shiftCmdW", new AbstractAction("shiftCmdW") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 closeAllChatRooms();
@@ -195,8 +199,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         });
 
         // Add KeyMappings
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "searchContacts");
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()), "searchContacts");
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
 
             @Override
@@ -225,10 +229,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     public synchronized void addChatRoom(final ChatRoom room) {
         createFrameIfNeeded();
-
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
         AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(room.getBareJid()));
-
         // Next, create a packet listener. We use an anonymous inner class for brevity.
         StanzaListener myListener = stanza -> SwingUtilities.invokeLater(() -> {
             try {
@@ -247,7 +249,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         String tooltip;
         if (room instanceof ChatRoomImpl) {
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl) room).getParticipantJID());
+            EntityBareJid participantJid = ((ChatRoomImpl) room).getParticipantJID();
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(participantJid);
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + room.getJid();
         } else {
             tooltip = room.getBareJid().toString();
@@ -310,24 +313,24 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Handles the presence of a one to one chat room.
      */
     private void handleRoomPresence(final Presence p) {
-        final EntityBareJid roomname = p.getFrom().asEntityBareJidIfPossible();
-        final Resourcepart userid = p.getFrom().getResourceOrNull();
-        if (roomname == null || userid == null) {
+        EntityBareJid roomName = p.getFrom().asEntityBareJidIfPossible();
+        Resourcepart nickname = p.getFrom().getResourceOrNull();
+        if (roomName == null || nickname == null) {
             Log.warning("Invalid presence received: " + p);
             return;
         }
         ChatRoom chatRoom;
         try {
-            chatRoom = getChatRoom(roomname);
+            chatRoom = getChatRoom(roomName);
         } catch (ChatRoomNotFoundException e1) {
-            Log.debug("Could not locate chat room " + roomname);
+            Log.debug("Could not locate chat room " + roomName);
             return;
         }
 
         if (p.getType() == Presence.Type.unavailable) {
-            fireUserHasLeft(chatRoom, userid);
+            fireUserHasLeft(chatRoom, nickname);
         } else if (p.isAvailable()) {
-            fireUserHasJoined(chatRoom, userid);
+            fireUserHasJoined(chatRoom, nickname);
         }
         // Change tab icon
         if (chatRoom instanceof ChatRoomImpl) {
@@ -349,8 +352,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // Set to new tab.
             int tabLocation = indexOfComponent(component);
             setSelectedIndex(tabLocation);
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
+            // If the ContactList is in the tray, we need better notification by flashing the chat frame.
             startFlashing(component, false, null, null);
         } // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible()) {
@@ -365,8 +367,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 chatFrame.setState(Frame.ICONIFIED);
             }
             chatFrame.setFocusableWindowState(true);
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
+            // If the ContactList is in the tray, we need better notification by flashing the chat frame.
             if (!SparkManager.getMainWindow().isVisible()) {
                 startFlashing(component, false, null, null);
             } else if (chatFrame.getState() == Frame.ICONIFIED) {
@@ -410,8 +411,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // Set to new tab.
             int tabLocation = indexOfComponent(chatRoom);
             setSelectedIndex(tabLocation);
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
+            // If the ContactList is in the tray, we need better notification by flashing the chat frame.
             if (!groupMessageChecked) {
                 groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             }
@@ -430,8 +430,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
             chatFrame.setVisible(true);
 
-            // If the ContactList is in the tray, we need better notification by flashing
-            // the chatframe.
+            // If the ContactList is in the tray, we need better notification by flashing the chat frame.
             if (!SparkManager.getMainWindow().isVisible()) {
                 if (!groupMessageChecked) {
                     groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
@@ -702,7 +701,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (getTabCount() == 0) {
             chatFrame.setTitle("");
         }
-        this.close(this.getTabAt(location));
+        close(getTabAt(location));
     }
 
     public void closeActiveRoom() {
@@ -758,9 +757,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         chatRoomListeners.addIfAbsent(listener);
     }
 
-    /**
-     * Removes the specified <code>ChatRoomListener</code>.
-     */
     public void removeChatRoomListener(ChatRoomListener listener) {
         chatRoomListeners.remove(listener);
     }
@@ -1246,24 +1242,22 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private void navigateLeft() {
         int selectedIndex = getSelectedIndex();
         if (selectedIndex > 0) {
-            setSelectedIndex(selectedIndex - 1);
+            setSelectedIndex(selectedIndex - 1); // previous
         } else {
-            setSelectedIndex(getTabCount() - 1);
+            setSelectedIndex(getTabCount() - 1); // last
         }
     }
 
-    // Handle key listener events for mac only :)
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-        // Nothing to do.
     }
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.isMetaDown()) {
-            if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (keyEvent.getKeyCode() == VK_RIGHT) {
                 navigateRight();
-            } else if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+            } else if (keyEvent.getKeyCode() == VK_LEFT) {
                 navigateLeft();
             }
         }
